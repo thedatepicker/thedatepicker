@@ -1,0 +1,30 @@
+{
+  "name": "thedatepicker",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/thedatepicker/thedatepicker.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "*",
+    "stylus": "*",
+    "uglify-js": "*"
+  },
+  "scripts": {
+    "js": "tsc",
+    "css": "stylus src/assets -o dist",
+    "minify": "uglifyjs -c -m -o dist/the-datepicker.min.js dist/the-datepicker.js"
+  },
+  "bugs": {
+    "url": "https://github.com/thedatepicker/thedatepicker/issues"
+  },
+  "homepage": "https://github.com/thedatepicker/thedatepicker#readme",
+  "description": "TheDatepicker - Pure JavaScript Datepicker",
+  "keywords": [
+    "date",
+    "datepicker"
+  ],
+  "author": "Vladislav Hejda"
+}
