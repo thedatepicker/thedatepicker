@@ -10,14 +10,21 @@ namespace TheDatepicker {
 	export enum EventType {
 		BeforeSelect = 'beforeSelect',
 		Select = 'select',
+		BeforeSwitch = 'beforeSwitch',
+		Switch = 'switch',
 	}
 
-	type SelectEvent = (event: Event | null, day: Day| null) => boolean;
+	export type SelectEvent = (event: Event | null, day: Day| null) => boolean;
+	export type SwitchEvent = (event: Event | null, isOpening: boolean) => boolean;
+	type OneOfEvent = SelectEvent | SwitchEvent;
+	type AnyEvent = SelectEvent & SwitchEvent;
 	type EventCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
 		beforeSelect: SelectEvent[]
 		select: SelectEvent[]
+		beforeSwitch: SwitchEvent[]
+		switch: SwitchEvent[]
 	}
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
@@ -40,6 +47,8 @@ namespace TheDatepicker {
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
+			beforeSwitch: [],
+			switch: [],
 		};
 
 		public constructor() {
@@ -212,11 +221,7 @@ namespace TheDatepicker {
 		// An Event instance and a Day instance (or null when deselected) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
 		public onBeforeSelect(listener: SelectEvent) {
-			if (typeof listener !== 'function') {
-				throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-			}
-
-			this.listeners.beforeSelect.push(listener);
+			this.onEventListener(EventType.BeforeSelect, listener as AnyEvent);
 		}
 
 		public offBeforeSelect(listener: SelectEvent | null = null): void {
@@ -226,15 +231,32 @@ namespace TheDatepicker {
 		// Callback to be called immediately after the day is selected or deselected.
 		// An Event instance and a Day instance (or null when deselected) are given on input.
 		public onSelect(listener: SelectEvent) {
-			if (typeof listener !== 'function') {
-				throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-			}
-
-			this.listeners.select.push(listener);
+			this.onEventListener(EventType.Select, listener as AnyEvent);
 		}
 
 		public offSelect(listener: SelectEvent | null = null): void {
 			this.offEventListener(EventType.Select, listener);
+		}
+
+		// Callback to be called just before the datepicker is opened or closed.
+		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
+		// If callback returns false, action stops and datepicker will not be opened / closed.
+		public onBeforeSwitch(listener: SwitchEvent) {
+			this.onEventListener(EventType.BeforeSwitch, listener as AnyEvent);
+		}
+
+		public offBeforeSwitch(listener: SwitchEvent | null = null): void {
+			this.offEventListener(EventType.BeforeSwitch, listener);
+		}
+
+		// Callback to be called immediately after the datepicker is opened or closed.
+		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
+		public onSwitch(listener: SwitchEvent) {
+			this.onEventListener(EventType.Switch, listener as AnyEvent);
+		}
+
+		public offSwitch(listener: SwitchEvent | null = null): void {
+			this.offEventListener(EventType.Switch, listener);
 		}
 
 		public getTemplate(): Template {
@@ -350,7 +372,15 @@ namespace TheDatepicker {
 			}
 		}
 
-		private offEventListener(eventType: EventType, listener: SelectEvent | null): void {
+		public onEventListener(eventType: EventType, listener: AnyEvent) {
+			if (typeof listener !== 'function') {
+				throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
+			}
+
+			this.listeners[eventType].push(listener);
+		}
+
+		private offEventListener(eventType: EventType, listener: OneOfEvent | null): void {
 			if (listener !== null && typeof listener !== 'function') {
 				throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
 			}
@@ -364,7 +394,7 @@ namespace TheDatepicker {
 						newListeners.push(this.listeners[eventType][index]);
 					}
 				}
-				this.listeners[eventType] = newListeners;
+				this.listeners[eventType] = newListeners as AnyEvent[];
 			}
 		}
 

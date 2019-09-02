@@ -51,14 +51,24 @@ namespace TheDatepicker {
 			this.datepicker.updateInput();
 		}
 
-		public setActive(value: boolean): void {
-			if (this.active !== value) {
-				this.active = value;
-
-				if (this.options.isHiddenOnBlur()) {
-					this.render();
-				}
+		public setActive(event: Event | null, value: boolean): boolean {
+			if (this.active === value) {
+				return true;
 			}
+
+			if (!this.triggerOnBeforeSwitch(event, value)) {
+				return false;
+			}
+
+			this.active = value;
+
+			if (this.options.isHiddenOnBlur()) {
+				this.render();
+			}
+
+			this.triggerOnSwitch(event, value);
+
+			return true;
 		}
 
 		public isActive(): boolean {
@@ -386,15 +396,27 @@ namespace TheDatepicker {
 		}
 
 		private triggerOnBeforeSelect(event: Event | null, day: Day | null): boolean {
-			return this.options.triggerEvent(EventType.BeforeSelect, (listener) => {
+			return this.options.triggerEvent(EventType.BeforeSelect, (listener: SelectEvent) => {
 				return listener(event, day);
 			});
 		}
 
-		private triggerOnSelect(event: Event, day: Day | null): void {
+		private triggerOnSelect(event: Event | null, day: Day | null): void {
 			// todo v prohlížeči se vyrendrované html objeví až poté co se zavolá alert v listeneru... proč?
-			this.options.triggerEvent(EventType.Select, (listener) => {
+			this.options.triggerEvent(EventType.Select, (listener: SelectEvent) => {
 				return listener(event, day);
+			});
+		}
+
+		private triggerOnBeforeSwitch(event: Event | null, isOpening: boolean): boolean {
+			return this.options.triggerEvent(EventType.BeforeSwitch, (listener: SwitchEvent) => {
+				return listener(event, isOpening);
+			});
+		}
+
+		private triggerOnSwitch(event: Event | null, isOpening: boolean): void {
+			this.options.triggerEvent(EventType.Switch, (listener: SwitchEvent) => {
+				return listener(event, isOpening);
 			});
 		}
 

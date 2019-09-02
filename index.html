@@ -74,7 +74,7 @@
 					<label>datepicker.options.setDaysOutOfMonthVisible(<input type="checkbox" id="daysOutOfMonthVisible">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setFixedRowsCountInput(<input type="checkbox" id="fixedRowsCount">);</label>
+					<label>datepicker.options.setFixedRowsCount(<input type="checkbox" id="fixedRowsCount">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeSelect((event, day) => {<br>
@@ -95,7 +95,6 @@
 			var input = document.getElementById('my-input');
 
 			var datepicker = new TheDatepicker.Datepicker(input);
-			datepicker.options.getTemplate().areDaysOutOfMonthVisible = true;
 			datepicker.render();
 
 			var updateSetting = function (settingInput, callback) {

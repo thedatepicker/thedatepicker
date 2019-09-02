@@ -6,7 +6,7 @@ namespace TheDatepicker {
 	// todo indexOf není v IE <= 8 (https://caniuse.com/#feat=es5)
 	// todo měly by se listenery on*Select volat KDYKOLIV je vybráno datum (selectDate...)?
 	// todo input.value = 'xxx' nezavolá onchange, dá se to nějak řešit?
-	// todo datepicker.selectdate() by mohlo přijímat i string 2019-01-20
+	// todo datepicker.selectdate() by mohlo přijímat i string 2019-01-20 + kontrola že je to datum
 	// todo parser neveme "7. 8.     2001"
 	// todo pokud je předvybrané datum, či je vybráno pomocí datepicker.selectDate(), a zároveň initialMonth = null, bylo by dobrý kdyby byl měsíc nastaven na vybrané datum
 	// todo onMonthChange, onBefore.. (do callbacku previous + new)
@@ -26,6 +26,9 @@ namespace TheDatepicker {
 	// todo předat do listenerů (on*) nějaké this?
 	// todo toggle mode (klik na selected ho odvybere)
 	// todo no empty mode? (vždy musí být něco vybráno)
+	// todo option zda zobrazovat křížek
+	// todo static metody šětří výkon
+	// todo smooth transformace (mizení backgroundu atd)
 
 	// todo HLAVNÍ CÍLE:
 	// - upravit kde to floatuje (absolute position)
@@ -184,9 +187,10 @@ namespace TheDatepicker {
 			this.render();
 		}
 
-		public open(): void {
+		public open(): boolean {
 			if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
 				this.input.focus();
+				// todo zde opět nevím co vrátit
 				return;
 			}
 
@@ -194,14 +198,35 @@ namespace TheDatepicker {
 				throw new Error('Call render() first.');
 			}
 
-			this.activateViewModel(this.viewModel);
+			if (!Datepicker.activateViewModel(null, this.viewModel)) {
+				return false;
+			}
+
 			if (this.input !== null) {
 				this.input.focus();
 			}
+
+			return true;
 		}
 
-		public close(): void {
-			this.activateViewModel(null);
+		public close(): boolean {
+			if (this.viewModel === null) {
+				throw new Error('Call render() first.');
+			}
+
+			if (!this.viewModel.isActive()) {
+				return true;
+			}
+
+			if (!Datepicker.activateViewModel(null, null)) {
+				return false;
+			}
+
+			if (this.input !== null) {
+				this.input.blur();
+			}
+
+			return true;
 		}
 
 		public readInput(event: KeyboardEvent | null): void {
@@ -278,11 +303,11 @@ namespace TheDatepicker {
 			if (Datepicker.viewModels.length === 0) {
 				let activeViewModel: ViewModel | null = null;
 
-				const checkMiss = () => {
+				const checkMiss = (event: Event) => {
 					if (Datepicker.hasClickedViewModel) {
 						Datepicker.hasClickedViewModel = false;
 					} else {
-						this.activateViewModel(null);
+						Datepicker.activateViewModel(event, null);
 					}
 				};
 
@@ -292,7 +317,7 @@ namespace TheDatepicker {
 						originalOnMousedown.call(this.document, event);
 					}
 
-					checkMiss();
+					checkMiss(event);
 				};
 
 				if (this.document.addEventListener) {
@@ -304,7 +329,7 @@ namespace TheDatepicker {
 							originalOnFocusIn.call(this.document, event);
 						}
 
-						checkMiss();
+						checkMiss(event);
 					};
 				}
 
@@ -327,8 +352,8 @@ namespace TheDatepicker {
 
 			Datepicker.viewModels.push(this.viewModel);
 
-			const hit = () => {
-				this.activateViewModel(this.viewModel);
+			const hit = (event: Event) => {
+				Datepicker.activateViewModel(event, this.viewModel);
 				Datepicker.hasClickedViewModel = true;
 			};
 
@@ -338,7 +363,7 @@ namespace TheDatepicker {
 					originalOnMousedown.call(this.container, event);
 				}
 
-				hit();
+				hit(event);
 			};
 
 			if (this.container.addEventListener) {
@@ -350,7 +375,7 @@ namespace TheDatepicker {
 						originalOnFocusIn.call(this.container, event);
 					}
 
-					hit();
+					hit(event);
 				};
 			}
 
@@ -361,7 +386,7 @@ namespace TheDatepicker {
 						originalOnMousedown.call(this.input, event);
 					}
 
-					hit();
+					hit(event);
 				};
 
 				const originalOnFocus = this.input.onfocus || null;
@@ -370,7 +395,7 @@ namespace TheDatepicker {
 						originalOnFocus.call(this.input, event);
 					}
 
-					hit();
+					hit(event);
 				};
 
 				const originalOnBlur = this.input.onblur || null;
@@ -393,15 +418,27 @@ namespace TheDatepicker {
 			}
 		}
 
-		private activateViewModel(viewModel: ViewModel | null): void {
+		private static activateViewModel(event: Event | null, viewModel: ViewModel | null): boolean {
 			if (Datepicker.activeViewModel === viewModel) {
-				return;
+				return true;
+			}
+
+			if (Datepicker.activeViewModel !== null && !Datepicker.activeViewModel.setActive(event, false)) {
+				return false;
+			}
+
+			if (viewModel === null) {
+				Datepicker.activeViewModel = null;
+				return true;
+			}
+
+			if (!viewModel.setActive(event, true)) {
+				return false;
 			}
 
 			Datepicker.activeViewModel = viewModel;
-			for (let index = 0; index < Datepicker.viewModels.length; index++) {
-				Datepicker.viewModels[index].setActive(Datepicker.viewModels[index] === viewModel);
-			}
+
+			return true;
 		}
 
 		// todo do nějakýho helpru?

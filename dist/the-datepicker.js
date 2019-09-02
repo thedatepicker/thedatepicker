@@ -488,13 +488,28 @@ var TheDatepicker;
             if (this.viewModel === null) {
                 throw new Error('Call render() first.');
             }
-            this.activateViewModel(this.viewModel);
+            if (!Datepicker.activateViewModel(null, this.viewModel)) {
+                return false;
+            }
             if (this.input !== null) {
                 this.input.focus();
             }
+            return true;
         };
         Datepicker.prototype.close = function () {
-            this.activateViewModel(null);
+            if (this.viewModel === null) {
+                throw new Error('Call render() first.');
+            }
+            if (!this.viewModel.isActive()) {
+                return true;
+            }
+            if (!Datepicker.activateViewModel(null, null)) {
+                return false;
+            }
+            if (this.input !== null) {
+                this.input.blur();
+            }
+            return true;
         };
         Datepicker.prototype.readInput = function (event) {
             if (this.input === null || this.viewModel === null) {
@@ -558,12 +573,12 @@ var TheDatepicker;
             var _this = this;
             if (Datepicker.viewModels.length === 0) {
                 var activeViewModel = null;
-                var checkMiss_1 = function () {
+                var checkMiss_1 = function (event) {
                     if (Datepicker.hasClickedViewModel) {
                         Datepicker.hasClickedViewModel = false;
                     }
                     else {
-                        _this.activateViewModel(null);
+                        Datepicker.activateViewModel(event, null);
                     }
                 };
                 var originalOnMousedown_1 = this.document.onmousedown || null;
@@ -571,7 +586,7 @@ var TheDatepicker;
                     if (originalOnMousedown_1 !== null) {
                         originalOnMousedown_1.call(_this.document, event);
                     }
-                    checkMiss_1();
+                    checkMiss_1(event);
                 };
                 if (this.document.addEventListener) {
                     this.document.addEventListener('focusin', checkMiss_1);
@@ -582,7 +597,7 @@ var TheDatepicker;
                         if (originalOnFocusIn_1 !== null) {
                             originalOnFocusIn_1.call(_this.document, event);
                         }
-                        checkMiss_1();
+                        checkMiss_1(event);
                     };
                 }
                 var originalKeyDown_1 = this.document.onkeydown || null;
@@ -600,8 +615,8 @@ var TheDatepicker;
                 };
             }
             Datepicker.viewModels.push(this.viewModel);
-            var hit = function () {
-                _this.activateViewModel(_this.viewModel);
+            var hit = function (event) {
+                Datepicker.activateViewModel(event, _this.viewModel);
                 Datepicker.hasClickedViewModel = true;
             };
             var originalOnMousedown = this.container.onmousedown || null;
@@ -609,7 +624,7 @@ var TheDatepicker;
                 if (originalOnMousedown !== null) {
                     originalOnMousedown.call(_this.container, event);
                 }
-                hit();
+                hit(event);
             };
             if (this.container.addEventListener) {
                 this.container.addEventListener('focusin', hit);
@@ -620,7 +635,7 @@ var TheDatepicker;
                     if (originalOnFocusIn_2 !== null) {
                         originalOnFocusIn_2.call(_this.container, event);
                     }
-                    hit();
+                    hit(event);
                 };
             }
             if (this.input !== null) {
@@ -629,14 +644,14 @@ var TheDatepicker;
                     if (originalOnMousedown_2 !== null) {
                         originalOnMousedown_2.call(_this.input, event);
                     }
-                    hit();
+                    hit(event);
                 };
                 var originalOnFocus_1 = this.input.onfocus || null;
                 this.input.onfocus = function (event) {
                     if (originalOnFocus_1 !== null) {
                         originalOnFocus_1.call(_this.input, event);
                     }
-                    hit();
+                    hit(event);
                 };
                 var originalOnBlur_1 = this.input.onblur || null;
                 this.input.onblur = function (event) {
@@ -654,14 +669,22 @@ var TheDatepicker;
                 };
             }
         };
-        Datepicker.prototype.activateViewModel = function (viewModel) {
+        Datepicker.activateViewModel = function (event, viewModel) {
             if (Datepicker.activeViewModel === viewModel) {
-                return;
+                return true;
+            }
+            if (Datepicker.activeViewModel !== null && !Datepicker.activeViewModel.setActive(event, false)) {
+                return false;
+            }
+            if (viewModel === null) {
+                Datepicker.activeViewModel = null;
+                return true;
+            }
+            if (!viewModel.setActive(event, true)) {
+                return false;
             }
             Datepicker.activeViewModel = viewModel;
-            for (var index = 0; index < Datepicker.viewModels.length; index++) {
-                Datepicker.viewModels[index].setActive(Datepicker.viewModels[index] === viewModel);
-            }
+            return true;
         };
         Datepicker.prototype.isElement = function (element) {
             return typeof element === 'object'
@@ -866,13 +889,19 @@ var TheDatepicker;
             this.options.getTemplate().render(this, this.datepicker);
             this.datepicker.updateInput();
         };
-        ViewModel.prototype.setActive = function (value) {
-            if (this.active !== value) {
-                this.active = value;
-                if (this.options.isHiddenOnBlur()) {
-                    this.render();
-                }
+        ViewModel.prototype.setActive = function (event, value) {
+            if (this.active === value) {
+                return true;
             }
+            if (!this.triggerOnBeforeSwitch(event, value)) {
+                return false;
+            }
+            this.active = value;
+            if (this.options.isHiddenOnBlur()) {
+                this.render();
+            }
+            this.triggerOnSwitch(event, value);
+            return true;
         };
         ViewModel.prototype.isActive = function () {
             return this.active;
@@ -1139,6 +1168,16 @@ var TheDatepicker;
         ViewModel.prototype.triggerOnSelect = function (event, day) {
             this.options.triggerEvent(TheDatepicker.EventType.Select, function (listener) {
                 return listener(event, day);
+            });
+        };
+        ViewModel.prototype.triggerOnBeforeSwitch = function (event, isOpening) {
+            return this.options.triggerEvent(TheDatepicker.EventType.BeforeSwitch, function (listener) {
+                return listener(event, isOpening);
+            });
+        };
+        ViewModel.prototype.triggerOnSwitch = function (event, isOpening) {
+            this.options.triggerEvent(TheDatepicker.EventType.Switch, function (listener) {
+                return listener(event, isOpening);
             });
         };
         ViewModel.prototype.createDay = function (date) {
@@ -1447,6 +1486,8 @@ var TheDatepicker;
     (function (EventType) {
         EventType["BeforeSelect"] = "beforeSelect";
         EventType["Select"] = "select";
+        EventType["BeforeSwitch"] = "beforeSwitch";
+        EventType["Switch"] = "switch";
     })(EventType = TheDatepicker.EventType || (TheDatepicker.EventType = {}));
     var Options = (function () {
         function Options() {
@@ -1463,7 +1504,9 @@ var TheDatepicker;
             this.fixedRowsCount = false;
             this.listeners = {
                 beforeSelect: [],
-                select: []
+                select: [],
+                beforeSwitch: [],
+                "switch": []
             };
             this.setTemplate(new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper()));
             this.setTranslator(new TheDatepicker.Translator());
@@ -1554,24 +1597,32 @@ var TheDatepicker;
             this.fixedRowsCount = value;
         };
         Options.prototype.onBeforeSelect = function (listener) {
-            if (typeof listener !== 'function') {
-                throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-            }
-            this.listeners.beforeSelect.push(listener);
+            this.onEventListener(EventType.BeforeSelect, listener);
         };
         Options.prototype.offBeforeSelect = function (listener) {
             if (listener === void 0) { listener = null; }
             this.offEventListener(EventType.BeforeSelect, listener);
         };
         Options.prototype.onSelect = function (listener) {
-            if (typeof listener !== 'function') {
-                throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-            }
-            this.listeners.select.push(listener);
+            this.onEventListener(EventType.Select, listener);
         };
         Options.prototype.offSelect = function (listener) {
             if (listener === void 0) { listener = null; }
             this.offEventListener(EventType.Select, listener);
+        };
+        Options.prototype.onBeforeSwitch = function (listener) {
+            this.onEventListener(EventType.BeforeSwitch, listener);
+        };
+        Options.prototype.offBeforeSwitch = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEventListener(EventType.BeforeSwitch, listener);
+        };
+        Options.prototype.onSwitch = function (listener) {
+            this.onEventListener(EventType.Switch, listener);
+        };
+        Options.prototype.offSwitch = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEventListener(EventType.Switch, listener);
         };
         Options.prototype.getTemplate = function () {
             return this.template;
@@ -1661,6 +1712,12 @@ var TheDatepicker;
                 && minDate.getTime() > maxDate.getTime()) {
                 throw new Error('Min date cannot be higher then max date, given min: ' + minDate.toString() + ', max: ' + maxDate.toString());
             }
+        };
+        Options.prototype.onEventListener = function (eventType, listener) {
+            if (typeof listener !== 'function') {
+                throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
+            }
+            this.listeners[eventType].push(listener);
         };
         Options.prototype.offEventListener = function (eventType, listener) {
             if (listener !== null && typeof listener !== 'function') {
