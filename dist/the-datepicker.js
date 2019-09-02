@@ -1099,6 +1099,13 @@ var TheDatepicker;
                 day.isInCurrentMonth = false;
                 days.push(day);
             }
+            if (this.options.hasFixedRowsCount()) {
+                for (var date_1 = appendDaysCount + 1; days.length < 6 * 7; date_1++) {
+                    var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date_1));
+                    day.isInCurrentMonth = false;
+                    days.push(day);
+                }
+            }
             var weeks = [];
             for (var i = 0; i < days.length; i += 7) {
                 weeks.push(days.slice(i, i + 7));
@@ -1184,8 +1191,6 @@ var TheDatepicker;
             this.goBackHtml = '&lt;';
             this.goForwardHtml = '&gt;';
             this.closeHtml = '&times;';
-            this.maxWeeks = 6;
-            this.daysInWeekCount = 7;
             this.containerElement = null;
             this.goBackElement = null;
             this.goForwardElement = null;
@@ -1346,7 +1351,7 @@ var TheDatepicker;
             this.daysElements = [];
             this.daysContentsElements = [];
             var rows = [];
-            for (var index = 0; index < this.maxWeeks; index++) {
+            for (var index = 0; index < 6; index++) {
                 rows.push(this.createTableRowElement(viewModel));
             }
             this.weeksElements = rows;
@@ -1368,7 +1373,7 @@ var TheDatepicker;
         Template.prototype.createTableRowElement = function (viewModel) {
             var cells = [];
             var cellsContents = [];
-            for (var index = 0; index < this.daysInWeekCount; index++) {
+            for (var index = 0; index < 7; index++) {
                 var cell = this.htmlHelper.createTableCell('day');
                 var cellContent = this.createTableCellContentElement(viewModel);
                 cells.push(cell);
@@ -1381,17 +1386,20 @@ var TheDatepicker;
         };
         Template.prototype.updateDayElement = function (viewModel, dayElement, dayContentElement, day) {
             dayContentElement.day = day;
-            if (!day.isInCurrentMonth && !this.areDaysOutOfMonthVisible) {
+            if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
                 dayElement.className = '';
                 dayContentElement.innerHTML = '';
                 dayContentElement.removeAttribute('href');
+                dayContentElement.style.visibility = 'hidden';
                 return;
             }
             this.htmlHelper.toggleClass(dayElement, 'today', day.isToday);
             this.htmlHelper.toggleClass(dayElement, 'weekend', day.isWeekend);
             this.htmlHelper.toggleClass(dayElement, 'unavailable', !day.isAvailable);
+            this.htmlHelper.toggleClass(dayElement, 'outside', !day.isInCurrentMonth);
             this.htmlHelper.toggleClass(dayElement, 'highlighted', day.isHighlighted);
             this.htmlHelper.toggleClass(dayElement, 'selected', day.isSelected);
+            dayContentElement.style.visibility = 'visible';
             dayContentElement.innerHTML = this.getCellHtml(viewModel, day);
             if (day.isAvailable) {
                 dayContentElement.href = '#';
@@ -1451,6 +1459,8 @@ var TheDatepicker;
             this.dateAvailabilityResolver = null;
             this.inputFormat = 'j. n. Y';
             this.hoverEnabled = true;
+            this.daysOutOfMonthVisible = false;
+            this.fixedRowsCount = false;
             this.listeners = {
                 beforeSelect: [],
                 select: []
@@ -1472,13 +1482,13 @@ var TheDatepicker;
         };
         Options.prototype.setHideOnBlur = function (value) {
             if (typeof value !== 'boolean') {
-                throw new Error('Whether to hide on blur was expected to boolean, but ' + value + ' given.');
+                throw new Error('Whether to hide on blur was expected to be a boolean, but ' + value + ' given.');
             }
             this.hideOnBlur = value;
         };
         Options.prototype.setHideOnSelect = function (value) {
             if (typeof value !== 'boolean') {
-                throw new Error('Whether to hide on select was expected to boolean, but ' + value + ' given.');
+                throw new Error('Whether to hide on select was expected to be a boolean, but ' + value + ' given.');
             }
             this.hideOnSelect = value;
         };
@@ -1527,9 +1537,21 @@ var TheDatepicker;
         };
         Options.prototype.setHoverEnabled = function (value) {
             if (typeof value !== 'boolean') {
-                throw new Error('Whether is hover enabled was expected to boolean, but ' + value + ' given.');
+                throw new Error('Whether is hover enabled was expected to be a boolean, but ' + value + ' given.');
             }
             this.hoverEnabled = value;
+        };
+        Options.prototype.setDaysOutOfMonthVisible = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether are days out of month visible was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.daysOutOfMonthVisible = value;
+        };
+        Options.prototype.setFixedRowsCount = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether has fixed rows count was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.fixedRowsCount = value;
         };
         Options.prototype.onBeforeSelect = function (listener) {
             if (typeof listener !== 'function') {
@@ -1538,6 +1560,7 @@ var TheDatepicker;
             this.listeners.beforeSelect.push(listener);
         };
         Options.prototype.offBeforeSelect = function (listener) {
+            if (listener === void 0) { listener = null; }
             this.offEventListener(EventType.BeforeSelect, listener);
         };
         Options.prototype.onSelect = function (listener) {
@@ -1547,6 +1570,7 @@ var TheDatepicker;
             this.listeners.select.push(listener);
         };
         Options.prototype.offSelect = function (listener) {
+            if (listener === void 0) { listener = null; }
             this.offEventListener(EventType.Select, listener);
         };
         Options.prototype.getTemplate = function () {
@@ -1585,6 +1609,12 @@ var TheDatepicker;
         };
         Options.prototype.isHoverEnabled = function () {
             return this.hoverEnabled;
+        };
+        Options.prototype.areDaysOutOfMonthVisible = function () {
+            return this.daysOutOfMonthVisible;
+        };
+        Options.prototype.hasFixedRowsCount = function () {
+            return this.fixedRowsCount;
         };
         Options.prototype.getMinDate = function () {
             return this.minDate;
@@ -1633,6 +1663,9 @@ var TheDatepicker;
             }
         };
         Options.prototype.offEventListener = function (eventType, listener) {
+            if (listener !== null && typeof listener !== 'function') {
+                throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
+            }
             if (listener === null) {
                 this.listeners[eventType] = [];
             }

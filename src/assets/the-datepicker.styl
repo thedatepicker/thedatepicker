@@ -1,10 +1,14 @@
 $base-color = #007eff
+$weak-color = #8ac4ff
+$unavailable-color = #aaa
 $highlight-background = #d1e8ff
+$table-header-color = #666
+$border = #ccc
 
 .the-datepicker-container
 	float left
-	background white
-	border 1px solid #ccc
+	background-color white
+	border 1px solid $border
 	border-radius 0 6px 6px 6px
 	padding 6px
 	font-family Arial, Helvetica, sans-serif
@@ -22,6 +26,7 @@ $highlight-background = #d1e8ff
 .the-datepicker-button
 	display block
 	width 21px
+	height 17px
 	padding 4px
 	text-decoration none
 	text-align center
@@ -73,7 +78,7 @@ $highlight-background = #d1e8ff
 	text-align center
 	font-weight normal
 	text-transform uppercase
-	color #666
+	color $table-header-color
 	font-size 0.85em
 	padding-bottom 5px
 
@@ -84,9 +89,13 @@ $highlight-background = #d1e8ff
 	.the-datepicker-button
 		background-color $highlight-background
 
+.the-datepicker-outside
+	.the-datepicker-button
+		color $weak-color
+
 .the-datepicker-unavailable
 	.the-datepicker-button
-		color #aaa
+		color $unavailable-color
 		&:hover
 			background-color transparent
 

@@ -35,6 +35,8 @@ namespace TheDatepicker {
 		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
 		private inputFormat = 'j. n. Y';
 		private hoverEnabled = true;
+		private daysOutOfMonthVisible = false;
+		private fixedRowsCount = false;
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
@@ -67,7 +69,7 @@ namespace TheDatepicker {
 		// defaults to true
 		public setHideOnBlur(value: boolean): void {
 			if (typeof value !== 'boolean') {
-				throw new Error('Whether to hide on blur was expected to boolean, but ' + value + ' given.');
+				throw new Error('Whether to hide on blur was expected to be a boolean, but ' + value + ' given.');
 			}
 
 			this.hideOnBlur = value;
@@ -79,7 +81,7 @@ namespace TheDatepicker {
 		// defaults to true
 		public setHideOnSelect(value: boolean): void {
 			if (typeof value !== 'boolean') {
-				throw new Error('Whether to hide on select was expected to boolean, but ' + value + ' given.');
+				throw new Error('Whether to hide on select was expected to be a boolean, but ' + value + ' given.');
 			}
 
 			this.hideOnSelect = value;
@@ -142,8 +144,7 @@ namespace TheDatepicker {
 
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not,
 		// or null to make available all days.
-		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void
-		{
+		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
 			if (resolver === null) {
 				this.dateAvailabilityResolver = null;
 			}
@@ -181,10 +182,30 @@ namespace TheDatepicker {
 		// defaults to true
 		public setHoverEnabled(value: boolean): void {
 			if (typeof value !== 'boolean') {
-				throw new Error('Whether is hover enabled was expected to boolean, but ' + value + ' given.');
+				throw new Error('Whether is hover enabled was expected to be a boolean, but ' + value + ' given.');
 			}
 
 			this.hoverEnabled = value;
+		}
+
+		// Setting to false will hide days which belongs to other months.
+		// defaults to false
+		public setDaysOutOfMonthVisible(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether are days out of month visible was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.daysOutOfMonthVisible = value;
+		}
+
+		// Setting to true will always render six rows despite of current month weeks count.
+		// defaults to false
+		public setFixedRowsCount(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether has fixed rows count was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.fixedRowsCount = value;
 		}
 
 		// Callback to be called just before the day is selected or deselected.
@@ -198,7 +219,7 @@ namespace TheDatepicker {
 			this.listeners.beforeSelect.push(listener);
 		}
 
-		public offBeforeSelect(listener: SelectEvent | null): void {
+		public offBeforeSelect(listener: SelectEvent | null = null): void {
 			this.offEventListener(EventType.BeforeSelect, listener);
 		}
 
@@ -212,7 +233,7 @@ namespace TheDatepicker {
 			this.listeners.select.push(listener);
 		}
 
-		public offSelect(listener: SelectEvent | null): void {
+		public offSelect(listener: SelectEvent | null = null): void {
 			this.offEventListener(EventType.Select, listener);
 		}
 
@@ -260,6 +281,14 @@ namespace TheDatepicker {
 
 		public isHoverEnabled(): boolean {
 			return this.hoverEnabled;
+		}
+
+		public areDaysOutOfMonthVisible(): boolean {
+			return this.daysOutOfMonthVisible;
+		}
+
+		public hasFixedRowsCount(): boolean {
+			return this.fixedRowsCount;
 		}
 
 		public getMinDate(): Date | null {
@@ -321,8 +350,11 @@ namespace TheDatepicker {
 			}
 		}
 
-		private offEventListener(eventType: EventType, listener: SelectEvent | null): void
-		{
+		private offEventListener(eventType: EventType, listener: SelectEvent | null): void {
+			if (listener !== null && typeof listener !== 'function') {
+				throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
+			}
+
 			if (listener === null) {
 				this.listeners[eventType] = [];
 			} else {

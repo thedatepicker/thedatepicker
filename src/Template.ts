@@ -17,13 +17,9 @@ namespace TheDatepicker {
 		public goBackHtml = '&lt;';
 		public goForwardHtml = '&gt;';
 		public closeHtml = '&times;';
-		public areDaysOutOfMonthVisible: true;
 
 		private readonly options: Options;
 		private readonly htmlHelper: HtmlHelper;
-
-		private readonly maxWeeks = 6;
-		private readonly daysInWeekCount = 7;
 
 		private containerElement: HTMLElement | null = null;
 		private goBackElement: HTMLElement | null = null;
@@ -230,7 +226,7 @@ namespace TheDatepicker {
 			this.daysContentsElements = [];
 
 			const rows = [];
-			for (let index = 0; index < this.maxWeeks; index++) {
+			for (let index = 0; index < 6; index++) {
 				rows.push(this.createTableRowElement(viewModel));
 			}
 			this.weeksElements = rows;
@@ -258,7 +254,7 @@ namespace TheDatepicker {
 		protected createTableRowElement(viewModel: ViewModel): HTMLElement {
 			const cells = [];
 			const cellsContents = [];
-			for (let index = 0; index < this.daysInWeekCount; index++) {
+			for (let index = 0; index < 7; index++) {
 				const cell = this.htmlHelper.createTableCell('day');
 				const cellContent = this.createTableCellContentElement(viewModel);
 
@@ -276,21 +272,23 @@ namespace TheDatepicker {
 		protected updateDayElement(viewModel: ViewModel, dayElement: HTMLElement, dayContentElement: HTMLDayContentElement, day: Day): void {
 			dayContentElement.day = day;
 
-			// todo areDaysOutOfMonthVisible así do options
-			if (!day.isInCurrentMonth && !this.areDaysOutOfMonthVisible) {
+			if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
 				dayElement.className = '';
 				dayContentElement.innerHTML = '';
 				dayContentElement.removeAttribute('href');
+				dayContentElement.style.visibility = 'hidden';
 				return;
 			}
 
 			this.htmlHelper.toggleClass(dayElement, 'today', day.isToday);
 			this.htmlHelper.toggleClass(dayElement, 'weekend', day.isWeekend);
 			this.htmlHelper.toggleClass(dayElement, 'unavailable', !day.isAvailable);
+			this.htmlHelper.toggleClass(dayElement, 'outside', !day.isInCurrentMonth);
 			this.htmlHelper.toggleClass(dayElement, 'highlighted', day.isHighlighted);
 			this.htmlHelper.toggleClass(dayElement, 'selected', day.isSelected);
 
 			// todo nestačil by innerText?
+			dayContentElement.style.visibility = 'visible';
 			dayContentElement.innerHTML = this.getCellHtml(viewModel, day);
 
 			if (day.isAvailable) {

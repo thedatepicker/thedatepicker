@@ -1,6 +1,6 @@
 .the-datepicker-container {
   float: left;
-  background: #fff;
+  background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 0 6px 6px 6px;
   padding: 6px;
@@ -19,6 +19,7 @@
 .the-datepicker-button {
   display: block;
   width: 21px;
+  height: 17px;
   padding: 4px;
   text-decoration: none;
   text-align: center;
@@ -81,6 +82,9 @@
 }
 .the-datepicker-highlighted .the-datepicker-button {
   background-color: #d1e8ff;
+}
+.the-datepicker-outside .the-datepicker-button {
+  color: #8ac4ff;
 }
 .the-datepicker-unavailable .the-datepicker-button {
   color: #aaa;

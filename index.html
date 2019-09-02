@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+		<meta charset="utf-8">
+		<title>The Datepicker</title>
+		<meta name="Keywords" content="javascript,datepicker">
+		<meta name="Description" content="Pure JavaScript Datepicker">
+		<link rel="stylesheet" href="dist/the-datepicker.css">
+		<script src="dist/the-datepicker.js"></script>
+		<style>
+			article {
+				float: left;
+			}
+			#label-wrapper {
+				float: left;
+			}
+			#input-wrapper {
+				float: left;
+				margin-left: 10px;
+			}
+			aside {
+				float: left;
+				clear: left;
+				margin-top: 265px;
+			}
+			.settings {
+				font-family: "Courier New", serif;
+				list-style: none;
+				padding-left: 0;
+			}
+			.invalid {
+				background: #fdd;
+			}
+		</style>
+</head>
+<body>
+	<main>
+		<article>
+			<div id="label-wrapper">
+				<label for="my-input">Date:</label>
+			</div>
+			<div id="input-wrapper">
+				<input type="text" id="my-input" size="20">
+			</div>
+		</article>
+
+		<aside>
+			<ul class="settings">
+				<li>
+					<label>datepicker.options.setInitialMonth(<input type="text" id="initialMonth">);</label>
+				</li>
+				<li>
+					datepicker.<input type="button" id="open" value="open()">;
+				</li>
+				<li>
+					datepicker.<input type="button" id="close" value="close()">;
+				</li>
+				<li>
+					<label>datepicker.options.setHideOnBlur(<input type="checkbox" id="hideOnBlur" checked="checked">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setInputFormat(<input type="text" id="inputFormat" value="j. n. Y">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setMinDate(<input type="text" id="minDate">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setMaxDate(<input type="text" id="maxDate">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setHoverEnabled(<input type="checkbox" id="hoverEnabled" checked="checked">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setDaysOutOfMonthVisible(<input type="checkbox" id="daysOutOfMonthVisible">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setFixedRowsCountInput(<input type="checkbox" id="fixedRowsCount">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.onBeforeSelect((event, day) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onBeforeSelect"></textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onSelect((event, day) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onSelect"></textarea><br>
+					});</label>
+				</li>
+			</ul>
+		</aside>
+	</main>
+
+	<script>
+		(function () {
+			var input = document.getElementById('my-input');
+
+			var datepicker = new TheDatepicker.Datepicker(input);
+			datepicker.options.getTemplate().areDaysOutOfMonthVisible = true;
+			datepicker.render();
+
+			var updateSetting = function (settingInput, callback) {
+				settingInput.className = '';
+				try {
+					callback();
+					datepicker.render();
+				} catch (error) {
+					console.error(error);
+					settingInput.className = 'invalid';
+				}
+			};
+
+			var updateListener = function(eventName, body, argumentsString) {
+				eventName = eventName.charAt(0).toUpperCase() + eventName.slice(1);
+
+				datepicker.options['off' + eventName]();
+
+				if (body === '') {
+					return;
+				}
+
+				var wrap = function () {
+					return '{ return function( ' + argumentsString + ' ){ ' + body + ' } };'
+				};
+				var listener = (new Function(wrap()))();
+				datepicker.options['on' + eventName](listener);
+			};
+
+			var initialMonthInput = document.getElementById('initialMonth');
+			initialMonthInput.onchange = function () {
+				updateSetting(initialMonthInput, function () {
+					datepicker.options.setInitialMonth(initialMonthInput.value !== '' ? initialMonthInput.value : null);
+				});
+			};
+
+			var openInput = document.getElementById('open');
+			openInput.onclick = function () {
+				datepicker.open();
+			};
+
+			var closeInput = document.getElementById('close');
+			closeInput.onclick = function () {
+				datepicker.close();
+			};
+
+			var hideOnBlurInput = document.getElementById('hideOnBlur');
+			hideOnBlurInput.onchange = function () {
+				updateSetting(hideOnBlurInput, function () {
+					datepicker.options.setHideOnBlur(hideOnBlurInput.checked);
+				});
+			};
+
+			var inputFormatInput = document.getElementById('inputFormat');
+			inputFormatInput.onchange = function () {
+				updateSetting(inputFormatInput, function () {
+					datepicker.options.setInputFormat(inputFormatInput.value);
+				});
+			};
+
+			var minDateInput = document.getElementById('minDate');
+			minDateInput.onchange = function () {
+				updateSetting(minDateInput, function () {
+					datepicker.options.setMinDate(minDateInput.value !== '' ? minDateInput.value : null);
+				});
+			};
+
+			var maxDateInput = document.getElementById('maxDate');
+			maxDateInput.onchange = function () {
+				updateSetting(maxDateInput, function () {
+					datepicker.options.setMaxDate(maxDateInput.value !== '' ? maxDateInput.value : null);
+				});
+			};
+
+			var hoverEnabledInput = document.getElementById('hoverEnabled');
+			hoverEnabledInput.onchange = function () {
+				updateSetting(hoverEnabledInput, function () {
+					datepicker.options.setHoverEnabled(hoverEnabledInput.checked);
+				});
+			};
+
+			var daysOutOfMonthVisibleInput = document.getElementById('daysOutOfMonthVisible');
+			daysOutOfMonthVisibleInput.onchange = function () {
+				updateSetting(daysOutOfMonthVisibleInput, function () {
+					datepicker.options.setDaysOutOfMonthVisible(daysOutOfMonthVisibleInput.checked);
+				});
+			};
+
+			var fixedRowsCountInput = document.getElementById('fixedRowsCount');
+			fixedRowsCountInput.onchange = function () {
+				updateSetting(fixedRowsCountInput, function () {
+					datepicker.options.setFixedRowsCount(fixedRowsCountInput.checked);
+				});
+			};
+
+			var onBeforeSelectInput = document.getElementById('onBeforeSelect');
+			onBeforeSelectInput.onchange = function () {
+				updateListener('beforeSelect', onBeforeSelectInput.value, 'event, day');
+			};
+
+			var onSelectInput = document.getElementById('onSelect');
+			onSelectInput.onchange = function () {
+				updateListener('select', onSelectInput.value, 'event, day');
+			};
+		})();
+	</script>
+</body>
+</html>

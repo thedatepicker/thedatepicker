@@ -347,6 +347,14 @@ namespace TheDatepicker {
 				days.push(day);
 			}
 
+			if (this.options.hasFixedRowsCount()) {
+				for (let date = appendDaysCount + 1; days.length < 6 * 7; date++) {
+					const day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+					day.isInCurrentMonth = false;
+					days.push(day);
+				}
+			}
+
 			const weeks = [];
 			for (let i = 0; i < days.length; i += 7) {
 				weeks.push(days.slice(i, i + 7));

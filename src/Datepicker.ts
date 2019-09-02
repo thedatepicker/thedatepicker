@@ -16,6 +16,16 @@ namespace TheDatepicker {
 	//      asi bude jednodušší udělat nejdřív verzi kdy se to rendruje vždy
 	// todo souvisí s předchozím bodem: když se pak do getInitialMonth předá currentMonth ?? selectedDate, měl by se na začátku předvybrat správný měsíc
 	// todo mělo by smysl držet identitu dní?
+	// todo nastavovat z-index
+	// todo isHoverEnabled je k něčemu? onmouseenter/leave?
+	// todo křížek enter / space
+	// todo kurzor mizí z inputu při parseDate
+	// todo v IE nejde křížek
+	// todo levý horní roh zkosený pokud to není input mode
+	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
+	// todo předat do listenerů (on*) nějaké this?
+	// todo toggle mode (klik na selected ho odvybere)
+	// todo no empty mode? (vždy musí být něco vybráno)
 
 	// todo HLAVNÍ CÍLE:
 	// - upravit kde to floatuje (absolute position)
