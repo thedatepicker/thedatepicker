@@ -77,6 +77,11 @@
 					<label>datepicker.options.setFixedRowsCount(<input type="checkbox" id="fixedRowsCount">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="dateAvailabilityResolver"></textarea><br>
+						});</label>
+				</li>
+				<li>
 					<label>datepicker.options.onBeforeSelect((event, day) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="onBeforeSelect"></textarea><br>
 						});</label>
@@ -84,6 +89,26 @@
 				<li>
 					<label>datepicker.options.onSelect((event, day) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="onSelect"></textarea><br>
+					});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onBeforeSwitch((event, isOpening) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onBeforeSwitch"></textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onSwitch((event, isOpening) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onSwitch"></textarea><br>
+					});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onBeforeGo((event, month, previousMonth) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onBeforeGo"></textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onGo((event, month, previousMonth) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onGo"></textarea><br>
 					});</label>
 				</li>
 			</ul>
@@ -108,6 +133,13 @@
 				}
 			};
 
+			var createCallback = function (argumentsString, body) {
+				var wrap = function () {
+					return '{ return function( ' + argumentsString + ' ){ ' + body + ' } };'
+				};
+				return (new Function(wrap()))();
+			};
+
 			var updateListener = function(eventName, body, argumentsString) {
 				eventName = eventName.charAt(0).toUpperCase() + eventName.slice(1);
 
@@ -117,11 +149,7 @@
 					return;
 				}
 
-				var wrap = function () {
-					return '{ return function( ' + argumentsString + ' ){ ' + body + ' } };'
-				};
-				var listener = (new Function(wrap()))();
-				datepicker.options['on' + eventName](listener);
+				datepicker.options['on' + eventName](createCallback(argumentsString, body));
 			};
 
 			var initialMonthInput = document.getElementById('initialMonth');
@@ -190,6 +218,16 @@
 				});
 			};
 
+			var dateAvailabilityResolverInput = document.getElementById('dateAvailabilityResolver');
+			dateAvailabilityResolverInput.onchange = function () {
+				if (dateAvailabilityResolverInput.value === '') {
+					datepicker.options.setDateAvailabilityResolver(null);
+				} else {
+					datepicker.options.setDateAvailabilityResolver(createCallback('date', dateAvailabilityResolverInput.value));
+				}
+				datepicker.render();
+			};
+
 			var onBeforeSelectInput = document.getElementById('onBeforeSelect');
 			onBeforeSelectInput.onchange = function () {
 				updateListener('beforeSelect', onBeforeSelectInput.value, 'event, day');
@@ -198,6 +236,26 @@
 			var onSelectInput = document.getElementById('onSelect');
 			onSelectInput.onchange = function () {
 				updateListener('select', onSelectInput.value, 'event, day');
+			};
+
+			var onBeforeSwitchInput = document.getElementById('onBeforeSwitch');
+			onBeforeSwitchInput.onchange = function () {
+				updateListener('beforeSwitch', onBeforeSwitchInput.value, 'event, isOpening');
+			};
+
+			var onSwitchInput = document.getElementById('onSwitch');
+			onSwitchInput.onchange = function () {
+				updateListener('switch', onSwitchInput.value, 'event, isOpening');
+			};
+
+			var onBeforeGoInput = document.getElementById('onBeforeGo');
+			onBeforeGoInput.onchange = function () {
+				updateListener('beforeGo', onBeforeGoInput.value, 'event, month, previousMonth');
+			};
+
+			var onGoInput = document.getElementById('onGo');
+			onGoInput.onchange = function () {
+				updateListener('go', onGoInput.value, 'event, month, previousMonth');
 			};
 		})();
 	</script>

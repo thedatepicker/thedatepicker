@@ -3,7 +3,6 @@
 namespace TheDatepicker {
 
 	// todo nešlo by se nějak v produkci zbavit kontrol aka addClass regulár?
-	// todo indexOf není v IE <= 8 (https://caniuse.com/#feat=es5)
 	// todo měly by se listenery on*Select volat KDYKOLIV je vybráno datum (selectDate...)?
 	// todo input.value = 'xxx' nezavolá onchange, dá se to nějak řešit?
 	// todo datepicker.selectdate() by mohlo přijímat i string 2019-01-20 + kontrola že je to datum
@@ -29,11 +28,9 @@ namespace TheDatepicker {
 	// todo option zda zobrazovat křížek
 	// todo static metody šětří výkon
 	// todo smooth transformace (mizení backgroundu atd)
-
-	// todo HLAVNÍ CÍLE:
-	// - upravit kde to floatuje (absolute position)
-	// - základní styly
-	// - onClose / onOpen
+	// todo onBefore dovolit rerurnovat i promisu
+	// todo selectedDate, currentMonth v Datepickeru?
+	// todo on*Select by mohl taky dostat předchozí vybraný den
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -73,7 +70,7 @@ namespace TheDatepicker {
 		private dateConverter: DateConverterInterface;
 		private viewModel: ViewModel | null = null;
 
-		private static viewModels: ViewModel[] = [];
+		private static instances: Datepicker[] = [];
 		private static activeViewModel: ViewModel | null = null;
 		private static hasClickedViewModel = false;
 
@@ -81,10 +78,10 @@ namespace TheDatepicker {
 			input: HTMLDatepickerInputElement | null,
 			container: HTMLDatepickerContainerElement | null = null
 		) {
-			if (input !== null && !this.isElement(input)) {
+			if (input !== null && !Helper.isElement(input)) {
 				throw new Error('Input was expected to be null or an HTMLElement.');
 			}
-			if (container !== null && !this.isElement(container)) {
+			if (container !== null && !Helper.isElement(container)) {
 				throw new Error('Container was expected to be null or an HTMLElement.');
 			}
 			if (input === null && container === null) {
@@ -300,7 +297,7 @@ namespace TheDatepicker {
 		}
 
 		private initListeners(): void {
-			if (Datepicker.viewModels.length === 0) {
+			if (Datepicker.instances.length === 0) {
 				let activeViewModel: ViewModel | null = null;
 
 				const checkMiss = (event: Event) => {
@@ -350,7 +347,7 @@ namespace TheDatepicker {
 				};
 			}
 
-			Datepicker.viewModels.push(this.viewModel);
+			Datepicker.instances.push(this);
 
 			const hit = (event: Event) => {
 				Datepicker.activateViewModel(event, this.viewModel);
@@ -439,14 +436,6 @@ namespace TheDatepicker {
 			Datepicker.activeViewModel = viewModel;
 
 			return true;
-		}
-
-		// todo do nějakýho helpru?
-		private isElement(element: HTMLElement): boolean {
-			return typeof element === 'object'
-				&& element.nodeType === 1
-				&& typeof element.style === 'object'
-				&& typeof element.ownerDocument === 'object';
 		}
 
 	}

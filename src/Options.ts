@@ -3,7 +3,7 @@
 /// <reference path="DayOfWeek.ts" />
 /// <reference path="Month.ts" />
 /// <reference path="Day.ts" />
-/// <reference path="DateHelper.ts" />
+/// <reference path="Helper.ts" />
 
 namespace TheDatepicker {
 
@@ -12,12 +12,15 @@ namespace TheDatepicker {
 		Select = 'select',
 		BeforeSwitch = 'beforeSwitch',
 		Switch = 'switch',
+		Go = 'go',
+		BeforeGo = 'beforeGo',
 	}
 
 	export type SelectEvent = (event: Event | null, day: Day| null) => boolean;
 	export type SwitchEvent = (event: Event | null, isOpening: boolean) => boolean;
-	type OneOfEvent = SelectEvent | SwitchEvent;
-	type AnyEvent = SelectEvent & SwitchEvent;
+	export type GoEvent = (event: Event | null, month: Date, previousMonth: Date) => boolean;
+	type OneOfEvent = SelectEvent | SwitchEvent | GoEvent;
+	type AnyEvent = SelectEvent & SwitchEvent & GoEvent;
 	type EventCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
@@ -25,6 +28,8 @@ namespace TheDatepicker {
 		select: SelectEvent[]
 		beforeSwitch: SwitchEvent[]
 		switch: SwitchEvent[]
+		go: GoEvent[]
+		beforeGo: GoEvent[]
 	}
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
@@ -49,6 +54,8 @@ namespace TheDatepicker {
 			select: [],
 			beforeSwitch: [],
 			switch: [],
+			go: [],
+			beforeGo: [],
 		};
 
 		public constructor() {
@@ -259,6 +266,27 @@ namespace TheDatepicker {
 			this.offEventListener(EventType.Switch, listener);
 		}
 
+		// Callback to be called just before displayed month is changed.
+		// An Event instance, month (Date instance set to first day of month) which is going to be displayed and month (Date instance) which was displayed before are given on input.
+		// If callback returns false, month will not be changed.
+		public onBeforeGo(listener: GoEvent) {
+			this.onEventListener(EventType.BeforeGo, listener as AnyEvent);
+		}
+
+		public offBeforeGo(listener: GoEvent | null = null): void {
+			this.offEventListener(EventType.BeforeGo, listener);
+		}
+
+		// Callback to be called immediately after the datepicker is opened or closed.
+		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
+		public onGo(listener: GoEvent) {
+			this.onEventListener(EventType.Go, listener as AnyEvent);
+		}
+
+		public offGo(listener: GoEvent | null = null): void {
+			this.offEventListener(EventType.Go, listener);
+		}
+
 		public getTemplate(): Template {
 			return this.template;
 		}
@@ -276,7 +304,7 @@ namespace TheDatepicker {
 						: new Date()
 				);
 			initialMonth.setDate(1);
-			DateHelper.resetTime(initialMonth);
+			Helper.resetTime(initialMonth);
 
 			if (this.minDate !== null) {
 				const minDate = new Date(this.minDate.getTime());
@@ -349,13 +377,13 @@ namespace TheDatepicker {
 			if (typeof value === 'string') {
 				const date = new Date(value);
 				if (!isNaN(date.getTime())) {
-					DateHelper.resetTime(date);
+					Helper.resetTime(date);
 					return date;
 				}
 
 			} else if (typeof value === 'object' && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
 				const date = new Date(value.getTime());
-				DateHelper.resetTime(date);
+				Helper.resetTime(date);
 				return date;
 			}
 

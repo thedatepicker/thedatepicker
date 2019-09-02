@@ -99,7 +99,7 @@ namespace TheDatepicker {
 			});
 
 			closeButton.onkeydown = (event: KeyboardEvent) => {
-				if ([KeyCode.Enter, KeyCode.Space].indexOf(event.keyCode) > -1) {
+				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
 					event.preventDefault();
 					datepicker.close();
 				}
@@ -127,21 +127,21 @@ namespace TheDatepicker {
 		protected createGoElement(viewModel: ViewModel, directionForward: boolean): HTMLElement {
 			const goElement = this.htmlHelper.createDiv('go');
 			this.htmlHelper.addClass(goElement, directionForward ? 'go-next' : 'go-previous');
-			const goButton = this.htmlHelper.createAnchor(() => {
+			const goButton = this.htmlHelper.createAnchor((event: MouseEvent) => {
 				if (directionForward) {
-					viewModel.goForward();
+					viewModel.goForward(event);
 				} else {
-					viewModel.goBack();
+					viewModel.goBack(event);
 				}
 			});
 
 			goButton.onkeydown = (event: KeyboardEvent) => {
-				if ([KeyCode.Enter, KeyCode.Space].indexOf(event.keyCode) > -1) {
+				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
 					event.preventDefault();
 					if (directionForward) {
-						viewModel.goForward();
+						viewModel.goForward(event);
 					} else {
-						viewModel.goBack();
+						viewModel.goBack(event);
 					}
 				}
 			};
@@ -307,12 +307,12 @@ namespace TheDatepicker {
 				viewModel.selectDay(event, cellContent.day);
 			}) as HTMLDayContentElement;
 
-			cellContent.onfocus = () => {
-				viewModel.highlightDay(cellContent.day);
+			cellContent.onfocus = (event: FocusEvent) => {
+				viewModel.highlightDay(event, cellContent.day);
 			};
 
-			cellContent.onmouseenter = () => {
-				viewModel.hoverDay(cellContent.day);
+			cellContent.onmouseenter = (event: MouseEvent) => {
+				viewModel.hoverDay(event, cellContent.day);
 			};
 
 			cellContent.onmouseleave = () => {
@@ -320,7 +320,7 @@ namespace TheDatepicker {
 			};
 
 			cellContent.onkeydown = (event: KeyboardEvent) => {
-				if ([KeyCode.Enter, KeyCode.Space].indexOf(event.keyCode) > -1) {
+				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
 					event.preventDefault();
 					viewModel.selectDay(event, cellContent.day);
 				}

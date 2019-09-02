@@ -35,7 +35,7 @@ namespace TheDatepicker {
 			private readonly datepicker: Datepicker
 		) {
 			const today = new Date();
-			DateHelper.resetTime(today);
+			Helper.resetTime(today);
 			this.today = today;
 		}
 
@@ -115,33 +115,40 @@ namespace TheDatepicker {
 			return true;
 		}
 
-		public goBack(): void {
+		public goBack(event: Event): void {
 			const newMonth = new Date(this.getCurrentMonth().getTime());
 			newMonth.setMonth(newMonth.getMonth() - 1);
-			this.goToMonth(newMonth);
+			this.goToMonth(event, newMonth);
 		}
 
-		public goForward(): void {
+		public goForward(event: Event): void {
 			const newMonth = new Date(this.getCurrentMonth().getTime());
 			newMonth.setMonth(newMonth.getMonth() + 1);
-			this.goToMonth(newMonth);
+			this.goToMonth(event, newMonth);
 		}
 
-		public goToMonth(month: Date, doCancelHighlight = true): boolean {
+		public goToMonth(event: Event | null, month: Date, doCancelHighlight = true): boolean {
 			month = new Date(month.getTime());
 			month.setDate(1);
-			DateHelper.resetTime(month);
+			Helper.resetTime(month);
 
-			if (this.canGoToMonth(month) && month.getTime() !== this.getCurrentMonth().getTime()) {
-				this.currentMonth = month;
-				if (!doCancelHighlight || !this.cancelHighlight()) {
-					this.render();
-				}
-
-				return true;
+			// todo zde na rozdíl od jiných metod vrací false pokud jsou hodnoty stejný
+			if (month.getTime() === this.getCurrentMonth().getTime() || !this.canGoToMonth(month)) {
+				return false;
 			}
 
-			return false;
+			if (!this.triggerOnBeforeGo(event, month, this.currentMonth)) {
+				return false;
+			}
+
+			this.currentMonth = month;
+			if (!doCancelHighlight || !this.cancelHighlight()) {
+				this.render();
+			}
+
+			this.triggerOnGo(event, month, this.currentMonth)
+
+			return true;
 		}
 
 		public selectDay(event: Event, day: Day): void {
@@ -186,7 +193,7 @@ namespace TheDatepicker {
 			}
 
 			this.selectedDate = day.getDate();
-			if (!this.goToMonth(date)) {
+			if (!this.goToMonth(event, date)) {
 				this.render();
 			}
 
@@ -214,7 +221,7 @@ namespace TheDatepicker {
 			this.selectDate(event, date);
 		}
 
-		public highlightDay(day: Day, doFocus = true, doUpdateMonth = false): boolean {
+		public highlightDay(event: Event, day: Day, doFocus = true, doUpdateMonth = false): boolean {
 			if (!day.isAvailable) {
 				return false;
 			}
@@ -229,7 +236,7 @@ namespace TheDatepicker {
 			let isRendered = false;
 			const date = day.getDate();
 			if (doUpdateMonth) {
-				isRendered = this.goToMonth(date, false);
+				isRendered = this.goToMonth(event, date, false);
 			}
 
 			if (!isRendered) {
@@ -239,7 +246,7 @@ namespace TheDatepicker {
 			return true;
 		}
 
-		public highlightFirstAvailableDay(): void {
+		public highlightFirstAvailableDay(event: Event): void {
 			let date = new Date(this.getCurrentMonth().getTime());
 			const maxDate = this.options.getMaxDate();
 
@@ -256,13 +263,13 @@ namespace TheDatepicker {
 				day = this.createDay(date);
 			}
 
-			this.highlightDay(day);
+			this.highlightDay(event, day);
 		}
 
-		public highlightSiblingDay(day: Day, direction: MoveDirection): void {
+		public highlightSiblingDay(event: Event, day: Day, direction: MoveDirection): void {
 			let newDay = day;
 			let date = newDay.getDate();
-			let maxLoops = 30; // infinite loop prevention
+			let maxLoops = 100; // infinite loop prevention
 
 			do {
 				date.setDate(newDay.dayNumber + direction);
@@ -274,15 +281,15 @@ namespace TheDatepicker {
 				maxLoops--;
 			} while (!newDay.isAvailable && maxLoops > 0);
 
-			this.highlightDay(newDay, true, true);
+			this.highlightDay(event, newDay, true, true);
 		}
 
-		public hoverDay(day: Day): boolean {
+		public hoverDay(event: Event, day: Day): boolean {
 			if (!this.options.isHoverEnabled()) {
 				return false;
 			}
 
-			return this.highlightDay(day, false);
+			return this.highlightDay(event, day, false);
 		}
 
 		public cancelSelection(event: Event | null): boolean {
@@ -378,19 +385,19 @@ namespace TheDatepicker {
 		}
 
 		public triggerKeyPress(event: KeyboardEvent, target: HTMLElement): void {
-			if ([KeyCode.Left, KeyCode.Up, KeyCode.Right, KeyCode.Down].indexOf(event.keyCode) > -1) {
+			if (Helper.inArray([KeyCode.Left, KeyCode.Up, KeyCode.Right, KeyCode.Down], event.keyCode)) {
 				event.preventDefault();
 
 				if (this.highlightedDay !== null) {
-					this.highlightSiblingDay(this.highlightedDay, this.translateKeyCodeToMoveDirection(event.keyCode));
+					this.highlightSiblingDay(event, this.highlightedDay, this.translateKeyCodeToMoveDirection(event.keyCode));
 				} else if (
 					this.selectedDate !== null
 					&& this.selectedDate.getFullYear() === this.getCurrentMonth().getFullYear()
 					&& this.selectedDate.getMonth() === this.getCurrentMonth().getMonth()
 				) {
-					this.highlightSiblingDay(this.createDay(this.selectedDate), this.translateKeyCodeToMoveDirection(event.keyCode));
+					this.highlightSiblingDay(event, this.createDay(this.selectedDate), this.translateKeyCodeToMoveDirection(event.keyCode));
 				} else {
-					this.highlightFirstAvailableDay();
+					this.highlightFirstAvailableDay(event);
 				}
 			}
 		}
@@ -420,10 +427,22 @@ namespace TheDatepicker {
 			});
 		}
 
+		private triggerOnBeforeGo(event: Event | null, month: Date, previousMonth: Date): boolean {
+			return this.options.triggerEvent(EventType.BeforeGo, (listener: GoEvent) => {
+				return listener(event, month, previousMonth);
+			});
+		}
+
+		private triggerOnGo(event: Event | null, month: Date, previousMonth: Date): void {
+			this.options.triggerEvent(EventType.Go, (listener: GoEvent) => {
+				return listener(event,  month, previousMonth);
+			});
+		}
+
 		// todo udělat customizovatelný + customizovatelný classy pro cell
 		private createDay(date: Date): Day {
 			date = new Date(date.getTime());
-			DateHelper.resetTime(date);
+			Helper.resetTime(date);
 			const dateTime = date.getTime();
 			const todayTime = this.today.getTime();
 
