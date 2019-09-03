@@ -32,6 +32,11 @@ namespace TheDatepicker {
 		beforeGo: GoEvent[]
 	}
 
+	interface NumbersRange {
+		from: number;
+		to: number;
+	}
+
 	type DateAvailabilityResolver = (date: Date) => boolean;
 
 	export class Options {
@@ -49,6 +54,10 @@ namespace TheDatepicker {
 		private hoverEnabled = true;
 		private daysOutOfMonthVisible = false;
 		private fixedRowsCount = false;
+		private yearsSelectionLimits: NumbersRange = {
+			from: 1900,
+			to: 2100,
+		};
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
@@ -224,6 +233,25 @@ namespace TheDatepicker {
 			this.fixedRowsCount = value;
 		}
 
+		public setYearsSelectionLimits(from: number, to: number): void {
+			if (typeof from !== 'number' || typeof to !== 'number') {
+				throw new Error('Years selection limits was expected to be numbers, but ' + typeof from + ', ' + typeof to + ' given.');
+			}
+
+			if (isNaN(from) || isNaN(to)) {
+				throw new Error('Years selection limits was expected to be numbers, but NaN given.');
+			}
+
+			if (from > to) {
+				throw new Error('From cannot be higher than to, given from: ' + from + ', to: ' + to);
+			}
+
+			this.yearsSelectionLimits = {
+				from,
+				to,
+			};
+		}
+
 		// Callback to be called just before the day is selected or deselected.
 		// An Event instance and a Day instance (or null when deselected) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
@@ -349,6 +377,10 @@ namespace TheDatepicker {
 			return this.maxDate;
 		}
 
+		public getYearsSelectionLimits(): NumbersRange {
+			return this.yearsSelectionLimits;
+		}
+
 		public isDateAvailable(date: Date): boolean {
 			if (this.dateAvailabilityResolver !== null) {
 				return this.dateAvailabilityResolver(date);
@@ -382,6 +414,7 @@ namespace TheDatepicker {
 				}
 
 			} else if (typeof value === 'object' && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+				// todo check zda je to datum do helperu
 				const date = new Date(value.getTime());
 				Helper.resetTime(date);
 				return date;

@@ -47,7 +47,7 @@
 		<aside>
 			<ul class="settings">
 				<li>
-					<label>datepicker.options.setInitialMonth(<input type="text" id="initialMonth">);</label>
+					<label>datepicker.options.setInitialMonth(<input type="text" size="15" id="initialMonth">);</label>
 				</li>
 				<li>
 					datepicker.<input type="button" id="open" value="open()">;
@@ -59,13 +59,16 @@
 					<label>datepicker.options.setHideOnBlur(<input type="checkbox" id="hideOnBlur" checked="checked">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setInputFormat(<input type="text" id="inputFormat" value="j. n. Y">);</label>
+					<label>datepicker.options.setInputFormat(<input type="text" size="15" id="inputFormat" value="j. n. Y">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setMinDate(<input type="text" id="minDate">);</label>
+					<label>datepicker.options.setMinDate(<input type="text" size="15" id="minDate">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setMaxDate(<input type="text" id="maxDate">);</label>
+					<label>datepicker.options.setMaxDate(<input type="text" size="15" id="maxDate">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setYearsSelectionLimits(<input type="text" size="8" id="yearsSelectionLimitsFrom" value="1900">, <input type="text" size="8" id="yearsSelectionLimitsTo" value="2100">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setHoverEnabled(<input type="checkbox" id="hoverEnabled" checked="checked">);</label>
@@ -196,6 +199,23 @@
 					datepicker.options.setMaxDate(maxDateInput.value !== '' ? maxDateInput.value : null);
 				});
 			};
+
+			var yearsSelectionLimitsFromInput = document.getElementById('yearsSelectionLimitsFrom');
+			var yearsSelectionLimitsToInput = document.getElementById('yearsSelectionLimitsTo');
+			var yearsSelectionLimitsOnChange = function () {
+				yearsSelectionLimitsFromInput.className = '';
+				yearsSelectionLimitsToInput.className = '';
+				try {
+					datepicker.options.setYearsSelectionLimits(parseInt(yearsSelectionLimitsFromInput.value, 10), parseInt(yearsSelectionLimitsToInput.value, 10));
+					datepicker.render();
+				} catch (error) {
+					console.error(error);
+					yearsSelectionLimitsFromInput.className = 'invalid';
+					yearsSelectionLimitsToInput.className = 'invalid';
+				}
+			};
+			yearsSelectionLimitsFromInput.onchange = yearsSelectionLimitsOnChange;
+			yearsSelectionLimitsToInput.onchange = yearsSelectionLimitsOnChange;
 
 			var hoverEnabledInput = document.getElementById('hoverEnabled');
 			hoverEnabledInput.onchange = function () {

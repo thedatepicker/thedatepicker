@@ -25,7 +25,9 @@ namespace TheDatepicker {
 		private goBackElement: HTMLElement | null = null;
 		private goForwardElement: HTMLElement | null = null;
 		private closeElement: HTMLElement | null = null;
+		private monthSelect: HTMLSelectElement | null = null;
 		private monthElement: HTMLElement | null = null;
+		private yearSelect: HTMLSelectElement | null = null;
 		private yearElement: HTMLElement | null = null;
 		private weeksElements: HTMLElement[] = [];
 		private daysElements: HTMLElement[][] = [];
@@ -168,26 +170,116 @@ namespace TheDatepicker {
 		}
 
 		protected createMonthElement(viewModel: ViewModel): HTMLElement {
+			const options: SelectOption[] = [];
+			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
+				options.push({
+					value: monthNumber,
+					label: this.options.getTranslator().translateMonth(monthNumber),
+				});
+			}
+
+			const selectElement = this.htmlHelper.createSelectInput(options, (event: Event, monthNumber: number) => {
+				const newMonth = new Date(viewModel.getCurrentMonth().getTime());
+				newMonth.setMonth(monthNumber);
+				viewModel.goToMonth(event, newMonth);
+			});
+
 			const monthElement = this.htmlHelper.createDiv('month');
-			this.monthElement = monthElement;
+			const monthSpan = this.htmlHelper.createSpan();
+			monthElement.appendChild(selectElement);
+			monthElement.appendChild(monthSpan);
+
+			this.monthElement = monthSpan;
+			this.monthSelect = selectElement;
 
 			return monthElement;
 		}
 
 		protected updateMonthElement(viewModel: ViewModel): void {
-			this.monthElement.innerText = this.options.getTranslator().translateMonth(viewModel.getCurrentMonth().getMonth());
+			const currentMonth = viewModel.getCurrentMonth().getMonth();
+			let valuesCount = 0;
+			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
+				const newMonth = new Date(viewModel.getCurrentMonth().getTime());
+				newMonth.setMonth(monthNumber);
+				const option = this.monthSelect.getElementsByTagName('option')[monthNumber];
+				const canGoToMonth = viewModel.canGoToMonth(newMonth);
+				option.disabled = !canGoToMonth;
+				option.style.display = canGoToMonth ? 'inline' : 'none';
+				valuesCount += canGoToMonth ? 1 : 0;
+			}
+
+			this.monthSelect.value = currentMonth.toString();
+			this.monthElement.innerText = this.options.getTranslator().translateMonth(currentMonth);
+
+			this.monthSelect.style.display = valuesCount > 1 ? 'inline' : 'none';
+			this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
 		}
 
 		protected createYearElement(viewModel: ViewModel): HTMLElement {
-			// todo lepší by byl select, textově to může měnit v inputu (jenže jaký rozsah tam zobrazit? 1900 - 2100 ?)
+			const options: SelectOption[] = [];
+			const limits = this.options.getYearsSelectionLimits();
+			for (let year = limits.from; year <= limits.to; year++) {
+				options.push({
+					value: year,
+					label: year.toString(),
+				});
+			}
+
+			const selectElement = this.htmlHelper.createSelectInput(options, (event: Event, year: number) => {
+				const newYear = new Date(viewModel.getCurrentMonth().getTime());
+				newYear.setFullYear(year);
+				viewModel.goToMonth(event, newYear);
+			});
+
 			const yearElement = this.htmlHelper.createDiv('year');
-			this.yearElement = yearElement;
+			const yearSpan = this.htmlHelper.createSpan();
+			yearElement.appendChild(selectElement);
+			yearElement.appendChild(yearSpan);
+
+			this.yearElement = yearSpan;
+			this.yearSelect = selectElement;
 
 			return yearElement;
 		}
 
 		protected updateYearElement(viewModel: ViewModel): void {
-			this.yearElement.innerText = viewModel.getCurrentMonth().getFullYear().toString();
+			const currentYear = viewModel.getCurrentMonth().getFullYear();
+			const options = this.yearSelect.getElementsByTagName('option');
+			const yearFrom = parseInt(options[0].value, 10);
+			const minDate = this.options.getMinDate();
+			const minYear = minDate !== null ? minDate.getFullYear() : null;
+			const maxDate = this.options.getMaxDate();
+			const maxYear = maxDate !== null ? maxDate.getFullYear() : null;
+
+			let valuesCount = 0;
+			let includesCurrentYear = false;
+			for (let index = 0; index < options.length; index++) {
+				const year = yearFrom + index;
+				if (year === currentYear) {
+					includesCurrentYear = true;
+				}
+
+				let canGoToYear: boolean;
+				if (year === minYear || year === maxYear) {
+					const newYear = new Date(viewModel.getCurrentMonth().getTime());
+					newYear.setFullYear(year);
+					canGoToYear = viewModel.canGoToMonth(newYear);
+				} else {
+					canGoToYear = (minYear === null || year > minYear) && (maxYear === null || year < maxYear);
+				}
+				options[index].disabled = !canGoToYear;
+				options[index].style.display = canGoToYear ? 'inline' : 'none';
+				valuesCount += canGoToYear ? 1 : 0;
+			}
+
+			if (includesCurrentYear) {
+				this.yearSelect.value = currentYear.toString();
+			}
+			this.yearElement.innerText = currentYear.toString();
+
+			const isSelectVisible = includesCurrentYear && valuesCount > 1;
+			this.yearSelect.style.display = isSelectVisible ? 'inline' : 'none';
+			this.yearElement.style.display = isSelectVisible ? 'none' : 'inline';
 		}
 
 		protected createTableElement(viewModel: ViewModel): HTMLElement {

@@ -66,6 +66,9 @@
   width: 40%;
   text-align: center;
 }
+.the-datepicker-select {
+  margin-top: -2px;
+}
 .the-datepicker-table {
   border-collapse: collapse;
 }

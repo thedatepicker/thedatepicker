@@ -817,6 +817,20 @@ var TheDatepicker;
             this.addClass(cell, className);
             return cell;
         };
+        HtmlHelper.prototype.createSelectInput = function (options, onChange) {
+            var input = this.document.createElement('select');
+            this.addClass(input, 'select');
+            for (var index = 0; index < options.length; index++) {
+                var option = this.document.createElement('option');
+                option.value = options[index].value.toString();
+                option.innerText = options[index].label;
+                input.appendChild(option);
+            }
+            input.onchange = function (event) {
+                onChange(event, parseInt(input.value, 10));
+            };
+            return input;
+        };
         HtmlHelper.prototype.addClass = function (element, className) {
             this.toggleClass(element, className, true);
         };
@@ -1256,7 +1270,9 @@ var TheDatepicker;
             this.goBackElement = null;
             this.goForwardElement = null;
             this.closeElement = null;
+            this.monthSelect = null;
             this.monthElement = null;
+            this.yearSelect = null;
             this.yearElement = null;
             this.weeksElements = [];
             this.daysElements = [];
@@ -1371,20 +1387,100 @@ var TheDatepicker;
             this.goForwardElement.style.visibility = viewModel.canGoForward() ? 'visible' : 'hidden';
         };
         Template.prototype.createMonthElement = function (viewModel) {
+            var options = [];
+            for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
+                options.push({
+                    value: monthNumber,
+                    label: this.options.getTranslator().translateMonth(monthNumber)
+                });
+            }
+            var selectElement = this.htmlHelper.createSelectInput(options, function (event, monthNumber) {
+                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
+                newMonth.setMonth(monthNumber);
+                viewModel.goToMonth(event, newMonth);
+            });
             var monthElement = this.htmlHelper.createDiv('month');
-            this.monthElement = monthElement;
+            var monthSpan = this.htmlHelper.createSpan();
+            monthElement.appendChild(selectElement);
+            monthElement.appendChild(monthSpan);
+            this.monthElement = monthSpan;
+            this.monthSelect = selectElement;
             return monthElement;
         };
         Template.prototype.updateMonthElement = function (viewModel) {
-            this.monthElement.innerText = this.options.getTranslator().translateMonth(viewModel.getCurrentMonth().getMonth());
+            var currentMonth = viewModel.getCurrentMonth().getMonth();
+            var valuesCount = 0;
+            for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
+                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
+                newMonth.setMonth(monthNumber);
+                var option = this.monthSelect.getElementsByTagName('option')[monthNumber];
+                var canGoToMonth = viewModel.canGoToMonth(newMonth);
+                option.disabled = !canGoToMonth;
+                option.style.display = canGoToMonth ? 'inline' : 'none';
+                valuesCount += canGoToMonth ? 1 : 0;
+            }
+            this.monthSelect.value = currentMonth.toString();
+            this.monthElement.innerText = this.options.getTranslator().translateMonth(currentMonth);
+            this.monthSelect.style.display = valuesCount > 1 ? 'inline' : 'none';
+            this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
         };
         Template.prototype.createYearElement = function (viewModel) {
+            var options = [];
+            var limits = this.options.getYearsSelectionLimits();
+            for (var year = limits.from; year <= limits.to; year++) {
+                options.push({
+                    value: year,
+                    label: year.toString()
+                });
+            }
+            var selectElement = this.htmlHelper.createSelectInput(options, function (event, year) {
+                var newYear = new Date(viewModel.getCurrentMonth().getTime());
+                newYear.setFullYear(year);
+                viewModel.goToMonth(event, newYear);
+            });
             var yearElement = this.htmlHelper.createDiv('year');
-            this.yearElement = yearElement;
+            var yearSpan = this.htmlHelper.createSpan();
+            yearElement.appendChild(selectElement);
+            yearElement.appendChild(yearSpan);
+            this.yearElement = yearSpan;
+            this.yearSelect = selectElement;
             return yearElement;
         };
         Template.prototype.updateYearElement = function (viewModel) {
-            this.yearElement.innerText = viewModel.getCurrentMonth().getFullYear().toString();
+            var currentYear = viewModel.getCurrentMonth().getFullYear();
+            var options = this.yearSelect.getElementsByTagName('option');
+            var yearFrom = parseInt(options[0].value, 10);
+            var minDate = this.options.getMinDate();
+            var minYear = minDate !== null ? minDate.getFullYear() : null;
+            var maxDate = this.options.getMaxDate();
+            var maxYear = maxDate !== null ? maxDate.getFullYear() : null;
+            var valuesCount = 0;
+            var includesCurrentYear = false;
+            for (var index = 0; index < options.length; index++) {
+                var year = yearFrom + index;
+                if (year === currentYear) {
+                    includesCurrentYear = true;
+                }
+                var canGoToYear = void 0;
+                if (year === minYear || year === maxYear) {
+                    var newYear = new Date(viewModel.getCurrentMonth().getTime());
+                    newYear.setFullYear(year);
+                    canGoToYear = viewModel.canGoToMonth(newYear);
+                }
+                else {
+                    canGoToYear = (minYear === null || year > minYear) && (maxYear === null || year < maxYear);
+                }
+                options[index].disabled = !canGoToYear;
+                options[index].style.display = canGoToYear ? 'inline' : 'none';
+                valuesCount += canGoToYear ? 1 : 0;
+            }
+            if (includesCurrentYear) {
+                this.yearSelect.value = currentYear.toString();
+            }
+            this.yearElement.innerText = currentYear.toString();
+            var isSelectVisible = includesCurrentYear && valuesCount > 1;
+            this.yearSelect.style.display = isSelectVisible ? 'inline' : 'none';
+            this.yearElement.style.display = isSelectVisible ? 'none' : 'inline';
         };
         Template.prototype.createTableElement = function (viewModel) {
             var tableHeader = this.createTableHeaderElement(viewModel);
@@ -1526,6 +1622,10 @@ var TheDatepicker;
             this.hoverEnabled = true;
             this.daysOutOfMonthVisible = false;
             this.fixedRowsCount = false;
+            this.yearsSelectionLimits = {
+                from: 1900,
+                to: 2100
+            };
             this.listeners = {
                 beforeSelect: [],
                 select: [],
@@ -1622,6 +1722,18 @@ var TheDatepicker;
             }
             this.fixedRowsCount = value;
         };
+        Options.prototype.setYearsSelectionLimits = function (from, to) {
+            if (typeof from !== 'number' || typeof to !== 'number') {
+                throw new Error('Years selection limits was expected to be numbers, but ' + typeof from + ', ' + typeof to + ' given.');
+            }
+            if (from > to) {
+                throw new Error('From cannot be higher than to, given from: ' + from + ', to: ' + to);
+            }
+            this.yearsSelectionLimits = {
+                from: from,
+                to: to
+            };
+        };
         Options.prototype.onBeforeSelect = function (listener) {
             this.onEventListener(EventType.BeforeSelect, listener);
         };
@@ -1712,6 +1824,9 @@ var TheDatepicker;
         };
         Options.prototype.getMaxDate = function () {
             return this.maxDate;
+        };
+        Options.prototype.getYearsSelectionLimits = function () {
+            return this.yearsSelectionLimits;
         };
         Options.prototype.isDateAvailable = function (date) {
             if (this.dateAvailabilityResolver !== null) {

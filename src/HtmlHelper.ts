@@ -1,5 +1,10 @@
 namespace TheDatepicker {
 
+	export interface SelectOption {
+		value: number;
+		label: string;
+	}
+
 	export class HtmlHelper {
 
 		private classesPrefix = 'the-datepicker-';
@@ -96,6 +101,24 @@ namespace TheDatepicker {
 			this.addClass(cell, className);
 
 			return cell;
+		}
+
+		public createSelectInput(options: SelectOption[], onChange: (event: Event, value: number) => void): HTMLSelectElement {
+			const input = this.document.createElement('select');
+			this.addClass(input, 'select');
+
+			for (let index = 0; index < options.length; index++) {
+				const option = this.document.createElement('option');
+				option.value = options[index].value.toString();
+				option.innerText = options[index].label;
+				input.appendChild(option);
+			}
+
+			input.onchange = (event: Event) => {
+				onChange(event, parseInt(input.value, 10));
+			};
+
+			return input;
 		}
 
 		public addClass(element: HTMLElement, className: string): void {

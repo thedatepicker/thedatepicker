@@ -31,6 +31,10 @@ namespace TheDatepicker {
 	// todo onBefore dovolit rerurnovat i promisu
 	// todo selectedDate, currentMonth v Datepickeru?
 	// todo on*Select by mohl taky dostat předchozí vybraný den
+	// todo volitelně tlačítko které tě přesune na aktuální měsíc (je-li dostupný, jinak se tlačítko nezobrazí)
+	// todo šipky by mohly na selectech (month, year) měnit hodnotu selectu
+	// todo yearsSelectionLimits se nemění interaktivně (po zavolání .render()) + možná by to šlo vymyslet líp (např. setYearSelectItemsCount(100) a nastavovaly by se +-50 od aktuálního roku
+	//      todo + optimalizace že pokud option.style.display !== 'none' tak vím že ta dylší už mení nemusím
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
