@@ -29,10 +29,6 @@
 .the-datepicker-button:hover {
   background-color: #d1e8ff;
 }
-.the-datepicker-close {
-  float: left;
-  width: 100%;
-}
 .the-datepicker-close .the-datepicker-button {
   font-weight: bold;
   float: right;

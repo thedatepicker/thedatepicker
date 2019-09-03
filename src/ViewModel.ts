@@ -2,7 +2,7 @@
 
 namespace TheDatepicker {
 
-	// todo pořešit zda se tedy bude vracet boolean nebo ne (hoverDay, highlightDay...)
+	// todo pořešit zda se tedy bude vracet boolean nebo ne (selectDay, highlightDay...)
 
 	export enum MoveDirection {
 		Left = -1,
@@ -160,7 +160,9 @@ namespace TheDatepicker {
 				return;
 			}
 
-			if (!this.triggerOnBeforeSelect(event, day)) {
+			const previousDay = this.selectedDate !== null ? this.createDay(this.selectedDate) : null;
+
+			if (!this.triggerOnBeforeSelect(event, day, previousDay)) {
 				return;
 			}
 
@@ -170,7 +172,7 @@ namespace TheDatepicker {
 
 			this.render();
 
-			this.triggerOnSelect(event, day);
+			this.triggerOnSelect(event, day, previousDay);
 		}
 
 		public selectDate(event: Event | null, date: Date | null): boolean {
@@ -188,7 +190,9 @@ namespace TheDatepicker {
 				return false;
 			}
 
-			if (!this.triggerOnBeforeSelect(event, day)) {
+			const previousDay = this.selectedDate !== null ? this.createDay(this.selectedDate) : null;
+
+			if (!this.triggerOnBeforeSelect(event, day, previousDay)) {
 				return false;
 			}
 
@@ -197,7 +201,7 @@ namespace TheDatepicker {
 				this.render();
 			}
 
-			this.triggerOnSelect(event, day);
+			this.triggerOnSelect(event, day, previousDay);
 
 			return true;
 		}
@@ -284,27 +288,21 @@ namespace TheDatepicker {
 			this.highlightDay(event, newDay, true, true);
 		}
 
-		public hoverDay(event: Event, day: Day): boolean {
-			if (!this.options.isHoverEnabled()) {
-				return false;
-			}
-
-			return this.highlightDay(event, day, false);
-		}
-
 		public cancelSelection(event: Event | null): boolean {
 			if (this.selectedDate === null) {
 				return false;
 			}
 
-			if (!this.triggerOnBeforeSelect(event, null)) {
+			const previousDay = this.createDay(this.selectedDate);
+
+			if (!this.triggerOnBeforeSelect(event, null, previousDay)) {
 				return false;
 			}
 
 			this.selectedDate = null;
 			this.render();
 
-			this.triggerOnSelect(event, null);
+			this.triggerOnSelect(event, null, previousDay);
 
 			return true;
 		}
@@ -319,14 +317,6 @@ namespace TheDatepicker {
 			this.render();
 
 			return true;
-		}
-
-		public cancelHover(): boolean {
-			if (!this.options.isHoverEnabled()) {
-				return;
-			}
-
-			this.cancelHighlight();
 		}
 
 		public getWeekDays(): DayOfWeek[] {
@@ -402,16 +392,16 @@ namespace TheDatepicker {
 			}
 		}
 
-		private triggerOnBeforeSelect(event: Event | null, day: Day | null): boolean {
+		private triggerOnBeforeSelect(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
 			return this.options.triggerEvent(EventType.BeforeSelect, (listener: SelectEvent) => {
-				return listener(event, day);
+				return listener(event, day, previousDay);
 			});
 		}
 
-		private triggerOnSelect(event: Event | null, day: Day | null): void {
+		private triggerOnSelect(event: Event | null, day: Day | null, previousDay: Day | null): void {
 			// todo v prohlížeči se vyrendrované html objeví až poté co se zavolá alert v listeneru... proč?
 			this.options.triggerEvent(EventType.Select, (listener: SelectEvent) => {
-				return listener(event, day);
+				return listener(event, day, previousDay);
 			});
 		}
 

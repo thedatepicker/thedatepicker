@@ -313,6 +313,9 @@ namespace TheDatepicker {
 			while (/[0-9]/.test(text.substring(yearLength, yearLength + 1))) {
 				yearLength++;
 			}
+			if (yearLength === 0) {
+				throw new CannotParseDateException();
+			}
 
 			let year = parseInt(text.substring(0, yearLength), 10);
 			if (isNegative) {

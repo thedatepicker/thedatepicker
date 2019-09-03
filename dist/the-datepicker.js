@@ -342,6 +342,9 @@ var TheDatepicker;
             while (/[0-9]/.test(text.substring(yearLength, yearLength + 1))) {
                 yearLength++;
             }
+            if (yearLength === 0) {
+                throw new CannotParseDateException();
+            }
             var year = parseInt(text.substring(0, yearLength), 10);
             if (isNegative) {
                 year = -year;
@@ -531,6 +534,9 @@ var TheDatepicker;
             return this.input;
         };
         Datepicker.prototype.selectDate = function (date) {
+            if (date !== null && !TheDatepicker.Helper.isValidDate(date)) {
+                throw new Error('Date ' + date + ' is invalid.');
+            }
             if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
                 this.input.onfocus = this.originalInputOnFocus;
                 this.initializationPhase = InitializationPhase.Ready;
@@ -558,7 +564,7 @@ var TheDatepicker;
             var _this = this;
             if (Datepicker.instances.length === 0) {
                 var activeViewModel = null;
-                var checkMiss_1 = function (event) {
+                var checkMiss = function (event) {
                     if (Datepicker.hasClickedViewModel) {
                         Datepicker.hasClickedViewModel = false;
                     }
@@ -566,30 +572,9 @@ var TheDatepicker;
                         Datepicker.activateViewModel(event, null);
                     }
                 };
-                var originalOnMousedown_1 = this.document.onmousedown || null;
-                this.document.onmousedown = function (event) {
-                    if (originalOnMousedown_1 !== null) {
-                        originalOnMousedown_1.call(_this.document, event);
-                    }
-                    checkMiss_1(event);
-                };
-                if (this.document.addEventListener) {
-                    this.document.addEventListener('focusin', checkMiss_1);
-                }
-                else {
-                    var originalOnFocusIn_1 = this.document.onfocusin || null;
-                    this.document.onfocusin = function (event) {
-                        if (originalOnFocusIn_1 !== null) {
-                            originalOnFocusIn_1.call(_this.document, event);
-                        }
-                        checkMiss_1(event);
-                    };
-                }
-                var originalKeyDown_1 = this.document.onkeydown || null;
-                this.document.onkeydown = function (event) {
-                    if (originalKeyDown_1 !== null) {
-                        originalKeyDown_1.call(_this.document, event);
-                    }
+                TheDatepicker.Helper.addEventListener(this.document, TheDatepicker.ListenerType.MouseDown, checkMiss);
+                TheDatepicker.Helper.addEventListener(this.document, TheDatepicker.ListenerType.FocusIn, checkMiss);
+                TheDatepicker.Helper.addEventListener(this.document, TheDatepicker.ListenerType.KeyDown, function (event) {
                     var target = event.target || event.srcElement;
                     if (target !== null && target === _this.input) {
                         return;
@@ -597,61 +582,24 @@ var TheDatepicker;
                     if (Datepicker.activeViewModel !== null) {
                         Datepicker.activeViewModel.triggerKeyPress(event, target);
                     }
-                };
+                });
             }
             Datepicker.instances.push(this);
             var hit = function (event) {
                 Datepicker.activateViewModel(event, _this.viewModel);
                 Datepicker.hasClickedViewModel = true;
             };
-            var originalOnMousedown = this.container.onmousedown || null;
-            this.container.onmousedown = function (event) {
-                if (originalOnMousedown !== null) {
-                    originalOnMousedown.call(_this.container, event);
-                }
-                hit(event);
-            };
-            if (this.container.addEventListener) {
-                this.container.addEventListener('focusin', hit);
-            }
-            else {
-                var originalOnFocusIn_2 = this.document.onfocusin || null;
-                this.container.onfocusin = function (event) {
-                    if (originalOnFocusIn_2 !== null) {
-                        originalOnFocusIn_2.call(_this.container, event);
-                    }
-                    hit(event);
-                };
-            }
+            TheDatepicker.Helper.addEventListener(this.container, TheDatepicker.ListenerType.MouseDown, hit);
+            TheDatepicker.Helper.addEventListener(this.container, TheDatepicker.ListenerType.FocusIn, hit);
             if (this.input !== null) {
-                var originalOnMousedown_2 = this.input.onmousedown || null;
-                this.input.onmousedown = function (event) {
-                    if (originalOnMousedown_2 !== null) {
-                        originalOnMousedown_2.call(_this.input, event);
-                    }
-                    hit(event);
-                };
-                var originalOnFocus_1 = this.input.onfocus || null;
-                this.input.onfocus = function (event) {
-                    if (originalOnFocus_1 !== null) {
-                        originalOnFocus_1.call(_this.input, event);
-                    }
-                    hit(event);
-                };
-                var originalOnBlur_1 = this.input.onblur || null;
-                this.input.onblur = function (event) {
-                    if (originalOnBlur_1 !== null) {
-                        originalOnBlur_1.call(_this.input, event);
-                    }
+                TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.MouseDown, hit);
+                TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.Focus, hit);
+                TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.Blur, function () {
                     _this.updateInput();
-                };
-                var originalOnKeyUp_1 = this.input.onkeyup || null;
-                this.input.onkeyup = function (event) {
-                    if (originalOnKeyUp_1 !== null) {
-                        originalOnKeyUp_1.call(_this.input, event);
-                    }
+                });
+                TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.KeyUp, function (event) {
                     _this.readInput(event);
-                };
+                });
             }
         };
         Datepicker.activateViewModel = function (event, viewModel) {
@@ -717,6 +665,15 @@ var TheDatepicker;
 })(TheDatepicker || (TheDatepicker = {}));
 var TheDatepicker;
 (function (TheDatepicker) {
+    var ListenerType;
+    (function (ListenerType) {
+        ListenerType["MouseDown"] = "mousedown";
+        ListenerType["Focus"] = "focus";
+        ListenerType["FocusIn"] = "focusin";
+        ListenerType["Blur"] = "blur";
+        ListenerType["KeyDown"] = "keydown";
+        ListenerType["KeyUp"] = "keyup";
+    })(ListenerType = TheDatepicker.ListenerType || (TheDatepicker.ListenerType = {}));
     var Helper = (function () {
         function Helper() {
         }
@@ -732,6 +689,11 @@ var TheDatepicker;
                 && typeof element.style === 'object'
                 && typeof element.ownerDocument === 'object';
         };
+        Helper.isValidDate = function (value) {
+            return typeof value === 'object'
+                && Object.prototype.toString.call(value) === '[object Date]'
+                && !isNaN(value.getTime());
+        };
         Helper.inArray = function (list, item) {
             for (var index = 0; index < list.length; index++) {
                 if (list[index] === item) {
@@ -739,6 +701,21 @@ var TheDatepicker;
                 }
             }
             return false;
+        };
+        Helper.addEventListener = function (element, listenerType, listener) {
+            if (element.addEventListener) {
+                element.addEventListener(listenerType, listener);
+            }
+            else {
+                var listenerProperty = 'on' + listenerType;
+                var originalListener_1 = element[listenerProperty] || null;
+                element[listenerProperty] = function (event) {
+                    if (originalListener_1 !== null) {
+                        originalListener_1.call(element, event);
+                    }
+                    listener(event);
+                };
+            }
         };
         return Helper;
     }());
@@ -996,14 +973,15 @@ var TheDatepicker;
             if (day.isEqualToDate(this.selectedDate)) {
                 return;
             }
-            if (!this.triggerOnBeforeSelect(event, day)) {
+            var previousDay = this.selectedDate !== null ? this.createDay(this.selectedDate) : null;
+            if (!this.triggerOnBeforeSelect(event, day, previousDay)) {
                 return;
             }
             this.selectedDate = day.getDate();
             this.highlightedDay = day;
             this.isHighlightedDayFocused = true;
             this.render();
-            this.triggerOnSelect(event, day);
+            this.triggerOnSelect(event, day, previousDay);
         };
         ViewModel.prototype.selectDate = function (event, date) {
             if (date === null) {
@@ -1016,14 +994,15 @@ var TheDatepicker;
             if (day.isEqualToDate(this.selectedDate)) {
                 return false;
             }
-            if (!this.triggerOnBeforeSelect(event, day)) {
+            var previousDay = this.selectedDate !== null ? this.createDay(this.selectedDate) : null;
+            if (!this.triggerOnBeforeSelect(event, day, previousDay)) {
                 return false;
             }
             this.selectedDate = day.getDate();
             if (!this.goToMonth(event, date)) {
                 this.render();
             }
-            this.triggerOnSelect(event, day);
+            this.triggerOnSelect(event, day, previousDay);
             return true;
         };
         ViewModel.prototype.selectDateSince = function (event, date) {
@@ -1092,22 +1071,17 @@ var TheDatepicker;
             } while (!newDay.isAvailable && maxLoops > 0);
             this.highlightDay(event, newDay, true, true);
         };
-        ViewModel.prototype.hoverDay = function (event, day) {
-            if (!this.options.isHoverEnabled()) {
-                return false;
-            }
-            return this.highlightDay(event, day, false);
-        };
         ViewModel.prototype.cancelSelection = function (event) {
             if (this.selectedDate === null) {
                 return false;
             }
-            if (!this.triggerOnBeforeSelect(event, null)) {
+            var previousDay = this.createDay(this.selectedDate);
+            if (!this.triggerOnBeforeSelect(event, null, previousDay)) {
                 return false;
             }
             this.selectedDate = null;
             this.render();
-            this.triggerOnSelect(event, null);
+            this.triggerOnSelect(event, null, previousDay);
             return true;
         };
         ViewModel.prototype.cancelHighlight = function () {
@@ -1117,12 +1091,6 @@ var TheDatepicker;
             this.highlightedDay = null;
             this.render();
             return true;
-        };
-        ViewModel.prototype.cancelHover = function () {
-            if (!this.options.isHoverEnabled()) {
-                return;
-            }
-            this.cancelHighlight();
         };
         ViewModel.prototype.getWeekDays = function () {
             var weekDays = [];
@@ -1186,14 +1154,14 @@ var TheDatepicker;
                 }
             }
         };
-        ViewModel.prototype.triggerOnBeforeSelect = function (event, day) {
+        ViewModel.prototype.triggerOnBeforeSelect = function (event, day, previousDay) {
             return this.options.triggerEvent(TheDatepicker.EventType.BeforeSelect, function (listener) {
-                return listener(event, day);
+                return listener(event, day, previousDay);
             });
         };
-        ViewModel.prototype.triggerOnSelect = function (event, day) {
+        ViewModel.prototype.triggerOnSelect = function (event, day, previousDay) {
             this.options.triggerEvent(TheDatepicker.EventType.Select, function (listener) {
-                return listener(event, day);
+                return listener(event, day, previousDay);
             });
         };
         ViewModel.prototype.triggerOnBeforeSwitch = function (event, isOpening) {
@@ -1576,10 +1544,10 @@ var TheDatepicker;
                 viewModel.highlightDay(event, cellContent.day);
             };
             cellContent.onmouseenter = function (event) {
-                viewModel.hoverDay(event, cellContent.day);
+                viewModel.cancelHighlight();
             };
             cellContent.onmouseleave = function () {
-                viewModel.cancelHover();
+                viewModel.cancelHighlight();
             };
             cellContent.onkeydown = function (event) {
                 if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Enter, TheDatepicker.KeyCode.Space], event.keyCode)) {
@@ -1619,7 +1587,6 @@ var TheDatepicker;
             this.firstDayOfWeek = TheDatepicker.DayOfWeek.Monday;
             this.dateAvailabilityResolver = null;
             this.inputFormat = 'j. n. Y';
-            this.hoverEnabled = true;
             this.daysOutOfMonthVisible = false;
             this.fixedRowsCount = false;
             this.yearsSelectionLimits = {
@@ -1704,12 +1671,6 @@ var TheDatepicker;
             }
             this.inputFormat = format;
         };
-        Options.prototype.setHoverEnabled = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether is hover enabled was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.hoverEnabled = value;
-        };
         Options.prototype.setDaysOutOfMonthVisible = function (value) {
             if (typeof value !== 'boolean') {
                 throw new Error('Whether are days out of month visible was expected to be a boolean, but ' + value + ' given.');
@@ -1725,6 +1686,9 @@ var TheDatepicker;
         Options.prototype.setYearsSelectionLimits = function (from, to) {
             if (typeof from !== 'number' || typeof to !== 'number') {
                 throw new Error('Years selection limits was expected to be numbers, but ' + typeof from + ', ' + typeof to + ' given.');
+            }
+            if (isNaN(from) || isNaN(to)) {
+                throw new Error('Years selection limits was expected to be numbers, but NaN given.');
             }
             if (from > to) {
                 throw new Error('From cannot be higher than to, given from: ' + from + ', to: ' + to);
@@ -1810,9 +1774,6 @@ var TheDatepicker;
         Options.prototype.getFirstDayOfWeek = function () {
             return this.firstDayOfWeek;
         };
-        Options.prototype.isHoverEnabled = function () {
-            return this.hoverEnabled;
-        };
         Options.prototype.areDaysOutOfMonthVisible = function () {
             return this.daysOutOfMonthVisible;
         };
@@ -1854,7 +1815,7 @@ var TheDatepicker;
                     return date;
                 }
             }
-            else if (typeof value === 'object' && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+            else if (TheDatepicker.Helper.isValidDate(value)) {
                 var date = new Date(value.getTime());
                 TheDatepicker.Helper.resetTime(date);
                 return date;

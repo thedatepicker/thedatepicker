@@ -16,7 +16,7 @@ namespace TheDatepicker {
 		BeforeGo = 'beforeGo',
 	}
 
-	export type SelectEvent = (event: Event | null, day: Day| null) => boolean;
+	export type SelectEvent = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
 	export type SwitchEvent = (event: Event | null, isOpening: boolean) => boolean;
 	export type GoEvent = (event: Event | null, month: Date, previousMonth: Date) => boolean;
 	type OneOfEvent = SelectEvent | SwitchEvent | GoEvent;
@@ -51,7 +51,6 @@ namespace TheDatepicker {
 		private firstDayOfWeek = DayOfWeek.Monday;
 		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
 		private inputFormat = 'j. n. Y';
-		private hoverEnabled = true;
 		private daysOutOfMonthVisible = false;
 		private fixedRowsCount = false;
 		private yearsSelectionLimits: NumbersRange = {
@@ -203,16 +202,6 @@ namespace TheDatepicker {
 			this.inputFormat = format;
 		}
 
-		// Setting to true enables hover effect on available days of the calendar.
-		// defaults to true
-		public setHoverEnabled(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether is hover enabled was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.hoverEnabled = value;
-		}
-
 		// Setting to false will hide days which belongs to other months.
 		// defaults to false
 		public setDaysOutOfMonthVisible(value: boolean): void {
@@ -253,7 +242,7 @@ namespace TheDatepicker {
 		}
 
 		// Callback to be called just before the day is selected or deselected.
-		// An Event instance and a Day instance (or null when deselected) are given on input.
+		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
 		public onBeforeSelect(listener: SelectEvent) {
 			this.onEventListener(EventType.BeforeSelect, listener as AnyEvent);
@@ -264,7 +253,7 @@ namespace TheDatepicker {
 		}
 
 		// Callback to be called immediately after the day is selected or deselected.
-		// An Event instance and a Day instance (or null when deselected) are given on input.
+		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		public onSelect(listener: SelectEvent) {
 			this.onEventListener(EventType.Select, listener as AnyEvent);
 		}
@@ -357,10 +346,6 @@ namespace TheDatepicker {
 			return this.firstDayOfWeek;
 		}
 
-		public isHoverEnabled(): boolean {
-			return this.hoverEnabled;
-		}
-
 		public areDaysOutOfMonthVisible(): boolean {
 			return this.daysOutOfMonthVisible;
 		}
@@ -413,8 +398,7 @@ namespace TheDatepicker {
 					return date;
 				}
 
-			} else if (typeof value === 'object' && Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
-				// todo check zda je to datum do helperu
+			} else if (Helper.isValidDate(value)) {
 				const date = new Date(value.getTime());
 				Helper.resetTime(date);
 				return date;

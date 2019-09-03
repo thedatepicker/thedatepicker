@@ -71,9 +71,6 @@
 					<label>datepicker.options.setYearsSelectionLimits(<input type="text" size="8" id="yearsSelectionLimitsFrom" value="1900">, <input type="text" size="8" id="yearsSelectionLimitsTo" value="2100">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setHoverEnabled(<input type="checkbox" id="hoverEnabled" checked="checked">);</label>
-				</li>
-				<li>
 					<label>datepicker.options.setDaysOutOfMonthVisible(<input type="checkbox" id="daysOutOfMonthVisible">);</label>
 				</li>
 				<li>
@@ -85,12 +82,12 @@
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeSelect((event, day) => {<br>
+					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="onBeforeSelect"></textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onSelect((event, day) => {<br>
+					<label>datepicker.options.onSelect((event, day, previousDay) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="onSelect"></textarea><br>
 					});</label>
 				</li>
@@ -217,13 +214,6 @@
 			yearsSelectionLimitsFromInput.onchange = yearsSelectionLimitsOnChange;
 			yearsSelectionLimitsToInput.onchange = yearsSelectionLimitsOnChange;
 
-			var hoverEnabledInput = document.getElementById('hoverEnabled');
-			hoverEnabledInput.onchange = function () {
-				updateSetting(hoverEnabledInput, function () {
-					datepicker.options.setHoverEnabled(hoverEnabledInput.checked);
-				});
-			};
-
 			var daysOutOfMonthVisibleInput = document.getElementById('daysOutOfMonthVisible');
 			daysOutOfMonthVisibleInput.onchange = function () {
 				updateSetting(daysOutOfMonthVisibleInput, function () {
@@ -250,12 +240,12 @@
 
 			var onBeforeSelectInput = document.getElementById('onBeforeSelect');
 			onBeforeSelectInput.onchange = function () {
-				updateListener('beforeSelect', onBeforeSelectInput.value, 'event, day');
+				updateListener('beforeSelect', onBeforeSelectInput.value, 'event, day, previousDay');
 			};
 
 			var onSelectInput = document.getElementById('onSelect');
 			onSelectInput.onchange = function () {
-				updateListener('select', onSelectInput.value, 'event, day');
+				updateListener('select', onSelectInput.value, 'event, day, previousDay');
 			};
 
 			var onBeforeSwitchInput = document.getElementById('onBeforeSwitch');

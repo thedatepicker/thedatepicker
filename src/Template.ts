@@ -404,11 +404,11 @@ namespace TheDatepicker {
 			};
 
 			cellContent.onmouseenter = (event: MouseEvent) => {
-				viewModel.hoverDay(event, cellContent.day);
+				viewModel.cancelHighlight();
 			};
 
 			cellContent.onmouseleave = () => {
-				viewModel.cancelHover();
+				viewModel.cancelHighlight();
 			};
 
 			cellContent.onkeydown = (event: KeyboardEvent) => {

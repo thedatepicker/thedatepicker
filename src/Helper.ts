@@ -1,5 +1,14 @@
 namespace TheDatepicker {
 
+	export enum ListenerType {
+		MouseDown = 'mousedown',
+		Focus = 'focus',
+		FocusIn = 'focusin',
+		Blur = 'blur',
+		KeyDown = 'keydown',
+		KeyUp = 'keyup',
+	}
+
 	export class Helper {
 
 		public static resetTime(date: Date): void {
@@ -16,6 +25,12 @@ namespace TheDatepicker {
 				&& typeof element.ownerDocument === 'object';
 		}
 
+		public static isValidDate(value: any): boolean {
+			return typeof value === 'object'
+				&& Object.prototype.toString.call(value) === '[object Date]'
+				&& !isNaN(value.getTime());
+		}
+
 		public static inArray(list: any[], item: any): boolean {
 			for (let index = 0; index < list.length; index++) {
 				if (list[index] === item) {
@@ -24,6 +39,24 @@ namespace TheDatepicker {
 			}
 
 			return false;
+		}
+
+		public static addEventListener(element: Node, listenerType: ListenerType, listener: (event: Event) => void): void {
+			if (element.addEventListener) {
+				element.addEventListener(listenerType, listener);
+			} else {
+				const listenerProperty = 'on' + listenerType;
+				// @ts-ignore
+				const originalListener = element[listenerProperty] || null;
+				// @ts-ignore
+				element[listenerProperty] = (event: Event) => {
+					if (originalListener !== null) {
+						originalListener.call(element, event);
+					}
+
+					listener(event);
+				};
+			}
 		}
 
 	}

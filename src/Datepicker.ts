@@ -3,12 +3,8 @@
 namespace TheDatepicker {
 
 	// todo nešlo by se nějak v produkci zbavit kontrol aka addClass regulár?
-	// todo měly by se listenery on*Select volat KDYKOLIV je vybráno datum (selectDate...)?
-	// todo input.value = 'xxx' nezavolá onchange, dá se to nějak řešit?
 	// todo datepicker.selectdate() by mohlo přijímat i string 2019-01-20 + kontrola že je to datum
-	// todo parser neveme "7. 8.     2001"
 	// todo pokud je předvybrané datum, či je vybráno pomocí datepicker.selectDate(), a zároveň initialMonth = null, bylo by dobrý kdyby byl měsíc nastaven na vybrané datum
-	// todo onMonthChange, onBefore.. (do callbacku previous + new)
 	// todo jsou potřeba ty originální on* ? asi jo ale jak se to zachová např. s jquery?
 	// todo asi bych se měl na lazyload vysrat ... anebo ještě líp:
 	//      selectedDate, createDay... bude v Datepickeru, takže to bude moct zpracovat nezávisle
@@ -16,7 +12,6 @@ namespace TheDatepicker {
 	// todo souvisí s předchozím bodem: když se pak do getInitialMonth předá currentMonth ?? selectedDate, měl by se na začátku předvybrat správný měsíc
 	// todo mělo by smysl držet identitu dní?
 	// todo nastavovat z-index
-	// todo isHoverEnabled je k něčemu? onmouseenter/leave?
 	// todo křížek enter / space
 	// todo kurzor mizí z inputu při parseDate
 	// todo v IE nejde křížek
@@ -27,14 +22,14 @@ namespace TheDatepicker {
 	// todo no empty mode? (vždy musí být něco vybráno)
 	// todo option zda zobrazovat křížek
 	// todo static metody šětří výkon
-	// todo smooth transformace (mizení backgroundu atd)
 	// todo onBefore dovolit rerurnovat i promisu
 	// todo selectedDate, currentMonth v Datepickeru?
-	// todo on*Select by mohl taky dostat předchozí vybraný den
 	// todo volitelně tlačítko které tě přesune na aktuální měsíc (je-li dostupný, jinak se tlačítko nezobrazí)
 	// todo šipky by mohly na selectech (month, year) měnit hodnotu selectu
 	// todo yearsSelectionLimits se nemění interaktivně (po zavolání .render()) + možná by to šlo vymyslet líp (např. setYearSelectItemsCount(100) a nastavovaly by se +-50 od aktuálního roku
 	//      todo + optimalizace že pokud option.style.display !== 'none' tak vím že ta dylší už mení nemusím
+	// todo datepicker.goToMonth()
+	// todo nějak se to s těma selectama rozšířilo
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -269,6 +264,10 @@ namespace TheDatepicker {
 		}
 
 		public selectDate(date: Date | null): boolean {
+			if (date !== null && !Helper.isValidDate(date)) {
+				throw new Error('Date ' + date  + ' is invalid.');
+			}
+
 			if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
 				this.input.onfocus = this.originalInputOnFocus;
 				this.initializationPhase = InitializationPhase.Ready;
@@ -312,34 +311,9 @@ namespace TheDatepicker {
 					}
 				};
 
-				const originalOnMousedown = this.document.onmousedown || null;
-				this.document.onmousedown = (event: MouseEvent) => {
-					if (originalOnMousedown !== null) {
-						originalOnMousedown.call(this.document, event);
-					}
-
-					checkMiss(event);
-				};
-
-				if (this.document.addEventListener) {
-					this.document.addEventListener('focusin', checkMiss);
-				} else {
-					const originalOnFocusIn = this.document.onfocusin || null;
-					this.document.onfocusin = (event: FocusEvent) => {
-						if (originalOnFocusIn !== null) {
-							originalOnFocusIn.call(this.document, event);
-						}
-
-						checkMiss(event);
-					};
-				}
-
-				const originalKeyDown = this.document.onkeydown || null;
-				this.document.onkeydown = (event: KeyboardEvent) => {
-					if (originalKeyDown !== null) {
-						originalKeyDown.call(this.document, event);
-					}
-
+				Helper.addEventListener(this.document, ListenerType.MouseDown, checkMiss);
+				Helper.addEventListener(this.document, ListenerType.FocusIn, checkMiss);
+				Helper.addEventListener(this.document, ListenerType.KeyDown, (event: KeyboardEvent) => {
 					const target = event.target || event.srcElement;
 					if (target !== null && target === this.input) {
 						return;
@@ -348,7 +322,7 @@ namespace TheDatepicker {
 					if (Datepicker.activeViewModel !== null) {
 						Datepicker.activeViewModel.triggerKeyPress(event, target as HTMLElement);
 					}
-				};
+				});
 			}
 
 			Datepicker.instances.push(this);
@@ -358,64 +332,18 @@ namespace TheDatepicker {
 				Datepicker.hasClickedViewModel = true;
 			};
 
-			const originalOnMousedown = this.container.onmousedown || null;
-			this.container.onmousedown = (event: MouseEvent) => {
-				if (originalOnMousedown !== null) {
-					originalOnMousedown.call(this.container, event);
-				}
-
-				hit(event);
-			};
-
-			if (this.container.addEventListener) {
-				this.container.addEventListener('focusin', hit);
-			} else {
-				const originalOnFocusIn = this.document.onfocusin || null;
-				this.container.onfocusin = (event: FocusEvent) => {
-					if (originalOnFocusIn !== null) {
-						originalOnFocusIn.call(this.container, event);
-					}
-
-					hit(event);
-				};
-			}
+			Helper.addEventListener(this.container, ListenerType.MouseDown, hit);
+			Helper.addEventListener(this.container, ListenerType.FocusIn, hit);
 
 			if (this.input !== null) {
-				const originalOnMousedown = this.input.onmousedown || null;
-				this.input.onmousedown = (event: MouseEvent) => {
-					if (originalOnMousedown !== null) {
-						originalOnMousedown.call(this.input, event);
-					}
-
-					hit(event);
-				};
-
-				const originalOnFocus = this.input.onfocus || null;
-				this.input.onfocus = (event: FocusEvent) => {
-					if (originalOnFocus !== null) {
-						originalOnFocus.call(this.input, event);
-					}
-
-					hit(event);
-				};
-
-				const originalOnBlur = this.input.onblur || null;
-				this.input.onblur = (event: FocusEvent) => {
-					if (originalOnBlur !== null) {
-						originalOnBlur.call(this.input, event);
-					}
-
+				Helper.addEventListener(this.input, ListenerType.MouseDown, hit);
+				Helper.addEventListener(this.input, ListenerType.Focus, hit);
+				Helper.addEventListener(this.input, ListenerType.Blur, () => {
 					this.updateInput();
-				};
-
-				const originalOnKeyUp = this.input.onkeyup || null;
-				this.input.onkeyup = (event: KeyboardEvent) => {
-					if (originalOnKeyUp !== null) {
-						originalOnKeyUp.call(this.input, event);
-					}
-
+				});
+				Helper.addEventListener(this.input, ListenerType.KeyUp, (event: KeyboardEvent) => {
 					this.readInput(event);
-				};
+				});
 			}
 		}
 
