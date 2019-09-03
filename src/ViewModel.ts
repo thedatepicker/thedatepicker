@@ -24,7 +24,7 @@ namespace TheDatepicker {
 
 		private readonly today: Date;
 
-		private currentMonth: Date | null;
+		private currentMonth: Date | null = null;
 		private selectedDate: Date | null = null;
 		private highlightedDay: Day | null = null;
 		private isHighlightedDayFocused = false;
@@ -77,7 +77,7 @@ namespace TheDatepicker {
 
 		public getCurrentMonth(): Date {
 			if (this.currentMonth === null) {
-				throw new Error('Call render() first.');
+				this.render();
 			}
 
 			return this.currentMonth;
@@ -149,6 +149,10 @@ namespace TheDatepicker {
 			this.triggerOnGo(event, month, this.currentMonth)
 
 			return true;
+		}
+
+		public reset(event: Event | null): void {
+			this.goToMonth(event, this.options.getInitialMonth());
 		}
 
 		public selectDay(event: Event, day: Day): void {

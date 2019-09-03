@@ -17,6 +17,7 @@ namespace TheDatepicker {
 		public goBackHtml = '&lt;';
 		public goForwardHtml = '&gt;';
 		public closeHtml = '&times;';
+		public resetHtml = '&olarr;';
 
 		private readonly options: Options;
 		private readonly htmlHelper: HtmlHelper;
@@ -24,6 +25,7 @@ namespace TheDatepicker {
 		private containerElement: HTMLElement | null = null;
 		private goBackElement: HTMLElement | null = null;
 		private goForwardElement: HTMLElement | null = null;
+		private resetElement: HTMLElement | null = null;
 		private closeElement: HTMLElement | null = null;
 		private monthSelect: HTMLSelectElement | null = null;
 		private monthElement: HTMLElement | null = null;
@@ -46,8 +48,9 @@ namespace TheDatepicker {
 				container.appendChild(this.createSkeleton(viewModel, datepicker));
 			}
 
-			this.updateContainerElement(viewModel);
+			this.updateContainerElement(viewModel, datepicker.getInput());
 			this.updateCloseElement(viewModel, datepicker.getInput());
+			this.updateResetElement(viewModel);
 			this.updateGoBackElement(viewModel);
 			this.updateGoForwardElement(viewModel);
 			this.updateMonthElement(viewModel);
@@ -73,8 +76,8 @@ namespace TheDatepicker {
 			return container;
 		}
 
-		protected updateContainerElement(viewModel: ViewModel): void {
-			this.containerElement.style.display = viewModel.isActive() || !this.options.isHiddenOnBlur() ? 'block' : 'none';
+		protected updateContainerElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
+			this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? 'block' : 'none';
 		}
 
 		protected createHeaderElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
@@ -87,11 +90,40 @@ namespace TheDatepicker {
 			navigation.appendChild(title);
 			navigation.appendChild(this.createGoForwardElement(viewModel));
 
+			const control = this.htmlHelper.createDiv('control');
+			control.appendChild(this.createCloseElement(viewModel, datepicker));
+			control.appendChild(this.createResetElement(viewModel));
+
 			const header = this.htmlHelper.createDiv('header');
-			header.appendChild(this.createCloseElement(viewModel, datepicker));
+			header.appendChild(control);
 			header.appendChild(navigation);
 
 			return header;
+		}
+
+		protected createResetElement(viewModel: ViewModel): HTMLElement {
+			const resetElement = this.htmlHelper.createDiv('reset');
+			const resetButton = this.htmlHelper.createAnchor((event: MouseEvent) => {
+				viewModel.reset(event);
+			});
+
+			resetButton.onkeydown = (event: KeyboardEvent) => {
+				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
+					event.preventDefault();
+					viewModel.reset(event);
+				}
+			};
+
+			resetButton.innerHTML = this.resetHtml;
+			resetElement.appendChild(resetButton);
+			this.resetElement = resetElement;
+
+			return resetElement;
+		}
+
+		protected updateResetElement(viewModel: ViewModel): void {
+			this.resetElement.style.display = this.options.isResetButtonShown() ? 'block' : 'none';
+			// todo visibility hidden pokud je v resetovaném stavu
 		}
 
 		protected createCloseElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
@@ -115,7 +147,7 @@ namespace TheDatepicker {
 		}
 
 		protected updateCloseElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
-			this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() ? 'block' : 'none';
+			this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? 'block' : 'none';
 		}
 
 		protected createGoBackElement(viewModel: ViewModel): HTMLElement {

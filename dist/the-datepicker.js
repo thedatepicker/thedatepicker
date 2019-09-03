@@ -373,13 +373,13 @@ var TheDatepicker;
         InitializationPhase[InitializationPhase["Untouched"] = 0] = "Untouched";
         InitializationPhase[InitializationPhase["WaitingOnFocus"] = 1] = "WaitingOnFocus";
         InitializationPhase[InitializationPhase["Ready"] = 2] = "Ready";
+        InitializationPhase[InitializationPhase["Initialized"] = 3] = "Initialized";
     })(InitializationPhase || (InitializationPhase = {}));
     var Datepicker = (function () {
         function Datepicker(input, container) {
             if (container === void 0) { container = null; }
             this.initializationPhase = InitializationPhase.Untouched;
             this.originalInputOnFocus = null;
-            this.viewModel = null;
             if (input !== null && !TheDatepicker.Helper.isElement(input)) {
                 throw new Error('Input was expected to be null or an HTMLElement.');
             }
@@ -398,12 +398,14 @@ var TheDatepicker;
             }
             if (input !== null) {
                 input.datepicker = this;
+                input.autocomplete = 'off';
             }
             container.datepicker = this;
             this.input = input;
             this.container = container;
             this.setOptions(new TheDatepicker.Options());
             this.setDateConverter(new TheDatepicker.DateConverter(this.options.getTranslator()));
+            this.viewModel = new TheDatepicker.ViewModel(this.options, this);
         }
         Datepicker.prototype.setOptions = function (options) {
             if (!(options instanceof TheDatepicker.Options)) {
@@ -419,12 +421,11 @@ var TheDatepicker;
         };
         Datepicker.prototype.render = function () {
             var _this = this;
-            if (this.viewModel !== null) {
+            if (this.initializationPhase === InitializationPhase.Initialized) {
                 this.viewModel.render();
                 return;
             }
             if (this.initializationPhase === InitializationPhase.Ready) {
-                this.viewModel = new TheDatepicker.ViewModel(this.options, this);
                 this.initListeners();
                 var date = null;
                 if (this.input !== null) {
@@ -437,6 +438,7 @@ var TheDatepicker;
                         }
                     }
                 }
+                this.initializationPhase = InitializationPhase.Initialized;
                 this.render();
                 this.selectDate(date);
                 if (this.input === this.document.activeElement) {
@@ -456,10 +458,6 @@ var TheDatepicker;
                     if (_this.originalInputOnFocus !== null) {
                         _this.originalInputOnFocus.call(_this.input, event);
                     }
-                    _this.initializationPhase = InitializationPhase.Ready;
-                    _this.input.onfocus = _this.originalInputOnFocus;
-                    _this.render();
-                    Datepicker.hasClickedViewModel = true;
                     _this.open();
                 };
                 this.initializationPhase = InitializationPhase.WaitingOnFocus;
@@ -470,11 +468,11 @@ var TheDatepicker;
         };
         Datepicker.prototype.open = function () {
             if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
-                this.input.focus();
-                return;
-            }
-            if (this.viewModel === null) {
-                throw new Error('Call render() first.');
+                this.initializationPhase = InitializationPhase.Ready;
+                this.input.onfocus = this.originalInputOnFocus;
+                this.render();
+                Datepicker.hasClickedViewModel = true;
+                return this.open();
             }
             if (!Datepicker.activateViewModel(null, this.viewModel)) {
                 return false;
@@ -485,9 +483,6 @@ var TheDatepicker;
             return true;
         };
         Datepicker.prototype.close = function () {
-            if (this.viewModel === null) {
-                throw new Error('Call render() first.');
-            }
             if (!this.viewModel.isActive()) {
                 return true;
             }
@@ -500,7 +495,7 @@ var TheDatepicker;
             return true;
         };
         Datepicker.prototype.readInput = function (event) {
-            if (this.input === null || this.viewModel === null) {
+            if (this.input === null) {
                 return;
             }
             try {
@@ -519,7 +514,7 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.updateInput = function () {
-            if (this.input === null || this.viewModel === null || this.input === this.document.activeElement) {
+            if (this.input === null || this.input === this.document.activeElement) {
                 return;
             }
             var date = this.viewModel.getSelectedDate();
@@ -534,24 +529,17 @@ var TheDatepicker;
             return this.input;
         };
         Datepicker.prototype.selectDate = function (date) {
-            if (date !== null && !TheDatepicker.Helper.isValidDate(date)) {
-                throw new Error('Date ' + date + ' is invalid.');
+            try {
+                return this.viewModel.selectDate(null, TheDatepicker.Helper.normalizeDate(date));
             }
-            if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
-                this.input.onfocus = this.originalInputOnFocus;
-                this.initializationPhase = InitializationPhase.Ready;
-                this.render();
-                return;
+            catch (error) {
+                if (!(error instanceof TheDatepicker.InvalidDateException)) {
+                    throw error;
+                }
+                throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.');
             }
-            if (this.viewModel === null) {
-                throw new Error('Call render() first.');
-            }
-            return this.viewModel.selectDate(null, date);
         };
         Datepicker.prototype.getSelectedDate = function () {
-            if (this.viewModel === null) {
-                throw new Error('Call render() first.');
-            }
             return this.viewModel.getSelectedDate();
         };
         Datepicker.prototype.createContainer = function () {
@@ -674,6 +662,12 @@ var TheDatepicker;
         ListenerType["KeyDown"] = "keydown";
         ListenerType["KeyUp"] = "keyup";
     })(ListenerType = TheDatepicker.ListenerType || (TheDatepicker.ListenerType = {}));
+    var InvalidDateException = (function () {
+        function InvalidDateException() {
+        }
+        return InvalidDateException;
+    }());
+    TheDatepicker.InvalidDateException = InvalidDateException;
     var Helper = (function () {
         function Helper() {
         }
@@ -682,6 +676,24 @@ var TheDatepicker;
             date.setMinutes(0);
             date.setSeconds(0);
             date.setMilliseconds(0);
+        };
+        Helper.normalizeDate = function (value) {
+            if (value === null) {
+                return null;
+            }
+            if (typeof value === 'string') {
+                var date = new Date(value);
+                if (!isNaN(date.getTime())) {
+                    Helper.resetTime(date);
+                    return date;
+                }
+            }
+            else if (Helper.isValidDate(value)) {
+                var date = new Date(value.getTime());
+                Helper.resetTime(date);
+                return date;
+            }
+            throw new InvalidDateException();
         };
         Helper.isElement = function (element) {
             return typeof element === 'object'
@@ -869,6 +881,7 @@ var TheDatepicker;
         function ViewModel(options, datepicker) {
             this.options = options;
             this.datepicker = datepicker;
+            this.currentMonth = null;
             this.selectedDate = null;
             this.highlightedDay = null;
             this.isHighlightedDayFocused = false;
@@ -907,7 +920,7 @@ var TheDatepicker;
         };
         ViewModel.prototype.getCurrentMonth = function () {
             if (this.currentMonth === null) {
-                throw new Error('Call render() first.');
+                this.render();
             }
             return this.currentMonth;
         };
@@ -965,6 +978,9 @@ var TheDatepicker;
             }
             this.triggerOnGo(event, month, this.currentMonth);
             return true;
+        };
+        ViewModel.prototype.reset = function (event) {
+            this.goToMonth(event, this.options.getInitialMonth());
         };
         ViewModel.prototype.selectDay = function (event, day) {
             if (!day.isAvailable) {
@@ -1234,9 +1250,11 @@ var TheDatepicker;
             this.goBackHtml = '&lt;';
             this.goForwardHtml = '&gt;';
             this.closeHtml = '&times;';
+            this.resetHtml = '&olarr;';
             this.containerElement = null;
             this.goBackElement = null;
             this.goForwardElement = null;
+            this.resetElement = null;
             this.closeElement = null;
             this.monthSelect = null;
             this.monthElement = null;
@@ -1254,8 +1272,9 @@ var TheDatepicker;
                 container.innerHTML = '';
                 container.appendChild(this.createSkeleton(viewModel, datepicker));
             }
-            this.updateContainerElement(viewModel);
+            this.updateContainerElement(viewModel, datepicker.getInput());
             this.updateCloseElement(viewModel, datepicker.getInput());
+            this.updateResetElement(viewModel);
             this.updateGoBackElement(viewModel);
             this.updateGoForwardElement(viewModel);
             this.updateMonthElement(viewModel);
@@ -1275,8 +1294,8 @@ var TheDatepicker;
             this.containerElement = container;
             return container;
         };
-        Template.prototype.updateContainerElement = function (viewModel) {
-            this.containerElement.style.display = viewModel.isActive() || !this.options.isHiddenOnBlur() ? 'block' : 'none';
+        Template.prototype.updateContainerElement = function (viewModel, input) {
+            this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? 'block' : 'none';
         };
         Template.prototype.createHeaderElement = function (viewModel, datepicker) {
             var title = this.htmlHelper.createDiv('title');
@@ -1286,10 +1305,32 @@ var TheDatepicker;
             navigation.appendChild(this.createGoBackElement(viewModel));
             navigation.appendChild(title);
             navigation.appendChild(this.createGoForwardElement(viewModel));
+            var control = this.htmlHelper.createDiv('control');
+            control.appendChild(this.createCloseElement(viewModel, datepicker));
+            control.appendChild(this.createResetElement(viewModel));
             var header = this.htmlHelper.createDiv('header');
-            header.appendChild(this.createCloseElement(viewModel, datepicker));
+            header.appendChild(control);
             header.appendChild(navigation);
             return header;
+        };
+        Template.prototype.createResetElement = function (viewModel) {
+            var resetElement = this.htmlHelper.createDiv('reset');
+            var resetButton = this.htmlHelper.createAnchor(function (event) {
+                viewModel.reset(event);
+            });
+            resetButton.onkeydown = function (event) {
+                if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Enter, TheDatepicker.KeyCode.Space], event.keyCode)) {
+                    event.preventDefault();
+                    viewModel.reset(event);
+                }
+            };
+            resetButton.innerHTML = this.resetHtml;
+            resetElement.appendChild(resetButton);
+            this.resetElement = resetElement;
+            return resetElement;
+        };
+        Template.prototype.updateResetElement = function (viewModel) {
+            this.resetElement.style.display = this.options.isResetButtonShown() ? 'block' : 'none';
         };
         Template.prototype.createCloseElement = function (viewModel, datepicker) {
             var closeElement = this.htmlHelper.createDiv('close');
@@ -1308,7 +1349,7 @@ var TheDatepicker;
             return closeElement;
         };
         Template.prototype.updateCloseElement = function (viewModel, input) {
-            this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() ? 'block' : 'none';
+            this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? 'block' : 'none';
         };
         Template.prototype.createGoBackElement = function (viewModel) {
             return this.createGoElement(viewModel, false);
@@ -1589,6 +1630,8 @@ var TheDatepicker;
             this.inputFormat = 'j. n. Y';
             this.daysOutOfMonthVisible = false;
             this.fixedRowsCount = false;
+            this.showResetButton = true;
+            this.showCloseButton = true;
             this.yearsSelectionLimits = {
                 from: 1900,
                 to: 2100
@@ -1682,6 +1725,18 @@ var TheDatepicker;
                 throw new Error('Whether has fixed rows count was expected to be a boolean, but ' + value + ' given.');
             }
             this.fixedRowsCount = value;
+        };
+        Options.prototype.setShowResetButton = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether is reset button shown was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.showResetButton = value;
+        };
+        Options.prototype.setShowCloseButton = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether is close button shown was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.showCloseButton = value;
         };
         Options.prototype.setYearsSelectionLimits = function (from, to) {
             if (typeof from !== 'number' || typeof to !== 'number') {
@@ -1780,6 +1835,12 @@ var TheDatepicker;
         Options.prototype.hasFixedRowsCount = function () {
             return this.fixedRowsCount;
         };
+        Options.prototype.isResetButtonShown = function () {
+            return this.showResetButton;
+        };
+        Options.prototype.isCloseButtonShown = function () {
+            return this.showCloseButton;
+        };
         Options.prototype.getMinDate = function () {
             return this.minDate;
         };
@@ -1805,22 +1866,15 @@ var TheDatepicker;
             return this.inputFormat;
         };
         Options.prototype.normalizeDate = function (value, parameterName) {
-            if (value === null) {
-                return null;
+            try {
+                return TheDatepicker.Helper.normalizeDate(value);
             }
-            if (typeof value === 'string') {
-                var date = new Date(value);
-                if (!isNaN(date.getTime())) {
-                    TheDatepicker.Helper.resetTime(date);
-                    return date;
+            catch (error) {
+                if (!(error instanceof TheDatepicker.InvalidDateException)) {
+                    throw error;
                 }
+                throw new Error(parameterName + ' was expected to be a valid Date string or valid instance of Date or null, ' + value + ' given.');
             }
-            else if (TheDatepicker.Helper.isValidDate(value)) {
-                var date = new Date(value.getTime());
-                TheDatepicker.Helper.resetTime(date);
-                return date;
-            }
-            throw new Error(parameterName + ' was expected to be a valid Date string or valid instance of Date or null, ' + value + ' given.');
         };
         Options.prototype.checkConstraints = function (minDate, maxDate) {
             if (minDate !== null

@@ -53,6 +53,8 @@ namespace TheDatepicker {
 		private inputFormat = 'j. n. Y';
 		private daysOutOfMonthVisible = false;
 		private fixedRowsCount = false;
+		private showResetButton = true;
+		private showCloseButton = true;
 		private yearsSelectionLimits: NumbersRange = {
 			from: 1900,
 			to: 2100,
@@ -222,6 +224,27 @@ namespace TheDatepicker {
 			this.fixedRowsCount = value;
 		}
 
+		// Setting to true will show button for reseting datepicker to initial state.
+		// defaults to true
+		public setShowResetButton(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether is reset button shown was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.showResetButton = value;
+		}
+
+		// Setting to true will show button for closing datepicker.
+		// Works only when the setting HideOnBlur is set to true.
+		// defaults to true
+		public setShowCloseButton(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether is close button shown was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.showCloseButton = value;
+		}
+
 		public setYearsSelectionLimits(from: number, to: number): void {
 			if (typeof from !== 'number' || typeof to !== 'number') {
 				throw new Error('Years selection limits was expected to be numbers, but ' + typeof from + ', ' + typeof to + ' given.');
@@ -354,6 +377,14 @@ namespace TheDatepicker {
 			return this.fixedRowsCount;
 		}
 
+		public isResetButtonShown(): boolean {
+			return this.showResetButton;
+		}
+
+		public isCloseButtonShown(): boolean {
+			return this.showCloseButton;
+		}
+
 		public getMinDate(): Date | null {
 			return this.minDate;
 		}
@@ -387,24 +418,15 @@ namespace TheDatepicker {
 		}
 
 		private normalizeDate(value: Date | string | null, parameterName: string): Date | null {
-			if (value === null) {
-				return null;
-			}
-
-			if (typeof value === 'string') {
-				const date = new Date(value);
-				if (!isNaN(date.getTime())) {
-					Helper.resetTime(date);
-					return date;
+			try {
+				return Helper.normalizeDate(value);
+			} catch (error) {
+				if (!(error instanceof InvalidDateException)) {
+					throw error;
 				}
 
-			} else if (Helper.isValidDate(value)) {
-				const date = new Date(value.getTime());
-				Helper.resetTime(date);
-				return date;
+				throw new Error(parameterName + ' was expected to be a valid Date string or valid instance of Date or null, ' + value + ' given.');
 			}
-
-			throw new Error(parameterName + ' was expected to be a valid Date string or valid instance of Date or null, ' + value + ' given.');
 		}
 
 		private checkConstraints(minDate: Date | null, maxDate: Date | null): void {

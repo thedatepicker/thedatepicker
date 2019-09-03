@@ -77,6 +77,9 @@
 					<label>datepicker.options.setFixedRowsCount(<input type="checkbox" id="fixedRowsCount">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setShowCloseButton(<input type="checkbox" id="showCloseButton" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="dateAvailabilityResolver"></textarea><br>
 						});</label>
@@ -225,6 +228,13 @@
 			fixedRowsCountInput.onchange = function () {
 				updateSetting(fixedRowsCountInput, function () {
 					datepicker.options.setFixedRowsCount(fixedRowsCountInput.checked);
+				});
+			};
+
+			var showCloseButtonInput = document.getElementById('showCloseButton');
+			showCloseButtonInput.onchange = function () {
+				updateSetting(showCloseButtonInput, function () {
+					datepicker.options.setShowCloseButton(showCloseButtonInput.checked);
 				});
 			};
 

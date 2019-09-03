@@ -9,6 +9,10 @@ namespace TheDatepicker {
 		KeyUp = 'keyup',
 	}
 
+	export class InvalidDateException {
+
+	}
+
 	export class Helper {
 
 		public static resetTime(date: Date): void {
@@ -16,6 +20,27 @@ namespace TheDatepicker {
 			date.setMinutes(0);
 			date.setSeconds(0);
 			date.setMilliseconds(0);
+		}
+
+		public static normalizeDate(value: Date | string | null): Date | null {
+			if (value === null) {
+				return null;
+			}
+
+			if (typeof value === 'string') {
+				const date = new Date(value);
+				if (!isNaN(date.getTime())) {
+					Helper.resetTime(date);
+					return date;
+				}
+
+			} else if (Helper.isValidDate(value)) {
+				const date = new Date(value.getTime());
+				Helper.resetTime(date);
+				return date;
+			}
+
+			throw new InvalidDateException();
 		}
 
 		public static isElement(element: HTMLElement): boolean {

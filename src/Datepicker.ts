@@ -13,14 +13,12 @@ namespace TheDatepicker {
 	// todo mělo by smysl držet identitu dní?
 	// todo nastavovat z-index
 	// todo křížek enter / space
-	// todo kurzor mizí z inputu při parseDate
 	// todo v IE nejde křížek
 	// todo levý horní roh zkosený pokud to není input mode
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo předat do listenerů (on*) nějaké this?
 	// todo toggle mode (klik na selected ho odvybere)
 	// todo no empty mode? (vždy musí být něco vybráno)
-	// todo option zda zobrazovat křížek
 	// todo static metody šětří výkon
 	// todo onBefore dovolit rerurnovat i promisu
 	// todo selectedDate, currentMonth v Datepickeru?
@@ -28,8 +26,9 @@ namespace TheDatepicker {
 	// todo šipky by mohly na selectech (month, year) měnit hodnotu selectu
 	// todo yearsSelectionLimits se nemění interaktivně (po zavolání .render()) + možná by to šlo vymyslet líp (např. setYearSelectItemsCount(100) a nastavovaly by se +-50 od aktuálního roku
 	//      todo + optimalizace že pokud option.style.display !== 'none' tak vím že ta dylší už mení nemusím
-	// todo datepicker.goToMonth()
-	// todo nějak se to s těma selectama rozšířilo
+	// todo datepicker.goToMonth() (přepošle do viewModel)
+	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
+	// todo fičura resetování nabádá k options.setDefaultDate() + to asi bude spolupracovat s setDeselectEnabled() :-)
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -54,6 +53,7 @@ namespace TheDatepicker {
 		Untouched,
 		WaitingOnFocus,
 		Ready,
+		Initialized,
 	}
 
 	export class Datepicker {
@@ -61,13 +61,13 @@ namespace TheDatepicker {
 		private readonly document: DocumentInterface;
 		private readonly input: HTMLDatepickerInputElement | null;
 		private readonly container: HTMLDatepickerContainerElement;
+		private readonly viewModel: ViewModel;
 
 		private initializationPhase = InitializationPhase.Untouched;
 		private originalInputOnFocus: ((event: FocusEvent) => void) | null = null
 
 		private options: Options;
 		private dateConverter: DateConverterInterface;
-		private viewModel: ViewModel | null = null;
 
 		private static instances: Datepicker[] = [];
 		private static activeViewModel: ViewModel | null = null;
@@ -98,6 +98,7 @@ namespace TheDatepicker {
 
 			if (input !== null) {
 				input.datepicker = this;
+				input.autocomplete = 'off';
 			}
 			container.datepicker = this;
 
@@ -106,6 +107,8 @@ namespace TheDatepicker {
 
 			this.setOptions(new Options());
 			this.setDateConverter(new DateConverter(this.options.getTranslator()));
+
+			this.viewModel = new ViewModel(this.options, this);
 		}
 
 		public setOptions(options: Options): void {
@@ -125,13 +128,12 @@ namespace TheDatepicker {
 		}
 
 		public render(): void {
-			if (this.viewModel !== null) {
+			if (this.initializationPhase === InitializationPhase.Initialized) {
 				this.viewModel.render();
 				return;
 			}
 
 			if (this.initializationPhase === InitializationPhase.Ready) {
-				this.viewModel = new ViewModel(this.options, this);
 				this.initListeners();
 				let date: Date | null = null;
 				if (this.input !== null) {
@@ -143,11 +145,13 @@ namespace TheDatepicker {
 						}
 					}
 				}
+				this.initializationPhase = InitializationPhase.Initialized;
 				this.render();
 				this.selectDate(date);
 				if (this.input === this.document.activeElement) {
 					this.open();
 				}
+
 				return;
 			}
 
@@ -167,10 +171,6 @@ namespace TheDatepicker {
 						this.originalInputOnFocus.call(this.input, event);
 					}
 
-					this.initializationPhase = InitializationPhase.Ready;
-					this.input.onfocus = this.originalInputOnFocus;
-					this.render();
-					Datepicker.hasClickedViewModel = true;
 					this.open();
 				};
 
@@ -185,13 +185,11 @@ namespace TheDatepicker {
 
 		public open(): boolean {
 			if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
-				this.input.focus();
-				// todo zde opět nevím co vrátit
-				return;
-			}
-
-			if (this.viewModel === null) {
-				throw new Error('Call render() first.');
+				this.initializationPhase = InitializationPhase.Ready;
+				this.input.onfocus = this.originalInputOnFocus;
+				this.render();
+				Datepicker.hasClickedViewModel = true;
+				return this.open();
 			}
 
 			if (!Datepicker.activateViewModel(null, this.viewModel)) {
@@ -206,10 +204,6 @@ namespace TheDatepicker {
 		}
 
 		public close(): boolean {
-			if (this.viewModel === null) {
-				throw new Error('Call render() first.');
-			}
-
 			if (!this.viewModel.isActive()) {
 				return true;
 			}
@@ -226,7 +220,7 @@ namespace TheDatepicker {
 		}
 
 		public readInput(event: KeyboardEvent | null): void {
-			if (this.input === null || this.viewModel === null) {
+			if (this.input === null) {
 				return;
 			}
 
@@ -245,7 +239,7 @@ namespace TheDatepicker {
 		}
 
 		public updateInput(): void {
-			if (this.input === null || this.viewModel === null || this.input === this.document.activeElement) {
+			if (this.input === null || this.input === this.document.activeElement) {
 				return;
 			}
 
@@ -263,31 +257,19 @@ namespace TheDatepicker {
 			return this.input;
 		}
 
-		public selectDate(date: Date | null): boolean {
-			if (date !== null && !Helper.isValidDate(date)) {
-				throw new Error('Date ' + date  + ' is invalid.');
-			}
+		public selectDate(date: Date | string | null): boolean {
+			try {
+				return this.viewModel.selectDate(null, Helper.normalizeDate(date));
+			} catch (error) {
+				if (!(error instanceof InvalidDateException)) {
+					throw error;
+				}
 
-			if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
-				this.input.onfocus = this.originalInputOnFocus;
-				this.initializationPhase = InitializationPhase.Ready;
-				this.render();
-				// todo co tady mám vrátit?
-				return;
+				throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.')
 			}
-
-			if (this.viewModel === null) {
-				throw new Error('Call render() first.');
-			}
-
-			return this.viewModel.selectDate(null, date);
 		}
 
 		public getSelectedDate(): Date | null {
-			if (this.viewModel === null) {
-				throw new Error('Call render() first.');
-			}
-
 			return this.viewModel.getSelectedDate();
 		}
 
