@@ -29,6 +29,9 @@
 .the-datepicker-button:hover {
   background-color: #d1e8ff;
 }
+.the-datepicker-control {
+  min-height: 6px;
+}
 .the-datepicker-reset .the-datepicker-button,
 .the-datepicker-close .the-datepicker-button {
   font-weight: bold;

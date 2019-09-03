@@ -30,13 +30,21 @@ namespace TheDatepicker {
 			return div;
 		}
 
-		public createAnchor(onClick: (event: MouseEvent) => void): HTMLAnchorElement {
+		public createAnchor(onClick: (event: Event) => void): HTMLAnchorElement {
 			const anchor = this.document.createElement('a');
 			this.addClass(anchor, 'button');
 			anchor.href = '#';
+
 			anchor.onclick = (event: MouseEvent) => {
 				event.preventDefault();
 				onClick(event);
+			};
+
+			anchor.onkeydown = (event: KeyboardEvent) => {
+				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
+					event.preventDefault();
+					onClick(event);
+				}
 			};
 
 			return anchor;
@@ -116,6 +124,10 @@ namespace TheDatepicker {
 
 			input.onchange = (event: Event) => {
 				onChange(event, parseInt(input.value, 10));
+			};
+
+			input.onkeydown = (event: KeyboardEvent) => {
+				event.stopPropagation();
 			};
 
 			return input;

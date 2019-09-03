@@ -3,20 +3,12 @@
 namespace TheDatepicker {
 
 	// todo nešlo by se nějak v produkci zbavit kontrol aka addClass regulár?
-	// todo datepicker.selectdate() by mohlo přijímat i string 2019-01-20 + kontrola že je to datum
-	// todo pokud je předvybrané datum, či je vybráno pomocí datepicker.selectDate(), a zároveň initialMonth = null, bylo by dobrý kdyby byl měsíc nastaven na vybrané datum
 	// todo jsou potřeba ty originální on* ? asi jo ale jak se to zachová např. s jquery?
-	// todo asi bych se měl na lazyload vysrat ... anebo ještě líp:
-	//      selectedDate, createDay... bude v Datepickeru, takže to bude moct zpracovat nezávisle
-	//      asi bude jednodušší udělat nejdřív verzi kdy se to rendruje vždy
-	// todo souvisí s předchozím bodem: když se pak do getInitialMonth předá currentMonth ?? selectedDate, měl by se na začátku předvybrat správný měsíc
 	// todo mělo by smysl držet identitu dní?
 	// todo nastavovat z-index
-	// todo křížek enter / space
 	// todo v IE nejde křížek
 	// todo levý horní roh zkosený pokud to není input mode
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
-	// todo předat do listenerů (on*) nějaké this?
 	// todo toggle mode (klik na selected ho odvybere)
 	// todo no empty mode? (vždy musí být něco vybráno)
 	// todo static metody šětří výkon
@@ -29,23 +21,12 @@ namespace TheDatepicker {
 	// todo datepicker.goToMonth() (přepošle do viewModel)
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
 	// todo fičura resetování nabádá k options.setDefaultDate() + to asi bude spolupracovat s setDeselectEnabled() :-)
-	// todo asi by se dalo zbavit prvotního volání render() pokud by se to vytvářelo jako new ThaDatepicker.Datepicker(new ThaDatepicker.Options());
-	//      akorát by se stejně muselo volat nějaký update() nebo render() poté co změní něco v options
-	//      leda by se na Options navěsil hook který to zavolá.. ale to by pak mohl volat zbytečně mockrát
-
-	/*
-		jak nastavit počáteční datum & měsíc:
-		1. datepicker.options.setInitialDate()
-		2. <input value=""> - defacto tohle se může nastavit automaticky do datepicker.options.setInitialDate()
-		3. datepicker.selectDate()
-		(3 = nejvyšší priorita)
-
-		reset vyresetuje stejně, ale zanedbá datepicker.selectDate()
-
-		pokud datepicker.options.setInitialMonth() pak je to vždy initialMonth (případně jemu nejbližší možný)
-		pokud null, tak dle toho jaké datum je předvybrané - 1. <input value="">; 2. datepicker.options.setInitialDate()
-		pokud null, tak aktuální měsíc (případně jemu nejbližší možný)
-	 */
+	// todo při změně měsíce selectem když onBeforeGo vrátí false by se neměla změnit hodnota selectu
+	// todo proč výběr data volá Template.render() tolikrát?
+	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
+	// todo custom html pro jednotlivé dny bude složitější
+	// todo destroy()
+	// todo enable/disable ty selecty (month, year)
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -168,7 +149,7 @@ namespace TheDatepicker {
 					this.preselectFromInput();
 
 					const initialDate = this.options.getInitialDate();
-					this.viewModel.selectDate(null, this.options.getInitialDate(), false);
+					this.viewModel.selectDay(null, this.options.getInitialDate(), false);
 					this.updateInput();
 
 					if (this.input !== null && this.options.isHiddenOnBlur()) {
@@ -188,7 +169,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		public open(): boolean {
+		public open(event: Event | null = null): boolean {
 			if (this.initializationPhase === InitializationPhase.Untouched) {
 				this.render();
 			}
@@ -201,7 +182,7 @@ namespace TheDatepicker {
 				return this.open();
 			}
 
-			if (!Datepicker.activateViewModel(null, this.viewModel)) {
+			if (!Datepicker.activateViewModel(event, this.viewModel)) {
 				return false;
 			}
 
@@ -212,12 +193,12 @@ namespace TheDatepicker {
 			return true;
 		}
 
-		public close(): boolean {
+		public close(event: Event | null = null): boolean {
 			if (!this.viewModel.isActive()) {
 				return true;
 			}
 
-			if (!Datepicker.activateViewModel(null, null)) {
+			if (!Datepicker.activateViewModel(event, null)) {
 				return false;
 			}
 
@@ -228,22 +209,24 @@ namespace TheDatepicker {
 			return true;
 		}
 
-		public readInput(event: KeyboardEvent | null): void {
+		public readInput(event: Event | null = null): boolean {
 			if (this.input === null) {
-				return;
+				return false;
 			}
 
 			try {
 				const date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
 				if (date !== null) {
-					this.viewModel.selectDateSince(event, date);
-				} else {
-					this.viewModel.selectDate(event, null);
+					return this.viewModel.selectDateSince(event, date);
 				}
+				return this.viewModel.selectDay(event, null);
+
 			} catch (error) {
 				if (!(error instanceof CannotParseDateException)) {
 					throw error;
 				}
+
+				return false;
 			}
 		}
 
@@ -266,9 +249,9 @@ namespace TheDatepicker {
 			return this.input;
 		}
 
-		public selectDate(date: Date | string | null): boolean {
+		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
 			try {
-				return this.viewModel.selectDate(null, Helper.normalizeDate(date));
+				return this.viewModel.selectDay(event, Helper.normalizeDate(date), doUpdateMonth);
 			} catch (error) {
 				if (!(error instanceof InvalidDateException)) {
 					throw error;
@@ -312,7 +295,7 @@ namespace TheDatepicker {
 					this.originalInputOnFocus.call(this.input, event);
 				}
 
-				this.open();
+				this.open(event);
 			};
 
 			this.initializationPhase = InitializationPhase.Waiting;

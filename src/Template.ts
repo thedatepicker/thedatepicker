@@ -13,7 +13,7 @@ namespace TheDatepicker {
 	export class Template {
 
 		// todo nějak hezky aby šlo snadno customizovat uspořádání prvků
-		// todo sjednotit goBackHtml & getCellHtml
+		// todo do options
 		public goBackHtml = '&lt;';
 		public goForwardHtml = '&gt;';
 		public closeHtml = '&times;';
@@ -66,10 +66,6 @@ namespace TheDatepicker {
 			this.htmlHelper.setClassesPrefix(prefix);
 		}
 
-		public getCellHtml(viewModel: ViewModel, day: Day): string {
-			return day.dayNumber.toString();
-		}
-
 		protected createSkeleton(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
 			const container = this.htmlHelper.createDiv('container');
 			container.appendChild(this.createHeaderElement(viewModel, datepicker));
@@ -107,16 +103,9 @@ namespace TheDatepicker {
 
 		protected createResetElement(viewModel: ViewModel): HTMLElement {
 			const resetElement = this.htmlHelper.createDiv('reset');
-			const resetButton = this.htmlHelper.createAnchor((event: MouseEvent) => {
+			const resetButton = this.htmlHelper.createAnchor((event: Event) => {
 				viewModel.reset(event);
 			});
-
-			resetButton.onkeydown = (event: KeyboardEvent) => {
-				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
-					event.preventDefault();
-					viewModel.reset(event);
-				}
-			};
 
 			resetButton.innerHTML = this.resetHtml;
 			resetElement.appendChild(resetButton);
@@ -132,16 +121,9 @@ namespace TheDatepicker {
 
 		protected createCloseElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
 			const closeElement = this.htmlHelper.createDiv('close');
-			const closeButton = this.htmlHelper.createAnchor(() => {
-				datepicker.close();
+			const closeButton = this.htmlHelper.createAnchor((event: Event) => {
+				datepicker.close(event);
 			});
-
-			closeButton.onkeydown = (event: KeyboardEvent) => {
-				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
-					event.preventDefault();
-					datepicker.close();
-				}
-			};
 
 			closeButton.innerHTML = this.closeHtml;
 			closeElement.appendChild(closeButton);
@@ -165,24 +147,13 @@ namespace TheDatepicker {
 		protected createGoElement(viewModel: ViewModel, directionForward: boolean): HTMLElement {
 			const goElement = this.htmlHelper.createDiv('go');
 			this.htmlHelper.addClass(goElement, directionForward ? 'go-next' : 'go-previous');
-			const goButton = this.htmlHelper.createAnchor((event: MouseEvent) => {
+			const goButton = this.htmlHelper.createAnchor((event: Event) => {
 				if (directionForward) {
 					viewModel.goForward(event);
 				} else {
 					viewModel.goBack(event);
 				}
 			});
-
-			goButton.onkeydown = (event: KeyboardEvent) => {
-				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
-					event.preventDefault();
-					if (directionForward) {
-						viewModel.goForward(event);
-					} else {
-						viewModel.goBack(event);
-					}
-				}
-			};
 
 			goButton.innerHTML = directionForward ? this.goForwardHtml : this.goBackHtml;
 			goElement.appendChild(goButton);
@@ -402,7 +373,7 @@ namespace TheDatepicker {
 
 			if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
 				dayElement.className = '';
-				dayContentElement.innerHTML = '';
+				dayContentElement.innerText = '';
 				dayContentElement.removeAttribute('href');
 				dayContentElement.style.visibility = 'hidden';
 				return;
@@ -415,9 +386,8 @@ namespace TheDatepicker {
 			this.htmlHelper.toggleClass(dayElement, 'highlighted', day.isHighlighted);
 			this.htmlHelper.toggleClass(dayElement, 'selected', day.isSelected);
 
-			// todo nestačil by innerText?
 			dayContentElement.style.visibility = 'visible';
-			dayContentElement.innerHTML = this.getCellHtml(viewModel, day);
+			dayContentElement.innerText = this.options.getCellContent(day);
 
 			if (day.isAvailable) {
 				dayContentElement.href = '#';
@@ -431,8 +401,8 @@ namespace TheDatepicker {
 		}
 
 		protected createTableCellContentElement(viewModel: ViewModel): HTMLDayContentElement {
-			const cellContent = this.htmlHelper.createAnchor((event: MouseEvent) => {
-				viewModel.selectDay(event, cellContent.day);
+			const cellContent = this.htmlHelper.createAnchor((event: Event) => {
+				viewModel.selectDay(event, cellContent.day, false, true, true);
 			}) as HTMLDayContentElement;
 
 			cellContent.onfocus = (event: FocusEvent) => {
@@ -445,13 +415,6 @@ namespace TheDatepicker {
 
 			cellContent.onmouseleave = () => {
 				viewModel.cancelHighlight();
-			};
-
-			cellContent.onkeydown = (event: KeyboardEvent) => {
-				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
-					event.preventDefault();
-					viewModel.selectDay(event, cellContent.day);
-				}
 			};
 
 			return cellContent;

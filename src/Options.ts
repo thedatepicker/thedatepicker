@@ -39,6 +39,8 @@ namespace TheDatepicker {
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
 
+	type CellContentResolver = (day: Day) => string;
+
 	export class Options {
 
 		private template: Template;
@@ -51,9 +53,11 @@ namespace TheDatepicker {
 		private initialMonth: Date | null = null;
 		private firstDayOfWeek = DayOfWeek.Monday;
 		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
+		private cellContentResolver: CellContentResolver | null = null;
 		private inputFormat = 'j. n. Y';
 		private daysOutOfMonthVisible = false;
 		private fixedRowsCount = false;
+		private toggleSelection = false;
 		private showResetButton = true;
 		private showCloseButton = true;
 		private yearsSelectionLimits: NumbersRange = {
@@ -192,6 +196,22 @@ namespace TheDatepicker {
 			this.dateAvailabilityResolver = resolver;
 		}
 
+		// Accepts callback which gets an instance of Day on input and returns string representing content of day cell,
+		// or null for default behavior.
+		// Default callback returns day number.
+		public setCellContentResolver(resolver: CellContentResolver | null): void {
+			if (resolver === null) {
+				this.cellContentResolver = null;
+				return;
+			}
+
+			if (typeof resolver !== 'function') {
+				throw new Error('Cell content resolver was expected to be function or null, but ' + typeof resolver + ' given.');
+			}
+
+			this.cellContentResolver = resolver;
+		}
+
 		// Format in which date is printed as an input value.
 		// It accepts following placeholders:
 		// "j": Day of the month; 1 to 31
@@ -232,6 +252,16 @@ namespace TheDatepicker {
 			}
 
 			this.fixedRowsCount = value;
+		}
+
+		// Setting to true will make selection toggle, so click on selected day will deselects it.
+		// defaults to false
+		public setToggleSelection(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether has toggle selection was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.toggleSelection = value;
 		}
 
 		// Setting to true will show button for reseting datepicker to initial state.
@@ -402,6 +432,10 @@ namespace TheDatepicker {
 			return this.fixedRowsCount;
 		}
 
+		public hasToggleSelection(): boolean {
+			return this.toggleSelection;
+		}
+
 		public isResetButtonShown(): boolean {
 			return this.showResetButton;
 		}
@@ -428,6 +462,14 @@ namespace TheDatepicker {
 			}
 
 			return true;
+		}
+
+		public getCellContent(day: Day): string {
+			if (this.cellContentResolver !== null) {
+				return this.cellContentResolver(day);
+			}
+
+			return day.dayNumber.toString();
 		}
 
 		public isHiddenOnBlur(): boolean {

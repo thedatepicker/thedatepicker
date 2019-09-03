@@ -1,5 +1,14 @@
 namespace TheDatepicker {
 
+	export enum KeyCode {
+		Enter = 13,
+		Space = 32,
+		Left = 37,
+		Up = 38,
+		Right = 39,
+		Down = 40,
+	}
+
 	export enum ListenerType {
 		MouseDown = 'mousedown',
 		Focus = 'focus',

@@ -80,11 +80,22 @@
 					<label>datepicker.options.setFixedRowsCount(<input type="checkbox" id="fixedRowsCount">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setToggleSelection(<input type="checkbox" id="toggleSelection">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setShowCloseButton(<input type="checkbox" id="showCloseButton" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setShowResetButton(<input type="checkbox" id="showResetButton" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="dateAvailabilityResolver"></textarea><br>
+						&nbsp;<textarea rows="3" cols="40" id="dateAvailabilityResolver">return true;</textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.setCellContentResolver((day) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="cellContentResolver">return day.dayNumber;</textarea><br>
 						});</label>
 				</li>
 				<li>
@@ -241,10 +252,24 @@
 				});
 			};
 
+			var toggleSelectionInput = document.getElementById('toggleSelection');
+			toggleSelectionInput.onchange = function () {
+				updateSetting(toggleSelectionInput, function () {
+					datepicker.options.setToggleSelection(toggleSelectionInput.checked);
+				});
+			};
+
 			var showCloseButtonInput = document.getElementById('showCloseButton');
 			showCloseButtonInput.onchange = function () {
 				updateSetting(showCloseButtonInput, function () {
 					datepicker.options.setShowCloseButton(showCloseButtonInput.checked);
+				});
+			};
+
+			var showResetButtonInput = document.getElementById('showResetButton');
+			showResetButtonInput.onchange = function () {
+				updateSetting(showResetButtonInput, function () {
+					datepicker.options.setShowResetButton(showResetButtonInput.checked);
 				});
 			};
 
@@ -254,6 +279,16 @@
 					datepicker.options.setDateAvailabilityResolver(null);
 				} else {
 					datepicker.options.setDateAvailabilityResolver(createCallback('date', dateAvailabilityResolverInput.value));
+				}
+				datepicker.render();
+			};
+
+			var cellContentResolverInput = document.getElementById('cellContentResolver');
+			cellContentResolverInput.onchange = function () {
+				if (cellContentResolverInput.value === '') {
+					datepicker.options.setCellContentResolver(null);
+				} else {
+					datepicker.options.setCellContentResolver(createCallback('day', cellContentResolverInput.value));
 				}
 				datepicker.render();
 			};
