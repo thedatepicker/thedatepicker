@@ -43,10 +43,16 @@ namespace TheDatepicker {
 			if (this.selectedDate !== null) {
 				const selectedDay = this.createDay(this.selectedDate);
 				if (!selectedDay.isAvailable) {
-					this.selectedDate = null;
+					this.selectDate(null, null, false);
+					return;
 				}
 			}
-			this.currentMonth = this.options.getInitialMonth(this.currentMonth);
+
+			const correctMonth = this.options.correctMonth(this.getCurrentMonth());
+			if (this.goToMonth(null, correctMonth)) {
+				return;
+			}
+
 			this.options.getTemplate().render(this, this.datepicker);
 			this.datepicker.updateInput();
 		}
@@ -77,7 +83,7 @@ namespace TheDatepicker {
 
 		public getCurrentMonth(): Date {
 			if (this.currentMonth === null) {
-				this.render();
+				this.currentMonth = this.options.getInitialMonth();
 			}
 
 			return this.currentMonth;
@@ -96,23 +102,7 @@ namespace TheDatepicker {
 		}
 
 		public canGoToMonth(month: Date): boolean {
-			if (this.options.getMinDate() !== null) {
-				const minDate = new Date(this.options.getMinDate().getTime());
-				minDate.setDate(1);
-				if (minDate.getTime() > month.getTime()) {
-					return false;
-				}
-			}
-
-			if (this.options.getMaxDate() !== null) {
-				const maxDate = new Date(this.options.getMaxDate().getTime());
-				maxDate.setDate(1);
-				if (maxDate.getTime() < month.getTime()) {
-					return false;
-				}
-			}
-
-			return true;
+			return this.options.isMonthInValidity(month);
 		}
 
 		public goBack(event: Event): void {
@@ -146,13 +136,14 @@ namespace TheDatepicker {
 				this.render();
 			}
 
-			this.triggerOnGo(event, month, this.currentMonth)
+			this.triggerOnGo(event, month, this.currentMonth);
 
 			return true;
 		}
 
 		public reset(event: Event | null): void {
 			this.goToMonth(event, this.options.getInitialMonth());
+			this.selectDate(event, this.options.getInitialDate(), false);
 		}
 
 		public selectDay(event: Event, day: Day): void {
@@ -179,7 +170,7 @@ namespace TheDatepicker {
 			this.triggerOnSelect(event, day, previousDay);
 		}
 
-		public selectDate(event: Event | null, date: Date | null): boolean {
+		public selectDate(event: Event | null, date: Date | null, doUpdateMonth = true): boolean {
 			if (date === null) {
 				return this.cancelSelection(event);
 			}
@@ -201,7 +192,7 @@ namespace TheDatepicker {
 			}
 
 			this.selectedDate = day.getDate();
-			if (!this.goToMonth(event, date)) {
+			if (!doUpdateMonth || !this.goToMonth(event, date)) {
 				this.render();
 			}
 
@@ -229,7 +220,7 @@ namespace TheDatepicker {
 			this.selectDate(event, date);
 		}
 
-		public highlightDay(event: Event, day: Day, doFocus = true, doUpdateMonth = false): boolean {
+		public highlightDay(event: Event, day: Day, doUpdateMonth = false): boolean {
 			if (!day.isAvailable) {
 				return false;
 			}
@@ -239,15 +230,10 @@ namespace TheDatepicker {
 			}
 
 			this.highlightedDay = day;
-			this.isHighlightedDayFocused = doFocus;
+			this.isHighlightedDayFocused = true;
 
-			let isRendered = false;
 			const date = day.getDate();
-			if (doUpdateMonth) {
-				isRendered = this.goToMonth(event, date, false);
-			}
-
-			if (!isRendered) {
+			if (!doUpdateMonth || !this.goToMonth(event, date, false)) {
 				this.render();
 			}
 
@@ -289,7 +275,7 @@ namespace TheDatepicker {
 				maxLoops--;
 			} while (!newDay.isAvailable && maxLoops > 0);
 
-			this.highlightDay(event, newDay, true, true);
+			this.highlightDay(event, newDay, true);
 		}
 
 		public cancelSelection(event: Event | null): boolean {
@@ -437,19 +423,11 @@ namespace TheDatepicker {
 		private createDay(date: Date): Day {
 			date = new Date(date.getTime());
 			Helper.resetTime(date);
-			const dateTime = date.getTime();
-			const todayTime = this.today.getTime();
 
 			const day = new Day(date);
-			day.isToday = dateTime === todayTime;
-			day.isPast = dateTime < todayTime;
-			day.isInValidity = (
-				this.options.getMinDate() === null
-				|| dateTime >= this.options.getMinDate().getTime()
-			) && (
-				this.options.getMaxDate() === null
-				|| dateTime <= this.options.getMaxDate().getTime()
-			);
+			day.isToday = date.getTime() === this.today.getTime();
+			day.isPast = date.getTime() < this.today.getTime();
+			day.isInValidity = this.options.isDateInValidity(date);
 			day.isAvailable = day.isInValidity && this.options.isDateAvailable(date);
 
 			if (day.isAvailable) {

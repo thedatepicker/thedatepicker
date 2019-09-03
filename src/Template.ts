@@ -43,6 +43,10 @@ namespace TheDatepicker {
 
 		public render(viewModel: ViewModel, datepicker: Datepicker): void {
 			if (this.containerElement === null) {
+				if (datepicker.getInput() !== null && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
+					return;
+				}
+
 				const container = datepicker.getContainer();
 				container.innerHTML = '';
 				container.appendChild(this.createSkeleton(viewModel, datepicker));

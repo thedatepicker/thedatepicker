@@ -29,6 +29,23 @@ namespace TheDatepicker {
 	// todo datepicker.goToMonth() (přepošle do viewModel)
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
 	// todo fičura resetování nabádá k options.setDefaultDate() + to asi bude spolupracovat s setDeselectEnabled() :-)
+	// todo asi by se dalo zbavit prvotního volání render() pokud by se to vytvářelo jako new ThaDatepicker.Datepicker(new ThaDatepicker.Options());
+	//      akorát by se stejně muselo volat nějaký update() nebo render() poté co změní něco v options
+	//      leda by se na Options navěsil hook který to zavolá.. ale to by pak mohl volat zbytečně mockrát
+
+	/*
+		jak nastavit počáteční datum & měsíc:
+		1. datepicker.options.setInitialDate()
+		2. <input value=""> - defacto tohle se může nastavit automaticky do datepicker.options.setInitialDate()
+		3. datepicker.selectDate()
+		(3 = nejvyšší priorita)
+
+		reset vyresetuje stejně, ale zanedbá datepicker.selectDate()
+
+		pokud datepicker.options.setInitialMonth() pak je to vždy initialMonth (případně jemu nejbližší možný)
+		pokud null, tak dle toho jaké datum je předvybrané - 1. <input value="">; 2. datepicker.options.setInitialDate()
+		pokud null, tak aktuální měsíc (případně jemu nejbližší možný)
+	 */
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -51,7 +68,7 @@ namespace TheDatepicker {
 
 	enum InitializationPhase {
 		Untouched,
-		WaitingOnFocus,
+		Waiting,
 		Ready,
 		Initialized,
 	}
@@ -64,7 +81,7 @@ namespace TheDatepicker {
 		private readonly viewModel: ViewModel;
 
 		private initializationPhase = InitializationPhase.Untouched;
-		private originalInputOnFocus: ((event: FocusEvent) => void) | null = null
+		private originalInputOnFocus: ((event: FocusEvent) => void) | null = null;
 
 		private options: Options;
 		private dateConverter: DateConverterInterface;
@@ -120,7 +137,7 @@ namespace TheDatepicker {
 		}
 
 		public setDateConverter(dateConverter: DateConverterInterface): void {
-			if (typeof dateConverter.formatDate !== 'function' || typeof dateConverter.parseDate !== 'function') {
+			if (typeof dateConverter !== 'object' || typeof dateConverter.formatDate !== 'function' || typeof dateConverter.parseDate !== 'function') {
 				throw new Error('Date converter was expected to be an instance of DateConverterInterface, but ' + dateConverter + ' given.');
 			}
 
@@ -128,63 +145,55 @@ namespace TheDatepicker {
 		}
 
 		public render(): void {
-			if (this.initializationPhase === InitializationPhase.Initialized) {
-				this.viewModel.render();
-				return;
-			}
+			switch (this.initializationPhase) {
+				case InitializationPhase.Initialized:
+					this.viewModel.render();
+					return;
 
-			if (this.initializationPhase === InitializationPhase.Ready) {
-				this.initListeners();
-				let date: Date | null = null;
-				if (this.input !== null) {
-					try {
-						date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
-					} catch (error) {
-						if (!(error instanceof CannotParseDateException)) {
-							throw error;
+				case InitializationPhase.Ready:
+					this.initListeners();
+					this.initializationPhase = InitializationPhase.Initialized;
+					this.render();
+					return;
+
+				case InitializationPhase.Waiting:
+					const selectedDate = this.viewModel.getSelectedDate();
+					if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
+						this.viewModel.cancelSelection(null);
+					}
+
+					return;
+
+				case InitializationPhase.Untouched:
+					this.preselectFromInput();
+
+					const initialDate = this.options.getInitialDate();
+					this.viewModel.selectDate(null, this.options.getInitialDate(), false);
+					this.updateInput();
+
+					if (this.input !== null && this.options.isHiddenOnBlur()) {
+						if (this.input === this.document.activeElement) {
+							this.initializationPhase = InitializationPhase.Ready;
+							this.render();
+							this.open();
+							return;
 						}
-					}
-				}
-				this.initializationPhase = InitializationPhase.Initialized;
-				this.render();
-				this.selectDate(date);
-				if (this.input === this.document.activeElement) {
-					this.open();
-				}
 
-				return;
-			}
-
-			if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
-				return;
-			}
-
-			if (
-				this.input !== null
-				&& this.options.isHiddenOnBlur()
-				&& this.input.value === ''
-				&& this.input !== this.document.activeElement
-			) {
-				this.originalInputOnFocus = this.input.onfocus || null;
-				this.input.onfocus = (event: FocusEvent) => {
-					if (this.originalInputOnFocus !== null) {
-						this.originalInputOnFocus.call(this.input, event);
+						this.prepareLazyLoad();
+						return;
 					}
 
-					this.open();
-				};
-
-				this.initializationPhase = InitializationPhase.WaitingOnFocus;
-
-				return;
+					this.initializationPhase = InitializationPhase.Ready;
+					this.render();
 			}
-
-			this.initializationPhase = InitializationPhase.Ready;
-			this.render();
 		}
 
 		public open(): boolean {
-			if (this.initializationPhase === InitializationPhase.WaitingOnFocus) {
+			if (this.initializationPhase === InitializationPhase.Untouched) {
+				this.render();
+			}
+
+			if (this.initializationPhase === InitializationPhase.Waiting) {
 				this.initializationPhase = InitializationPhase.Ready;
 				this.input.onfocus = this.originalInputOnFocus;
 				this.render();
@@ -279,6 +288,34 @@ namespace TheDatepicker {
 			container.style.zIndex = '99';
 
 			return container;
+		}
+
+		private preselectFromInput(): void {
+			if (this.input !== null) {
+				try {
+					const date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
+					if (date !== null) {
+						this.options.setInitialDate(date);
+					}
+				} catch (error) {
+					if (!(error instanceof CannotParseDateException)) {
+						throw error;
+					}
+				}
+			}
+		}
+
+		private prepareLazyLoad(): void {
+			this.originalInputOnFocus = this.input.onfocus || null;
+			this.input.onfocus = (event: FocusEvent) => {
+				if (this.originalInputOnFocus !== null) {
+					this.originalInputOnFocus.call(this.input, event);
+				}
+
+				this.open();
+			};
+
+			this.initializationPhase = InitializationPhase.Waiting;
 		}
 
 		private initListeners(): void {

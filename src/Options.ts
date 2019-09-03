@@ -47,6 +47,7 @@ namespace TheDatepicker {
 		private hideOnSelect = true;
 		private minDate: Date | null = null;
 		private maxDate: Date | null = null;
+		private initialDate: Date | null = null;
 		private initialMonth: Date | null = null;
 		private firstDayOfWeek = DayOfWeek.Monday;
 		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
@@ -137,7 +138,7 @@ namespace TheDatepicker {
 			this.maxDate = normalizedDate;
 		}
 
-		// Month to be rendered when you open datepicker first time.
+		// Month to be rendered when datepicker opened first time.
 		// string in format YYYY-MM; e.g.: "2019-02" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
@@ -145,6 +146,14 @@ namespace TheDatepicker {
 		// defaults to current month
 		public setInitialMonth(month: Date | string | null): void {
 			this.initialMonth = this.normalizeDate(month, 'Initial month');
+		}
+
+		// Preselected date.
+		// It's overloaded by direct input value, if any.
+		// null for no value
+		// defaults to null
+		public setInitialDate(value: Date | string | null): void {
+			this.initialDate = this.normalizeDate(value, 'Initial date');
 		}
 
 		// Day of week when weeks start.
@@ -173,6 +182,7 @@ namespace TheDatepicker {
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
 			if (resolver === null) {
 				this.dateAvailabilityResolver = null;
+				return;
 			}
 
 			if (typeof resolver !== 'function') {
@@ -335,34 +345,49 @@ namespace TheDatepicker {
 			return this.translator;
 		}
 
-		public getInitialMonth(currentMonth: Date | null = null): Date {
-			const initialMonth = currentMonth !== null
-				? new Date(currentMonth.getTime())
+		public getInitialMonth(): Date {
+			const initialMonth = this.initialMonth !== null
+				? new Date(this.initialMonth.getTime())
 				: (
-					this.initialMonth !== null
-						? new Date(this.initialMonth.getTime())
+					this.initialDate !== null
+						? new Date(this.initialDate.getTime())
 						: new Date()
 				);
 			initialMonth.setDate(1);
 			Helper.resetTime(initialMonth);
 
-			if (this.minDate !== null) {
-				const minDate = new Date(this.minDate.getTime());
-				minDate.setDate(1);
-				if (initialMonth < minDate) {
-					return minDate;
-				}
+			return this.correctMonth(initialMonth);
+		}
+
+		public isMonthInValidity(month: Date): boolean {
+			return this.calculateMonthCorrection(month) === null;
+		}
+
+		public correctMonth(month: Date): Date {
+			const correctMonth = this.calculateMonthCorrection(month);
+			return correctMonth !== null ? correctMonth : month;
+		}
+
+		public getInitialDate(): Date | null {
+			if (
+				this.initialDate === null
+				|| !this.isDateInValidity(this.initialDate)
+				|| !this.isDateAvailable(this.initialDate)
+			) {
+				return null;
 			}
 
-			if (this.maxDate !== null) {
-				const maxDate = new Date(this.maxDate.getTime());
-				maxDate.setDate(1);
-				if (initialMonth > maxDate) {
-					return maxDate;
-				}
-			}
+			return this.initialDate;
+		}
 
-			return initialMonth;
+		public isDateInValidity(date: Date): boolean {
+			return (
+				this.minDate === null
+				|| date.getTime() >= this.minDate.getTime()
+			) && (
+				this.maxDate === null
+				|| date.getTime() <= this.maxDate.getTime()
+			);
 		}
 
 		public getFirstDayOfWeek(): DayOfWeek {
@@ -437,6 +462,26 @@ namespace TheDatepicker {
 			) {
 				throw new Error('Min date cannot be higher then max date, given min: ' + minDate.toString() + ', max: ' + maxDate.toString());
 			}
+		}
+
+		private calculateMonthCorrection(month: Date): Date | null {
+			if (this.minDate !== null) {
+				const minMonth = new Date(this.minDate.getTime());
+				minMonth.setDate(1);
+				if (month < minMonth) {
+					return minMonth;
+				}
+			}
+
+			if (this.maxDate !== null) {
+				const maxMonth = new Date(this.maxDate.getTime());
+				maxMonth.setDate(1);
+				if (month > maxMonth) {
+					return maxMonth;
+				}
+			}
+
+			return null;
 		}
 
 		public onEventListener(eventType: EventType, listener: AnyEvent) {

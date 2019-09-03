@@ -47,6 +47,9 @@
 		<aside>
 			<ul class="settings">
 				<li>
+					<label>datepicker.options.setInitialDate(<input type="text" size="15" id="initialDate">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setInitialMonth(<input type="text" size="15" id="initialMonth">);</label>
 				</li>
 				<li>
@@ -153,6 +156,13 @@
 				}
 
 				datepicker.options['on' + eventName](createCallback(argumentsString, body));
+			};
+
+			var initialDateInput = document.getElementById('initialDate');
+			initialDateInput.onchange = function () {
+				updateSetting(initialDateInput, function () {
+					datepicker.options.setInitialDate(initialDateInput.value !== '' ? initialDateInput.value : null);
+				});
 			};
 
 			var initialMonthInput = document.getElementById('initialMonth');
