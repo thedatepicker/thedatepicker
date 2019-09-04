@@ -177,6 +177,9 @@
 				<li>
 					<label>datepicker.options.setResetHtml(<input type="text" size="15" id="resetHtml" value="&amp;olarr;">);</label>
 				</li>
+				<li>
+					<label>datepicker.options.setDeselectHtml(<input type="text" size="15" id="deselectHtml" value="&amp;times;">);</label>
+				</li>
 
 				<li>
 					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Monday, <input type="text" size="15" id="dayOfWeekTranslation0" value="Su">);</label>
@@ -516,6 +519,13 @@
 			resetHtmlInput.onchange = function () {
 				updateSetting(resetHtmlInput, function () {
 					datepicker.options.setResetHtml(resetHtmlInput.value);
+				});
+			};
+
+			var deselectHtmlInput = document.getElementById('deselectHtml');
+			deselectHtmlInput.onchange = function () {
+				updateSetting(deselectHtmlInput, function () {
+					datepicker.options.setReselectHtml(deselectHtmlInput.value);
 				});
 			};
 

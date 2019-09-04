@@ -75,6 +75,7 @@ namespace TheDatepicker {
 		public goForwardHtml = '&gt;';
 		public closeHtml = '&times;';
 		public resetHtml = '&olarr;';
+		public deselectHtml = '&times;';
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
@@ -311,6 +312,13 @@ namespace TheDatepicker {
 			this.resetHtml = html;
 		}
 
+		// Sets html for deselect button.
+		// Defaults to "&times;"
+		public setDeselectHtml(html: string): void {
+			Helper.checkString('Html', html);
+			this.deselectHtml = html;
+		}
+
 		// Callback to be called just before the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
@@ -544,6 +552,10 @@ namespace TheDatepicker {
 
 		public getResetHtml(): string {
 			return this.resetHtml;
+		}
+
+		public getDeselectHtml(): string {
+			return this.deselectHtml;
 		}
 
 		public isHiddenOnBlur(): boolean {

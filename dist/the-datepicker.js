@@ -524,7 +524,7 @@ var TheDatepicker;
             var deselectElement = this.document.createElement('span');
             deselectElement.style.position = 'absolute';
             var deselectButton = this.document.createElement('a');
-            deselectButton.innerHTML = '&times;';
+            deselectButton.innerHTML = this.options.getDeselectHtml();
             deselectButton.style.position = 'relative';
             deselectButton.style.left = '-12px';
             deselectButton.href = '#';
@@ -1658,6 +1658,7 @@ var TheDatepicker;
             this.goForwardHtml = '&gt;';
             this.closeHtml = '&times;';
             this.resetHtml = '&olarr;';
+            this.deselectHtml = '&times;';
             this.listeners = {
                 beforeSelect: [],
                 select: [],
@@ -1772,6 +1773,10 @@ var TheDatepicker;
         Options.prototype.setResetHtml = function (html) {
             TheDatepicker.Helper.checkString('Html', html);
             this.resetHtml = html;
+        };
+        Options.prototype.setDeselectHtml = function (html) {
+            TheDatepicker.Helper.checkString('Html', html);
+            this.deselectHtml = html;
         };
         Options.prototype.onBeforeSelect = function (listener) {
             this.onEventListener(EventType.BeforeSelect, listener);
@@ -1949,6 +1954,9 @@ var TheDatepicker;
         };
         Options.prototype.getResetHtml = function () {
             return this.resetHtml;
+        };
+        Options.prototype.getDeselectHtml = function () {
+            return this.deselectHtml;
         };
         Options.prototype.isHiddenOnBlur = function () {
             return this.hideOnBlur;

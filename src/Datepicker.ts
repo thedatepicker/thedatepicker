@@ -296,7 +296,7 @@ namespace TheDatepicker {
 			const deselectElement = this.document.createElement('span');
 			deselectElement.style.position = 'absolute';
 			const deselectButton = this.document.createElement('a');
-			deselectButton.innerHTML = '&times;';
+			deselectButton.innerHTML = this.options.getDeselectHtml();
 			deselectButton.style.position = 'relative';
 			deselectButton.style.left = '-12px';
 			deselectButton.href = '#';
