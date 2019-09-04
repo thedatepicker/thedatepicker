@@ -62,6 +62,9 @@
 					datepicker.<input type="button" id="close" value="close()">;
 				</li>
 				<li>
+					datepicker.<input type="button" id="destroy" value="destroy()">;
+				</li>
+				<li>
 					<label>datepicker.options.setHideOnBlur(<input type="checkbox" id="hideOnBlur" checked="checked">);</label>
 				</li>
 				<li>
@@ -203,6 +206,11 @@
 			var closeInput = document.getElementById('close');
 			closeInput.onclick = function () {
 				datepicker.close();
+			};
+
+			var destroyInput = document.getElementById('destroy');
+			destroyInput.onclick = function () {
+				datepicker.destroy();
 			};
 
 			var hideOnBlurInput = document.getElementById('hideOnBlur');

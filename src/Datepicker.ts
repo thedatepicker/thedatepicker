@@ -5,27 +5,21 @@ namespace TheDatepicker {
 	// todo nešlo by se nějak v produkci zbavit kontrol aka addClass regulár?
 	// todo jsou potřeba ty originální on* ? asi jo ale jak se to zachová např. s jquery?
 	// todo mělo by smysl držet identitu dní?
-	// todo nastavovat z-index
 	// todo v IE nejde křížek
 	// todo levý horní roh zkosený pokud to není input mode
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
-	// todo toggle mode (klik na selected ho odvybere)
-	// todo no empty mode? (vždy musí být něco vybráno)
 	// todo static metody šětří výkon
 	// todo onBefore dovolit rerurnovat i promisu
 	// todo yearsSelectionLimits se nemění interaktivně (po zavolání .render()) + možná by to šlo vymyslet líp (např. setYearSelectItemsCount(100) a nastavovaly by se +-50 od aktuálního roku
 	//      todo + optimalizace že pokud option.style.display !== 'none' tak vím že ta dylší už mení nemusím
-	// todo datepicker.goToMonth() (přepošle do viewModel)
+	// todo datepicker.goToMonth() (přepošle do viewModel) + další metody
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
-	// todo fičura resetování nabádá k options.setDefaultDate() + to asi bude spolupracovat s setDeselectEnabled() :-)
 	// todo při změně měsíce selectem když onBeforeGo vrátí false by se neměla změnit hodnota selectu
 	// todo proč výběr data volá Template.render() tolikrát?
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
-	// todo destroy()
 	// todo enable/disable ty selecty (month, year)
 	// todo nadesignovat v relativních jednotkách ať je to hezký na všech obrazovkách?
-	// todo ikonka křížku v inputu na odvybrání?
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -51,23 +45,26 @@ namespace TheDatepicker {
 		Waiting,
 		Ready,
 		Initialized,
+		Destroyed,
 	}
 
 	export class Datepicker {
 
 		private readonly document: DocumentInterface;
-		private readonly input: HTMLDatepickerInputElement | null;
+		private input: HTMLDatepickerInputElement | null;
 		private readonly container: HTMLDatepickerContainerElement;
+		private isContainerExternal = true;
 		private deselectElement: HTMLSpanElement | null = null;
 		private readonly viewModel: ViewModel;
 
 		private initializationPhase = InitializationPhase.Untouched;
-		private originalInputOnFocus: ((event: FocusEvent) => void) | null = null;
+		private inputListenerRemover: (() => void) | null = null;
+		private listenerRemovers: (() => void)[] = [];
 
 		private options: Options;
 		private dateConverter: DateConverterInterface;
 
-		private static instances: Datepicker[] = [];
+		private static areGlobalListenersInitialized = false;
 		private static activeViewModel: ViewModel | null = null;
 		private static hasClickedViewModel = false;
 
@@ -88,6 +85,7 @@ namespace TheDatepicker {
 			this.document = document;
 
 			if (container === null) {
+				this.isContainerExternal = false;
 				container = this.createContainer();
 				if (input !== null) {
 					input.parentNode.insertBefore(container, input.nextSibling);
@@ -127,6 +125,9 @@ namespace TheDatepicker {
 
 		public render(): void {
 			switch (this.initializationPhase) {
+				case InitializationPhase.Destroyed:
+					return;
+
 				case InitializationPhase.Initialized:
 					this.viewModel.render();
 					return;
@@ -138,6 +139,11 @@ namespace TheDatepicker {
 					return;
 
 				case InitializationPhase.Waiting:
+					if (!this.options.isHiddenOnBlur()) {
+						this.open();
+						return;
+					}
+
 					this.prepareDeselectButton();
 					const selectedDate = this.viewModel.getSelectedDate();
 					if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
@@ -162,7 +168,11 @@ namespace TheDatepicker {
 							return;
 						}
 
-						this.prepareLazyLoad();
+						this.inputListenerRemover = Helper.addEventListener(this.input, ListenerType.Focus, (event: FocusEvent) => {
+							this.open(event);
+						});
+
+						this.initializationPhase = InitializationPhase.Waiting;
 						return;
 					}
 
@@ -178,10 +188,8 @@ namespace TheDatepicker {
 
 			if (this.initializationPhase === InitializationPhase.Waiting) {
 				this.initializationPhase = InitializationPhase.Ready;
-				this.input.onfocus = this.originalInputOnFocus;
 				this.render();
 				Datepicker.hasClickedViewModel = true;
-				return this.open();
 			}
 
 			if (!Datepicker.activateViewModel(event, this.viewModel)) {
@@ -209,6 +217,36 @@ namespace TheDatepicker {
 			}
 
 			return true;
+		}
+
+		public destroy(): void {
+			if (this.initializationPhase === InitializationPhase.Destroyed) {
+				return;
+			}
+
+			for (let index = 0; index < this.listenerRemovers.length; index++) {
+				this.listenerRemovers[index]();
+			}
+			this.listenerRemovers = [];
+
+			if (this.isContainerExternal) {
+				this.container.innerHTML = '';
+			} else {
+				this.container.parentNode.removeChild(this.container);
+			}
+			this.container.datepicker = null;
+
+			if (this.input !== null) {
+				this.input.datepicker = null;
+				this.removeInitialInputListener();
+				this.input = null;
+			}
+
+			if (this.deselectElement !== null) {
+				this.deselectElement.parentNode.removeChild(this.deselectElement);
+			}
+
+			this.initializationPhase = InitializationPhase.Destroyed;
 		}
 
 		public readInput(event: Event | null = null): boolean {
@@ -322,21 +360,8 @@ namespace TheDatepicker {
 			}
 		}
 
-		private prepareLazyLoad(): void {
-			this.originalInputOnFocus = this.input.onfocus || null;
-			this.input.onfocus = (event: FocusEvent) => {
-				if (this.originalInputOnFocus !== null) {
-					this.originalInputOnFocus.call(this.input, event);
-				}
-
-				this.open(event);
-			};
-
-			this.initializationPhase = InitializationPhase.Waiting;
-		}
-
 		private initListeners(): void {
-			if (Datepicker.instances.length === 0) {
+			if (!Datepicker.areGlobalListenersInitialized) {
 				let activeViewModel: ViewModel | null = null;
 
 				const checkMiss = (event: Event) => {
@@ -359,27 +384,36 @@ namespace TheDatepicker {
 						Datepicker.activeViewModel.triggerKeyPress(event, target as HTMLElement);
 					}
 				});
+
+				Datepicker.areGlobalListenersInitialized = true;
 			}
 
-			Datepicker.instances.push(this);
+			this.removeInitialInputListener();
 
 			const hit = (event: Event) => {
 				Datepicker.activateViewModel(event, this.viewModel);
 				Datepicker.hasClickedViewModel = true;
 			};
 
-			Helper.addEventListener(this.container, ListenerType.MouseDown, hit);
-			Helper.addEventListener(this.container, ListenerType.FocusIn, hit);
+			this.listenerRemovers.push(Helper.addEventListener(this.container, ListenerType.MouseDown, hit));
+			this.listenerRemovers.push(Helper.addEventListener(this.container, ListenerType.FocusIn, hit));
 
 			if (this.input !== null) {
-				Helper.addEventListener(this.input, ListenerType.MouseDown, hit);
-				Helper.addEventListener(this.input, ListenerType.Focus, hit);
-				Helper.addEventListener(this.input, ListenerType.Blur, () => {
+				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.MouseDown, hit));
+				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.Focus, hit));
+				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.Blur, () => {
 					this.updateInput();
-				});
-				Helper.addEventListener(this.input, ListenerType.KeyUp, (event: KeyboardEvent) => {
+				}));
+				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.KeyUp, (event: KeyboardEvent) => {
 					this.readInput(event);
-				});
+				}));
+			}
+		}
+
+		private removeInitialInputListener(): void {
+			if (this.inputListenerRemover !== null) {
+				this.inputListenerRemover();
+				this.inputListenerRemover = null;
 			}
 		}
 

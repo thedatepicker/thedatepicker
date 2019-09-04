@@ -78,22 +78,31 @@ namespace TheDatepicker {
 			return false;
 		}
 
-		public static addEventListener(element: Node, listenerType: ListenerType, listener: (event: Event) => void): void {
+		public static addEventListener(element: Node, listenerType: ListenerType, listener: (event: Event) => void): () => void {
 			if (element.addEventListener) {
 				element.addEventListener(listenerType, listener);
-			} else {
-				const listenerProperty = 'on' + listenerType;
-				// @ts-ignore
-				const originalListener = element[listenerProperty] || null;
-				// @ts-ignore
-				element[listenerProperty] = (event: Event) => {
-					if (originalListener !== null) {
-						originalListener.call(element, event);
-					}
 
-					listener(event);
+				return () => {
+					element.removeEventListener(listenerType, listener);
 				};
 			}
+
+			const listenerProperty = 'on' + listenerType;
+			// @ts-ignore
+			const originalListener = element[listenerProperty] || null;
+			// @ts-ignore
+			element[listenerProperty] = (event: Event) => {
+				if (originalListener !== null) {
+					originalListener.call(element, event);
+				}
+
+				listener(event);
+			};
+
+			return () => {
+				// @ts-ignore
+				element[listenerProperty] = originalListener;
+			};
 		}
 
 	}
