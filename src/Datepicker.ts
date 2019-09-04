@@ -2,17 +2,14 @@
 
 namespace TheDatepicker {
 
-	// todo nešlo by se nějak v produkci zbavit kontrol aka addClass regulár?
 	// todo jsou potřeba ty originální on* ? asi jo ale jak se to zachová např. s jquery?
 	// todo mělo by smysl držet identitu dní?
 	// todo v IE nejde křížek
 	// todo levý horní roh zkosený pokud to není input mode
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo static metody šětří výkon
-	// todo onBefore dovolit rerurnovat i promisu
 	// todo yearsSelectionLimits se nemění interaktivně (po zavolání .render()) + možná by to šlo vymyslet líp (např. setYearSelectItemsCount(100) a nastavovaly by se +-50 od aktuálního roku
 	//      todo + optimalizace že pokud option.style.display !== 'none' tak vím že ta dylší už mení nemusím
-	// todo datepicker.goToMonth() (přepošle do viewModel) + další metody
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
 	// todo při změně měsíce selectem když onBeforeGo vrátí false by se neměla změnit hodnota selectu
 	// todo proč výběr data volá Template.render() tolikrát?
@@ -86,7 +83,7 @@ namespace TheDatepicker {
 			this.document = document;
 
 			this.isContainerExternal = container !== null;
-			if (!this.isContainerExternal) {
+			if (container === null) {
 				container = this.createContainer();
 				if (input !== null) {
 					input.parentNode.insertBefore(container, input.nextSibling);
@@ -202,6 +199,10 @@ namespace TheDatepicker {
 			return true;
 		}
 
+		public reset(event: Event | null = null): boolean {
+			return this.viewModel.reset(event);
+		}
+
 		public destroy(): void {
 			if (this.initializationPhase === InitializationPhase.Destroyed) {
 				return;
@@ -230,6 +231,34 @@ namespace TheDatepicker {
 			}
 
 			this.initializationPhase = InitializationPhase.Destroyed;
+		}
+
+		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
+			try {
+				return this.viewModel.selectDay(event, Helper.normalizeDate(date), doUpdateMonth);
+			} catch (error) {
+				if (!(error instanceof InvalidDateException)) {
+					throw error;
+				}
+
+				throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.')
+			}
+		}
+
+		public getSelectedDate(): Date | null {
+			return this.viewModel.selectedDate;
+		}
+
+		public goToMonth(month: Date | string, event: Event | null = null): boolean {
+			try {
+				return this.viewModel.goToMonth(event, Helper.normalizeDate(month));
+			} catch (error) {
+				if (!(error instanceof InvalidDateException)) {
+					throw error;
+				}
+
+				throw new Error('Month was expected to be a valid Date string or valid instance of Date, ' + month + ' given.')
+			}
 		}
 
 		public readInput(event: Event | null = null): boolean {
@@ -263,22 +292,6 @@ namespace TheDatepicker {
 				: '';
 
 			this.prepareDeselectButton();
-		}
-
-		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
-			try {
-				return this.viewModel.selectDay(event, Helper.normalizeDate(date), doUpdateMonth);
-			} catch (error) {
-				if (!(error instanceof InvalidDateException)) {
-					throw error;
-				}
-
-				throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.')
-			}
-		}
-
-		public getSelectedDate(): Date | null {
-			return this.viewModel.selectedDate;
 		}
 
 		private createContainer(): HTMLElement {

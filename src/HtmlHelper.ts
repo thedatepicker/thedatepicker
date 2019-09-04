@@ -94,11 +94,8 @@ namespace TheDatepicker {
 			return row;
 		}
 
-		public createTableCell(className: string): HTMLTableCellElement {
-			const cell = this.document.createElement('td');
-			this.addClass(cell, className);
-
-			return cell;
+		public createTableCell(): HTMLTableCellElement {
+			return this.document.createElement('td');
 		}
 
 		public createSelectInput(options: SelectOption[], onChange: (event: Event, value: number) => void): HTMLSelectElement {
@@ -124,44 +121,11 @@ namespace TheDatepicker {
 		}
 
 		public addClass(element: HTMLElement, className: string): void {
-			this.toggleClass(element, className, true);
-		}
-
-		public removeClass(element: HTMLElement, className: string): void {
-			this.toggleClass(element, className, false);
-		}
-
-		public toggleClass(element: HTMLElement, className: string, doAdd: boolean): void {
-			if (!/^[a-zA-Z0-9_-]+$/.test(className)) {
-				throw new Error('Invalid class name: ' + className);
-			}
-
 			className = this.options.getClassesPrefix() + className;
-			let wasFound = false;
-
-			const classes = element.className.split(/\s+/);
-			for (let index = 0; index < classes.length; index++) {
-				if (classes[index] === '') {
-					classes.splice(index, 1);
-				}
-
-				if (classes[index] === className) {
-					if (doAdd) {
-						return;
-					} else {
-						classes.splice(index, 1);
-						wasFound = true;
-					}
-				}
+			if (element.className !== '') {
+				className = ' ' + className;
 			}
-
-			if (doAdd) {
-				classes.push(className);
-			} else if (!wasFound) {
-				return;
-			}
-
-			element.className = classes.join(' ');
+			element.className += className;
 		}
 
 	}

@@ -349,7 +349,7 @@ namespace TheDatepicker {
 			const cells = [];
 			const cellsContents = [];
 			for (let index = 0; index < 7; index++) {
-				const cell = this.htmlHelper.createTableCell('day');
+				const cell = this.htmlHelper.createTableCell();
 				const cellContent = this.createTableCellContentElement(viewModel);
 
 				cells.push(cell);
@@ -365,21 +365,38 @@ namespace TheDatepicker {
 
 		protected updateDayElement(viewModel: ViewModel, dayElement: HTMLElement, dayContentElement: HTMLDayContentElement, day: Day): void {
 			dayContentElement.day = day;
+			dayElement.className = '';
 
 			if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
-				dayElement.className = '';
 				dayContentElement.innerText = '';
 				dayContentElement.removeAttribute('href');
 				dayContentElement.style.visibility = 'hidden';
 				return;
 			}
 
-			this.htmlHelper.toggleClass(dayElement, 'today', day.isToday);
-			this.htmlHelper.toggleClass(dayElement, 'weekend', day.isWeekend);
-			this.htmlHelper.toggleClass(dayElement, 'unavailable', !day.isAvailable);
-			this.htmlHelper.toggleClass(dayElement, 'outside', !day.isInCurrentMonth);
-			this.htmlHelper.toggleClass(dayElement, 'highlighted', day.isHighlighted);
-			this.htmlHelper.toggleClass(dayElement, 'selected', day.isSelected);
+			this.htmlHelper.addClass(dayElement, 'day');
+			if (day.isToday) {
+				this.htmlHelper.addClass(dayElement, 'today');
+			}
+			if (day.isWeekend) {
+				this.htmlHelper.addClass(dayElement, 'weekend');
+			}
+			if (!day.isAvailable) {
+				this.htmlHelper.addClass(dayElement, 'unavailable');
+			}
+			if (!day.isInCurrentMonth) {
+				this.htmlHelper.addClass(dayElement, 'outside');
+			}
+			if (day.isHighlighted) {
+				this.htmlHelper.addClass(dayElement, 'highlighted');
+			}
+			if (day.isSelected) {
+				this.htmlHelper.addClass(dayElement, 'selected');
+			}
+			const customClasses = this.options.getCellClasses(day);
+			for (let index = 0; index < customClasses.length; index++) {
+				dayElement.className += ' ' + customClasses[index];
+			}
 
 			dayContentElement.style.visibility = 'visible';
 			dayContentElement.innerText = this.options.getCellContent(day);

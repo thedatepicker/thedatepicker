@@ -41,6 +41,8 @@ namespace TheDatepicker {
 
 	type CellContentResolver = (day: Day) => string;
 
+	type CellClassesResolver = (day: Day) => string[];
+
 	export class Options {
 
 		public readonly translator: Translator;
@@ -55,6 +57,7 @@ namespace TheDatepicker {
 		private firstDayOfWeek = DayOfWeek.Monday;
 		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
 		private cellContentResolver: CellContentResolver | null = null;
+		private cellClassesResolver: CellClassesResolver | null = null;
 		private inputFormat = 'j. n. Y';
 		private daysOutOfMonthVisible = false;
 		private fixedRowsCount = false;
@@ -198,6 +201,20 @@ namespace TheDatepicker {
 			}
 
 			this.cellContentResolver = resolver;
+		}
+
+		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
+		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
+			if (resolver === null) {
+				this.cellClassesResolver = null;
+				return;
+			}
+
+			if (typeof resolver !== 'function') {
+				throw new Error('Cell classes resolver was expected to be function or null, but ' + typeof resolver + ' given.');
+			}
+
+			this.cellClassesResolver = resolver;
 		}
 
 		// Format in which date is printed as an input value.
@@ -512,7 +529,7 @@ namespace TheDatepicker {
 
 		public isDateAvailable(date: Date): boolean {
 			if (this.dateAvailabilityResolver !== null) {
-				return this.dateAvailabilityResolver(new Date(date.getTime()));
+				return !!this.dateAvailabilityResolver(new Date(date.getTime()));
 			}
 
 			return true;
@@ -524,6 +541,17 @@ namespace TheDatepicker {
 			}
 
 			return day.dayNumber.toString();
+		}
+
+		public getCellClasses(day: Day): string[] {
+			if (this.cellClassesResolver !== null) {
+				const classes = this.cellClassesResolver(day);
+				if (typeof classes === 'object' && classes.constructor === Array) {
+					return classes;
+				}
+			}
+
+			return [];
 		}
 
 		public isHiddenOnBlur(): boolean {

@@ -394,7 +394,7 @@ var TheDatepicker;
             }
             this.document = document;
             this.isContainerExternal = container !== null;
-            if (!this.isContainerExternal) {
+            if (container === null) {
                 container = this.createContainer();
                 if (input !== null) {
                     input.parentNode.insertBefore(container, input.nextSibling);
@@ -489,6 +489,10 @@ var TheDatepicker;
             }
             return true;
         };
+        Datepicker.prototype.reset = function (event) {
+            if (event === void 0) { event = null; }
+            return this.viewModel.reset(event);
+        };
         Datepicker.prototype.destroy = function () {
             if (this.initializationPhase === InitializationPhase.Destroyed) {
                 return;
@@ -513,6 +517,34 @@ var TheDatepicker;
                 this.deselectElement.parentNode.removeChild(this.deselectElement);
             }
             this.initializationPhase = InitializationPhase.Destroyed;
+        };
+        Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
+            if (doUpdateMonth === void 0) { doUpdateMonth = true; }
+            if (event === void 0) { event = null; }
+            try {
+                return this.viewModel.selectDay(event, TheDatepicker.Helper.normalizeDate(date), doUpdateMonth);
+            }
+            catch (error) {
+                if (!(error instanceof TheDatepicker.InvalidDateException)) {
+                    throw error;
+                }
+                throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.');
+            }
+        };
+        Datepicker.prototype.getSelectedDate = function () {
+            return this.viewModel.selectedDate;
+        };
+        Datepicker.prototype.goToMonth = function (month, event) {
+            if (event === void 0) { event = null; }
+            try {
+                return this.viewModel.goToMonth(event, TheDatepicker.Helper.normalizeDate(month));
+            }
+            catch (error) {
+                if (!(error instanceof TheDatepicker.InvalidDateException)) {
+                    throw error;
+                }
+                throw new Error('Month was expected to be a valid Date string or valid instance of Date, ' + month + ' given.');
+            }
         };
         Datepicker.prototype.readInput = function (event) {
             if (event === void 0) { event = null; }
@@ -541,22 +573,6 @@ var TheDatepicker;
                 ? this.dateConverter.formatDate(this.options.getInputFormat(), this.viewModel.selectedDate)
                 : '';
             this.prepareDeselectButton();
-        };
-        Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
-            if (doUpdateMonth === void 0) { doUpdateMonth = true; }
-            if (event === void 0) { event = null; }
-            try {
-                return this.viewModel.selectDay(event, TheDatepicker.Helper.normalizeDate(date), doUpdateMonth);
-            }
-            catch (error) {
-                if (!(error instanceof TheDatepicker.InvalidDateException)) {
-                    throw error;
-                }
-                throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.');
-            }
-        };
-        Datepicker.prototype.getSelectedDate = function () {
-            return this.viewModel.selectedDate;
         };
         Datepicker.prototype.createContainer = function () {
             var container = this.document.createElement('div');
@@ -880,10 +896,8 @@ var TheDatepicker;
             }
             return row;
         };
-        HtmlHelper.prototype.createTableCell = function (className) {
-            var cell = this.document.createElement('td');
-            this.addClass(cell, className);
-            return cell;
+        HtmlHelper.prototype.createTableCell = function () {
+            return this.document.createElement('td');
         };
         HtmlHelper.prototype.createSelectInput = function (options, onChange) {
             var input = this.document.createElement('select');
@@ -903,39 +917,11 @@ var TheDatepicker;
             return input;
         };
         HtmlHelper.prototype.addClass = function (element, className) {
-            this.toggleClass(element, className, true);
-        };
-        HtmlHelper.prototype.removeClass = function (element, className) {
-            this.toggleClass(element, className, false);
-        };
-        HtmlHelper.prototype.toggleClass = function (element, className, doAdd) {
-            if (!/^[a-zA-Z0-9_-]+$/.test(className)) {
-                throw new Error('Invalid class name: ' + className);
-            }
             className = this.options.getClassesPrefix() + className;
-            var wasFound = false;
-            var classes = element.className.split(/\s+/);
-            for (var index = 0; index < classes.length; index++) {
-                if (classes[index] === '') {
-                    classes.splice(index, 1);
-                }
-                if (classes[index] === className) {
-                    if (doAdd) {
-                        return;
-                    }
-                    else {
-                        classes.splice(index, 1);
-                        wasFound = true;
-                    }
-                }
+            if (element.className !== '') {
+                className = ' ' + className;
             }
-            if (doAdd) {
-                classes.push(className);
-            }
-            else if (!wasFound) {
-                return;
-            }
-            element.className = classes.join(' ');
+            element.className += className;
         };
         return HtmlHelper;
     }());
@@ -1569,7 +1555,7 @@ var TheDatepicker;
             var cells = [];
             var cellsContents = [];
             for (var index = 0; index < 7; index++) {
-                var cell = this.htmlHelper.createTableCell('day');
+                var cell = this.htmlHelper.createTableCell();
                 var cellContent = this.createTableCellContentElement(viewModel);
                 cells.push(cell);
                 cellsContents.push(cellContent);
@@ -1581,19 +1567,36 @@ var TheDatepicker;
         };
         Template.prototype.updateDayElement = function (viewModel, dayElement, dayContentElement, day) {
             dayContentElement.day = day;
+            dayElement.className = '';
             if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
-                dayElement.className = '';
                 dayContentElement.innerText = '';
                 dayContentElement.removeAttribute('href');
                 dayContentElement.style.visibility = 'hidden';
                 return;
             }
-            this.htmlHelper.toggleClass(dayElement, 'today', day.isToday);
-            this.htmlHelper.toggleClass(dayElement, 'weekend', day.isWeekend);
-            this.htmlHelper.toggleClass(dayElement, 'unavailable', !day.isAvailable);
-            this.htmlHelper.toggleClass(dayElement, 'outside', !day.isInCurrentMonth);
-            this.htmlHelper.toggleClass(dayElement, 'highlighted', day.isHighlighted);
-            this.htmlHelper.toggleClass(dayElement, 'selected', day.isSelected);
+            this.htmlHelper.addClass(dayElement, 'day');
+            if (day.isToday) {
+                this.htmlHelper.addClass(dayElement, 'today');
+            }
+            if (day.isWeekend) {
+                this.htmlHelper.addClass(dayElement, 'weekend');
+            }
+            if (!day.isAvailable) {
+                this.htmlHelper.addClass(dayElement, 'unavailable');
+            }
+            if (!day.isInCurrentMonth) {
+                this.htmlHelper.addClass(dayElement, 'outside');
+            }
+            if (day.isHighlighted) {
+                this.htmlHelper.addClass(dayElement, 'highlighted');
+            }
+            if (day.isSelected) {
+                this.htmlHelper.addClass(dayElement, 'selected');
+            }
+            var customClasses = this.options.getCellClasses(day);
+            for (var index = 0; index < customClasses.length; index++) {
+                dayElement.className += ' ' + customClasses[index];
+            }
             dayContentElement.style.visibility = 'visible';
             dayContentElement.innerText = this.options.getCellContent(day);
             if (day.isAvailable) {
@@ -1652,6 +1655,7 @@ var TheDatepicker;
             this.firstDayOfWeek = TheDatepicker.DayOfWeek.Monday;
             this.dateAvailabilityResolver = null;
             this.cellContentResolver = null;
+            this.cellClassesResolver = null;
             this.inputFormat = 'j. n. Y';
             this.daysOutOfMonthVisible = false;
             this.fixedRowsCount = false;
@@ -1738,6 +1742,16 @@ var TheDatepicker;
                 throw new Error('Cell content resolver was expected to be function or null, but ' + typeof resolver + ' given.');
             }
             this.cellContentResolver = resolver;
+        };
+        Options.prototype.setCellClassesResolver = function (resolver) {
+            if (resolver === null) {
+                this.cellClassesResolver = null;
+                return;
+            }
+            if (typeof resolver !== 'function') {
+                throw new Error('Cell classes resolver was expected to be function or null, but ' + typeof resolver + ' given.');
+            }
+            this.cellClassesResolver = resolver;
         };
         Options.prototype.setInputFormat = function (format) {
             if (typeof format !== 'string' || format === '') {
@@ -1948,7 +1962,7 @@ var TheDatepicker;
         };
         Options.prototype.isDateAvailable = function (date) {
             if (this.dateAvailabilityResolver !== null) {
-                return this.dateAvailabilityResolver(new Date(date.getTime()));
+                return !!this.dateAvailabilityResolver(new Date(date.getTime()));
             }
             return true;
         };
@@ -1957,6 +1971,15 @@ var TheDatepicker;
                 return this.cellContentResolver(day);
             }
             return day.dayNumber.toString();
+        };
+        Options.prototype.getCellClasses = function (day) {
+            if (this.cellClassesResolver !== null) {
+                var classes = this.cellClassesResolver(day);
+                if (typeof classes === 'object' && classes.constructor === Array) {
+                    return classes;
+                }
+            }
+            return [];
         };
         Options.prototype.isHiddenOnBlur = function () {
             return this.hideOnBlur;

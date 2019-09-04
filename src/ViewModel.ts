@@ -402,7 +402,6 @@ namespace TheDatepicker {
 			});
 		}
 
-		// todo udělat customizovatelný + customizovatelný classy pro cell
 		private createDay(date: Date): Day {
 			date = Helper.resetTime(new Date(date.getTime()));
 

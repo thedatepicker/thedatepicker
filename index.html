@@ -111,6 +111,11 @@
 						});</label>
 				</li>
 				<li>
+					<label>datepicker.options.setCellClassesResolver((day) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="cellClassesResolver">return [];</textarea><br>
+						});</label>
+				</li>
+				<li>
 					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="onBeforeSelect"></textarea><br>
 						});</label>
@@ -323,6 +328,16 @@
 					datepicker.options.setCellContentResolver(null);
 				} else {
 					datepicker.options.setCellContentResolver(createCallback('day', cellContentResolverInput.value));
+				}
+				datepicker.render();
+			};
+
+			var cellClassesResolverInput = document.getElementById('cellClassesResolver');
+			cellClassesResolverInput.onchange = function () {
+				if (cellClassesResolverInput.value === '') {
+					datepicker.options.setCellClassesResolver(null);
+				} else {
+					datepicker.options.setCellClassesResolver(createCallback('day', cellClassesResolverInput.value));
 				}
 				datepicker.render();
 			};
