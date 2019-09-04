@@ -64,6 +64,31 @@ namespace TheDatepicker {
 			}
 
 			if (typeof value === 'string') {
+				if (value === 'today' || value === 'now') {
+					return Helper.resetTime(new Date());
+				}
+
+				const matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
+				if (matches !== null) {
+					const date = Helper.resetTime(new Date());
+					const amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
+					switch (matches[3].toLowerCase()) {
+						case 'day':
+						case 'days':
+							date.setDate(date.getDate() + amount);
+							break;
+						case 'month':
+						case 'months':
+							date.setMonth(date.getMonth() + amount);
+							break;
+						case 'year':
+						case 'years':
+							date.setFullYear(date.getFullYear() + amount);
+							break;
+					}
+					return date;
+				}
+
 				const date = new Date(value);
 				if (!isNaN(date.getTime())) {
 					return Helper.resetTime(date);

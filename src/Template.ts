@@ -261,6 +261,7 @@ namespace TheDatepicker {
 			const maxDate = this.options.getMaxDate();
 			const maxYear = maxDate !== null ? maxDate.getFullYear() : null;
 
+			// todo optimalizovat
 			let valuesCount = 0;
 			let includesCurrentYear = false;
 			for (let index = 0; index < options.length; index++) {

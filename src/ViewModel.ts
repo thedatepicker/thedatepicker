@@ -372,7 +372,6 @@ namespace TheDatepicker {
 		}
 
 		private triggerOnSelect(event: Event | null, day: Day | null, previousDay: Day | null): void {
-			// todo v prohlížeči se vyrendrované html objeví až poté co se zavolá alert v listeneru... proč?
 			this.options.triggerEvent(EventType.Select, (listener: SelectEvent) => {
 				return listener.call(day, event, day, previousDay);
 			});

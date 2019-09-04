@@ -110,6 +110,8 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
+		// or "now" or "today" or string in format "<sign> <number> <unit>"
+		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no limit
 		// defaults to no limit
 		public setMinDate(date: Date | string | null): void {
@@ -122,6 +124,8 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
+		// or "now" or "today" or string in format "<sign> <number> <unit>"
+		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no limit
 		// defaults to no limit
 		public setMaxDate(date: Date | string | null): void {
@@ -132,8 +136,13 @@ namespace TheDatepicker {
 
 		// Month to be rendered when datepicker opened first time.
 		// string in format YYYY-MM; e.g.: "2019-02" (months 1-based)
-		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
+		// or any string which is accepted by Date constructor, e.g.: "September 2021"
 		// or instance of Date
+		// string in format YYYY-MM; e.g.: "2019-02" (months 1-based)
+		// or any string which is accepted by Date constructor, e.g.: "September 2021"
+		// or instance of Date
+		// or "now" or "today" or string in format "<sign> <number> <unit>"
+		// where <sign> is "+" or "-" and is optional, <unit> is one of "month" or "year" or plural version
 		// or null for current month
 		// defaults to current month
 		public setInitialMonth(month: Date | string | null): void {
@@ -141,8 +150,13 @@ namespace TheDatepicker {
 		}
 
 		// Preselected date.
+		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
+		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
+		// or instance of Date
+		// or "now" or "today" or string in format "<sign> <number> <unit>"
+		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
+		// or null for no value
 		// It's overloaded by direct input value, if any.
-		// null for no value
 		// defaults to null
 		public setInitialDate(value: Date | string | null): void {
 			this.initialDate = Helper.normalizeDate('Initial date', value);

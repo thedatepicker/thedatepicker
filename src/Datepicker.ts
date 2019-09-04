@@ -4,7 +4,6 @@ namespace TheDatepicker {
 
 	// todo jsou potřeba ty originální on* ? asi jo ale jak se to zachová např. s jquery?
 	// todo mělo by smysl držet identitu dní?
-	// todo v IE nejde křížek
 	// todo levý horní roh zkosený pokud to není input mode
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo static metody šětří výkon
