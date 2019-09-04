@@ -239,8 +239,8 @@ var TheDatepicker;
         };
         DateConverter.prototype.parseDayOfWeekTextual = function (text, date) {
             var maxLength = 0;
-            for (var index = 0; index < this.translator.dayOfWeekTranslations.length; index++) {
-                var translation = this.translator.dayOfWeekTranslations[index];
+            for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+                var translation = this.translator.translateDayOfWeek(dayOfWeek);
                 maxLength = Math.max(maxLength, translation.length);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     return translation.length;
@@ -273,10 +273,10 @@ var TheDatepicker;
             return took + month.length;
         };
         DateConverter.prototype.parseMonthTextual = function (text, date) {
-            for (var index = 0; index < this.translator.monthTranslations.length; index++) {
-                var translation = this.translator.monthTranslations[index];
+            for (var month = 0; month < 12; month++) {
+                var translation = this.translator.translateMonth(month);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-                    date.setMonth(index);
+                    date.setMonth(month);
                     return translation.length;
                 }
             }

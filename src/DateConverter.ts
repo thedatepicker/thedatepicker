@@ -245,8 +245,8 @@ namespace TheDatepicker {
 
 		private parseDayOfWeekTextual(text: string, date: Date): number {
 			let maxLength = 0;
-			for (let index = 0; index < this.translator.dayOfWeekTranslations.length; index++) {
-				const translation = this.translator.dayOfWeekTranslations[index];
+			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+				const translation = this.translator.translateDayOfWeek(dayOfWeek);
 				maxLength = Math.max(maxLength, translation.length);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
@@ -287,11 +287,11 @@ namespace TheDatepicker {
 		}
 
 		private parseMonthTextual(text: string, date: Date): number {
-			for (let index = 0; index < this.translator.monthTranslations.length; index++) {
-				const translation = this.translator.monthTranslations[index];
+			for (let month = 0; month < 12; month++) {
+				const translation = this.translator.translateMonth(month);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-					date.setMonth(index);
+					date.setMonth(month);
 					return translation.length;
 				}
 			}

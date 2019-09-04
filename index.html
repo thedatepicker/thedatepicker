@@ -177,6 +177,65 @@
 				<li>
 					<label>datepicker.options.setResetHtml(<input type="text" size="15" id="resetHtml" value="&amp;olarr;">);</label>
 				</li>
+
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Monday, <input type="text" size="15" id="dayOfWeekTranslation0" value="Su">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Tuesday, <input type="text" size="15" id="dayOfWeekTranslation1" value="Mo">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Wednesday, <input type="text" size="15" id="dayOfWeekTranslation2" value="Tu">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Thursday, <input type="text" size="15" id="dayOfWeekTranslation3" value="We">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Friday, <input type="text" size="15" id="dayOfWeekTranslation4" value="Th">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Saturday, <input type="text" size="15" id="dayOfWeekTranslation5" value="Fr">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Sunday, <input type="text" size="15" id="dayOfWeekTranslation6" value="Sa">);</label>
+				</li>
+
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.January, <input type="text" size="15" id="monthTranslation0" value="January">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.February, <input type="text" size="15" id="monthTranslation1" value="February">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.March, <input type="text" size="15" id="monthTranslation2" value="March">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.April, <input type="text" size="15" id="monthTranslation3" value="April">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.May, <input type="text" size="15" id="monthTranslation4" value="May">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.June, <input type="text" size="15" id="monthTranslation5" value="June">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.July, <input type="text" size="15" id="monthTranslation6" value="July">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.August, <input type="text" size="15" id="monthTranslation7" value="August">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.September, <input type="text" size="15" id="monthTranslation8" value="September">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.October, <input type="text" size="15" id="monthTranslation9" value="October">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.November, <input type="text" size="15" id="monthTranslation10" value="November">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.December, <input type="text" size="15" id="monthTranslation11" value="December">);</label>
+				</li>
 				<li>
 					datepicker.render();
 				</li>
@@ -459,6 +518,30 @@
 					datepicker.options.setResetHtml(resetHtmlInput.value);
 				});
 			};
+
+			for (var i = 0; i < 7; i++) {
+				(function () {
+					var dayOfWeek = i;
+					var dayOfWeekTranslationInput = document.getElementById('dayOfWeekTranslation' + dayOfWeek);
+					dayOfWeekTranslationInput.onchange = function () {
+						updateSetting(dayOfWeekTranslationInput, function () {
+							datepicker.options.translator.setDayOfWeekTranslation(dayOfWeek, dayOfWeekTranslationInput.value);
+						});
+					};
+				})();
+			}
+
+			for (var j = 0; j < 12; j++) {
+				(function () {
+					var month = j;
+					var monthTranslationInput = document.getElementById('monthTranslation' + month);
+					monthTranslationInput.onchange = function () {
+						updateSetting(monthTranslationInput, function () {
+							datepicker.options.translator.setMonthTranslation(month, monthTranslationInput.value);
+						});
+					};
+				})();
+			}
 		})();
 	</script>
 </body>
