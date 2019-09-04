@@ -34,8 +34,9 @@
   color: #007eff;
   font-weight: bold;
 }
-.the-datepicker-control {
-  min-height: 6px;
+.the-datepicker-title {
+  float: left;
+  padding: 4px;
 }
 .the-datepicker-reset .the-datepicker-button,
 .the-datepicker-close .the-datepicker-button {
@@ -45,6 +46,7 @@
 .the-datepicker-navigation {
   float: left;
   width: 100%;
+  margin-top: 6px;
 }
 .the-datepicker-go {
   float: left;
@@ -56,7 +58,7 @@
 .the-datepicker-go-next .the-datepicker-button {
   float: right;
 }
-.the-datepicker-title {
+.the-datepicker-state {
   float: left;
   width: 70%;
   padding: 4px 0;

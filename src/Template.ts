@@ -20,6 +20,7 @@ namespace TheDatepicker {
 		private containerElement: HTMLElement | null = null;
 		private goBackElement: HTMLElement | null = null;
 		private goForwardElement: HTMLElement | null = null;
+		private titleElement: HTMLElement | null = null;
 		private resetElement: HTMLElement | null = null;
 		private closeElement: HTMLElement | null = null;
 		private monthSelect: HTMLSelectElement | null = null;
@@ -46,6 +47,7 @@ namespace TheDatepicker {
 			}
 
 			this.updateContainerElement(viewModel, datepicker.input);
+			this.updateTitleElement(viewModel);
 			this.updateCloseElement(viewModel, datepicker.input);
 			this.updateResetElement(viewModel);
 			this.updateGoBackElement(viewModel);
@@ -70,16 +72,17 @@ namespace TheDatepicker {
 		}
 
 		protected createHeaderElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
-			const title = this.htmlHelper.createDiv('title');
-			title.appendChild(this.createMonthElement(viewModel));
-			title.appendChild(this.createYearElement(viewModel));
+			const state = this.htmlHelper.createDiv('state');
+			state.appendChild(this.createMonthElement(viewModel));
+			state.appendChild(this.createYearElement(viewModel));
 
 			const navigation = this.htmlHelper.createDiv('navigation');
 			navigation.appendChild(this.createGoBackElement(viewModel));
-			navigation.appendChild(title);
+			navigation.appendChild(state);
 			navigation.appendChild(this.createGoForwardElement(viewModel));
 
 			const control = this.htmlHelper.createDiv('control');
+			control.appendChild(this.createTitleElement(viewModel));
 			control.appendChild(this.createCloseElement(viewModel, datepicker));
 			control.appendChild(this.createResetElement(viewModel));
 
@@ -88,6 +91,19 @@ namespace TheDatepicker {
 			header.appendChild(navigation);
 
 			return header;
+		}
+
+		protected createTitleElement(viewModel: ViewModel): HTMLElement {
+			const titleElement = this.htmlHelper.createDiv('title');
+			this.titleElement = titleElement;
+
+			return titleElement;
+		}
+
+		protected updateTitleElement(viewModel: ViewModel): void {
+			const title = this.options.getTitle();
+			this.titleElement.style.display = title !== '' ? 'block' : 'none';
+			this.titleElement.innerText = title;
 		}
 
 		protected createResetElement(viewModel: ViewModel): HTMLElement {

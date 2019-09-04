@@ -109,6 +109,9 @@
 					<label>datepicker.options.setShowCloseButton(<input type="checkbox" id="showCloseButton" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setTitle(<input type="text" size="15" id="title">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setShowResetButton(<input type="checkbox" id="showResetButton" checked="checked">);</label>
 				</li>
 				<li>
@@ -403,6 +406,13 @@
 			showCloseButtonInput.onchange = function () {
 				updateSetting(showCloseButtonInput, function () {
 					datepicker.options.setShowCloseButton(showCloseButtonInput.checked);
+				});
+			};
+
+			var titleInput = document.getElementById('title');
+			titleInput.onchange = function () {
+				updateSetting(titleInput, function () {
+					datepicker.options.setTitle(titleInput.value);
 				});
 			};
 

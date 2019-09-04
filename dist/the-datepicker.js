@@ -1292,6 +1292,7 @@ var TheDatepicker;
             this.containerElement = null;
             this.goBackElement = null;
             this.goForwardElement = null;
+            this.titleElement = null;
             this.resetElement = null;
             this.closeElement = null;
             this.monthSelect = null;
@@ -1313,6 +1314,7 @@ var TheDatepicker;
                 datepicker.container.appendChild(this.createSkeleton(viewModel, datepicker));
             }
             this.updateContainerElement(viewModel, datepicker.input);
+            this.updateTitleElement(viewModel);
             this.updateCloseElement(viewModel, datepicker.input);
             this.updateResetElement(viewModel);
             this.updateGoBackElement(viewModel);
@@ -1332,20 +1334,31 @@ var TheDatepicker;
             this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? 'block' : 'none';
         };
         Template.prototype.createHeaderElement = function (viewModel, datepicker) {
-            var title = this.htmlHelper.createDiv('title');
-            title.appendChild(this.createMonthElement(viewModel));
-            title.appendChild(this.createYearElement(viewModel));
+            var state = this.htmlHelper.createDiv('state');
+            state.appendChild(this.createMonthElement(viewModel));
+            state.appendChild(this.createYearElement(viewModel));
             var navigation = this.htmlHelper.createDiv('navigation');
             navigation.appendChild(this.createGoBackElement(viewModel));
-            navigation.appendChild(title);
+            navigation.appendChild(state);
             navigation.appendChild(this.createGoForwardElement(viewModel));
             var control = this.htmlHelper.createDiv('control');
+            control.appendChild(this.createTitleElement(viewModel));
             control.appendChild(this.createCloseElement(viewModel, datepicker));
             control.appendChild(this.createResetElement(viewModel));
             var header = this.htmlHelper.createDiv('header');
             header.appendChild(control);
             header.appendChild(navigation);
             return header;
+        };
+        Template.prototype.createTitleElement = function (viewModel) {
+            var titleElement = this.htmlHelper.createDiv('title');
+            this.titleElement = titleElement;
+            return titleElement;
+        };
+        Template.prototype.updateTitleElement = function (viewModel) {
+            var title = this.options.getTitle();
+            this.titleElement.style.display = title !== '' ? 'block' : 'none';
+            this.titleElement.innerText = title;
         };
         Template.prototype.createResetElement = function (viewModel) {
             var resetElement = this.htmlHelper.createDiv('reset');
@@ -1673,6 +1686,7 @@ var TheDatepicker;
             this.yearAsDropdown = true;
             this.classesPrefix = 'the-datepicker-';
             this.showCloseButton = true;
+            this.title = '';
             this.yearsSelectionLimits = {
                 from: 1900,
                 to: 2100
@@ -1768,6 +1782,11 @@ var TheDatepicker;
         };
         Options.prototype.setShowCloseButton = function (value) {
             this.showCloseButton = !!value;
+        };
+        Options.prototype.setTitle = function (title) {
+            title = title === null ? '' : title;
+            TheDatepicker.Helper.checkString('Title', title);
+            this.title = title;
         };
         Options.prototype.setYearsSelectionLimits = function (from, to) {
             var parameterName = 'Years selection limits';
@@ -1935,6 +1954,9 @@ var TheDatepicker;
         };
         Options.prototype.isCloseButtonShown = function () {
             return this.showCloseButton;
+        };
+        Options.prototype.getTitle = function () {
+            return this.title;
         };
         Options.prototype.getMinDate = function () {
             return this.minDate;

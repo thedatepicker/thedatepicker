@@ -67,6 +67,7 @@ namespace TheDatepicker {
 		private yearAsDropdown = true;
 		private classesPrefix = 'the-datepicker-';
 		private showCloseButton = true;
+		private title = '';
 		private yearsSelectionLimits: NumbersRange = {
 			from: 1900,
 			to: 2100,
@@ -278,6 +279,15 @@ namespace TheDatepicker {
 		// defaults to true
 		public setShowCloseButton(value: boolean): void {
 			this.showCloseButton = !!value;
+		}
+
+		// Sets title which is displayed in the datepicker header.
+		// null for no title
+		// defaults to no title
+		public setTitle(title: string | null): void {
+			title = title === null ? '' : title;
+			Helper.checkString('Title', title);
+			this.title = title;
 		}
 
 		// Limits (from - to) of year dropdown list.
@@ -511,6 +521,10 @@ namespace TheDatepicker {
 
 		public isCloseButtonShown(): boolean {
 			return this.showCloseButton;
+		}
+
+		public getTitle(): string {
+			return this.title;
 		}
 
 		public getMinDate(): Date | null {

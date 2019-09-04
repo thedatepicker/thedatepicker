@@ -16,6 +16,7 @@ namespace TheDatepicker {
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo nadesignovat v relativních jednotkách ať je to hezký na všech obrazovkách?
 	// todo např třída CannotParseDateException se neminifikuje
+	// todo scope="col" apod.
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
