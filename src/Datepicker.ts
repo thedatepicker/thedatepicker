@@ -125,7 +125,7 @@ namespace TheDatepicker {
 						return;
 					}
 
-					this.prepareDeselectButton();
+					this.updateDeselectButton();
 					if (this.viewModel.selectedDate !== null && (!this.options.isDateInValidity(this.viewModel.selectedDate) || !this.options.isDateAvailable(this.viewModel.selectedDate))) {
 						this.viewModel.cancelSelection(null);
 					} else if (this.viewModel.selectedDate == null && !this.options.isAllowedEmpty()) {
@@ -136,6 +136,7 @@ namespace TheDatepicker {
 
 				case InitializationPhase.Untouched:
 					this.preselectFromInput();
+					this.createDeselectElement();
 
 					this.viewModel.selectDay(null, this.options.getInitialDate(), false);
 					this.updateInput();
@@ -228,6 +229,7 @@ namespace TheDatepicker {
 
 			if (this.deselectElement !== null) {
 				this.deselectElement.parentNode.removeChild(this.deselectElement);
+				this.deselectElement = null;
 			}
 
 			this.initializationPhase = InitializationPhase.Destroyed;
@@ -275,7 +277,7 @@ namespace TheDatepicker {
 				? this.dateConverter.formatDate(this.options.getInputFormat(), this.viewModel.selectedDate)
 				: '';
 
-			this.prepareDeselectButton();
+			this.updateDeselectButton();
 		}
 
 		private createContainer(): HTMLElement {
@@ -286,31 +288,30 @@ namespace TheDatepicker {
 			return container;
 		}
 
-		private prepareDeselectButton(): void {
-			const hasDeselectButton = this.input !== null && this.options.isDeselectButtonShown() && this.options.isAllowedEmpty();
-
-			if (this.deselectElement !== null && !hasDeselectButton) {
-				this.deselectElement.parentNode.removeChild(this.deselectElement);
-				this.deselectElement = null;
-
-			} else if (this.deselectElement === null && hasDeselectButton) {
-				this.deselectElement = this.document.createElement('span');
-				this.deselectElement.style.position = 'absolute';
-				const deselectButton = this.document.createElement('a');
-				deselectButton.innerHTML = '&times;';
-				deselectButton.style.position = 'relative';
-				deselectButton.style.left = '-12px';
-				deselectButton.href = '#';
-				deselectButton.onclick = (event: MouseEvent) => {
-					event.preventDefault();
-					this.viewModel.cancelSelection(event);
-				};
-				this.deselectElement.className = this.options.getClassesPrefix() + 'deselect';
-				this.deselectElement.appendChild(deselectButton);
-
-				this.input.parentNode.insertBefore(this.deselectElement, this.input.nextSibling);
+		private createDeselectElement(): HTMLElement | null {
+			if (this.input === null || !this.options.isDeselectButtonShown() || !this.options.isAllowedEmpty()) {
+				return null;
 			}
 
+			const deselectElement = this.document.createElement('span');
+			deselectElement.style.position = 'absolute';
+			const deselectButton = this.document.createElement('a');
+			deselectButton.innerHTML = '&times;';
+			deselectButton.style.position = 'relative';
+			deselectButton.style.left = '-12px';
+			deselectButton.href = '#';
+			deselectButton.onclick = (event: MouseEvent) => {
+				event.preventDefault();
+				this.viewModel.cancelSelection(event);
+			};
+			deselectElement.className = this.options.getClassesPrefix() + 'deselect';
+			deselectElement.appendChild(deselectButton);
+
+			this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
+			this.deselectElement = deselectElement;
+		}
+
+		private updateDeselectButton(): void {
 			if (this.input !== null && this.deselectElement !== null) {
 				this.deselectElement.style.visibility = this.input.value === '' ? 'hidden' : 'visible';
 			}
@@ -368,6 +369,11 @@ namespace TheDatepicker {
 
 			this.listenerRemovers.push(Helper.addEventListener(this.container, ListenerType.MouseDown, hit));
 			this.listenerRemovers.push(Helper.addEventListener(this.container, ListenerType.FocusIn, hit));
+
+			if (this.deselectElement !== null) {
+				this.listenerRemovers.push(Helper.addEventListener(this.deselectElement, ListenerType.MouseDown, hit));
+				this.listenerRemovers.push(Helper.addEventListener(this.deselectElement, ListenerType.FocusIn, hit));
+			}
 
 			if (this.input !== null) {
 				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.MouseDown, hit));

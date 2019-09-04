@@ -379,7 +379,7 @@ var TheDatepicker;
                         this.open();
                         return;
                     }
-                    this.prepareDeselectButton();
+                    this.updateDeselectButton();
                     if (this.viewModel.selectedDate !== null && (!this.options.isDateInValidity(this.viewModel.selectedDate) || !this.options.isDateAvailable(this.viewModel.selectedDate))) {
                         this.viewModel.cancelSelection(null);
                     }
@@ -389,6 +389,7 @@ var TheDatepicker;
                     return;
                 case InitializationPhase.Untouched:
                     this.preselectFromInput();
+                    this.createDeselectElement();
                     this.viewModel.selectDay(null, this.options.getInitialDate(), false);
                     this.updateInput();
                     if (this.input !== null && this.options.isHiddenOnBlur()) {
@@ -465,6 +466,7 @@ var TheDatepicker;
             }
             if (this.deselectElement !== null) {
                 this.deselectElement.parentNode.removeChild(this.deselectElement);
+                this.deselectElement = null;
             }
             this.initializationPhase = InitializationPhase.Destroyed;
         };
@@ -506,7 +508,7 @@ var TheDatepicker;
             this.input.value = this.viewModel.selectedDate !== null
                 ? this.dateConverter.formatDate(this.options.getInputFormat(), this.viewModel.selectedDate)
                 : '';
-            this.prepareDeselectButton();
+            this.updateDeselectButton();
         };
         Datepicker.prototype.createContainer = function () {
             var container = this.document.createElement('div');
@@ -514,29 +516,28 @@ var TheDatepicker;
             container.style.zIndex = '99';
             return container;
         };
-        Datepicker.prototype.prepareDeselectButton = function () {
+        Datepicker.prototype.createDeselectElement = function () {
             var _this = this;
-            var hasDeselectButton = this.input !== null && this.options.isDeselectButtonShown() && this.options.isAllowedEmpty();
-            if (this.deselectElement !== null && !hasDeselectButton) {
-                this.deselectElement.parentNode.removeChild(this.deselectElement);
-                this.deselectElement = null;
+            if (this.input === null || !this.options.isDeselectButtonShown() || !this.options.isAllowedEmpty()) {
+                return null;
             }
-            else if (this.deselectElement === null && hasDeselectButton) {
-                this.deselectElement = this.document.createElement('span');
-                this.deselectElement.style.position = 'absolute';
-                var deselectButton = this.document.createElement('a');
-                deselectButton.innerHTML = '&times;';
-                deselectButton.style.position = 'relative';
-                deselectButton.style.left = '-12px';
-                deselectButton.href = '#';
-                deselectButton.onclick = function (event) {
-                    event.preventDefault();
-                    _this.viewModel.cancelSelection(event);
-                };
-                this.deselectElement.className = this.options.getClassesPrefix() + 'deselect';
-                this.deselectElement.appendChild(deselectButton);
-                this.input.parentNode.insertBefore(this.deselectElement, this.input.nextSibling);
-            }
+            var deselectElement = this.document.createElement('span');
+            deselectElement.style.position = 'absolute';
+            var deselectButton = this.document.createElement('a');
+            deselectButton.innerHTML = '&times;';
+            deselectButton.style.position = 'relative';
+            deselectButton.style.left = '-12px';
+            deselectButton.href = '#';
+            deselectButton.onclick = function (event) {
+                event.preventDefault();
+                _this.viewModel.cancelSelection(event);
+            };
+            deselectElement.className = this.options.getClassesPrefix() + 'deselect';
+            deselectElement.appendChild(deselectButton);
+            this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
+            this.deselectElement = deselectElement;
+        };
+        Datepicker.prototype.updateDeselectButton = function () {
             if (this.input !== null && this.deselectElement !== null) {
                 this.deselectElement.style.visibility = this.input.value === '' ? 'hidden' : 'visible';
             }
@@ -588,6 +589,10 @@ var TheDatepicker;
             };
             this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.container, TheDatepicker.ListenerType.MouseDown, hit));
             this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.container, TheDatepicker.ListenerType.FocusIn, hit));
+            if (this.deselectElement !== null) {
+                this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.deselectElement, TheDatepicker.ListenerType.MouseDown, hit));
+                this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.deselectElement, TheDatepicker.ListenerType.FocusIn, hit));
+            }
             if (this.input !== null) {
                 this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.MouseDown, hit));
                 this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.Focus, hit));
