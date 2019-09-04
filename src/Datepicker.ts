@@ -50,19 +50,20 @@ namespace TheDatepicker {
 
 	export class Datepicker {
 
+		public readonly options: Options;
+		public readonly viewModel: ViewModel;
+		public readonly dateConverter: DateConverterInterface;
+
+		public input: HTMLDatepickerInputElement | null;
+		public readonly container: HTMLDatepickerContainerElement;
+
 		private readonly document: DocumentInterface;
-		private input: HTMLDatepickerInputElement | null;
-		private readonly container: HTMLDatepickerContainerElement;
-		private isContainerExternal = true;
-		private deselectElement: HTMLSpanElement | null = null;
-		private readonly viewModel: ViewModel;
+		private readonly isContainerExternal: boolean;
 
 		private initializationPhase = InitializationPhase.Untouched;
 		private inputListenerRemover: (() => void) | null = null;
 		private listenerRemovers: (() => void)[] = [];
-
-		private options: Options;
-		private dateConverter: DateConverterInterface;
+		private deselectElement: HTMLSpanElement | null = null;
 
 		private static areGlobalListenersInitialized = false;
 		private static activeViewModel: ViewModel | null = null;
@@ -84,8 +85,8 @@ namespace TheDatepicker {
 
 			this.document = document;
 
-			if (container === null) {
-				this.isContainerExternal = false;
+			this.isContainerExternal = container !== null;
+			if (!this.isContainerExternal) {
 				container = this.createContainer();
 				if (input !== null) {
 					input.parentNode.insertBefore(container, input.nextSibling);
@@ -101,26 +102,9 @@ namespace TheDatepicker {
 			this.input = input;
 			this.container = container;
 
-			this.setOptions(new Options());
-			this.setDateConverter(new DateConverter(this.options.getTranslator()));
-
+			this.options = new Options();
+			this.dateConverter = new DateConverter(this.options.translator);
 			this.viewModel = new ViewModel(this.options, this);
-		}
-
-		public setOptions(options: Options): void {
-			if (!(options instanceof Options)) {
-				throw new Error('Options was expected to be an instance of Options, but ' + options + ' given.');
-			}
-
-			this.options = options;
-		}
-
-		public setDateConverter(dateConverter: DateConverterInterface): void {
-			if (typeof dateConverter !== 'object' || typeof dateConverter.formatDate !== 'function' || typeof dateConverter.parseDate !== 'function') {
-				throw new Error('Date converter was expected to be an instance of DateConverterInterface, but ' + dateConverter + ' given.');
-			}
-
-			this.dateConverter = dateConverter;
 		}
 
 		public render(): void {
@@ -145,10 +129,9 @@ namespace TheDatepicker {
 					}
 
 					this.prepareDeselectButton();
-					const selectedDate = this.viewModel.getSelectedDate();
-					if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
+					if (this.viewModel.selectedDate !== null && (!this.options.isDateInValidity(this.viewModel.selectedDate) || !this.options.isDateAvailable(this.viewModel.selectedDate))) {
 						this.viewModel.cancelSelection(null);
-					} else if (selectedDate == null && !this.options.isAllowedEmpty()) {
+					} else if (this.viewModel.selectedDate == null && !this.options.isAllowedEmpty()) {
 						this.viewModel.selectDay(null, this.options.getInitialDate(), false);
 					}
 
@@ -275,20 +258,11 @@ namespace TheDatepicker {
 				return;
 			}
 
-			const date = this.viewModel.getSelectedDate();
-			this.input.value = date !== null
-				? this.dateConverter.formatDate(this.options.getInputFormat(), date)
+			this.input.value = this.viewModel.selectedDate !== null
+				? this.dateConverter.formatDate(this.options.getInputFormat(), this.viewModel.selectedDate)
 				: '';
 
 			this.prepareDeselectButton();
-		}
-
-		public getContainer(): HTMLDatepickerContainerElement {
-			return this.container;
-		}
-
-		public getInput(): HTMLDatepickerInputElement | null {
-			return this.input;
 		}
 
 		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
@@ -304,7 +278,7 @@ namespace TheDatepicker {
 		}
 
 		public getSelectedDate(): Date | null {
-			return this.viewModel.getSelectedDate();
+			return this.viewModel.selectedDate;
 		}
 
 		private createContainer(): HTMLElement {

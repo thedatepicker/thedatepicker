@@ -16,12 +16,9 @@ namespace TheDatepicker {
 
 	export class DateConverter implements DateConverterInterface {
 
-		public translator: Translator;
-
 		private readonly escapeChar = '\\';
 
-		public constructor(translator: Translator) {
-			this.translator = translator;
+		public constructor(private readonly translator: Translator) {
 		}
 
 		public formatDate(format: string, date: Date): string {

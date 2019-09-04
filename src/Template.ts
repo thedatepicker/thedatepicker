@@ -43,17 +43,16 @@ namespace TheDatepicker {
 
 		public render(viewModel: ViewModel, datepicker: Datepicker): void {
 			if (this.containerElement === null) {
-				if (datepicker.getInput() !== null && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
+				if (datepicker.input !== null && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
 					return;
 				}
 
-				const container = datepicker.getContainer();
-				container.innerHTML = '';
-				container.appendChild(this.createSkeleton(viewModel, datepicker));
+				datepicker.container.innerHTML = '';
+				datepicker.container.appendChild(this.createSkeleton(viewModel, datepicker));
 			}
 
-			this.updateContainerElement(viewModel, datepicker.getInput());
-			this.updateCloseElement(viewModel, datepicker.getInput());
+			this.updateContainerElement(viewModel, datepicker.input);
+			this.updateCloseElement(viewModel, datepicker.input);
 			this.updateResetElement(viewModel);
 			this.updateGoBackElement(viewModel);
 			this.updateGoForwardElement(viewModel);
@@ -177,7 +176,7 @@ namespace TheDatepicker {
 			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
 				options.push({
 					value: monthNumber,
-					label: this.options.getTranslator().translateMonth(monthNumber),
+					label: this.options.translator.translateMonth(monthNumber),
 				});
 			}
 
@@ -212,7 +211,7 @@ namespace TheDatepicker {
 			}
 
 			this.monthSelect.value = currentMonth.toString();
-			this.monthElement.innerText = this.options.getTranslator().translateMonth(currentMonth);
+			this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
 
 			this.monthSelect.style.display = valuesCount > 1 ? 'inline' : 'none';
 			this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
@@ -311,7 +310,7 @@ namespace TheDatepicker {
 				this.htmlHelper.addClass(headerCell, 'weekend');
 			}
 
-			headerCell.innerText = this.options.getTranslator().translateDayOfWeek(dayOfWeek);
+			headerCell.innerText = this.options.translator.translateDayOfWeek(dayOfWeek);
 
 			return headerCell;
 		}

@@ -43,8 +43,9 @@ namespace TheDatepicker {
 
 	export class Options {
 
-		private template: Template;
-		private translator: Translator;
+		public readonly translator: Translator;
+		public readonly template: Template;
+
 		private hideOnBlur = true;
 		private hideOnSelect = true;
 		private minDate: Date | null = null;
@@ -77,24 +78,8 @@ namespace TheDatepicker {
 		};
 
 		public constructor() {
-			this.setTemplate(new Template(this, new HtmlHelper(this)));
-			this.setTranslator(new Translator());
-		}
-
-		public setTemplate(template: Template): void {
-			if (!(template instanceof Template)) {
-				throw new Error('Template was expected to an instance of Template, but ' + template + ' given.');
-			}
-
-			this.template = template;
-		}
-
-		public setTranslator(translator: Translator): void {
-			if (!(translator instanceof Translator)) {
-				throw new Error('Translator was expected to an instance of Translator, but ' + translator + ' given.');
-			}
-
-			this.translator = translator;
+			this.translator = new Translator();
+			this.template = new Template(this, new HtmlHelper(this));
 		}
 
 		// Setting to true will display datepicker only when input or datepicker itself is focused,
@@ -402,14 +387,6 @@ namespace TheDatepicker {
 
 		public offGo(listener: GoEvent | null = null): void {
 			this.offEventListener(EventType.Go, listener);
-		}
-
-		public getTemplate(): Template {
-			return this.template;
-		}
-
-		public getTranslator(): Translator {
-			return this.translator;
 		}
 
 		public getInitialMonth(): Date {

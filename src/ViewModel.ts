@@ -11,10 +11,11 @@ namespace TheDatepicker {
 
 	export class ViewModel {
 
+		public selectedDate: Date | null = null;
+
 		private readonly today: Date;
 
 		private currentMonth: Date | null = null;
-		private selectedDate: Date | null = null;
 		private highlightedDay: Day | null = null;
 		private isHighlightedDayFocused = false;
 		private active = false;
@@ -43,7 +44,7 @@ namespace TheDatepicker {
 				return;
 			}
 
-			this.options.getTemplate().render(this, this.datepicker);
+			this.options.template.render(this, this.datepicker);
 			this.datepicker.updateInput();
 		}
 
@@ -344,10 +345,6 @@ namespace TheDatepicker {
 			}
 
 			return weeks;
-		}
-
-		public getSelectedDate(): Date | null {
-			return this.selectedDate;
 		}
 
 		public triggerKeyPress(event: KeyboardEvent, target: HTMLElement): void {

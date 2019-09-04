@@ -112,8 +112,8 @@ var TheDatepicker;
     TheDatepicker.CannotParseDateException = CannotParseDateException;
     var DateConverter = (function () {
         function DateConverter(translator) {
-            this.escapeChar = '\\';
             this.translator = translator;
+            this.escapeChar = '\\';
         }
         DateConverter.prototype.formatDate = function (format, date) {
             var escapeNext = false;
@@ -379,11 +379,10 @@ var TheDatepicker;
     var Datepicker = (function () {
         function Datepicker(input, container) {
             if (container === void 0) { container = null; }
-            this.isContainerExternal = true;
-            this.deselectElement = null;
             this.initializationPhase = InitializationPhase.Untouched;
             this.inputListenerRemover = null;
             this.listenerRemovers = [];
+            this.deselectElement = null;
             if (input !== null && !TheDatepicker.Helper.isElement(input)) {
                 throw new Error('Input was expected to be null or an HTMLElement.');
             }
@@ -394,8 +393,8 @@ var TheDatepicker;
                 throw new Error('At least one of input or container is mandatory.');
             }
             this.document = document;
-            if (container === null) {
-                this.isContainerExternal = false;
+            this.isContainerExternal = container !== null;
+            if (!this.isContainerExternal) {
                 container = this.createContainer();
                 if (input !== null) {
                     input.parentNode.insertBefore(container, input.nextSibling);
@@ -408,22 +407,10 @@ var TheDatepicker;
             container.datepicker = this;
             this.input = input;
             this.container = container;
-            this.setOptions(new TheDatepicker.Options());
-            this.setDateConverter(new TheDatepicker.DateConverter(this.options.getTranslator()));
+            this.options = new TheDatepicker.Options();
+            this.dateConverter = new TheDatepicker.DateConverter(this.options.translator);
             this.viewModel = new TheDatepicker.ViewModel(this.options, this);
         }
-        Datepicker.prototype.setOptions = function (options) {
-            if (!(options instanceof TheDatepicker.Options)) {
-                throw new Error('Options was expected to be an instance of Options, but ' + options + ' given.');
-            }
-            this.options = options;
-        };
-        Datepicker.prototype.setDateConverter = function (dateConverter) {
-            if (typeof dateConverter !== 'object' || typeof dateConverter.formatDate !== 'function' || typeof dateConverter.parseDate !== 'function') {
-                throw new Error('Date converter was expected to be an instance of DateConverterInterface, but ' + dateConverter + ' given.');
-            }
-            this.dateConverter = dateConverter;
-        };
         Datepicker.prototype.render = function () {
             var _this = this;
             switch (this.initializationPhase) {
@@ -443,11 +430,10 @@ var TheDatepicker;
                         return;
                     }
                     this.prepareDeselectButton();
-                    var selectedDate = this.viewModel.getSelectedDate();
-                    if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
+                    if (this.viewModel.selectedDate !== null && (!this.options.isDateInValidity(this.viewModel.selectedDate) || !this.options.isDateAvailable(this.viewModel.selectedDate))) {
                         this.viewModel.cancelSelection(null);
                     }
-                    else if (selectedDate == null && !this.options.isAllowedEmpty()) {
+                    else if (this.viewModel.selectedDate == null && !this.options.isAllowedEmpty()) {
                         this.viewModel.selectDay(null, this.options.getInitialDate(), false);
                     }
                     return;
@@ -551,17 +537,10 @@ var TheDatepicker;
             if (this.input === null || this.input === this.document.activeElement) {
                 return;
             }
-            var date = this.viewModel.getSelectedDate();
-            this.input.value = date !== null
-                ? this.dateConverter.formatDate(this.options.getInputFormat(), date)
+            this.input.value = this.viewModel.selectedDate !== null
+                ? this.dateConverter.formatDate(this.options.getInputFormat(), this.viewModel.selectedDate)
                 : '';
             this.prepareDeselectButton();
-        };
-        Datepicker.prototype.getContainer = function () {
-            return this.container;
-        };
-        Datepicker.prototype.getInput = function () {
-            return this.input;
         };
         Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
             if (doUpdateMonth === void 0) { doUpdateMonth = true; }
@@ -577,7 +556,7 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.getSelectedDate = function () {
-            return this.viewModel.getSelectedDate();
+            return this.viewModel.selectedDate;
         };
         Datepicker.prototype.createContainer = function () {
             var container = this.document.createElement('div');
@@ -975,8 +954,8 @@ var TheDatepicker;
         function ViewModel(options, datepicker) {
             this.options = options;
             this.datepicker = datepicker;
-            this.currentMonth = null;
             this.selectedDate = null;
+            this.currentMonth = null;
             this.highlightedDay = null;
             this.isHighlightedDayFocused = false;
             this.active = false;
@@ -996,7 +975,7 @@ var TheDatepicker;
             if (this.goToMonth(null, correctMonth)) {
                 return;
             }
-            this.options.getTemplate().render(this, this.datepicker);
+            this.options.template.render(this, this.datepicker);
             this.datepicker.updateInput();
         };
         ViewModel.prototype.setActive = function (event, value) {
@@ -1234,9 +1213,6 @@ var TheDatepicker;
             }
             return weeks;
         };
-        ViewModel.prototype.getSelectedDate = function () {
-            return this.selectedDate;
-        };
         ViewModel.prototype.triggerKeyPress = function (event, target) {
             if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Left, TheDatepicker.KeyCode.Up, TheDatepicker.KeyCode.Right, TheDatepicker.KeyCode.Down], event.keyCode)) {
                 event.preventDefault();
@@ -1348,15 +1324,14 @@ var TheDatepicker;
         }
         Template.prototype.render = function (viewModel, datepicker) {
             if (this.containerElement === null) {
-                if (datepicker.getInput() !== null && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
+                if (datepicker.input !== null && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
                     return;
                 }
-                var container = datepicker.getContainer();
-                container.innerHTML = '';
-                container.appendChild(this.createSkeleton(viewModel, datepicker));
+                datepicker.container.innerHTML = '';
+                datepicker.container.appendChild(this.createSkeleton(viewModel, datepicker));
             }
-            this.updateContainerElement(viewModel, datepicker.getInput());
-            this.updateCloseElement(viewModel, datepicker.getInput());
+            this.updateContainerElement(viewModel, datepicker.input);
+            this.updateCloseElement(viewModel, datepicker.input);
             this.updateResetElement(viewModel);
             this.updateGoBackElement(viewModel);
             this.updateGoForwardElement(viewModel);
@@ -1454,7 +1429,7 @@ var TheDatepicker;
             for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
                 options.push({
                     value: monthNumber,
-                    label: this.options.getTranslator().translateMonth(monthNumber)
+                    label: this.options.translator.translateMonth(monthNumber)
                 });
             }
             var selectElement = this.htmlHelper.createSelectInput(options, function (event, monthNumber) {
@@ -1483,7 +1458,7 @@ var TheDatepicker;
                 valuesCount += canGoToMonth ? 1 : 0;
             }
             this.monthSelect.value = currentMonth.toString();
-            this.monthElement.innerText = this.options.getTranslator().translateMonth(currentMonth);
+            this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
             this.monthSelect.style.display = valuesCount > 1 ? 'inline' : 'none';
             this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
         };
@@ -1564,7 +1539,7 @@ var TheDatepicker;
             if (dayOfWeek === TheDatepicker.DayOfWeek.Saturday || dayOfWeek === TheDatepicker.DayOfWeek.Sunday) {
                 this.htmlHelper.addClass(headerCell, 'weekend');
             }
-            headerCell.innerText = this.options.getTranslator().translateDayOfWeek(dayOfWeek);
+            headerCell.innerText = this.options.translator.translateDayOfWeek(dayOfWeek);
             return headerCell;
         };
         Template.prototype.createTableBodyElement = function (viewModel) {
@@ -1698,21 +1673,9 @@ var TheDatepicker;
                 go: [],
                 beforeGo: []
             };
-            this.setTemplate(new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper(this)));
-            this.setTranslator(new TheDatepicker.Translator());
+            this.translator = new TheDatepicker.Translator();
+            this.template = new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper(this));
         }
-        Options.prototype.setTemplate = function (template) {
-            if (!(template instanceof TheDatepicker.Template)) {
-                throw new Error('Template was expected to an instance of Template, but ' + template + ' given.');
-            }
-            this.template = template;
-        };
-        Options.prototype.setTranslator = function (translator) {
-            if (!(translator instanceof TheDatepicker.Translator)) {
-                throw new Error('Translator was expected to an instance of Translator, but ' + translator + ' given.');
-            }
-            this.translator = translator;
-        };
         Options.prototype.setHideOnBlur = function (value) {
             if (typeof value !== 'boolean') {
                 throw new Error('Whether to hide on blur was expected to be a boolean, but ' + value + ' given.');
@@ -1886,12 +1849,6 @@ var TheDatepicker;
         Options.prototype.offGo = function (listener) {
             if (listener === void 0) { listener = null; }
             this.offEventListener(EventType.Go, listener);
-        };
-        Options.prototype.getTemplate = function () {
-            return this.template;
-        };
-        Options.prototype.getTranslator = function () {
-            return this.translator;
         };
         Options.prototype.getInitialMonth = function () {
             var initialMonth = this.initialMonth !== null
