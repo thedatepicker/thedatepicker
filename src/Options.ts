@@ -62,7 +62,7 @@ namespace TheDatepicker {
 		private toggleSelection = false;
 		private allowEmpty = true;
 		private showDeselectButton = true;
-		private showResetButton = true;
+		private showResetButton = false;
 		private monthAsDropdown = true;
 		private yearAsDropdown = true;
 		private classesPrefix = 'the-datepicker-';
@@ -250,7 +250,7 @@ namespace TheDatepicker {
 		}
 
 		// Setting to true will show button for reseting datepicker to initial state.
-		// defaults to true
+		// defaults to false
 		public setShowResetButton(value: boolean): void {
 			this.showResetButton = !!value;
 		}

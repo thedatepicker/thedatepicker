@@ -1681,7 +1681,7 @@ var TheDatepicker;
             this.toggleSelection = false;
             this.allowEmpty = true;
             this.showDeselectButton = true;
-            this.showResetButton = true;
+            this.showResetButton = false;
             this.monthAsDropdown = true;
             this.yearAsDropdown = true;
             this.classesPrefix = 'the-datepicker-';
