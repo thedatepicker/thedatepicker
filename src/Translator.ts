@@ -1,6 +1,3 @@
-/// <reference path="DayOfWeek.ts" />
-/// <reference path="Month.ts" />
-
 namespace TheDatepicker {
 
 	export class Translator {
@@ -31,42 +28,21 @@ namespace TheDatepicker {
 		];
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
-			switch (dayOfWeek) {
-				case DayOfWeek.Monday:
-				case DayOfWeek.Tuesday:
-				case DayOfWeek.Wednesday:
-				case DayOfWeek.Thursday:
-				case DayOfWeek.Friday:
-				case DayOfWeek.Saturday:
-				case DayOfWeek.Sunday:
-					this.dayOfWeekTranslations[dayOfWeek] = translation;
-					break;
-
-				default:
-					throw new Error('Day of week was expected to be TheDatepicker.DayOfWeek constant, but ' + dayOfWeek + ' given.');
+			dayOfWeek = Helper.checkNumber('First day of week', dayOfWeek);
+			Helper.checkString('Translation', translation);
+			if (dayOfWeek < 0 || dayOfWeek > 6) {
+				throw new Error('Day of week was expected to be a number from 0 to 6.')
 			}
+			this.dayOfWeekTranslations[dayOfWeek] = translation;
 		}
 
 		public setMonthTranslation(month: Month, translation: string): void {
-			switch (month) {
-				case Month.January:
-				case Month.February:
-				case Month.March:
-				case Month.April:
-				case Month.May:
-				case Month.June:
-				case Month.July:
-				case Month.August:
-				case Month.September:
-				case Month.October:
-				case Month.November:
-				case Month.December:
-					this.monthTranslations[month] = translation;
-					break;
-
-				default:
-					throw new Error('Month was expected to be TheDatepicker.Month constant, but ' + month + ' given.');
+			month = Helper.checkNumber('Month', month);
+			Helper.checkString('Translation', translation);
+			if (month < 0 || month > 11) {
+				throw new Error('Month was expected to be a number from 0 to 11.')
 			}
+			this.monthTranslations[month] = translation;
 		}
 
 		public translateDayOfWeek(dayOfWeek: DayOfWeek): string {

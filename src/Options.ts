@@ -1,7 +1,5 @@
 /// <reference path="Template.ts" />
 /// <reference path="Translator.ts" />
-/// <reference path="DayOfWeek.ts" />
-/// <reference path="Month.ts" />
 /// <reference path="Day.ts" />
 /// <reference path="Helper.ts" />
 
@@ -96,11 +94,7 @@ namespace TheDatepicker {
 		// Works only when there an input exists.
 		// defaults to true
 		public setHideOnBlur(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether to hide on blur was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.hideOnBlur = value;
+			this.hideOnBlur = !!value;
 		}
 
 		// Setting to true will hide datepicker immediately after selecting a valid date.
@@ -108,11 +102,7 @@ namespace TheDatepicker {
 		// Works only when there an input exists.
 		// defaults to true
 		public setHideOnSelect(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether to hide on select was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.hideOnSelect = value;
+			this.hideOnSelect = !!value;
 		}
 
 		// Minimal date which can be selected (inclusive).
@@ -122,7 +112,7 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMinDate(date: Date | string | null): void {
-			const normalizedDate = this.normalizeDate(date, 'Min date');
+			const normalizedDate = Helper.normalizeDate('Min date', date);
 			this.checkConstraints(normalizedDate, this.maxDate);
 			this.minDate = normalizedDate;
 		}
@@ -134,7 +124,7 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMaxDate(date: Date | string | null): void {
-			const normalizedDate = this.normalizeDate(date, 'Max date');
+			const normalizedDate = Helper.normalizeDate('Max date', date);
 			this.checkConstraints(this.minDate, normalizedDate);
 			this.maxDate = normalizedDate;
 		}
@@ -146,7 +136,7 @@ namespace TheDatepicker {
 		// or null for current month
 		// defaults to current month
 		public setInitialMonth(month: Date | string | null): void {
-			this.initialMonth = this.normalizeDate(month, 'Initial month');
+			this.initialMonth = Helper.normalizeDate('Initial month', month);
 		}
 
 		// Preselected date.
@@ -154,7 +144,7 @@ namespace TheDatepicker {
 		// null for no value
 		// defaults to null
 		public setInitialDate(value: Date | string | null): void {
-			this.initialDate = this.normalizeDate(value, 'Initial date');
+			this.initialDate = Helper.normalizeDate('Initial date', value);
 		}
 
 		// Day of week when weeks start.
@@ -162,34 +152,17 @@ namespace TheDatepicker {
 		// or integer from 0 to 6; 0 = Sunday, 1 = Monday, ... 6 = Saturday
 		// defaults to Monday
 		public setFirstDayOfWeek(dayOfWeek: DayOfWeek): void {
-			switch (dayOfWeek) {
-				case DayOfWeek.Monday:
-				case DayOfWeek.Tuesday:
-				case DayOfWeek.Wednesday:
-				case DayOfWeek.Thursday:
-				case DayOfWeek.Friday:
-				case DayOfWeek.Saturday:
-				case DayOfWeek.Sunday:
-					this.firstDayOfWeek = dayOfWeek;
-					break;
-
-				default:
-					throw new Error('First day of week was expected to be TheDatepicker.DayOfWeek constant, but ' + dayOfWeek + ' given.');
+			dayOfWeek = Helper.checkNumber('First day of week', dayOfWeek);
+			if (dayOfWeek < 0 || dayOfWeek > 6) {
+				throw new Error('First day of week was expected to be a number from 0 to 6.')
 			}
+			this.firstDayOfWeek = dayOfWeek;
 		}
 
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not,
 		// or null to make available all days.
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
-			if (resolver === null) {
-				this.dateAvailabilityResolver = null;
-				return;
-			}
-
-			if (typeof resolver !== 'function') {
-				throw new Error('Date availability resolver was expected to be function or null, but ' + typeof resolver + ' given.');
-			}
-
+			Helper.checkFunction('Date availability resolver', resolver);
 			this.dateAvailabilityResolver = resolver;
 		}
 
@@ -197,29 +170,13 @@ namespace TheDatepicker {
 		// or null for default behavior.
 		// Default callback returns day number.
 		public setCellContentResolver(resolver: CellContentResolver | null): void {
-			if (resolver === null) {
-				this.cellContentResolver = null;
-				return;
-			}
-
-			if (typeof resolver !== 'function') {
-				throw new Error('Cell content resolver was expected to be function or null, but ' + typeof resolver + ' given.');
-			}
-
+			Helper.checkFunction('Cell content resolver', resolver);
 			this.cellContentResolver = resolver;
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
 		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
-			if (resolver === null) {
-				this.cellClassesResolver = null;
-				return;
-			}
-
-			if (typeof resolver !== 'function') {
-				throw new Error('Cell classes resolver was expected to be function or null, but ' + typeof resolver + ' given.');
-			}
-
+			Helper.checkFunction('Cell classes resolver', resolver);
 			this.cellClassesResolver = resolver;
 		}
 
@@ -238,42 +195,27 @@ namespace TheDatepicker {
 		// Works only when there an input exists.
 		// defaults to "j. n. Y"
 		public setInputFormat(format: string): void {
-			if (typeof format !== 'string' || format === '') {
-				throw new Error('Input format was expected to be a non empty string, but ' + (format === '' ? 'empty string' : typeof format) + ' given.');
-			}
-
+			Helper.checkString('Input format', format, true);
 			this.inputFormat = format;
 		}
 
 		// Setting to false will hide days which belongs to other months.
 		// defaults to false
 		public setDaysOutOfMonthVisible(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether are days out of month visible was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.daysOutOfMonthVisible = value;
+			this.daysOutOfMonthVisible = !!value;
 		}
 
 		// Setting to true will always render six rows despite of current month weeks count.
 		// defaults to false
 		public setFixedRowsCount(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether has fixed rows count was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.fixedRowsCount = value;
+			this.fixedRowsCount = !!value;
 		}
 
 		// Setting to true will make selection toggle, so click on selected day will deselects it.
 		// Works only when the setting AllowEmpty is set to true.
 		// defaults to false
 		public setToggleSelection(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether has toggle selection was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.toggleSelection = value;
+			this.toggleSelection = !!value;
 		}
 
 		// Setting to true will render a button inside an input, which deselects selected date.
@@ -281,61 +223,38 @@ namespace TheDatepicker {
 		// Works only when the setting AllowEmpty is set to true.
 		// defaults to true
 		public setShowDeselectButton(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether is deselect button shown was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.showDeselectButton = value;
+			this.showDeselectButton = !!value;
 		}
 
 		// Setting to false will disallow to deselect, in other words it always must be any day selected.
 		// When there is no initial date, current date (or nearest available one) will be preselected.
 		// defaults to true
 		public setAllowEmpty(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether has allowed empty was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.allowEmpty = value;
+			this.allowEmpty = !!value;
 		}
 
 		// Setting to true will show button for reseting datepicker to initial state.
 		// defaults to true
 		public setShowResetButton(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether is reset button shown was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.showResetButton = value;
+			this.showResetButton = !!value;
 		}
 
 		// Setting to true will render month as dropdown list (html select).
 		// defaults to true
 		public setMonthAsDropdown(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether is selectable month was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.monthAsDropdown = value;
+			this.monthAsDropdown = !!value;
 		}
 
 		// Setting to true will render year as dropdown list (html select).
 		// defaults to true
 		public setYearAsDropdown(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether is selectable year was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.yearAsDropdown = value;
+			this.yearAsDropdown = !!value;
 		}
 
 		// CSS classes of datepicker elements will be prefixed with given string.
 		// defaults to "the-datepicker-"
 		public setClassesPrefix(prefix: string): void {
-			if (typeof prefix !== 'string') {
-				throw new Error('Classes prefix was expected to be a string, but ' + typeof prefix + ' given.');
-			}
-
+			Helper.checkString('Prefix', prefix);
 			this.classesPrefix = prefix;
 		}
 
@@ -343,27 +262,19 @@ namespace TheDatepicker {
 		// Works only when the setting HideOnBlur is set to true.
 		// defaults to true
 		public setShowCloseButton(value: boolean): void {
-			if (typeof value !== 'boolean') {
-				throw new Error('Whether is close button shown was expected to be a boolean, but ' + value + ' given.');
-			}
-
-			this.showCloseButton = value;
+			this.showCloseButton = !!value;
 		}
 
 		// Limits (from - to) of year dropdown list.
 		// Works only when the setting YearAsDropdown is set to true.
 		// Default is from 1900 to 2100.
 		public setYearsSelectionLimits(from: number, to: number): void {
-			if (typeof from !== 'number' || typeof to !== 'number') {
-				throw new Error('Years selection limits was expected to be numbers, but ' + typeof from + ', ' + typeof to + ' given.');
-			}
-
-			if (isNaN(from) || isNaN(to)) {
-				throw new Error('Years selection limits was expected to be numbers, but NaN given.');
-			}
+			const parameterName = 'Years selection limits';
+			from = Helper.checkNumber(parameterName, from);
+			to = Helper.checkNumber(parameterName, to);
 
 			if (from > to) {
-				throw new Error('From cannot be higher than to, given from: ' + from + ', to: ' + to);
+				throw new Error(parameterName + ' - from cannot be higher than to.');
 			}
 
 			this.yearsSelectionLimits = {
@@ -375,28 +286,28 @@ namespace TheDatepicker {
 		// Sets html for go back button.
 		// Defaults to "&lt;"
 		public setGoBackHtml(html: string): void {
-			this.checkHtmlString(html);
+			Helper.checkString('Html', html);
 			this.goBackHtml = html;
 		}
 
 		// Sets html for go forward button.
 		// Defaults to "&gt;"
 		public setGoForwardHtml(html: string): void {
-			this.checkHtmlString(html);
+			Helper.checkString('Html', html);
 			this.goForwardHtml = html;
 		}
 
 		// Sets html for close button.
 		// Defaults to "&times;"
 		public setCloseHtml(html: string): void {
-			this.checkHtmlString(html);
+			Helper.checkString('Html', html);
 			this.closeHtml = html;
 		}
 
 		// Sets html for reset button.
 		// Defaults to "&olarr;"
 		public setResetHtml(html: string): void {
-			this.checkHtmlString(html);
+			Helper.checkString('Html', html);
 			this.resetHtml = html;
 		}
 
@@ -647,25 +558,13 @@ namespace TheDatepicker {
 			return this.inputFormat;
 		}
 
-		private normalizeDate(value: Date | string | null, parameterName: string): Date | null {
-			try {
-				return Helper.normalizeDate(value);
-			} catch (error) {
-				if (!(error instanceof InvalidDateException)) {
-					throw error;
-				}
-
-				throw new Error(parameterName + ' was expected to be a valid Date string or valid instance of Date or null, ' + value + ' given.');
-			}
-		}
-
 		private checkConstraints(minDate: Date | null, maxDate: Date | null): void {
 			if (
 				minDate !== null
 				&& maxDate !== null
 				&& minDate.getTime() > maxDate.getTime()
 			) {
-				throw new Error('Min date cannot be higher then max date, given min: ' + minDate.toString() + ', max: ' + maxDate.toString());
+				throw new Error('Min date cannot be higher then max date.');
 			}
 		}
 
@@ -702,17 +601,12 @@ namespace TheDatepicker {
 		}
 
 		public onEventListener(eventType: EventType, listener: AnyEvent) {
-			if (typeof listener !== 'function') {
-				throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-			}
-
+			Helper.checkFunction('Event listener', listener, false);
 			this.listeners[eventType].push(listener);
 		}
 
 		private offEventListener(eventType: EventType, listener: OneOfEvent | null): void {
-			if (listener !== null && typeof listener !== 'function') {
-				throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-			}
+			Helper.checkFunction('Event listener', listener);
 
 			if (listener === null) {
 				this.listeners[eventType] = [];
@@ -735,12 +629,6 @@ namespace TheDatepicker {
 			}
 
 			return true;
-		}
-
-		private checkHtmlString(html: string): void {
-			if (typeof html !== 'string') {
-				throw new Error('Html was expected to be a string, but ' + typeof html + ' given.');
-			}
 		}
 
 	}

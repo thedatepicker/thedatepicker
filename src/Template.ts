@@ -31,7 +31,6 @@ namespace TheDatepicker {
 		private daysContentsElements: HTMLDayContentElement[][] = [];
 
 		public constructor(options: Options, htmlHelper: HtmlHelper) {
-			// todo customizovat CSS třídy
 			this.options = options;
 			this.htmlHelper = htmlHelper;
 		}
@@ -106,7 +105,6 @@ namespace TheDatepicker {
 
 		protected updateResetElement(viewModel: ViewModel): void {
 			this.resetElement.style.display = this.options.isResetButtonShown() ? 'block' : 'none';
-			// todo visibility hidden pokud je v resetovaném stavu
 		}
 
 		protected createCloseElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {

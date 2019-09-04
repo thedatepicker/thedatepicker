@@ -1,5 +1,30 @@
 namespace TheDatepicker {
 
+	export enum DayOfWeek {
+		Monday = 1,
+		Tuesday = 2,
+		Wednesday = 3,
+		Thursday = 4,
+		Friday = 5,
+		Saturday = 6,
+		Sunday = 0,
+	}
+
+	export enum Month {
+		January = 0,
+		February = 1,
+		March = 2,
+		April = 3,
+		May = 4,
+		June = 5,
+		July = 6,
+		August = 7,
+		September = 8,
+		October = 9,
+		November = 10,
+		December = 11,
+	}
+
 	export enum KeyCode {
 		Enter = 13,
 		Space = 32,
@@ -18,10 +43,6 @@ namespace TheDatepicker {
 		KeyUp = 'keyup',
 	}
 
-	export class InvalidDateException {
-
-	}
-
 	export class Helper {
 
 		public static resetTime(date: Date | null): Date | null {
@@ -37,7 +58,7 @@ namespace TheDatepicker {
 			return date;
 		}
 
-		public static normalizeDate(value: Date | string | null): Date | null {
+		public static normalizeDate(parameterName: string, value: Date | string | null): Date | null {
 			if (value === null) {
 				return null;
 			}
@@ -52,7 +73,7 @@ namespace TheDatepicker {
 				return Helper.resetTime(new Date(value.getTime()));
 			}
 
-			throw new InvalidDateException();
+			throw new Error(parameterName + 'was expected to be a valid Date string or valid Date or null.');
 		}
 
 		public static isElement(element: HTMLElement): boolean {
@@ -103,6 +124,26 @@ namespace TheDatepicker {
 				// @ts-ignore
 				element[listenerProperty] = originalListener;
 			};
+		}
+
+		public static checkString(parameterName: string, value: string, checkNonEmpty = false): void {
+			if (typeof value !== 'string' || (checkNonEmpty && value === '')) {
+				throw new Error(parameterName + ' was expected to be a' + (checkNonEmpty ? ' non empty' : '') + ' string.');
+			}
+		}
+
+		public static checkNumber(parameterName: string, value: number): number {
+			value = typeof value === 'string' ? parseInt(value) : value;
+			if (typeof value !== 'number' || isNaN(value)) {
+				throw new Error(parameterName + ' was expected to be a valid number.');
+			}
+			return value;
+		}
+
+		public static checkFunction(parameterName: string, value: Function, isNullable = true): void {
+			if ((!isNullable || value !== null) && typeof value !== 'function') {
+				throw new Error(parameterName + ' was expected to be a function' + (isNullable ? ' or null' : '') + '.');
+			}
 		}
 
 	}

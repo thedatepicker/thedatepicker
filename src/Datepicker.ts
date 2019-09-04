@@ -16,6 +16,7 @@ namespace TheDatepicker {
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo nadesignovat v relativních jednotkách ať je to hezký na všech obrazovkách?
+	// todo např třída CannotParseDateException se neminifikuje
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -233,15 +234,7 @@ namespace TheDatepicker {
 		}
 
 		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
-			try {
-				return this.viewModel.selectDay(event, Helper.normalizeDate(date), doUpdateMonth);
-			} catch (error) {
-				if (!(error instanceof InvalidDateException)) {
-					throw error;
-				}
-
-				throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.')
-			}
+			return this.viewModel.selectDay(event, Helper.normalizeDate('Date', date), doUpdateMonth);
 		}
 
 		public getSelectedDate(): Date | null {
@@ -249,15 +242,7 @@ namespace TheDatepicker {
 		}
 
 		public goToMonth(month: Date | string, event: Event | null = null): boolean {
-			try {
-				return this.viewModel.goToMonth(event, Helper.normalizeDate(month));
-			} catch (error) {
-				if (!(error instanceof InvalidDateException)) {
-					throw error;
-				}
-
-				throw new Error('Month was expected to be a valid Date string or valid instance of Date, ' + month + ' given.')
-			}
+			return this.viewModel.goToMonth(event, Helper.normalizeDate('Month', month));
 		}
 
 		public readInput(event: Event | null = null): boolean {

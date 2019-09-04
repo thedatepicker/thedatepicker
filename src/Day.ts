@@ -1,5 +1,3 @@
-/// <reference path="DayOfWeek.ts" />
-
 namespace TheDatepicker {
 
 	export class Day {

@@ -71,6 +71,17 @@
 					<label>datepicker.options.setInputFormat(<input type="text" size="15" id="inputFormat" value="j. n. Y">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setFirstDayOfWeek(<select id="firstDayOfWeek">
+							<option value="1" selected="selected">Monday</option>
+							<option value="2">Tuesday</option>
+							<option value="3">Wednesday</option>
+							<option value="4">Thursday</option>
+							<option value="5">Friday</option>
+							<option value="6">Saturday</option>
+							<option value="0">Sunday</option>
+						</select>);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setMinDate(<input type="text" size="15" id="minDate">);</label>
 				</li>
 				<li>
@@ -250,6 +261,13 @@
 			inputFormatInput.onchange = function () {
 				updateSetting(inputFormatInput, function () {
 					datepicker.options.setInputFormat(inputFormatInput.value);
+				});
+			};
+
+			var firstDayOfWeekInput = document.getElementById('firstDayOfWeek');
+			firstDayOfWeekInput.onchange = function () {
+				updateSetting(firstDayOfWeekInput, function () {
+					datepicker.options.setFirstDayOfWeek(firstDayOfWeekInput.value);
 				});
 			};
 

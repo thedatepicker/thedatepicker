@@ -1,36 +1,5 @@
 var TheDatepicker;
 (function (TheDatepicker) {
-    var DayOfWeek;
-    (function (DayOfWeek) {
-        DayOfWeek[DayOfWeek["Monday"] = 1] = "Monday";
-        DayOfWeek[DayOfWeek["Tuesday"] = 2] = "Tuesday";
-        DayOfWeek[DayOfWeek["Wednesday"] = 3] = "Wednesday";
-        DayOfWeek[DayOfWeek["Thursday"] = 4] = "Thursday";
-        DayOfWeek[DayOfWeek["Friday"] = 5] = "Friday";
-        DayOfWeek[DayOfWeek["Saturday"] = 6] = "Saturday";
-        DayOfWeek[DayOfWeek["Sunday"] = 0] = "Sunday";
-    })(DayOfWeek = TheDatepicker.DayOfWeek || (TheDatepicker.DayOfWeek = {}));
-})(TheDatepicker || (TheDatepicker = {}));
-var TheDatepicker;
-(function (TheDatepicker) {
-    var Month;
-    (function (Month) {
-        Month[Month["January"] = 0] = "January";
-        Month[Month["February"] = 1] = "February";
-        Month[Month["March"] = 2] = "March";
-        Month[Month["April"] = 3] = "April";
-        Month[Month["May"] = 4] = "May";
-        Month[Month["June"] = 5] = "June";
-        Month[Month["July"] = 6] = "July";
-        Month[Month["August"] = 7] = "August";
-        Month[Month["September"] = 8] = "September";
-        Month[Month["October"] = 9] = "October";
-        Month[Month["November"] = 10] = "November";
-        Month[Month["December"] = 11] = "December";
-    })(Month = TheDatepicker.Month || (TheDatepicker.Month = {}));
-})(TheDatepicker || (TheDatepicker = {}));
-var TheDatepicker;
-(function (TheDatepicker) {
     var Translator = (function () {
         function Translator() {
             this.dayOfWeekTranslations = [
@@ -58,39 +27,20 @@ var TheDatepicker;
             ];
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
-            switch (dayOfWeek) {
-                case TheDatepicker.DayOfWeek.Monday:
-                case TheDatepicker.DayOfWeek.Tuesday:
-                case TheDatepicker.DayOfWeek.Wednesday:
-                case TheDatepicker.DayOfWeek.Thursday:
-                case TheDatepicker.DayOfWeek.Friday:
-                case TheDatepicker.DayOfWeek.Saturday:
-                case TheDatepicker.DayOfWeek.Sunday:
-                    this.dayOfWeekTranslations[dayOfWeek] = translation;
-                    break;
-                default:
-                    throw new Error('Day of week was expected to be TheDatepicker.DayOfWeek constant, but ' + dayOfWeek + ' given.');
+            dayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek);
+            TheDatepicker.Helper.checkString('Translation', translation);
+            if (dayOfWeek < 0 || dayOfWeek > 6) {
+                throw new Error('Day of week was expected to be a number from 0 to 6.');
             }
+            this.dayOfWeekTranslations[dayOfWeek] = translation;
         };
         Translator.prototype.setMonthTranslation = function (month, translation) {
-            switch (month) {
-                case TheDatepicker.Month.January:
-                case TheDatepicker.Month.February:
-                case TheDatepicker.Month.March:
-                case TheDatepicker.Month.April:
-                case TheDatepicker.Month.May:
-                case TheDatepicker.Month.June:
-                case TheDatepicker.Month.July:
-                case TheDatepicker.Month.August:
-                case TheDatepicker.Month.September:
-                case TheDatepicker.Month.October:
-                case TheDatepicker.Month.November:
-                case TheDatepicker.Month.December:
-                    this.monthTranslations[month] = translation;
-                    break;
-                default:
-                    throw new Error('Month was expected to be TheDatepicker.Month constant, but ' + month + ' given.');
+            month = TheDatepicker.Helper.checkNumber('Month', month);
+            TheDatepicker.Helper.checkString('Translation', translation);
+            if (month < 0 || month > 11) {
+                throw new Error('Month was expected to be a number from 0 to 11.');
             }
+            this.monthTranslations[month] = translation;
         };
         Translator.prototype.translateDayOfWeek = function (dayOfWeek) {
             return this.dayOfWeekTranslations[dayOfWeek];
@@ -521,30 +471,14 @@ var TheDatepicker;
         Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
             if (doUpdateMonth === void 0) { doUpdateMonth = true; }
             if (event === void 0) { event = null; }
-            try {
-                return this.viewModel.selectDay(event, TheDatepicker.Helper.normalizeDate(date), doUpdateMonth);
-            }
-            catch (error) {
-                if (!(error instanceof TheDatepicker.InvalidDateException)) {
-                    throw error;
-                }
-                throw new Error('Date was expected to be a valid Date string or valid instance of Date or null, ' + date + ' given.');
-            }
+            return this.viewModel.selectDay(event, TheDatepicker.Helper.normalizeDate('Date', date), doUpdateMonth);
         };
         Datepicker.prototype.getSelectedDate = function () {
             return this.viewModel.selectedDate;
         };
         Datepicker.prototype.goToMonth = function (month, event) {
             if (event === void 0) { event = null; }
-            try {
-                return this.viewModel.goToMonth(event, TheDatepicker.Helper.normalizeDate(month));
-            }
-            catch (error) {
-                if (!(error instanceof TheDatepicker.InvalidDateException)) {
-                    throw error;
-                }
-                throw new Error('Month was expected to be a valid Date string or valid instance of Date, ' + month + ' given.');
-            }
+            return this.viewModel.goToMonth(event, TheDatepicker.Helper.normalizeDate('Month', month));
         };
         Datepicker.prototype.readInput = function (event) {
             if (event === void 0) { event = null; }
@@ -734,6 +668,31 @@ var TheDatepicker;
 })(TheDatepicker || (TheDatepicker = {}));
 var TheDatepicker;
 (function (TheDatepicker) {
+    var DayOfWeek;
+    (function (DayOfWeek) {
+        DayOfWeek[DayOfWeek["Monday"] = 1] = "Monday";
+        DayOfWeek[DayOfWeek["Tuesday"] = 2] = "Tuesday";
+        DayOfWeek[DayOfWeek["Wednesday"] = 3] = "Wednesday";
+        DayOfWeek[DayOfWeek["Thursday"] = 4] = "Thursday";
+        DayOfWeek[DayOfWeek["Friday"] = 5] = "Friday";
+        DayOfWeek[DayOfWeek["Saturday"] = 6] = "Saturday";
+        DayOfWeek[DayOfWeek["Sunday"] = 0] = "Sunday";
+    })(DayOfWeek = TheDatepicker.DayOfWeek || (TheDatepicker.DayOfWeek = {}));
+    var Month;
+    (function (Month) {
+        Month[Month["January"] = 0] = "January";
+        Month[Month["February"] = 1] = "February";
+        Month[Month["March"] = 2] = "March";
+        Month[Month["April"] = 3] = "April";
+        Month[Month["May"] = 4] = "May";
+        Month[Month["June"] = 5] = "June";
+        Month[Month["July"] = 6] = "July";
+        Month[Month["August"] = 7] = "August";
+        Month[Month["September"] = 8] = "September";
+        Month[Month["October"] = 9] = "October";
+        Month[Month["November"] = 10] = "November";
+        Month[Month["December"] = 11] = "December";
+    })(Month = TheDatepicker.Month || (TheDatepicker.Month = {}));
     var KeyCode;
     (function (KeyCode) {
         KeyCode[KeyCode["Enter"] = 13] = "Enter";
@@ -752,12 +711,6 @@ var TheDatepicker;
         ListenerType["KeyDown"] = "keydown";
         ListenerType["KeyUp"] = "keyup";
     })(ListenerType = TheDatepicker.ListenerType || (TheDatepicker.ListenerType = {}));
-    var InvalidDateException = (function () {
-        function InvalidDateException() {
-        }
-        return InvalidDateException;
-    }());
-    TheDatepicker.InvalidDateException = InvalidDateException;
     var Helper = (function () {
         function Helper() {
         }
@@ -771,7 +724,7 @@ var TheDatepicker;
             date.setMilliseconds(0);
             return date;
         };
-        Helper.normalizeDate = function (value) {
+        Helper.normalizeDate = function (parameterName, value) {
             if (value === null) {
                 return null;
             }
@@ -784,7 +737,7 @@ var TheDatepicker;
             else if (Helper.isValidDate(value)) {
                 return Helper.resetTime(new Date(value.getTime()));
             }
-            throw new InvalidDateException();
+            throw new Error(parameterName + 'was expected to be a valid Date string or valid Date or null.');
         };
         Helper.isElement = function (element) {
             return typeof element === 'object'
@@ -823,6 +776,25 @@ var TheDatepicker;
             return function () {
                 element[listenerProperty] = originalListener;
             };
+        };
+        Helper.checkString = function (parameterName, value, checkNonEmpty) {
+            if (checkNonEmpty === void 0) { checkNonEmpty = false; }
+            if (typeof value !== 'string' || (checkNonEmpty && value === '')) {
+                throw new Error(parameterName + ' was expected to be a' + (checkNonEmpty ? ' non empty' : '') + ' string.');
+            }
+        };
+        Helper.checkNumber = function (parameterName, value) {
+            value = typeof value === 'string' ? parseInt(value) : value;
+            if (typeof value !== 'number' || isNaN(value)) {
+                throw new Error(parameterName + ' was expected to be a valid number.');
+            }
+            return value;
+        };
+        Helper.checkFunction = function (parameterName, value, isNullable) {
+            if (isNullable === void 0) { isNullable = true; }
+            if ((!isNullable || value !== null) && typeof value !== 'function') {
+                throw new Error(parameterName + ' was expected to be a function' + (isNullable ? ' or null' : '') + '.');
+            }
         };
         return Helper;
     }());
@@ -1693,153 +1665,87 @@ var TheDatepicker;
             this.template = new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper(this));
         }
         Options.prototype.setHideOnBlur = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether to hide on blur was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.hideOnBlur = value;
+            this.hideOnBlur = !!value;
         };
         Options.prototype.setHideOnSelect = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether to hide on select was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.hideOnSelect = value;
+            this.hideOnSelect = !!value;
         };
         Options.prototype.setMinDate = function (date) {
-            var normalizedDate = this.normalizeDate(date, 'Min date');
+            var normalizedDate = TheDatepicker.Helper.normalizeDate('Min date', date);
             this.checkConstraints(normalizedDate, this.maxDate);
             this.minDate = normalizedDate;
         };
         Options.prototype.setMaxDate = function (date) {
-            var normalizedDate = this.normalizeDate(date, 'Max date');
+            var normalizedDate = TheDatepicker.Helper.normalizeDate('Max date', date);
             this.checkConstraints(this.minDate, normalizedDate);
             this.maxDate = normalizedDate;
         };
         Options.prototype.setInitialMonth = function (month) {
-            this.initialMonth = this.normalizeDate(month, 'Initial month');
+            this.initialMonth = TheDatepicker.Helper.normalizeDate('Initial month', month);
         };
         Options.prototype.setInitialDate = function (value) {
-            this.initialDate = this.normalizeDate(value, 'Initial date');
+            this.initialDate = TheDatepicker.Helper.normalizeDate('Initial date', value);
         };
         Options.prototype.setFirstDayOfWeek = function (dayOfWeek) {
-            switch (dayOfWeek) {
-                case TheDatepicker.DayOfWeek.Monday:
-                case TheDatepicker.DayOfWeek.Tuesday:
-                case TheDatepicker.DayOfWeek.Wednesday:
-                case TheDatepicker.DayOfWeek.Thursday:
-                case TheDatepicker.DayOfWeek.Friday:
-                case TheDatepicker.DayOfWeek.Saturday:
-                case TheDatepicker.DayOfWeek.Sunday:
-                    this.firstDayOfWeek = dayOfWeek;
-                    break;
-                default:
-                    throw new Error('First day of week was expected to be TheDatepicker.DayOfWeek constant, but ' + dayOfWeek + ' given.');
+            dayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek);
+            if (dayOfWeek < 0 || dayOfWeek > 6) {
+                throw new Error('First day of week was expected to be a number from 0 to 6.');
             }
+            this.firstDayOfWeek = dayOfWeek;
         };
         Options.prototype.setDateAvailabilityResolver = function (resolver) {
-            if (resolver === null) {
-                this.dateAvailabilityResolver = null;
-                return;
-            }
-            if (typeof resolver !== 'function') {
-                throw new Error('Date availability resolver was expected to be function or null, but ' + typeof resolver + ' given.');
-            }
+            TheDatepicker.Helper.checkFunction('Date availability resolver', resolver);
             this.dateAvailabilityResolver = resolver;
         };
         Options.prototype.setCellContentResolver = function (resolver) {
-            if (resolver === null) {
-                this.cellContentResolver = null;
-                return;
-            }
-            if (typeof resolver !== 'function') {
-                throw new Error('Cell content resolver was expected to be function or null, but ' + typeof resolver + ' given.');
-            }
+            TheDatepicker.Helper.checkFunction('Cell content resolver', resolver);
             this.cellContentResolver = resolver;
         };
         Options.prototype.setCellClassesResolver = function (resolver) {
-            if (resolver === null) {
-                this.cellClassesResolver = null;
-                return;
-            }
-            if (typeof resolver !== 'function') {
-                throw new Error('Cell classes resolver was expected to be function or null, but ' + typeof resolver + ' given.');
-            }
+            TheDatepicker.Helper.checkFunction('Cell classes resolver', resolver);
             this.cellClassesResolver = resolver;
         };
         Options.prototype.setInputFormat = function (format) {
-            if (typeof format !== 'string' || format === '') {
-                throw new Error('Input format was expected to be a non empty string, but ' + (format === '' ? 'empty string' : typeof format) + ' given.');
-            }
+            TheDatepicker.Helper.checkString('Input format', format, true);
             this.inputFormat = format;
         };
         Options.prototype.setDaysOutOfMonthVisible = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether are days out of month visible was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.daysOutOfMonthVisible = value;
+            this.daysOutOfMonthVisible = !!value;
         };
         Options.prototype.setFixedRowsCount = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether has fixed rows count was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.fixedRowsCount = value;
+            this.fixedRowsCount = !!value;
         };
         Options.prototype.setToggleSelection = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether has toggle selection was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.toggleSelection = value;
+            this.toggleSelection = !!value;
         };
         Options.prototype.setShowDeselectButton = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether is deselect button shown was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.showDeselectButton = value;
+            this.showDeselectButton = !!value;
         };
         Options.prototype.setAllowEmpty = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether has allowed empty was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.allowEmpty = value;
+            this.allowEmpty = !!value;
         };
         Options.prototype.setShowResetButton = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether is reset button shown was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.showResetButton = value;
+            this.showResetButton = !!value;
         };
         Options.prototype.setMonthAsDropdown = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether is selectable month was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.monthAsDropdown = value;
+            this.monthAsDropdown = !!value;
         };
         Options.prototype.setYearAsDropdown = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether is selectable year was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.yearAsDropdown = value;
+            this.yearAsDropdown = !!value;
         };
         Options.prototype.setClassesPrefix = function (prefix) {
-            if (typeof prefix !== 'string') {
-                throw new Error('Classes prefix was expected to be a string, but ' + typeof prefix + ' given.');
-            }
+            TheDatepicker.Helper.checkString('Prefix', prefix);
             this.classesPrefix = prefix;
         };
         Options.prototype.setShowCloseButton = function (value) {
-            if (typeof value !== 'boolean') {
-                throw new Error('Whether is close button shown was expected to be a boolean, but ' + value + ' given.');
-            }
-            this.showCloseButton = value;
+            this.showCloseButton = !!value;
         };
         Options.prototype.setYearsSelectionLimits = function (from, to) {
-            if (typeof from !== 'number' || typeof to !== 'number') {
-                throw new Error('Years selection limits was expected to be numbers, but ' + typeof from + ', ' + typeof to + ' given.');
-            }
-            if (isNaN(from) || isNaN(to)) {
-                throw new Error('Years selection limits was expected to be numbers, but NaN given.');
-            }
+            var parameterName = 'Years selection limits';
+            from = TheDatepicker.Helper.checkNumber(parameterName, from);
+            to = TheDatepicker.Helper.checkNumber(parameterName, to);
             if (from > to) {
-                throw new Error('From cannot be higher than to, given from: ' + from + ', to: ' + to);
+                throw new Error(parameterName + ' - from cannot be higher than to.');
             }
             this.yearsSelectionLimits = {
                 from: from,
@@ -1847,19 +1753,19 @@ var TheDatepicker;
             };
         };
         Options.prototype.setGoBackHtml = function (html) {
-            this.checkHtmlString(html);
+            TheDatepicker.Helper.checkString('Html', html);
             this.goBackHtml = html;
         };
         Options.prototype.setGoForwardHtml = function (html) {
-            this.checkHtmlString(html);
+            TheDatepicker.Helper.checkString('Html', html);
             this.goForwardHtml = html;
         };
         Options.prototype.setCloseHtml = function (html) {
-            this.checkHtmlString(html);
+            TheDatepicker.Helper.checkString('Html', html);
             this.closeHtml = html;
         };
         Options.prototype.setResetHtml = function (html) {
-            this.checkHtmlString(html);
+            TheDatepicker.Helper.checkString('Html', html);
             this.resetHtml = html;
         };
         Options.prototype.onBeforeSelect = function (listener) {
@@ -2048,22 +1954,11 @@ var TheDatepicker;
         Options.prototype.getInputFormat = function () {
             return this.inputFormat;
         };
-        Options.prototype.normalizeDate = function (value, parameterName) {
-            try {
-                return TheDatepicker.Helper.normalizeDate(value);
-            }
-            catch (error) {
-                if (!(error instanceof TheDatepicker.InvalidDateException)) {
-                    throw error;
-                }
-                throw new Error(parameterName + ' was expected to be a valid Date string or valid instance of Date or null, ' + value + ' given.');
-            }
-        };
         Options.prototype.checkConstraints = function (minDate, maxDate) {
             if (minDate !== null
                 && maxDate !== null
                 && minDate.getTime() > maxDate.getTime()) {
-                throw new Error('Min date cannot be higher then max date, given min: ' + minDate.toString() + ', max: ' + maxDate.toString());
+                throw new Error('Min date cannot be higher then max date.');
             }
         };
         Options.prototype.calculateMonthCorrection = function (month) {
@@ -2093,15 +1988,11 @@ var TheDatepicker;
             return null;
         };
         Options.prototype.onEventListener = function (eventType, listener) {
-            if (typeof listener !== 'function') {
-                throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-            }
+            TheDatepicker.Helper.checkFunction('Event listener', listener, false);
             this.listeners[eventType].push(listener);
         };
         Options.prototype.offEventListener = function (eventType, listener) {
-            if (listener !== null && typeof listener !== 'function') {
-                throw new Error('Event listener was expected to be function, but ' + typeof listener + ' given.');
-            }
+            TheDatepicker.Helper.checkFunction('Event listener', listener);
             if (listener === null) {
                 this.listeners[eventType] = [];
             }
@@ -2122,11 +2013,6 @@ var TheDatepicker;
                 }
             }
             return true;
-        };
-        Options.prototype.checkHtmlString = function (html) {
-            if (typeof html !== 'string') {
-                throw new Error('Html was expected to be a string, but ' + typeof html + ' given.');
-            }
         };
         return Options;
     }());
