@@ -23,15 +23,18 @@ namespace TheDatepicker {
 			private readonly options: Options,
 			private readonly datepicker: Datepicker
 		) {
-			const today = new Date();
-			Helper.resetTime(today);
-			this.today = today;
+			this.today = Helper.resetTime(new Date());
 		}
 
 		public render(): void {
 			if (this.selectedDate !== null) {
 				if (!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate)) {
-					this.selectDay(null, null, false);
+					if (this.selectDay(null, null, false)) {
+						return;
+					}
+				}
+			} else if (!this.options.isAllowedEmpty()) {
+				if (this.selectDay(null, this.options.getInitialDate(), false)) {
 					return;
 				}
 			}
@@ -106,9 +109,8 @@ namespace TheDatepicker {
 		}
 
 		public goToMonth(event: Event | null, month: Date, doCancelHighlight = true): boolean {
-			month = new Date(month.getTime());
+			month = Helper.resetTime(new Date(month.getTime()));
 			month.setDate(1);
-			Helper.resetTime(month);
 
 			if (month.getTime() === this.getCurrentMonth().getTime() || !this.canGoToMonth(month)) {
 				return false;
@@ -260,6 +262,10 @@ namespace TheDatepicker {
 		}
 
 		public cancelSelection(event: Event | null): boolean {
+			if (!this.options.isAllowedEmpty()) {
+				return false;
+			}
+
 			if (this.selectedDate === null) {
 				return false;
 			}
@@ -402,8 +408,7 @@ namespace TheDatepicker {
 
 		// todo udělat customizovatelný + customizovatelný classy pro cell
 		private createDay(date: Date): Day {
-			date = new Date(date.getTime());
-			Helper.resetTime(date);
+			date = Helper.resetTime(new Date(date.getTime()));
 
 			const day = new Day(date);
 			day.isToday = date.getTime() === this.today.getTime();

@@ -58,6 +58,7 @@ namespace TheDatepicker {
 		private daysOutOfMonthVisible = false;
 		private fixedRowsCount = false;
 		private toggleSelection = false;
+		private allowEmpty = true;
 		private showResetButton = true;
 		private showCloseButton = true;
 		private yearsSelectionLimits: NumbersRange = {
@@ -255,6 +256,7 @@ namespace TheDatepicker {
 		}
 
 		// Setting to true will make selection toggle, so click on selected day will deselects it.
+		// Works only when the setting AllowEmpty is set to true.
 		// defaults to false
 		public setToggleSelection(value: boolean): void {
 			if (typeof value !== 'boolean') {
@@ -262,6 +264,17 @@ namespace TheDatepicker {
 			}
 
 			this.toggleSelection = value;
+		}
+
+		// Setting to false will disallow to deselect, in other words it always must be any day selected.
+		// When there is no initial date, current date (or nearest available one) will be preselected.
+		// defaults to true
+		public setAllowEmpty(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether has allowed empty was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.allowEmpty = value;
 		}
 
 		// Setting to true will show button for reseting datepicker to initial state.
@@ -381,10 +394,9 @@ namespace TheDatepicker {
 				: (
 					this.initialDate !== null
 						? new Date(this.initialDate.getTime())
-						: new Date()
+						: Helper.resetTime(new Date())
 				);
 			initialMonth.setDate(1);
-			Helper.resetTime(initialMonth);
 
 			return this.correctMonth(initialMonth);
 		}
@@ -399,25 +411,54 @@ namespace TheDatepicker {
 		}
 
 		public getInitialDate(): Date | null {
-			if (
-				this.initialDate === null
-				|| !this.isDateInValidity(this.initialDate)
-				|| !this.isDateAvailable(this.initialDate)
-			) {
-				return null;
+			if (this.isAllowedEmpty()) {
+				return this.initialDate !== null && this.isDateInValidity(this.initialDate) && this.isDateAvailable(this.initialDate)
+					? this.initialDate
+					: null;
 			}
 
-			return this.initialDate;
+			let initialDate = this.initialDate !== null ? new Date(this.initialDate.getTime()) : Helper.resetTime(new Date());
+			initialDate = this.correctDate(initialDate);
+
+			if (this.isDateAvailable(initialDate)) {
+				return initialDate;
+			}
+
+			let maxLoops = 150; // infinite loop prevention
+			let increasedDate: Date | null = initialDate;
+			let decreasedDate: Date | null = new Date(initialDate.getTime());
+			do {
+				if (increasedDate !== null) {
+					increasedDate.setDate(increasedDate.getDate() + 1);
+					if (this.maxDate !== null && increasedDate.getTime() > this.maxDate.getTime()) {
+						increasedDate = null;
+					} else if (this.isDateAvailable(increasedDate)) {
+						return increasedDate;
+					}
+				}
+
+				if (decreasedDate !== null) {
+					decreasedDate.setDate(decreasedDate.getDate() - 1);
+					if (this.minDate !== null && decreasedDate.getTime() < this.minDate.getTime()) {
+						decreasedDate = null;
+					} else if (this.isDateAvailable(decreasedDate)) {
+						return decreasedDate;
+					}
+				}
+
+				maxLoops--;
+			} while ((increasedDate !== null || decreasedDate !== null) && maxLoops > 0);
+
+			return null;
 		}
 
 		public isDateInValidity(date: Date): boolean {
-			return (
-				this.minDate === null
-				|| date.getTime() >= this.minDate.getTime()
-			) && (
-				this.maxDate === null
-				|| date.getTime() <= this.maxDate.getTime()
-			);
+			return this.calculateDateCorrection(date) === null;
+		}
+
+		public correctDate(date: Date): Date {
+			const correctDate = this.calculateDateCorrection(date);
+			return correctDate !== null ? correctDate : date;
 		}
 
 		public getFirstDayOfWeek(): DayOfWeek {
@@ -434,6 +475,10 @@ namespace TheDatepicker {
 
 		public hasToggleSelection(): boolean {
 			return this.toggleSelection;
+		}
+
+		public isAllowedEmpty(): boolean {
+			return this.allowEmpty;
 		}
 
 		public isResetButtonShown(): boolean {
@@ -458,7 +503,7 @@ namespace TheDatepicker {
 
 		public isDateAvailable(date: Date): boolean {
 			if (this.dateAvailabilityResolver !== null) {
-				return this.dateAvailabilityResolver(date);
+				return this.dateAvailabilityResolver(new Date(date.getTime()));
 			}
 
 			return true;
@@ -510,7 +555,7 @@ namespace TheDatepicker {
 			if (this.minDate !== null) {
 				const minMonth = new Date(this.minDate.getTime());
 				minMonth.setDate(1);
-				if (month < minMonth) {
+				if (month.getTime() < minMonth.getTime()) {
 					return minMonth;
 				}
 			}
@@ -518,9 +563,21 @@ namespace TheDatepicker {
 			if (this.maxDate !== null) {
 				const maxMonth = new Date(this.maxDate.getTime());
 				maxMonth.setDate(1);
-				if (month > maxMonth) {
+				if (month.getTime() > maxMonth.getTime()) {
 					return maxMonth;
 				}
+			}
+
+			return null;
+		}
+
+		private calculateDateCorrection(date: Date): Date | null {
+			if (this.minDate !== null && date.getTime() < this.minDate.getTime()) {
+				return new Date(this.minDate.getTime());
+			}
+
+			if (this.maxDate !== null && date.getTime() > this.maxDate.getTime()) {
+				return new Date(this.maxDate.getTime());
 			}
 
 			return null;

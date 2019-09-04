@@ -47,6 +47,9 @@
 		<aside>
 			<ul class="settings">
 				<li>
+					var datepicker = new TheDatepicker.Datepicker(document.getElementById('my-input'));
+				</li>
+				<li>
 					<label>datepicker.options.setInitialDate(<input type="text" size="15" id="initialDate">);</label>
 				</li>
 				<li>
@@ -81,6 +84,9 @@
 				</li>
 				<li>
 					<label>datepicker.options.setToggleSelection(<input type="checkbox" id="toggleSelection">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setAllowEmpty(<input type="checkbox" id="allowEmpty" checked="checked">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setShowCloseButton(<input type="checkbox" id="showCloseButton" checked="checked">);</label>
@@ -127,6 +133,9 @@
 					<label>datepicker.options.onGo((event, month, previousMonth) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="onGo"></textarea><br>
 					});</label>
+				</li>
+				<li>
+					datepicker.render();
 				</li>
 			</ul>
 		</aside>
@@ -256,6 +265,13 @@
 			toggleSelectionInput.onchange = function () {
 				updateSetting(toggleSelectionInput, function () {
 					datepicker.options.setToggleSelection(toggleSelectionInput.checked);
+				});
+			};
+
+			var allowEmptyInput = document.getElementById('allowEmpty');
+			allowEmptyInput.onchange = function () {
+				updateSetting(allowEmptyInput, function () {
+					datepicker.options.setAllowEmpty(allowEmptyInput.checked);
 				});
 			};
 

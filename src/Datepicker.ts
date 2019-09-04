@@ -13,9 +13,6 @@ namespace TheDatepicker {
 	// todo no empty mode? (vždy musí být něco vybráno)
 	// todo static metody šětří výkon
 	// todo onBefore dovolit rerurnovat i promisu
-	// todo selectedDate, currentMonth v Datepickeru?
-	// todo volitelně tlačítko které tě přesune na aktuální měsíc (je-li dostupný, jinak se tlačítko nezobrazí)
-	// todo šipky by mohly na selectech (month, year) měnit hodnotu selectu
 	// todo yearsSelectionLimits se nemění interaktivně (po zavolání .render()) + možná by to šlo vymyslet líp (např. setYearSelectItemsCount(100) a nastavovaly by se +-50 od aktuálního roku
 	//      todo + optimalizace že pokud option.style.display !== 'none' tak vím že ta dylší už mení nemusím
 	// todo datepicker.goToMonth() (přepošle do viewModel)
@@ -27,6 +24,8 @@ namespace TheDatepicker {
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo destroy()
 	// todo enable/disable ty selecty (month, year)
+	// todo nadesignovat v relativních jednotkách ať je to hezký na všech obrazovkách?
+	// todo ikonka křížku v inputu na odvybrání?
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -141,6 +140,8 @@ namespace TheDatepicker {
 					const selectedDate = this.viewModel.getSelectedDate();
 					if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
 						this.viewModel.cancelSelection(null);
+					} else if (selectedDate == null && !this.options.isAllowedEmpty()) {
+						this.viewModel.selectDay(null, this.options.getInitialDate(), false);
 					}
 
 					return;
@@ -148,7 +149,6 @@ namespace TheDatepicker {
 				case InitializationPhase.Untouched:
 					this.preselectFromInput();
 
-					const initialDate = this.options.getInitialDate();
 					this.viewModel.selectDay(null, this.options.getInitialDate(), false);
 					this.updateInput();
 

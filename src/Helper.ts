@@ -24,11 +24,17 @@ namespace TheDatepicker {
 
 	export class Helper {
 
-		public static resetTime(date: Date): void {
+		public static resetTime(date: Date | null): Date | null {
+			if (date === null) {
+				return;
+			}
+
 			date.setHours(0);
 			date.setMinutes(0);
 			date.setSeconds(0);
 			date.setMilliseconds(0);
+
+			return date;
 		}
 
 		public static normalizeDate(value: Date | string | null): Date | null {
@@ -39,14 +45,11 @@ namespace TheDatepicker {
 			if (typeof value === 'string') {
 				const date = new Date(value);
 				if (!isNaN(date.getTime())) {
-					Helper.resetTime(date);
-					return date;
+					return Helper.resetTime(date);
 				}
 
 			} else if (Helper.isValidDate(value)) {
-				const date = new Date(value.getTime());
-				Helper.resetTime(date);
-				return date;
+				return Helper.resetTime(new Date(value.getTime()));
 			}
 
 			throw new InvalidDateException();

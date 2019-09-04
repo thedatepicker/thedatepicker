@@ -434,10 +434,12 @@ var TheDatepicker;
                     if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
                         this.viewModel.cancelSelection(null);
                     }
+                    else if (selectedDate == null && !this.options.isAllowedEmpty()) {
+                        this.viewModel.selectDay(null, this.options.getInitialDate(), false);
+                    }
                     return;
                 case InitializationPhase.Untouched:
                     this.preselectFromInput();
-                    var initialDate = this.options.getInitialDate();
                     this.viewModel.selectDay(null, this.options.getInitialDate(), false);
                     this.updateInput();
                     if (this.input !== null && this.options.isHiddenOnBlur()) {
@@ -702,10 +704,14 @@ var TheDatepicker;
         function Helper() {
         }
         Helper.resetTime = function (date) {
+            if (date === null) {
+                return;
+            }
             date.setHours(0);
             date.setMinutes(0);
             date.setSeconds(0);
             date.setMilliseconds(0);
+            return date;
         };
         Helper.normalizeDate = function (value) {
             if (value === null) {
@@ -714,14 +720,11 @@ var TheDatepicker;
             if (typeof value === 'string') {
                 var date = new Date(value);
                 if (!isNaN(date.getTime())) {
-                    Helper.resetTime(date);
-                    return date;
+                    return Helper.resetTime(date);
                 }
             }
             else if (Helper.isValidDate(value)) {
-                var date = new Date(value.getTime());
-                Helper.resetTime(date);
-                return date;
+                return Helper.resetTime(new Date(value.getTime()));
             }
             throw new InvalidDateException();
         };
@@ -916,14 +919,18 @@ var TheDatepicker;
             this.highlightedDay = null;
             this.isHighlightedDayFocused = false;
             this.active = false;
-            var today = new Date();
-            TheDatepicker.Helper.resetTime(today);
-            this.today = today;
+            this.today = TheDatepicker.Helper.resetTime(new Date());
         }
         ViewModel.prototype.render = function () {
             if (this.selectedDate !== null) {
                 if (!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate)) {
-                    this.selectDay(null, null, false);
+                    if (this.selectDay(null, null, false)) {
+                        return;
+                    }
+                }
+            }
+            else if (!this.options.isAllowedEmpty()) {
+                if (this.selectDay(null, this.options.getInitialDate(), false)) {
                     return;
                 }
             }
@@ -982,9 +989,8 @@ var TheDatepicker;
         };
         ViewModel.prototype.goToMonth = function (event, month, doCancelHighlight) {
             if (doCancelHighlight === void 0) { doCancelHighlight = true; }
-            month = new Date(month.getTime());
+            month = TheDatepicker.Helper.resetTime(new Date(month.getTime()));
             month.setDate(1);
-            TheDatepicker.Helper.resetTime(month);
             if (month.getTime() === this.getCurrentMonth().getTime() || !this.canGoToMonth(month)) {
                 return false;
             }
@@ -1104,6 +1110,9 @@ var TheDatepicker;
             return this.highlightDay(event, newDay, true);
         };
         ViewModel.prototype.cancelSelection = function (event) {
+            if (!this.options.isAllowedEmpty()) {
+                return false;
+            }
             if (this.selectedDate === null) {
                 return false;
             }
@@ -1219,8 +1228,7 @@ var TheDatepicker;
             });
         };
         ViewModel.prototype.createDay = function (date) {
-            date = new Date(date.getTime());
-            TheDatepicker.Helper.resetTime(date);
+            date = TheDatepicker.Helper.resetTime(new Date(date.getTime()));
             var day = new TheDatepicker.Day(date);
             day.isToday = date.getTime() === this.today.getTime();
             day.isPast = date.getTime() < this.today.getTime();
@@ -1618,6 +1626,7 @@ var TheDatepicker;
             this.daysOutOfMonthVisible = false;
             this.fixedRowsCount = false;
             this.toggleSelection = false;
+            this.allowEmpty = true;
             this.showResetButton = true;
             this.showCloseButton = true;
             this.yearsSelectionLimits = {
@@ -1734,6 +1743,12 @@ var TheDatepicker;
             }
             this.toggleSelection = value;
         };
+        Options.prototype.setAllowEmpty = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether has allowed empty was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.allowEmpty = value;
+        };
         Options.prototype.setShowResetButton = function (value) {
             if (typeof value !== 'boolean') {
                 throw new Error('Whether is reset button shown was expected to be a boolean, but ' + value + ' given.');
@@ -1814,9 +1829,8 @@ var TheDatepicker;
                 ? new Date(this.initialMonth.getTime())
                 : (this.initialDate !== null
                     ? new Date(this.initialDate.getTime())
-                    : new Date());
+                    : TheDatepicker.Helper.resetTime(new Date()));
             initialMonth.setDate(1);
-            TheDatepicker.Helper.resetTime(initialMonth);
             return this.correctMonth(initialMonth);
         };
         Options.prototype.isMonthInValidity = function (month) {
@@ -1827,17 +1841,48 @@ var TheDatepicker;
             return correctMonth !== null ? correctMonth : month;
         };
         Options.prototype.getInitialDate = function () {
-            if (this.initialDate === null
-                || !this.isDateInValidity(this.initialDate)
-                || !this.isDateAvailable(this.initialDate)) {
-                return null;
+            if (this.isAllowedEmpty()) {
+                return this.initialDate !== null && this.isDateInValidity(this.initialDate) && this.isDateAvailable(this.initialDate)
+                    ? this.initialDate
+                    : null;
             }
-            return this.initialDate;
+            var initialDate = this.initialDate !== null ? new Date(this.initialDate.getTime()) : TheDatepicker.Helper.resetTime(new Date());
+            initialDate = this.correctDate(initialDate);
+            if (this.isDateAvailable(initialDate)) {
+                return initialDate;
+            }
+            var maxLoops = 150;
+            var increasedDate = initialDate;
+            var decreasedDate = new Date(initialDate.getTime());
+            do {
+                if (increasedDate !== null) {
+                    increasedDate.setDate(increasedDate.getDate() + 1);
+                    if (this.maxDate !== null && increasedDate.getTime() > this.maxDate.getTime()) {
+                        increasedDate = null;
+                    }
+                    else if (this.isDateAvailable(increasedDate)) {
+                        return increasedDate;
+                    }
+                }
+                if (decreasedDate !== null) {
+                    decreasedDate.setDate(decreasedDate.getDate() - 1);
+                    if (this.minDate !== null && decreasedDate.getTime() < this.minDate.getTime()) {
+                        decreasedDate = null;
+                    }
+                    else if (this.isDateAvailable(decreasedDate)) {
+                        return decreasedDate;
+                    }
+                }
+                maxLoops--;
+            } while ((increasedDate !== null || decreasedDate !== null) && maxLoops > 0);
+            return null;
         };
         Options.prototype.isDateInValidity = function (date) {
-            return (this.minDate === null
-                || date.getTime() >= this.minDate.getTime()) && (this.maxDate === null
-                || date.getTime() <= this.maxDate.getTime());
+            return this.calculateDateCorrection(date) === null;
+        };
+        Options.prototype.correctDate = function (date) {
+            var correctDate = this.calculateDateCorrection(date);
+            return correctDate !== null ? correctDate : date;
         };
         Options.prototype.getFirstDayOfWeek = function () {
             return this.firstDayOfWeek;
@@ -1850,6 +1895,9 @@ var TheDatepicker;
         };
         Options.prototype.hasToggleSelection = function () {
             return this.toggleSelection;
+        };
+        Options.prototype.isAllowedEmpty = function () {
+            return this.allowEmpty;
         };
         Options.prototype.isResetButtonShown = function () {
             return this.showResetButton;
@@ -1868,7 +1916,7 @@ var TheDatepicker;
         };
         Options.prototype.isDateAvailable = function (date) {
             if (this.dateAvailabilityResolver !== null) {
-                return this.dateAvailabilityResolver(date);
+                return this.dateAvailabilityResolver(new Date(date.getTime()));
             }
             return true;
         };
@@ -1909,16 +1957,25 @@ var TheDatepicker;
             if (this.minDate !== null) {
                 var minMonth = new Date(this.minDate.getTime());
                 minMonth.setDate(1);
-                if (month < minMonth) {
+                if (month.getTime() < minMonth.getTime()) {
                     return minMonth;
                 }
             }
             if (this.maxDate !== null) {
                 var maxMonth = new Date(this.maxDate.getTime());
                 maxMonth.setDate(1);
-                if (month > maxMonth) {
+                if (month.getTime() > maxMonth.getTime()) {
                     return maxMonth;
                 }
+            }
+            return null;
+        };
+        Options.prototype.calculateDateCorrection = function (date) {
+            if (this.minDate !== null && date.getTime() < this.minDate.getTime()) {
+                return new Date(this.minDate.getTime());
+            }
+            if (this.maxDate !== null && date.getTime() > this.maxDate.getTime()) {
+                return new Date(this.maxDate.getTime());
             }
             return null;
         };
