@@ -1326,7 +1326,7 @@ var TheDatepicker;
         Template.prototype.createSkeleton = function (viewModel, datepicker) {
             var container = this.htmlHelper.createDiv('container');
             container.appendChild(this.createHeaderElement(viewModel, datepicker));
-            container.appendChild(this.createBodyElement(viewModel));
+            container.appendChild(this.createBodyElement(viewModel, datepicker));
             this.containerElement = container;
             return container;
         };
@@ -1525,9 +1525,9 @@ var TheDatepicker;
             this.yearSelect.style.display = isSelectVisible ? 'inline' : 'none';
             this.yearElement.style.display = isSelectVisible ? 'none' : 'inline';
         };
-        Template.prototype.createTableElement = function (viewModel) {
+        Template.prototype.createTableElement = function (viewModel, datepicker) {
             var tableHeader = this.createTableHeaderElement(viewModel);
-            var tableBody = this.createTableBodyElement(viewModel);
+            var tableBody = this.createTableBodyElement(viewModel, datepicker);
             return this.htmlHelper.createTable('table', tableHeader, tableBody);
         };
         Template.prototype.createTableHeaderElement = function (viewModel) {
@@ -1547,12 +1547,12 @@ var TheDatepicker;
             headerCell.innerText = this.options.translator.translateDayOfWeek(dayOfWeek);
             return headerCell;
         };
-        Template.prototype.createTableBodyElement = function (viewModel) {
+        Template.prototype.createTableBodyElement = function (viewModel, datepicker) {
             this.daysElements = [];
             this.daysContentsElements = [];
             var rows = [];
             for (var index = 0; index < 6; index++) {
-                rows.push(this.createTableRowElement(viewModel));
+                rows.push(this.createTableRowElement(viewModel, datepicker));
             }
             this.weeksElements = rows;
             return this.htmlHelper.createTableBody('table-body', rows);
@@ -1570,12 +1570,12 @@ var TheDatepicker;
                 }
             }
         };
-        Template.prototype.createTableRowElement = function (viewModel) {
+        Template.prototype.createTableRowElement = function (viewModel, datepicker) {
             var cells = [];
             var cellsContents = [];
             for (var index = 0; index < 7; index++) {
                 var cell = this.htmlHelper.createTableCell();
-                var cellContent = this.createTableCellContentElement(viewModel);
+                var cellContent = this.createTableCellContentElement(viewModel, datepicker);
                 cells.push(cell);
                 cellsContents.push(cellContent);
                 cell.appendChild(cellContent);
@@ -1628,9 +1628,13 @@ var TheDatepicker;
                 dayContentElement.focus();
             }
         };
-        Template.prototype.createTableCellContentElement = function (viewModel) {
+        Template.prototype.createTableCellContentElement = function (viewModel, datepicker) {
+            var _this = this;
             var cellContent = this.htmlHelper.createAnchor(function (event) {
                 viewModel.selectDay(event, cellContent.day, false, true, true);
+                if (_this.options.isHiddenOnSelect()) {
+                    datepicker.close(event);
+                }
             });
             cellContent.onfocus = function (event) {
                 viewModel.highlightDay(event, cellContent.day);
@@ -1643,9 +1647,9 @@ var TheDatepicker;
             };
             return cellContent;
         };
-        Template.prototype.createBodyElement = function (viewModel) {
+        Template.prototype.createBodyElement = function (viewModel, datepicker) {
             var body = this.htmlHelper.createDiv('body');
-            body.appendChild(this.createTableElement(viewModel));
+            body.appendChild(this.createTableElement(viewModel, datepicker));
             return body;
         };
         return Template;

@@ -68,6 +68,9 @@
 					<label>datepicker.options.setHideOnBlur(<input type="checkbox" id="hideOnBlur" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setHideOnSelect(<input type="checkbox" id="hideOnSelect" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setInputFormat(<input type="text" size="15" id="inputFormat" value="j. n. Y">);</label>
 				</li>
 				<li>
@@ -319,6 +322,13 @@
 			hideOnBlurInput.onchange = function () {
 				updateSetting(hideOnBlurInput, function () {
 					datepicker.options.setHideOnBlur(hideOnBlurInput.checked);
+				});
+			};
+
+			var hideOnSelectInput = document.getElementById('hideOnSelect');
+			hideOnSelectInput.onchange = function () {
+				updateSetting(hideOnSelectInput, function () {
+					datepicker.options.setHideOnSelect(hideOnSelectInput.checked);
 				});
 			};
 
