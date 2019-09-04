@@ -1289,10 +1289,6 @@ var TheDatepicker;
 (function (TheDatepicker) {
     var Template = (function () {
         function Template(options, htmlHelper) {
-            this.goBackHtml = '&lt;';
-            this.goForwardHtml = '&gt;';
-            this.closeHtml = '&times;';
-            this.resetHtml = '&olarr;';
             this.containerElement = null;
             this.goBackElement = null;
             this.goForwardElement = null;
@@ -1356,7 +1352,7 @@ var TheDatepicker;
             var resetButton = this.htmlHelper.createAnchor(function (event) {
                 viewModel.reset(event);
             });
-            resetButton.innerHTML = this.resetHtml;
+            resetButton.innerHTML = this.options.getResetHtml();
             resetElement.appendChild(resetButton);
             this.resetElement = resetElement;
             return resetElement;
@@ -1369,7 +1365,7 @@ var TheDatepicker;
             var closeButton = this.htmlHelper.createAnchor(function (event) {
                 datepicker.close(event);
             });
-            closeButton.innerHTML = this.closeHtml;
+            closeButton.innerHTML = this.options.getCloseHtml();
             closeElement.appendChild(closeButton);
             this.closeElement = closeElement;
             return closeElement;
@@ -1394,7 +1390,7 @@ var TheDatepicker;
                     viewModel.goBack(event);
                 }
             });
-            goButton.innerHTML = directionForward ? this.goForwardHtml : this.goBackHtml;
+            goButton.innerHTML = directionForward ? this.options.getGoForwardHtml() : this.options.getGoBackHtml();
             goElement.appendChild(goButton);
             if (directionForward) {
                 this.goForwardElement = goButton;
@@ -1669,6 +1665,10 @@ var TheDatepicker;
                 from: 1900,
                 to: 2100
             };
+            this.goBackHtml = '&lt;';
+            this.goForwardHtml = '&gt;';
+            this.closeHtml = '&times;';
+            this.resetHtml = '&olarr;';
             this.listeners = {
                 beforeSelect: [],
                 select: [],
@@ -1821,6 +1821,22 @@ var TheDatepicker;
                 from: from,
                 to: to
             };
+        };
+        Options.prototype.setGoBackHtml = function (html) {
+            this.checkHtmlString(html);
+            this.goBackHtml = html;
+        };
+        Options.prototype.setGoForwardHtml = function (html) {
+            this.checkHtmlString(html);
+            this.goForwardHtml = html;
+        };
+        Options.prototype.setCloseHtml = function (html) {
+            this.checkHtmlString(html);
+            this.closeHtml = html;
+        };
+        Options.prototype.setResetHtml = function (html) {
+            this.checkHtmlString(html);
+            this.resetHtml = html;
         };
         Options.prototype.onBeforeSelect = function (listener) {
             this.onEventListener(EventType.BeforeSelect, listener);
@@ -1981,6 +1997,18 @@ var TheDatepicker;
             }
             return [];
         };
+        Options.prototype.getGoBackHtml = function () {
+            return this.goBackHtml;
+        };
+        Options.prototype.getGoForwardHtml = function () {
+            return this.goForwardHtml;
+        };
+        Options.prototype.getCloseHtml = function () {
+            return this.closeHtml;
+        };
+        Options.prototype.getResetHtml = function () {
+            return this.resetHtml;
+        };
         Options.prototype.isHiddenOnBlur = function () {
             return this.hideOnBlur;
         };
@@ -2064,6 +2092,11 @@ var TheDatepicker;
                 }
             }
             return true;
+        };
+        Options.prototype.checkHtmlString = function (html) {
+            if (typeof html !== 'string') {
+                throw new Error('Html was expected to be a string, but ' + typeof html + ' given.');
+            }
         };
         return Options;
     }());

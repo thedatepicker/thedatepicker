@@ -146,6 +146,18 @@
 					});</label>
 				</li>
 				<li>
+					<label>datepicker.options.setGoBackHtml(<input type="text" size="15" id="goBackHtml" value="&amp;lt;">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setGoForwardHtml(<input type="text" size="15" id="goForwardHtml" value="&amp;gt;">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setCloseHtml(<input type="text" size="15" id="closeHtml" value="&amp;times;">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setResetHtml(<input type="text" size="15" id="resetHtml" value="&amp;olarr;">);</label>
+				</li>
+				<li>
 					datepicker.render();
 				</li>
 			</ul>
@@ -372,7 +384,33 @@
 				updateListener('go', onGoInput.value, 'event, month, previousMonth');
 			};
 
-			datepicker.options.translator
+			var goBackHtmlInput = document.getElementById('goBackHtml');
+			goBackHtmlInput.onchange = function () {
+				updateSetting(goBackHtmlInput, function () {
+					datepicker.options.setGoBackHtml(goBackHtmlInput.value);
+				});
+			};
+
+			var goForwardHtmlInput = document.getElementById('goForwardHtml');
+			goForwardHtmlInput.onchange = function () {
+				updateSetting(goForwardHtmlInput, function () {
+					datepicker.options.setGoForwardHtml(goForwardHtmlInput.value);
+				});
+			};
+
+			var closeHtmlInput = document.getElementById('closeHtml');
+			closeHtmlInput.onchange = function () {
+				updateSetting(closeHtmlInput, function () {
+					datepicker.options.setCloseHtml(closeHtmlInput.value);
+				});
+			};
+
+			var resetHtmlInput = document.getElementById('resetHtml');
+			resetHtmlInput.onchange = function () {
+				updateSetting(resetHtmlInput, function () {
+					datepicker.options.setResetHtml(resetHtmlInput.value);
+				});
+			};
 		})();
 	</script>
 </body>

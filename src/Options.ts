@@ -71,6 +71,10 @@ namespace TheDatepicker {
 			from: 1900,
 			to: 2100,
 		};
+		public goBackHtml = '&lt;';
+		public goForwardHtml = '&gt;';
+		public closeHtml = '&times;';
+		public resetHtml = '&olarr;';
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
@@ -324,6 +328,8 @@ namespace TheDatepicker {
 			this.showCloseButton = value;
 		}
 
+		// Limits (from - to) of year dropdown list.
+		// Default is from 1900 to 2100.
 		public setYearsSelectionLimits(from: number, to: number): void {
 			if (typeof from !== 'number' || typeof to !== 'number') {
 				throw new Error('Years selection limits was expected to be numbers, but ' + typeof from + ', ' + typeof to + ' given.');
@@ -341,6 +347,34 @@ namespace TheDatepicker {
 				from,
 				to,
 			};
+		}
+
+		// Sets html for go back button.
+		// Defaults to "&lt;"
+		public setGoBackHtml(html: string): void {
+			this.checkHtmlString(html);
+			this.goBackHtml = html;
+		}
+
+		// Sets html for go forward button.
+		// Defaults to "&gt;"
+		public setGoForwardHtml(html: string): void {
+			this.checkHtmlString(html);
+			this.goForwardHtml = html;
+		}
+
+		// Sets html for close button.
+		// Defaults to "&times;"
+		public setCloseHtml(html: string): void {
+			this.checkHtmlString(html);
+			this.closeHtml = html;
+		}
+
+		// Sets html for reset button.
+		// Defaults to "&olarr;"
+		public setResetHtml(html: string): void {
+			this.checkHtmlString(html);
+			this.resetHtml = html;
 		}
 
 		// Callback to be called just before the day is selected or deselected.
@@ -554,6 +588,22 @@ namespace TheDatepicker {
 			return [];
 		}
 
+		public getGoBackHtml(): string {
+			return this.goBackHtml;
+		}
+
+		public getGoForwardHtml(): string {
+			return this.goForwardHtml;
+		}
+
+		public getCloseHtml(): string {
+			return this.closeHtml;
+		}
+
+		public getResetHtml(): string {
+			return this.resetHtml;
+		}
+
 		public isHiddenOnBlur(): boolean {
 			return this.hideOnBlur;
 		}
@@ -654,6 +704,12 @@ namespace TheDatepicker {
 			}
 
 			return true;
+		}
+
+		private checkHtmlString(html: string): void {
+			if (typeof html !== 'string') {
+				throw new Error('Html was expected to be a string, but ' + typeof html + ' given.');
+			}
 		}
 
 	}

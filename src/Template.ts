@@ -13,11 +13,6 @@ namespace TheDatepicker {
 	export class Template {
 
 		// todo nějak hezky aby šlo snadno customizovat uspořádání prvků
-		// todo do options
-		public goBackHtml = '&lt;';
-		public goForwardHtml = '&gt;';
-		public closeHtml = '&times;';
-		public resetHtml = '&olarr;';
 
 		private readonly options: Options;
 		private readonly htmlHelper: HtmlHelper;
@@ -102,7 +97,7 @@ namespace TheDatepicker {
 				viewModel.reset(event);
 			});
 
-			resetButton.innerHTML = this.resetHtml;
+			resetButton.innerHTML = this.options.getResetHtml();
 			resetElement.appendChild(resetButton);
 			this.resetElement = resetElement;
 
@@ -120,7 +115,7 @@ namespace TheDatepicker {
 				datepicker.close(event);
 			});
 
-			closeButton.innerHTML = this.closeHtml;
+			closeButton.innerHTML = this.options.getCloseHtml();
 			closeElement.appendChild(closeButton);
 			this.closeElement = closeElement;
 
@@ -150,7 +145,7 @@ namespace TheDatepicker {
 				}
 			});
 
-			goButton.innerHTML = directionForward ? this.goForwardHtml : this.goBackHtml;
+			goButton.innerHTML = directionForward ? this.options.getGoForwardHtml() : this.options.getGoBackHtml();
 			goElement.appendChild(goButton);
 
 			// todo možná tohle ukládání udělat nějak v createSkeleton
