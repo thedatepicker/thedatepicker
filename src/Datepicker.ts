@@ -15,7 +15,6 @@ namespace TheDatepicker {
 	// todo proč výběr data volá Template.render() tolikrát?
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
-	// todo enable/disable ty selecty (month, year)
 	// todo nadesignovat v relativních jednotkách ať je to hezký na všech obrazovkách?
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {

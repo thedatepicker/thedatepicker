@@ -101,6 +101,12 @@
 					<label>datepicker.options.setShowResetButton(<input type="checkbox" id="showResetButton" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setMonthAsDropdown(<input type="checkbox" id="monthAsDropdown" checked="checked">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setYearAsDropdown(<input type="checkbox" id="yearAsDropdown" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="dateAvailabilityResolver">return true;</textarea><br>
 						});</label>
@@ -144,6 +150,9 @@
 					<label>datepicker.options.onGo((event, month, previousMonth) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="onGo"></textarea><br>
 					});</label>
+				</li>
+				<li>
+					<label>datepicker.options.setClassesPrefix(<input type="text" size="15" id="classesPrefix" value="the-datepicker-">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setGoBackHtml(<input type="text" size="15" id="goBackHtml" value="&amp;lt;">);</label>
@@ -324,6 +333,20 @@
 				});
 			};
 
+			var monthAsDropdownInput = document.getElementById('monthAsDropdown');
+			monthAsDropdownInput.onchange = function () {
+				updateSetting(monthAsDropdownInput, function () {
+					datepicker.options.setMonthAsDropdown(monthAsDropdownInput.checked);
+				});
+			};
+
+			var yearAsDropdownInput = document.getElementById('yearAsDropdown');
+			yearAsDropdownInput.onchange = function () {
+				updateSetting(yearAsDropdownInput, function () {
+					datepicker.options.setYearAsDropdown(yearAsDropdownInput.checked);
+				});
+			};
+
 			var dateAvailabilityResolverInput = document.getElementById('dateAvailabilityResolver');
 			dateAvailabilityResolverInput.onchange = function () {
 				if (dateAvailabilityResolverInput.value === '') {
@@ -382,6 +405,13 @@
 			var onGoInput = document.getElementById('onGo');
 			onGoInput.onchange = function () {
 				updateListener('go', onGoInput.value, 'event, month, previousMonth');
+			};
+
+			var classesPrefixInput = document.getElementById('classesPrefix');
+			classesPrefixInput.onchange = function () {
+				updateSetting(classesPrefixInput, function () {
+					datepicker.options.setClassesPrefix(classesPrefixInput.value);
+				});
 			};
 
 			var goBackHtmlInput = document.getElementById('goBackHtml');

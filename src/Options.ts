@@ -65,6 +65,8 @@ namespace TheDatepicker {
 		private allowEmpty = true;
 		private showDeselectButton = true;
 		private showResetButton = true;
+		private monthAsDropdown = true;
+		private yearAsDropdown = true;
 		private classesPrefix = 'the-datepicker-';
 		private showCloseButton = true;
 		private yearsSelectionLimits: NumbersRange = {
@@ -307,6 +309,26 @@ namespace TheDatepicker {
 			this.showResetButton = value;
 		}
 
+		// Setting to true will render month as dropdown list (html select).
+		// defaults to true
+		public setMonthAsDropdown(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether is selectable month was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.monthAsDropdown = value;
+		}
+
+		// Setting to true will render year as dropdown list (html select).
+		// defaults to true
+		public setYearAsDropdown(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether is selectable year was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.yearAsDropdown = value;
+		}
+
 		// CSS classes of datepicker elements will be prefixed with given string.
 		// defaults to "the-datepicker-"
 		public setClassesPrefix(prefix: string): void {
@@ -329,6 +351,7 @@ namespace TheDatepicker {
 		}
 
 		// Limits (from - to) of year dropdown list.
+		// Works only when the setting YearAsDropdown is set to true.
 		// Default is from 1900 to 2100.
 		public setYearsSelectionLimits(from: number, to: number): void {
 			if (typeof from !== 'number' || typeof to !== 'number') {
@@ -539,6 +562,14 @@ namespace TheDatepicker {
 
 		public isResetButtonShown(): boolean {
 			return this.showResetButton;
+		}
+
+		public isMonthAsDropdown(): boolean {
+			return this.monthAsDropdown;
+		}
+
+		public isYearAsDropdown(): boolean {
+			return this.yearAsDropdown;
 		}
 
 		public getClassesPrefix(): string {

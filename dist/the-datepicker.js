@@ -1429,6 +1429,12 @@ var TheDatepicker;
         };
         Template.prototype.updateMonthElement = function (viewModel) {
             var currentMonth = viewModel.getCurrentMonth().getMonth();
+            this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
+            if (!this.options.isMonthAsDropdown()) {
+                this.monthSelect.style.display = 'none';
+                this.monthElement.style.display = 'inline';
+                return;
+            }
             var valuesCount = 0;
             for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
                 var newMonth = new Date(viewModel.getCurrentMonth().getTime());
@@ -1440,7 +1446,6 @@ var TheDatepicker;
                 valuesCount += canGoToMonth ? 1 : 0;
             }
             this.monthSelect.value = currentMonth.toString();
-            this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
             this.monthSelect.style.display = valuesCount > 1 ? 'inline' : 'none';
             this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
         };
@@ -1468,6 +1473,12 @@ var TheDatepicker;
         };
         Template.prototype.updateYearElement = function (viewModel) {
             var currentYear = viewModel.getCurrentMonth().getFullYear();
+            this.yearElement.innerText = currentYear.toString();
+            if (!this.options.isYearAsDropdown()) {
+                this.yearSelect.style.display = 'none';
+                this.yearElement.style.display = 'inline';
+                return;
+            }
             var options = this.yearSelect.getElementsByTagName('option');
             var yearFrom = parseInt(options[0].value, 10);
             var minDate = this.options.getMinDate();
@@ -1497,7 +1508,6 @@ var TheDatepicker;
             if (includesCurrentYear) {
                 this.yearSelect.value = currentYear.toString();
             }
-            this.yearElement.innerText = currentYear.toString();
             var isSelectVisible = includesCurrentYear && valuesCount > 1;
             this.yearSelect.style.display = isSelectVisible ? 'inline' : 'none';
             this.yearElement.style.display = isSelectVisible ? 'none' : 'inline';
@@ -1659,6 +1669,8 @@ var TheDatepicker;
             this.allowEmpty = true;
             this.showDeselectButton = true;
             this.showResetButton = true;
+            this.monthAsDropdown = true;
+            this.yearAsDropdown = true;
             this.classesPrefix = 'the-datepicker-';
             this.showCloseButton = true;
             this.yearsSelectionLimits = {
@@ -1794,6 +1806,18 @@ var TheDatepicker;
                 throw new Error('Whether is reset button shown was expected to be a boolean, but ' + value + ' given.');
             }
             this.showResetButton = value;
+        };
+        Options.prototype.setMonthAsDropdown = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether is selectable month was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.monthAsDropdown = value;
+        };
+        Options.prototype.setYearAsDropdown = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether is selectable year was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.yearAsDropdown = value;
         };
         Options.prototype.setClassesPrefix = function (prefix) {
             if (typeof prefix !== 'string') {
@@ -1960,6 +1984,12 @@ var TheDatepicker;
         };
         Options.prototype.isResetButtonShown = function () {
             return this.showResetButton;
+        };
+        Options.prototype.isMonthAsDropdown = function () {
+            return this.monthAsDropdown;
+        };
+        Options.prototype.isYearAsDropdown = function () {
+            return this.yearAsDropdown;
         };
         Options.prototype.getClassesPrefix = function () {
             return this.classesPrefix;

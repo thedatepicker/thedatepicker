@@ -194,6 +194,14 @@ namespace TheDatepicker {
 
 		protected updateMonthElement(viewModel: ViewModel): void {
 			const currentMonth = viewModel.getCurrentMonth().getMonth();
+			this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
+
+			if (!this.options.isMonthAsDropdown()) {
+				this.monthSelect.style.display = 'none';
+				this.monthElement.style.display = 'inline';
+				return;
+			}
+
 			let valuesCount = 0;
 			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
 				const newMonth = new Date(viewModel.getCurrentMonth().getTime());
@@ -206,7 +214,6 @@ namespace TheDatepicker {
 			}
 
 			this.monthSelect.value = currentMonth.toString();
-			this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
 
 			this.monthSelect.style.display = valuesCount > 1 ? 'inline' : 'none';
 			this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
@@ -241,6 +248,14 @@ namespace TheDatepicker {
 
 		protected updateYearElement(viewModel: ViewModel): void {
 			const currentYear = viewModel.getCurrentMonth().getFullYear();
+			this.yearElement.innerText = currentYear.toString();
+
+			if (!this.options.isYearAsDropdown()) {
+				this.yearSelect.style.display = 'none';
+				this.yearElement.style.display = 'inline';
+				return;
+			}
+
 			const options = this.yearSelect.getElementsByTagName('option');
 			const yearFrom = parseInt(options[0].value, 10);
 			const minDate = this.options.getMinDate();
@@ -272,7 +287,6 @@ namespace TheDatepicker {
 			if (includesCurrentYear) {
 				this.yearSelect.value = currentYear.toString();
 			}
-			this.yearElement.innerText = currentYear.toString();
 
 			const isSelectVisible = includesCurrentYear && valuesCount > 1;
 			this.yearSelect.style.display = isSelectVisible ? 'inline' : 'none';
