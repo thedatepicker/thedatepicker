@@ -29,6 +29,11 @@
 .the-datepicker-button:hover {
   background-color: #d1e8ff;
 }
+.the-datepicker-deselect a {
+  text-decoration: none;
+  color: #007eff;
+  font-weight: bold;
+}
 .the-datepicker-control {
   min-height: 6px;
 }

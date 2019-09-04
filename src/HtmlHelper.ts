@@ -7,20 +7,10 @@ namespace TheDatepicker {
 
 	export class HtmlHelper {
 
-		private classesPrefix = 'the-datepicker-';
-
 		private readonly document: Document;
 
-		public constructor() {
+		public constructor(private readonly options: Options) {
 			this.document = document;
-		}
-
-		public setClassesPrefix(prefix: string): void {
-			if (typeof prefix !== 'string') {
-				throw new Error('Classes prefix was expected to be a string, but ' + typeof prefix + ' given.');
-			}
-
-			this.classesPrefix = prefix;
 		}
 
 		public createDiv(className: string): HTMLDivElement {
@@ -146,7 +136,7 @@ namespace TheDatepicker {
 				throw new Error('Invalid class name: ' + className);
 			}
 
-			className = this.classesPrefix + className;
+			className = this.options.getClassesPrefix() + className;
 			let wasFound = false;
 
 			const classes = element.className.split(/\s+/);

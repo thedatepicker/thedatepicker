@@ -58,6 +58,7 @@ namespace TheDatepicker {
 		private readonly document: DocumentInterface;
 		private readonly input: HTMLDatepickerInputElement | null;
 		private readonly container: HTMLDatepickerContainerElement;
+		private deselectElement: HTMLSpanElement | null = null;
 		private readonly viewModel: ViewModel;
 
 		private initializationPhase = InitializationPhase.Untouched;
@@ -137,6 +138,7 @@ namespace TheDatepicker {
 					return;
 
 				case InitializationPhase.Waiting:
+					this.prepareDeselectButton();
 					const selectedDate = this.viewModel.getSelectedDate();
 					if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
 						this.viewModel.cancelSelection(null);
@@ -219,7 +221,7 @@ namespace TheDatepicker {
 				if (date !== null) {
 					return this.viewModel.selectDateSince(event, date);
 				}
-				return this.viewModel.selectDay(event, null);
+				return this.viewModel.cancelSelection(event);
 
 			} catch (error) {
 				if (!(error instanceof CannotParseDateException)) {
@@ -239,6 +241,8 @@ namespace TheDatepicker {
 			this.input.value = date !== null
 				? this.dateConverter.formatDate(this.options.getInputFormat(), date)
 				: '';
+
+			this.prepareDeselectButton();
 		}
 
 		public getContainer(): HTMLDatepickerContainerElement {
@@ -271,6 +275,36 @@ namespace TheDatepicker {
 			container.style.zIndex = '99';
 
 			return container;
+		}
+
+		private prepareDeselectButton(): void {
+			const hasDeselectButton = this.input !== null && this.options.isDeselectButtonShown() && this.options.isAllowedEmpty();
+
+			if (this.deselectElement !== null && !hasDeselectButton) {
+				this.deselectElement.parentNode.removeChild(this.deselectElement);
+				this.deselectElement = null;
+
+			} else if (this.deselectElement === null && hasDeselectButton) {
+				this.deselectElement = this.document.createElement('span');
+				this.deselectElement.style.position = 'absolute';
+				const deselectButton = this.document.createElement('a');
+				deselectButton.innerHTML = '&times;';
+				deselectButton.style.position = 'relative';
+				deselectButton.style.left = '-12px';
+				deselectButton.href = '#';
+				deselectButton.onclick = (event: MouseEvent) => {
+					event.preventDefault();
+					this.viewModel.cancelSelection(event);
+				};
+				this.deselectElement.className = this.options.getClassesPrefix() + 'deselect';
+				this.deselectElement.appendChild(deselectButton);
+
+				this.input.parentNode.insertBefore(this.deselectElement, this.input.nextSibling);
+			}
+
+			if (this.input !== null && this.deselectElement !== null) {
+				this.deselectElement.style.visibility = this.input.value === '' ? 'hidden' : 'visible';
+			}
 		}
 
 		private preselectFromInput(): void {

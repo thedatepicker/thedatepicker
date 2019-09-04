@@ -28,15 +28,14 @@ namespace TheDatepicker {
 
 		public render(): void {
 			if (this.selectedDate !== null) {
-				if (!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate)) {
-					if (this.selectDay(null, null, false)) {
-						return;
-					}
-				}
-			} else if (!this.options.isAllowedEmpty()) {
-				if (this.selectDay(null, this.options.getInitialDate(), false)) {
+				if (
+					(!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate))
+					&& this.cancelSelection(null)
+				) {
 					return;
 				}
+			} else if (!this.options.isAllowedEmpty() && this.selectDay(null, this.options.getInitialDate(), false)) {
+				return;
 			}
 
 			const correctMonth = this.options.correctMonth(this.getCurrentMonth());

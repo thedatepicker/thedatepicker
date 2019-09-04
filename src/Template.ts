@@ -62,10 +62,6 @@ namespace TheDatepicker {
 			this.updateWeeksElements(viewModel);
 		}
 
-		public setClassesPrefix(prefix: string): void {
-			this.htmlHelper.setClassesPrefix(prefix);
-		}
-
 		protected createSkeleton(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
 			const container = this.htmlHelper.createDiv('container');
 			container.appendChild(this.createHeaderElement(viewModel, datepicker));

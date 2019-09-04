@@ -59,7 +59,9 @@ namespace TheDatepicker {
 		private fixedRowsCount = false;
 		private toggleSelection = false;
 		private allowEmpty = true;
+		private showDeselectButton = true;
 		private showResetButton = true;
+		private classesPrefix = 'the-datepicker-';
 		private showCloseButton = true;
 		private yearsSelectionLimits: NumbersRange = {
 			from: 1900,
@@ -75,7 +77,7 @@ namespace TheDatepicker {
 		};
 
 		public constructor() {
-			this.setTemplate(new Template(this, new HtmlHelper()));
+			this.setTemplate(new Template(this, new HtmlHelper(this)));
 			this.setTranslator(new Translator());
 		}
 
@@ -266,6 +268,18 @@ namespace TheDatepicker {
 			this.toggleSelection = value;
 		}
 
+		// Setting to true will render a button inside an input, which deselects selected date.
+		// Works only when there an input exists.
+		// Works only when the setting AllowEmpty is set to true.
+		// defaults to true
+		public setShowDeselectButton(value: boolean): void {
+			if (typeof value !== 'boolean') {
+				throw new Error('Whether is deselect button shown was expected to be a boolean, but ' + value + ' given.');
+			}
+
+			this.showDeselectButton = value;
+		}
+
 		// Setting to false will disallow to deselect, in other words it always must be any day selected.
 		// When there is no initial date, current date (or nearest available one) will be preselected.
 		// defaults to true
@@ -285,6 +299,16 @@ namespace TheDatepicker {
 			}
 
 			this.showResetButton = value;
+		}
+
+		// CSS classes of datepicker elements will be prefixed with given string.
+		// defaults to "the-datepicker-"
+		public setClassesPrefix(prefix: string): void {
+			if (typeof prefix !== 'string') {
+				throw new Error('Classes prefix was expected to be a string, but ' + typeof prefix + ' given.');
+			}
+
+			this.classesPrefix = prefix;
 		}
 
 		// Setting to true will show button for closing datepicker.
@@ -481,8 +505,16 @@ namespace TheDatepicker {
 			return this.allowEmpty;
 		}
 
+		public isDeselectButtonShown(): boolean {
+			return this.showDeselectButton;
+		}
+
 		public isResetButtonShown(): boolean {
 			return this.showResetButton;
+		}
+
+		public getClassesPrefix(): string {
+			return this.classesPrefix;
 		}
 
 		public isCloseButtonShown(): boolean {

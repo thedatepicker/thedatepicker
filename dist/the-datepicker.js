@@ -378,6 +378,7 @@ var TheDatepicker;
     var Datepicker = (function () {
         function Datepicker(input, container) {
             if (container === void 0) { container = null; }
+            this.deselectElement = null;
             this.initializationPhase = InitializationPhase.Untouched;
             this.originalInputOnFocus = null;
             if (input !== null && !TheDatepicker.Helper.isElement(input)) {
@@ -430,6 +431,7 @@ var TheDatepicker;
                     this.render();
                     return;
                 case InitializationPhase.Waiting:
+                    this.prepareDeselectButton();
                     var selectedDate = this.viewModel.getSelectedDate();
                     if (selectedDate !== null && (!this.options.isDateInValidity(selectedDate) || !this.options.isDateAvailable(selectedDate))) {
                         this.viewModel.cancelSelection(null);
@@ -499,7 +501,7 @@ var TheDatepicker;
                 if (date !== null) {
                     return this.viewModel.selectDateSince(event, date);
                 }
-                return this.viewModel.selectDay(event, null);
+                return this.viewModel.cancelSelection(event);
             }
             catch (error) {
                 if (!(error instanceof TheDatepicker.CannotParseDateException)) {
@@ -516,6 +518,7 @@ var TheDatepicker;
             this.input.value = date !== null
                 ? this.dateConverter.formatDate(this.options.getInputFormat(), date)
                 : '';
+            this.prepareDeselectButton();
         };
         Datepicker.prototype.getContainer = function () {
             return this.container;
@@ -544,6 +547,33 @@ var TheDatepicker;
             container.style.position = 'absolute';
             container.style.zIndex = '99';
             return container;
+        };
+        Datepicker.prototype.prepareDeselectButton = function () {
+            var _this = this;
+            var hasDeselectButton = this.input !== null && this.options.isDeselectButtonShown() && this.options.isAllowedEmpty();
+            if (this.deselectElement !== null && !hasDeselectButton) {
+                this.deselectElement.parentNode.removeChild(this.deselectElement);
+                this.deselectElement = null;
+            }
+            else if (this.deselectElement === null && hasDeselectButton) {
+                this.deselectElement = this.document.createElement('span');
+                this.deselectElement.style.position = 'absolute';
+                var deselectButton = this.document.createElement('a');
+                deselectButton.innerHTML = '&times;';
+                deselectButton.style.position = 'relative';
+                deselectButton.style.left = '-12px';
+                deselectButton.href = '#';
+                deselectButton.onclick = function (event) {
+                    event.preventDefault();
+                    _this.viewModel.cancelSelection(event);
+                };
+                this.deselectElement.className = this.options.getClassesPrefix() + 'deselect';
+                this.deselectElement.appendChild(deselectButton);
+                this.input.parentNode.insertBefore(this.deselectElement, this.input.nextSibling);
+            }
+            if (this.input !== null && this.deselectElement !== null) {
+                this.deselectElement.style.visibility = this.input.value === '' ? 'hidden' : 'visible';
+            }
         };
         Datepicker.prototype.preselectFromInput = function () {
             if (this.input !== null) {
@@ -769,16 +799,10 @@ var TheDatepicker;
 var TheDatepicker;
 (function (TheDatepicker) {
     var HtmlHelper = (function () {
-        function HtmlHelper() {
-            this.classesPrefix = 'the-datepicker-';
+        function HtmlHelper(options) {
+            this.options = options;
             this.document = document;
         }
-        HtmlHelper.prototype.setClassesPrefix = function (prefix) {
-            if (typeof prefix !== 'string') {
-                throw new Error('Classes prefix was expected to be a string, but ' + typeof prefix + ' given.');
-            }
-            this.classesPrefix = prefix;
-        };
         HtmlHelper.prototype.createDiv = function (className) {
             var div = this.document.createElement('div');
             this.addClass(div, className);
@@ -872,7 +896,7 @@ var TheDatepicker;
             if (!/^[a-zA-Z0-9_-]+$/.test(className)) {
                 throw new Error('Invalid class name: ' + className);
             }
-            className = this.classesPrefix + className;
+            className = this.options.getClassesPrefix() + className;
             var wasFound = false;
             var classes = element.className.split(/\s+/);
             for (var index = 0; index < classes.length; index++) {
@@ -923,16 +947,13 @@ var TheDatepicker;
         }
         ViewModel.prototype.render = function () {
             if (this.selectedDate !== null) {
-                if (!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate)) {
-                    if (this.selectDay(null, null, false)) {
-                        return;
-                    }
-                }
-            }
-            else if (!this.options.isAllowedEmpty()) {
-                if (this.selectDay(null, this.options.getInitialDate(), false)) {
+                if ((!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate))
+                    && this.cancelSelection(null)) {
                     return;
                 }
+            }
+            else if (!this.options.isAllowedEmpty() && this.selectDay(null, this.options.getInitialDate(), false)) {
+                return;
             }
             var correctMonth = this.options.correctMonth(this.getCurrentMonth());
             if (this.goToMonth(null, correctMonth)) {
@@ -1306,9 +1327,6 @@ var TheDatepicker;
             this.updateYearElement(viewModel);
             this.updateWeeksElements(viewModel);
         };
-        Template.prototype.setClassesPrefix = function (prefix) {
-            this.htmlHelper.setClassesPrefix(prefix);
-        };
         Template.prototype.createSkeleton = function (viewModel, datepicker) {
             var container = this.htmlHelper.createDiv('container');
             container.appendChild(this.createHeaderElement(viewModel, datepicker));
@@ -1627,7 +1645,9 @@ var TheDatepicker;
             this.fixedRowsCount = false;
             this.toggleSelection = false;
             this.allowEmpty = true;
+            this.showDeselectButton = true;
             this.showResetButton = true;
+            this.classesPrefix = 'the-datepicker-';
             this.showCloseButton = true;
             this.yearsSelectionLimits = {
                 from: 1900,
@@ -1641,7 +1661,7 @@ var TheDatepicker;
                 go: [],
                 beforeGo: []
             };
-            this.setTemplate(new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper()));
+            this.setTemplate(new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper(this)));
             this.setTranslator(new TheDatepicker.Translator());
         }
         Options.prototype.setTemplate = function (template) {
@@ -1743,6 +1763,12 @@ var TheDatepicker;
             }
             this.toggleSelection = value;
         };
+        Options.prototype.setShowDeselectButton = function (value) {
+            if (typeof value !== 'boolean') {
+                throw new Error('Whether is deselect button shown was expected to be a boolean, but ' + value + ' given.');
+            }
+            this.showDeselectButton = value;
+        };
         Options.prototype.setAllowEmpty = function (value) {
             if (typeof value !== 'boolean') {
                 throw new Error('Whether has allowed empty was expected to be a boolean, but ' + value + ' given.');
@@ -1754,6 +1780,12 @@ var TheDatepicker;
                 throw new Error('Whether is reset button shown was expected to be a boolean, but ' + value + ' given.');
             }
             this.showResetButton = value;
+        };
+        Options.prototype.setClassesPrefix = function (prefix) {
+            if (typeof prefix !== 'string') {
+                throw new Error('Classes prefix was expected to be a string, but ' + typeof prefix + ' given.');
+            }
+            this.classesPrefix = prefix;
         };
         Options.prototype.setShowCloseButton = function (value) {
             if (typeof value !== 'boolean') {
@@ -1899,8 +1931,14 @@ var TheDatepicker;
         Options.prototype.isAllowedEmpty = function () {
             return this.allowEmpty;
         };
+        Options.prototype.isDeselectButtonShown = function () {
+            return this.showDeselectButton;
+        };
         Options.prototype.isResetButtonShown = function () {
             return this.showResetButton;
+        };
+        Options.prototype.getClassesPrefix = function () {
+            return this.classesPrefix;
         };
         Options.prototype.isCloseButtonShown = function () {
             return this.showCloseButton;
