@@ -68,41 +68,52 @@ namespace TheDatepicker {
 		}
 
 		protected updateContainerElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
-			this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? 'block' : 'none';
+			this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
 		}
 
 		protected createHeaderElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+			const header = this.htmlHelper.createDiv('header');
+
+			const top = this.htmlHelper.createDiv('top');
+			header.appendChild(top);
+
+			top.appendChild(this.createTitleElement(viewModel));
+
+			const control = this.htmlHelper.createDiv('control');
+			top.appendChild(control);
+
+			control.appendChild(this.createResetElement(viewModel));
+			control.appendChild(this.createCloseElement(viewModel, datepicker));
+
+			const navigation = this.htmlHelper.createDiv('navigation');
+			header.appendChild(navigation);
+
+			navigation.appendChild(this.createGoBackElement(viewModel));
+
 			const state = this.htmlHelper.createDiv('state');
+			navigation.appendChild(state);
+
 			state.appendChild(this.createMonthElement(viewModel));
 			state.appendChild(this.createYearElement(viewModel));
 
-			const navigation = this.htmlHelper.createDiv('navigation');
-			navigation.appendChild(this.createGoBackElement(viewModel));
-			navigation.appendChild(state);
 			navigation.appendChild(this.createGoForwardElement(viewModel));
-
-			const control = this.htmlHelper.createDiv('control');
-			control.appendChild(this.createTitleElement(viewModel));
-			control.appendChild(this.createCloseElement(viewModel, datepicker));
-			control.appendChild(this.createResetElement(viewModel));
-
-			const header = this.htmlHelper.createDiv('header');
-			header.appendChild(control);
-			header.appendChild(navigation);
 
 			return header;
 		}
 
 		protected createTitleElement(viewModel: ViewModel): HTMLElement {
 			const titleElement = this.htmlHelper.createDiv('title');
-			this.titleElement = titleElement;
+			const titleSpan = this.htmlHelper.createSpan();
+			titleElement.appendChild(titleSpan);
+			this.htmlHelper.addClass(titleSpan, 'title-content');
+			this.titleElement = titleSpan;
 
 			return titleElement;
 		}
 
 		protected updateTitleElement(viewModel: ViewModel): void {
 			const title = this.options.getTitle();
-			this.titleElement.style.display = title !== '' ? 'block' : 'none';
+			this.titleElement.style.display = title !== '' ? '' : 'none';
 			this.titleElement.innerText = title;
 		}
 
@@ -120,7 +131,7 @@ namespace TheDatepicker {
 		}
 
 		protected updateResetElement(viewModel: ViewModel): void {
-			this.resetElement.style.display = this.options.isResetButtonShown() ? 'block' : 'none';
+			this.resetElement.style.display = this.options.isResetButtonShown() ? '' : 'none';
 		}
 
 		protected createCloseElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
@@ -137,7 +148,7 @@ namespace TheDatepicker {
 		}
 
 		protected updateCloseElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
-			this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? 'block' : 'none';
+			this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? '' : 'none';
 		}
 
 		protected createGoBackElement(viewModel: ViewModel): HTMLElement {
@@ -212,7 +223,7 @@ namespace TheDatepicker {
 
 			if (!this.options.isMonthAsDropdown()) {
 				this.monthSelect.style.display = 'none';
-				this.monthElement.style.display = 'inline';
+				this.monthElement.style.display = '';
 				return;
 			}
 
@@ -223,14 +234,14 @@ namespace TheDatepicker {
 				const option = this.monthSelect.getElementsByTagName('option')[monthNumber];
 				const canGoToMonth = viewModel.canGoToMonth(newMonth);
 				option.disabled = !canGoToMonth;
-				option.style.display = canGoToMonth ? 'block' : 'none';
+				option.style.display = canGoToMonth ? '' : 'none';
 				valuesCount += canGoToMonth ? 1 : 0;
 			}
 
 			this.monthSelect.value = currentMonth.toString();
 
-			this.monthSelect.style.display = valuesCount > 1 ? 'inline-block' : 'none';
-			this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
+			this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
+			this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
 		}
 
 		protected createYearElement(viewModel: ViewModel): HTMLElement {
@@ -266,7 +277,7 @@ namespace TheDatepicker {
 
 			if (!this.options.isYearAsDropdown()) {
 				this.yearSelect.style.display = 'none';
-				this.yearElement.style.display = 'inline';
+				this.yearElement.style.display = '';
 				return;
 			}
 
@@ -295,7 +306,7 @@ namespace TheDatepicker {
 					canGoToYear = (minYear === null || year > minYear) && (maxYear === null || year < maxYear);
 				}
 				options[index].disabled = !canGoToYear;
-				options[index].style.display = canGoToYear ? 'block' : 'none';
+				options[index].style.display = canGoToYear ? '' : 'none';
 				valuesCount += canGoToYear ? 1 : 0;
 			}
 
@@ -304,8 +315,8 @@ namespace TheDatepicker {
 			}
 
 			const isSelectVisible = includesCurrentYear && valuesCount > 1;
-			this.yearSelect.style.display = isSelectVisible ? 'inline-block' : 'none';
-			this.yearElement.style.display = isSelectVisible ? 'none' : 'inline';
+			this.yearSelect.style.display = isSelectVisible ? '' : 'none';
+			this.yearElement.style.display = isSelectVisible ? 'none' : '';
 		}
 
 		protected createTableElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
@@ -359,7 +370,7 @@ namespace TheDatepicker {
 				const weekElement = this.weeksElements[weekIndex];
 				const week = weeks.length > weekIndex ? weeks[weekIndex] : null;
 
-				weekElement.style.display = week !== null ? 'table-row' : 'none';
+				weekElement.style.display = week !== null ? '' : 'none';
 
 				if (week !== null) {
 					for (let dayIndex = 0; dayIndex < this.daysElements[weekIndex].length; dayIndex++) {

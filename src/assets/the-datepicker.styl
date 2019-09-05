@@ -6,27 +6,29 @@ $table-header-color = #666
 $border = #ccc
 
 .the-datepicker-container
-	float left
 	background-color white
 	border 1px solid $border
-	border-radius 0 6px 6px 6px
-	padding 6px
+	border-radius 0 0.3em 0.3em 0.3em
+	padding 0.4em 0.6em
 	font-family Arial, Helvetica, sans-serif
-	font-size 14px
+	line-height 1em
+	box-sizing border-box
 
 .the-datepicker-body
-	float left
-	clear left
-	margin-top 14px
+	margin-top 1em
+
+.the-datepicker-table-header-cell
+	width 2.1em
+	padding 0.5em 0
 
 .the-datepicker-button
 	display block
-	width 21px
-	padding 4px
+	width 2.1em
+	padding 0.5em 0
 	text-decoration none
 	text-align center
 	color $base-color
-	border-radius 6px
+	border-radius 0.3em
 	&:hover
 		background-color $highlight-background
 
@@ -36,50 +38,48 @@ $border = #ccc
 	font-weight bold
 
 .the-datepicker-title
-	float left
-	padding 4px
+	display inline-block
+	width 70%
+
+.the-datepicker-title-content
+	display inline-block
+	padding 0.5em
 
 .the-datepicker-control
-	float left
-	width 100%
+	display inline-block
+	width 30%
+	text-align right
 
 .the-datepicker-reset, .the-datepicker-close
+	display inline-block
 	font-weight bold
-	float right
-
-.the-datepicker-navigation
-	float left
-	clear left
-	width 100%
-	margin-top 6px
 
 .the-datepicker-go
-	float left
+	display inline-block
 	width 15%
 	.the-datepicker-button
+		display inline-block
 		font-weight bold
 
 .the-datepicker-go-next
-	.the-datepicker-button
-		float right
+	text-align right
 
 .the-datepicker-state
-	float left
+	display inline-block
 	width 70%
-	padding 4px 0
 
 .the-datepicker-month
-	float left
+	display inline-block
 	width 60%
 	text-align center
 
 .the-datepicker-year
-	float left
+	display inline-block
 	width 40%
 	text-align center
 
 .the-datepicker-select
-	margin-top -2px
+	font-size 1em
 
 .the-datepicker-table
 	border-collapse collapse
@@ -90,7 +90,6 @@ $border = #ccc
 	text-transform uppercase
 	color $table-header-color
 	font-size 0.85em
-	padding-bottom 5px
 
 .the-datepicker-highlighted
 	.the-datepicker-button

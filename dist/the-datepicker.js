@@ -1362,33 +1362,38 @@ var TheDatepicker;
             return container;
         };
         Template.prototype.updateContainerElement = function (viewModel, input) {
-            this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? 'block' : 'none';
+            this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
         };
         Template.prototype.createHeaderElement = function (viewModel, datepicker) {
+            var header = this.htmlHelper.createDiv('header');
+            var top = this.htmlHelper.createDiv('top');
+            header.appendChild(top);
+            top.appendChild(this.createTitleElement(viewModel));
+            var control = this.htmlHelper.createDiv('control');
+            top.appendChild(control);
+            control.appendChild(this.createResetElement(viewModel));
+            control.appendChild(this.createCloseElement(viewModel, datepicker));
+            var navigation = this.htmlHelper.createDiv('navigation');
+            header.appendChild(navigation);
+            navigation.appendChild(this.createGoBackElement(viewModel));
             var state = this.htmlHelper.createDiv('state');
+            navigation.appendChild(state);
             state.appendChild(this.createMonthElement(viewModel));
             state.appendChild(this.createYearElement(viewModel));
-            var navigation = this.htmlHelper.createDiv('navigation');
-            navigation.appendChild(this.createGoBackElement(viewModel));
-            navigation.appendChild(state);
             navigation.appendChild(this.createGoForwardElement(viewModel));
-            var control = this.htmlHelper.createDiv('control');
-            control.appendChild(this.createTitleElement(viewModel));
-            control.appendChild(this.createCloseElement(viewModel, datepicker));
-            control.appendChild(this.createResetElement(viewModel));
-            var header = this.htmlHelper.createDiv('header');
-            header.appendChild(control);
-            header.appendChild(navigation);
             return header;
         };
         Template.prototype.createTitleElement = function (viewModel) {
             var titleElement = this.htmlHelper.createDiv('title');
-            this.titleElement = titleElement;
+            var titleSpan = this.htmlHelper.createSpan();
+            titleElement.appendChild(titleSpan);
+            this.htmlHelper.addClass(titleSpan, 'title-content');
+            this.titleElement = titleSpan;
             return titleElement;
         };
         Template.prototype.updateTitleElement = function (viewModel) {
             var title = this.options.getTitle();
-            this.titleElement.style.display = title !== '' ? 'block' : 'none';
+            this.titleElement.style.display = title !== '' ? '' : 'none';
             this.titleElement.innerText = title;
         };
         Template.prototype.createResetElement = function (viewModel) {
@@ -1402,7 +1407,7 @@ var TheDatepicker;
             return resetElement;
         };
         Template.prototype.updateResetElement = function (viewModel) {
-            this.resetElement.style.display = this.options.isResetButtonShown() ? 'block' : 'none';
+            this.resetElement.style.display = this.options.isResetButtonShown() ? '' : 'none';
         };
         Template.prototype.createCloseElement = function (viewModel, datepicker) {
             var closeElement = this.htmlHelper.createDiv('close');
@@ -1415,7 +1420,7 @@ var TheDatepicker;
             return closeElement;
         };
         Template.prototype.updateCloseElement = function (viewModel, input) {
-            this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? 'block' : 'none';
+            this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? '' : 'none';
         };
         Template.prototype.createGoBackElement = function (viewModel) {
             return this.createGoElement(viewModel, false);
@@ -1476,7 +1481,7 @@ var TheDatepicker;
             this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
             if (!this.options.isMonthAsDropdown()) {
                 this.monthSelect.style.display = 'none';
-                this.monthElement.style.display = 'inline';
+                this.monthElement.style.display = '';
                 return;
             }
             var valuesCount = 0;
@@ -1486,12 +1491,12 @@ var TheDatepicker;
                 var option = this.monthSelect.getElementsByTagName('option')[monthNumber];
                 var canGoToMonth = viewModel.canGoToMonth(newMonth);
                 option.disabled = !canGoToMonth;
-                option.style.display = canGoToMonth ? 'block' : 'none';
+                option.style.display = canGoToMonth ? '' : 'none';
                 valuesCount += canGoToMonth ? 1 : 0;
             }
             this.monthSelect.value = currentMonth.toString();
-            this.monthSelect.style.display = valuesCount > 1 ? 'inline-block' : 'none';
-            this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
+            this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
+            this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
         };
         Template.prototype.createYearElement = function (viewModel) {
             var options = [];
@@ -1520,7 +1525,7 @@ var TheDatepicker;
             this.yearElement.innerText = currentYear.toString();
             if (!this.options.isYearAsDropdown()) {
                 this.yearSelect.style.display = 'none';
-                this.yearElement.style.display = 'inline';
+                this.yearElement.style.display = '';
                 return;
             }
             var options = this.yearSelect.getElementsByTagName('option');
@@ -1546,15 +1551,15 @@ var TheDatepicker;
                     canGoToYear = (minYear === null || year > minYear) && (maxYear === null || year < maxYear);
                 }
                 options[index].disabled = !canGoToYear;
-                options[index].style.display = canGoToYear ? 'block' : 'none';
+                options[index].style.display = canGoToYear ? '' : 'none';
                 valuesCount += canGoToYear ? 1 : 0;
             }
             if (includesCurrentYear) {
                 this.yearSelect.value = currentYear.toString();
             }
             var isSelectVisible = includesCurrentYear && valuesCount > 1;
-            this.yearSelect.style.display = isSelectVisible ? 'inline-block' : 'none';
-            this.yearElement.style.display = isSelectVisible ? 'none' : 'inline';
+            this.yearSelect.style.display = isSelectVisible ? '' : 'none';
+            this.yearElement.style.display = isSelectVisible ? 'none' : '';
         };
         Template.prototype.createTableElement = function (viewModel, datepicker) {
             var tableHeader = this.createTableHeaderElement(viewModel);
@@ -1593,7 +1598,7 @@ var TheDatepicker;
             for (var weekIndex = 0; weekIndex < this.weeksElements.length; weekIndex++) {
                 var weekElement = this.weeksElements[weekIndex];
                 var week = weeks.length > weekIndex ? weeks[weekIndex] : null;
-                weekElement.style.display = week !== null ? 'table-row' : 'none';
+                weekElement.style.display = week !== null ? '' : 'none';
                 if (week !== null) {
                     for (var dayIndex = 0; dayIndex < this.daysElements[weekIndex].length; dayIndex++) {
                         this.updateDayElement(viewModel, this.daysElements[weekIndex][dayIndex], this.daysContentsElements[weekIndex][dayIndex], week[dayIndex]);
