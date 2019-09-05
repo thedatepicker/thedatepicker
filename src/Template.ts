@@ -223,13 +223,13 @@ namespace TheDatepicker {
 				const option = this.monthSelect.getElementsByTagName('option')[monthNumber];
 				const canGoToMonth = viewModel.canGoToMonth(newMonth);
 				option.disabled = !canGoToMonth;
-				option.style.display = canGoToMonth ? 'inline' : 'none';
+				option.style.display = canGoToMonth ? 'block' : 'none';
 				valuesCount += canGoToMonth ? 1 : 0;
 			}
 
 			this.monthSelect.value = currentMonth.toString();
 
-			this.monthSelect.style.display = valuesCount > 1 ? 'inline' : 'none';
+			this.monthSelect.style.display = valuesCount > 1 ? 'inline-block' : 'none';
 			this.monthElement.style.display = valuesCount > 1 ? 'none' : 'inline';
 		}
 
@@ -295,7 +295,7 @@ namespace TheDatepicker {
 					canGoToYear = (minYear === null || year > minYear) && (maxYear === null || year < maxYear);
 				}
 				options[index].disabled = !canGoToYear;
-				options[index].style.display = canGoToYear ? 'inline' : 'none';
+				options[index].style.display = canGoToYear ? 'block' : 'none';
 				valuesCount += canGoToYear ? 1 : 0;
 			}
 
@@ -304,7 +304,7 @@ namespace TheDatepicker {
 			}
 
 			const isSelectVisible = includesCurrentYear && valuesCount > 1;
-			this.yearSelect.style.display = isSelectVisible ? 'inline' : 'none';
+			this.yearSelect.style.display = isSelectVisible ? 'inline-block' : 'none';
 			this.yearElement.style.display = isSelectVisible ? 'none' : 'inline';
 		}
 
