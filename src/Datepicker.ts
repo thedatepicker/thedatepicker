@@ -84,15 +84,23 @@ namespace TheDatepicker {
 
 			this.document = document;
 
+			const duplicateError = 'There is already a datepicker present on ';
 			this.isContainerExternal = container !== null;
 			if (container === null) {
 				container = this.createContainer();
 				if (input !== null) {
 					input.parentNode.insertBefore(container, input.nextSibling);
 				}
+			} else {
+				if (typeof container.datepicker !== 'undefined') {
+					throw new Error(duplicateError + 'container.');
+				}
 			}
 
 			if (input !== null) {
+				if (typeof input.datepicker !== 'undefined') {
+					throw new Error(duplicateError + 'input.');
+				}
 				input.datepicker = this;
 				input.autocomplete = 'off';
 			}

@@ -343,6 +343,7 @@ var TheDatepicker;
                 throw new Error('At least one of input or container is mandatory.');
             }
             this.document = document;
+            var duplicateError = 'There is already a datepicker present on ';
             this.isContainerExternal = container !== null;
             if (container === null) {
                 container = this.createContainer();
@@ -350,7 +351,15 @@ var TheDatepicker;
                     input.parentNode.insertBefore(container, input.nextSibling);
                 }
             }
+            else {
+                if (typeof container.datepicker !== 'undefined') {
+                    throw new Error(duplicateError + 'container.');
+                }
+            }
             if (input !== null) {
+                if (typeof input.datepicker !== 'undefined') {
+                    throw new Error(duplicateError + 'input.');
+                }
                 input.datepicker = this;
                 input.autocomplete = 'off';
             }
