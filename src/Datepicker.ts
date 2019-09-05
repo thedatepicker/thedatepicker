@@ -301,7 +301,8 @@ namespace TheDatepicker {
 			deselectButton.style.left = '-12px';
 			deselectButton.href = '#';
 			deselectButton.onclick = (event: MouseEvent) => {
-				event.preventDefault();
+				event = event || window.event as MouseEvent;
+				Helper.preventDefault(event);
 				this.viewModel.cancelSelection(event);
 			};
 			deselectElement.className = this.options.getClassesPrefix() + 'deselect';

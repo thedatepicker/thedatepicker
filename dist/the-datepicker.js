@@ -529,7 +529,8 @@ var TheDatepicker;
             deselectButton.style.left = '-12px';
             deselectButton.href = '#';
             deselectButton.onclick = function (event) {
-                event.preventDefault();
+                event = event || window.event;
+                TheDatepicker.Helper.preventDefault(event);
                 _this.viewModel.cancelSelection(event);
             };
             deselectElement.className = this.options.getClassesPrefix() + 'deselect';
@@ -796,6 +797,7 @@ var TheDatepicker;
             var listenerProperty = 'on' + listenerType;
             var originalListener = element[listenerProperty] || null;
             element[listenerProperty] = function (event) {
+                event = event || window.event;
                 if (originalListener !== null) {
                     originalListener.call(element, event);
                 }
@@ -804,6 +806,22 @@ var TheDatepicker;
             return function () {
                 element[listenerProperty] = originalListener;
             };
+        };
+        Helper.preventDefault = function (event) {
+            if (event.preventDefault) {
+                event.preventDefault();
+            }
+            else {
+                event.returnValue = false;
+            }
+        };
+        Helper.stopPropagation = function (event) {
+            if (event.stopPropagation) {
+                event.stopPropagation();
+            }
+            else {
+                event.cancelBubble = true;
+            }
         };
         Helper.checkString = function (parameterName, value, checkNonEmpty) {
             if (checkNonEmpty === void 0) { checkNonEmpty = false; }
@@ -845,12 +863,14 @@ var TheDatepicker;
             this.addClass(anchor, 'button');
             anchor.href = '#';
             anchor.onclick = function (event) {
-                event.preventDefault();
+                event = event || window.event;
+                TheDatepicker.Helper.preventDefault(event);
                 onClick(event);
             };
             anchor.onkeydown = function (event) {
+                event = event || window.event;
                 if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Enter, TheDatepicker.KeyCode.Space], event.keyCode)) {
-                    event.preventDefault();
+                    TheDatepicker.Helper.preventDefault(event);
                     onClick(event);
                 }
             };
@@ -909,10 +929,11 @@ var TheDatepicker;
                 input.appendChild(option);
             }
             input.onchange = function (event) {
-                onChange(event, parseInt(input.value, 10));
+                onChange(event || window.event, parseInt(input.value, 10));
             };
             input.onkeydown = function (event) {
-                event.stopPropagation();
+                event = event || window.event;
+                TheDatepicker.Helper.stopPropagation(event);
             };
             return input;
         };
@@ -1201,7 +1222,7 @@ var TheDatepicker;
         };
         ViewModel.prototype.triggerKeyPress = function (event, target) {
             if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Left, TheDatepicker.KeyCode.Up, TheDatepicker.KeyCode.Right, TheDatepicker.KeyCode.Down], event.keyCode)) {
-                event.preventDefault();
+                TheDatepicker.Helper.preventDefault(event);
                 if (this.highlightedDay !== null) {
                     this.highlightSiblingDay(event, this.highlightedDay, this.translateKeyCodeToMoveDirection(event.keyCode));
                 }
@@ -1637,9 +1658,9 @@ var TheDatepicker;
                 }
             });
             cellContent.onfocus = function (event) {
-                viewModel.highlightDay(event, cellContent.day);
+                viewModel.highlightDay(event || window.event, cellContent.day);
             };
-            cellContent.onmouseenter = function (event) {
+            cellContent.onmouseenter = function () {
                 viewModel.cancelHighlight();
             };
             cellContent.onmouseleave = function () {

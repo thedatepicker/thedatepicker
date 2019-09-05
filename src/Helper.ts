@@ -138,6 +138,8 @@ namespace TheDatepicker {
 			const originalListener = element[listenerProperty] || null;
 			// @ts-ignore
 			element[listenerProperty] = (event: Event) => {
+				event = event || window.event;
+
 				if (originalListener !== null) {
 					originalListener.call(element, event);
 				}
@@ -149,6 +151,22 @@ namespace TheDatepicker {
 				// @ts-ignore
 				element[listenerProperty] = originalListener;
 			};
+		}
+
+		public static preventDefault(event: Event): void {
+			if (event.preventDefault) {
+				event.preventDefault();
+			} else {
+				event.returnValue = false;
+			}
+		}
+
+		public static stopPropagation(event: Event): void {
+			if (event.stopPropagation) {
+				event.stopPropagation();
+			} else {
+				event.cancelBubble = true;
+			}
 		}
 
 		public static checkString(parameterName: string, value: string, checkNonEmpty = false): void {

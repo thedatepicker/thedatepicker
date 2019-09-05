@@ -26,13 +26,15 @@ namespace TheDatepicker {
 			anchor.href = '#';
 
 			anchor.onclick = (event: MouseEvent) => {
-				event.preventDefault();
+				event = event || window.event as MouseEvent;
+				Helper.preventDefault(event);
 				onClick(event);
 			};
 
 			anchor.onkeydown = (event: KeyboardEvent) => {
+				event = event || window.event as KeyboardEvent;
 				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
-					event.preventDefault();
+					Helper.preventDefault(event);
 					onClick(event);
 				}
 			};
@@ -110,11 +112,12 @@ namespace TheDatepicker {
 			}
 
 			input.onchange = (event: Event) => {
-				onChange(event, parseInt(input.value, 10));
+				onChange(event || window.event, parseInt(input.value, 10));
 			};
 
 			input.onkeydown = (event: KeyboardEvent) => {
-				event.stopPropagation();
+				event = event || window.event as KeyboardEvent;
+				Helper.stopPropagation(event);
 			};
 
 			return input;

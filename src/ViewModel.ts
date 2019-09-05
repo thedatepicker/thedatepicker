@@ -349,7 +349,7 @@ namespace TheDatepicker {
 
 		public triggerKeyPress(event: KeyboardEvent, target: HTMLElement): void {
 			if (Helper.inArray([KeyCode.Left, KeyCode.Up, KeyCode.Right, KeyCode.Down], event.keyCode)) {
-				event.preventDefault();
+				Helper.preventDefault(event);
 
 				if (this.highlightedDay !== null) {
 					this.highlightSiblingDay(event, this.highlightedDay, this.translateKeyCodeToMoveDirection(event.keyCode));
@@ -397,7 +397,7 @@ namespace TheDatepicker {
 
 		private triggerOnGo(event: Event | null, month: Date, previousMonth: Date): void {
 			this.options.triggerEvent(EventType.Go, (listener: GoEvent) => {
-				return listener.call(month, event,  month, previousMonth);
+				return listener.call(month, event, month, previousMonth);
 			});
 		}
 

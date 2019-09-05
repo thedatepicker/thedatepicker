@@ -445,10 +445,10 @@ namespace TheDatepicker {
 			}) as HTMLDayContentElement;
 
 			cellContent.onfocus = (event: FocusEvent) => {
-				viewModel.highlightDay(event, cellContent.day);
+				viewModel.highlightDay(event || window.event, cellContent.day);
 			};
 
-			cellContent.onmouseenter = (event: MouseEvent) => {
+			cellContent.onmouseenter = () => {
 				viewModel.cancelHighlight();
 			};
 
