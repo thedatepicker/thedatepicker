@@ -540,7 +540,8 @@ var TheDatepicker;
         };
         Datepicker.prototype.updateDeselectButton = function () {
             if (this.input !== null && this.deselectElement !== null) {
-                this.deselectElement.style.visibility = this.input.value === '' ? 'hidden' : 'visible';
+                var isVisible = this.options.isDeselectButtonShown() && this.options.isAllowedEmpty() && this.input.value !== '';
+                this.deselectElement.style.visibility = isVisible ? 'visible' : 'hidden';
             }
         };
         Datepicker.prototype.preselectFromInput = function () {

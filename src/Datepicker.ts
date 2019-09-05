@@ -314,7 +314,8 @@ namespace TheDatepicker {
 
 		private updateDeselectButton(): void {
 			if (this.input !== null && this.deselectElement !== null) {
-				this.deselectElement.style.visibility = this.input.value === '' ? 'hidden' : 'visible';
+				const isVisible = this.options.isDeselectButtonShown() && this.options.isAllowedEmpty() && this.input.value !== '';
+				this.deselectElement.style.visibility = isVisible ? 'visible' : 'hidden';
 			}
 		}
 
