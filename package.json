@@ -1,6 +1,6 @@
 {
   "name": "thedatepicker",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -15,7 +15,8 @@
   "scripts": {
     "js": "tsc",
     "css": "stylus src/assets -o dist",
-    "minify": "uglifyjs -c -m -o dist/the-datepicker.min.js dist/the-datepicker.js"
+    "minify": "uglifyjs -c -m -o dist/the-datepicker.min.js dist/the-datepicker.js",
+    "wp": "webpack"
   },
   "bugs": {
     "url": "https://github.com/thedatepicker/thedatepicker/issues"
