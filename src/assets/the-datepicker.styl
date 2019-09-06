@@ -14,110 +14,117 @@ $border = #ccc
 	line-height 1em
 	box-sizing border-box
 
-.the-datepicker-body
-	margin-top 1em
+	.the-datepicker-body
+		margin-top 1em
 
-.the-datepicker-table-header-cell
-	width 2.1em
-	padding 0.5em 0
-	text-align center
-	font-weight normal
-	text-transform uppercase
-	color $table-header-color
-	font-size 0.85em
+	th.the-datepicker-table-header-cell
+		width 2.1em
+		min-width 2.1em
+		max-width 2.1em
+		padding 0.5em 0
+		text-align center
+		font-weight normal
+		text-transform uppercase
+		color $table-header-color
+		font-size 0.85em
 
-.the-datepicker-button
-	display block
-	width 2.1em
-	padding 0.5em 0
-	text-decoration none
-	text-align center
-	color $base-color
-	border-radius 0.3em
-	&:hover
-		background-color $highlight-background
+	a.the-datepicker-button
+		display block
+		width 2.1em
+		min-width 2.1em
+		max-width 2.1em
+		padding 0.5em 0
+		text-decoration none
+		text-align center
+		color $base-color
+		border-radius 0.3em
+		&:hover
+			background-color $highlight-background
+			text-decoration none
+
+	.the-datepicker-title
+		display inline-block
+		width 70%
+
+	.the-datepicker-title-content
+		display inline-block
+		padding 0.5em
+
+	.the-datepicker-control
+		display inline-block
+		width 30%
+		text-align right
+
+	.the-datepicker-reset, .the-datepicker-close
+		display inline-block
+		font-weight bold
+
+	.the-datepicker-go
+		display inline-block
+		width 15%
+		.the-datepicker-button
+			display inline-block
+			font-weight bold
+
+	.the-datepicker-go-next
+		text-align right
+
+	.the-datepicker-state
+		display inline-block
+		width 70%
+
+	.the-datepicker-month
+		display inline-block
+		width 60%
+		text-align center
+
+	.the-datepicker-year
+		display inline-block
+		width 40%
+		text-align center
+
+	select.the-datepicker-select
+		font-size 1em
+		margin 0
+		padding 0
+
+	table.the-datepicker-table
+		display table
+		border-collapse collapse
+		thead
+			display table-header-group
+		tbody
+			display table-row-group
+		tr
+			display table-row
+			td, th
+				display table-cell
+
+	td.the-datepicker-highlighted
+		.the-datepicker-button
+			background-color $highlight-background
+
+	td.the-datepicker-outside
+		.the-datepicker-button
+			color $weak-color
+
+	td.the-datepicker-unavailable
+		.the-datepicker-button
+			color $unavailable-color
+			&:hover
+				background-color transparent
+
+	td.the-datepicker-selected, td.the-datepicker-selected.the-datepicker-highlighted
+		a.the-datepicker-button
+			background-color $base-color
+			color white
+			&:hover
+				background-color $base-color
+
+	td.the-datepicker-weekend, td.the-datepicker-today
+		font-weight bold
 
 .the-datepicker-deselect a
 	text-decoration none
 	color $base-color
-	font-weight bold
-
-.the-datepicker-title
-	display inline-block
-	width 70%
-
-.the-datepicker-title-content
-	display inline-block
-	padding 0.5em
-
-.the-datepicker-control
-	display inline-block
-	width 30%
-	text-align right
-
-.the-datepicker-reset, .the-datepicker-close
-	display inline-block
-	font-weight bold
-
-.the-datepicker-go
-	display inline-block
-	width 15%
-	.the-datepicker-button
-		display inline-block
-		font-weight bold
-
-.the-datepicker-go-next
-	text-align right
-
-.the-datepicker-state
-	display inline-block
-	width 70%
-
-.the-datepicker-month
-	display inline-block
-	width 60%
-	text-align center
-
-.the-datepicker-year
-	display inline-block
-	width 40%
-	text-align center
-
-.the-datepicker-select
-	font-size 1em
-
-.the-datepicker-table
-	display table
-	border-collapse collapse
-	thead
-		display table-header-group
-	tbody
-		display table-row-group
-	tr
-		display table-row
-		td, th
-			display table-cell
-
-.the-datepicker-highlighted
-	.the-datepicker-button
-		background-color $highlight-background
-
-.the-datepicker-outside
-	.the-datepicker-button
-		color $weak-color
-
-.the-datepicker-unavailable
-	.the-datepicker-button
-		color $unavailable-color
-		&:hover
-			background-color transparent
-
-.the-datepicker-selected, .the-datepicker-selected.the-datepicker-highlighted
-	.the-datepicker-button
-		background-color $base-color
-		color white
-		&:hover
-			background-color $base-color
-
-.the-datepicker-weekend, .the-datepicker-today
 	font-weight bold
