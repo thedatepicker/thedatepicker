@@ -20,6 +20,11 @@ $border = #ccc
 .the-datepicker-table-header-cell
 	width 2.1em
 	padding 0.5em 0
+	text-align center
+	font-weight normal
+	text-transform uppercase
+	color $table-header-color
+	font-size 0.85em
 
 .the-datepicker-button
 	display block
@@ -82,14 +87,16 @@ $border = #ccc
 	font-size 1em
 
 .the-datepicker-table
+	display table
 	border-collapse collapse
-
-.the-datepicker-table-header-cell
-	text-align center
-	font-weight normal
-	text-transform uppercase
-	color $table-header-color
-	font-size 0.85em
+	thead
+		display table-header-group
+	tbody
+		display table-row-group
+	tr
+		display table-row
+		td, th
+			display table-cell
 
 .the-datepicker-highlighted
 	.the-datepicker-button

@@ -13,6 +13,11 @@
 .the-datepicker-table-header-cell {
   width: 2.1em;
   padding: 0.5em 0;
+  text-align: center;
+  font-weight: normal;
+  text-transform: uppercase;
+  color: #666;
+  font-size: 0.85em;
 }
 .the-datepicker-button {
   display: block;
@@ -78,14 +83,21 @@
   font-size: 1em;
 }
 .the-datepicker-table {
+  display: table;
   border-collapse: collapse;
 }
-.the-datepicker-table-header-cell {
-  text-align: center;
-  font-weight: normal;
-  text-transform: uppercase;
-  color: #666;
-  font-size: 0.85em;
+.the-datepicker-table thead {
+  display: table-header-group;
+}
+.the-datepicker-table tbody {
+  display: table-row-group;
+}
+.the-datepicker-table tr {
+  display: table-row;
+}
+.the-datepicker-table tr td,
+.the-datepicker-table tr th {
+  display: table-cell;
 }
 .the-datepicker-highlighted .the-datepicker-button {
   background-color: #d1e8ff;
