@@ -401,6 +401,7 @@ namespace TheDatepicker {
 		protected updateDayElement(viewModel: ViewModel, dayElement: HTMLElement, dayContentElement: HTMLDayContentElement, day: Day): void {
 			dayContentElement.day = day;
 			dayElement.className = '';
+			this.htmlHelper.addClass(dayElement, 'cell');
 
 			if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
 				dayContentElement.innerText = '';

@@ -1623,6 +1623,7 @@ var TheDatepicker;
         Template.prototype.updateDayElement = function (viewModel, dayElement, dayContentElement, day) {
             dayContentElement.day = day;
             dayElement.className = '';
+            this.htmlHelper.addClass(dayElement, 'cell');
             if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
                 dayContentElement.innerText = '';
                 dayContentElement.removeAttribute('href');

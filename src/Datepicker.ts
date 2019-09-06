@@ -19,6 +19,8 @@ namespace TheDatepicker {
 	// todo scope="col", <col>
 	// todo option setMinDate apod. by mohly přijímat i undefined apod.
 	// todo initialdate by mělo mít vyšší prioritu než initialMonth
+	// todo poslední css zlobí ve Slv
+	// todo možná by měl jít vybrat rok i když už nejde vybrat onen měsíc, pokud alespoň jeden měsíc v roce vybrat jde
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

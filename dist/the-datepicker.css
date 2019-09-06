@@ -101,6 +101,9 @@
 .the-datepicker-container table.the-datepicker-table tr th {
   display: table-cell;
 }
+.the-datepicker-container td.the-datepicker-cell {
+  padding: 0;
+}
 .the-datepicker-container td.the-datepicker-highlighted .the-datepicker-button {
   background-color: #d1e8ff;
 }
@@ -130,4 +133,7 @@
   text-decoration: none;
   color: #007eff;
   font-weight: bold;
+}
+.the-datepicker-deselect a:hover {
+  text-decoration: none;
 }
