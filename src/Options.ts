@@ -30,11 +30,6 @@ namespace TheDatepicker {
 		beforeGo: GoEvent[]
 	}
 
-	interface NumbersRange {
-		from: number;
-		to: number;
-	}
-
 	type DateAvailabilityResolver = (date: Date) => boolean;
 
 	type CellContentResolver = (day: Day) => string;
@@ -68,10 +63,7 @@ namespace TheDatepicker {
 		private classesPrefix = 'the-datepicker-';
 		private showCloseButton = true;
 		private title = '';
-		private yearsSelectionLimits: NumbersRange = {
-			from: 1900,
-			to: 2100,
-		};
+		private yearDropdownItemsLimit = 200;
 		public goBackHtml = '&lt;';
 		public goForwardHtml = '&gt;';
 		public closeHtml = '&times;';
@@ -290,22 +282,11 @@ namespace TheDatepicker {
 			this.title = title;
 		}
 
-		// Limits (from - to) of year dropdown list.
+		// Limit of number of items in year dropdown list.
 		// Works only when the setting YearAsDropdown is set to true.
-		// Default is from 1900 to 2100.
-		public setYearsSelectionLimits(from: number, to: number): void {
-			const parameterName = 'Years selection limits';
-			from = Helper.checkNumber(parameterName, from);
-			to = Helper.checkNumber(parameterName, to);
-
-			if (from > to) {
-				throw new Error(parameterName + ' - from cannot be higher than to.');
-			}
-
-			this.yearsSelectionLimits = {
-				from,
-				to,
-			};
+		// Default is 200.
+		public setYearDropdownItemsLimit(limit: number): void {
+			this.yearDropdownItemsLimit = Helper.checkNumber('Year dropdown items limit', limit, true);
 		}
 
 		// Sets html for go back button.
@@ -535,8 +516,30 @@ namespace TheDatepicker {
 			return this.maxDate;
 		}
 
-		public getYearsSelectionLimits(): NumbersRange {
-			return this.yearsSelectionLimits;
+		public getMinMonth(): Date | null {
+			if (this.minDate === null) {
+				return null;
+			}
+
+			const minMonth = new Date(this.minDate.getTime());
+			minMonth.setDate(1);
+
+			return minMonth;
+		}
+
+		public getMaxMonth(): Date | null {
+			if (this.maxDate === null) {
+				return null;
+			}
+
+			const maxMonth = new Date(this.maxDate.getTime());
+			maxMonth.setDate(1);
+
+			return maxMonth;
+		}
+
+		public getYearDropdownItemsLimit(): number {
+			return this.yearDropdownItemsLimit;
 		}
 
 		public isDateAvailable(date: Date): boolean {
@@ -609,20 +612,14 @@ namespace TheDatepicker {
 		}
 
 		private calculateMonthCorrection(month: Date): Date | null {
-			if (this.minDate !== null) {
-				const minMonth = new Date(this.minDate.getTime());
-				minMonth.setDate(1);
-				if (month.getTime() < minMonth.getTime()) {
-					return minMonth;
-				}
+			const minMonth = this.getMinMonth();
+			if (minMonth !== null && month.getTime() < minMonth.getTime()) {
+				return minMonth;
 			}
 
-			if (this.maxDate !== null) {
-				const maxMonth = new Date(this.maxDate.getTime());
-				maxMonth.setDate(1);
-				if (month.getTime() > maxMonth.getTime()) {
-					return maxMonth;
-				}
+			const maxMonth = this.getMaxMonth();
+			if (maxMonth !== null && month.getTime() > maxMonth.getTime()) {
+				return maxMonth;
 			}
 
 			return null;

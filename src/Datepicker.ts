@@ -7,20 +7,20 @@ namespace TheDatepicker {
 	// todo levý horní roh zkosený pokud to není input mode
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo static metody šětří výkon
-	// todo yearsSelectionLimits se nemění interaktivně (po zavolání .render()) + možná by to šlo vymyslet líp (např. setYearSelectItemsCount(100) a nastavovaly by se +-50 od aktuálního roku
-	//      todo + optimalizace že pokud option.style.display !== 'none' tak vím že ta dylší už mení nemusím
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
 	// todo při změně měsíce selectem když onBeforeGo vrátí false by se neměla změnit hodnota selectu
 	// todo proč výběr data volá Template.render() tolikrát?
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
-	// todo nadesignovat v relativních jednotkách ať je to hezký na všech obrazovkách?
 	// todo např třída CannotParseDateException se neminifikuje
 	// todo scope="col", <col>
 	// todo option setMinDate apod. by mohly přijímat i undefined apod.
 	// todo initialdate by mělo mít vyšší prioritu než initialMonth
 	// todo poslední css zlobí ve Slv
-	// todo možná by měl jít vybrat rok i když už nejde vybrat onen měsíc, pokud alespoň jeden měsíc v roce vybrat jde
+	// todo ve FF manipulace šipkama v inputu blurne
+	// todo křížek by to mohl zavřít ale nechat focus v inputu (klik do inputu by to zas otevřel)
+	// todo dám minDate 1999-12-01, vyberu 1999-12-31, v inputu změnim datum na 1998-12-31, nic, změnim to zpět na 1999-12-31, vybere se mi prvního
+	// todo desgin: selecty moc u sebe, buňky tabulky taky (nevypadá to hezky, na druhou stranu lepší je když mezi tím není prázdný hover)
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

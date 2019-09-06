@@ -92,7 +92,7 @@
 					<label>datepicker.options.setMaxDate(<input type="text" size="15" id="maxDate">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setYearsSelectionLimits(<input type="text" size="8" id="yearsSelectionLimitsFrom" value="1900">, <input type="text" size="8" id="yearsSelectionLimitsTo" value="2100">);</label>
+					<label>datepicker.options.setYearDropdownItemsLimit(<input type="text" size="15" id="yearDropdownItemsLimit" value="200">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setDaysOutOfMonthVisible(<input type="checkbox" id="daysOutOfMonthVisible">);</label>
@@ -361,22 +361,12 @@
 				});
 			};
 
-			var yearsSelectionLimitsFromInput = document.getElementById('yearsSelectionLimitsFrom');
-			var yearsSelectionLimitsToInput = document.getElementById('yearsSelectionLimitsTo');
-			var yearsSelectionLimitsOnChange = function () {
-				yearsSelectionLimitsFromInput.className = '';
-				yearsSelectionLimitsToInput.className = '';
-				try {
-					datepicker.options.setYearsSelectionLimits(parseInt(yearsSelectionLimitsFromInput.value, 10), parseInt(yearsSelectionLimitsToInput.value, 10));
-					datepicker.render();
-				} catch (error) {
-					console.error(error);
-					yearsSelectionLimitsFromInput.className = 'invalid';
-					yearsSelectionLimitsToInput.className = 'invalid';
-				}
+			var yearDropdownItemsLimitInput = document.getElementById('yearDropdownItemsLimit');
+			yearDropdownItemsLimitInput.onchange = function () {
+				updateSetting(yearDropdownItemsLimitInput, function () {
+					datepicker.options.setYearDropdownItemsLimit(yearDropdownItemsLimitInput.value !== '' ? yearDropdownItemsLimitInput.value : null);
+				});
 			};
-			yearsSelectionLimitsFromInput.onchange = yearsSelectionLimitsOnChange;
-			yearsSelectionLimitsToInput.onchange = yearsSelectionLimitsOnChange;
 
 			var daysOutOfMonthVisibleInput = document.getElementById('daysOutOfMonthVisible');
 			daysOutOfMonthVisibleInput.onchange = function () {

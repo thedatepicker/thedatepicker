@@ -125,7 +125,7 @@
 .the-datepicker-container td.the-datepicker-selected.the-datepicker-highlighted a.the-datepicker-button:hover {
   background-color: #007eff;
 }
-.the-datepicker-container td.the-datepicker-weekend,
+.the-datepicker-container .the-datepicker-weekend,
 .the-datepicker-container td.the-datepicker-today {
   font-weight: bold;
 }

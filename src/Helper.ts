@@ -175,10 +175,10 @@ namespace TheDatepicker {
 			}
 		}
 
-		public static checkNumber(parameterName: string, value: number): number {
+		public static checkNumber(parameterName: string, value: number, isPositive = false): number {
 			value = typeof value === 'string' ? parseInt(value) : value;
-			if (typeof value !== 'number' || isNaN(value)) {
-				throw new Error(parameterName + ' was expected to be a valid number.');
+			if (typeof value !== 'number' || isNaN(value) || (isPositive && value <= 0)) {
+				throw new Error(parameterName + ' was expected to be a valid' + (isPositive ? ' positive' : '') + ' number.');
 			}
 			return value;
 		}

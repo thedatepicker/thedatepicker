@@ -105,10 +105,7 @@ namespace TheDatepicker {
 			this.addClass(input, 'select');
 
 			for (let index = 0; index < options.length; index++) {
-				const option = this.document.createElement('option');
-				option.value = options[index].value.toString();
-				option.innerText = options[index].label;
-				input.appendChild(option);
+				input.appendChild(this.createSelectOption(options[index].value, options[index].label));
 			}
 
 			input.onchange = (event: Event) => {
@@ -121,6 +118,14 @@ namespace TheDatepicker {
 			};
 
 			return input;
+		}
+
+		public createSelectOption(value: number, label: string): HTMLOptionElement {
+			const option = this.document.createElement('option');
+			option.value = value.toString();
+			option.innerText = label;
+
+			return option;
 		}
 
 		public addClass(element: HTMLElement, className: string): void {
