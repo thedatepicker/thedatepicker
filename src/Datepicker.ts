@@ -20,7 +20,9 @@ namespace TheDatepicker {
 	// todo ve FF manipulace šipkama v inputu blurne
 	// todo křížek by to mohl zavřít ale nechat focus v inputu (klik do inputu by to zas otevřel)
 	// todo dám minDate 1999-12-01, vyberu 1999-12-31, v inputu změnim datum na 1998-12-31, nic, změnim to zpět na 1999-12-31, vybere se mi prvního
-	// todo desgin: selecty moc u sebe, buňky tabulky taky (nevypadá to hezky, na druhou stranu lepší je když mezi tím není prázdný hover)
+	// todo BEM zápis CSS
+	// todo fixed rows count nedrží správnou velikost pokud nejsou zobrazeny out of month
+	// todo min/max month zakešovanej
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

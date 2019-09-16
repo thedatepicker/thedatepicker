@@ -4,7 +4,7 @@
 
 namespace TheDatepicker {
 
-	interface HTMLDayContentElement extends HTMLAnchorElement {
+	interface HTMLDayButtonElement extends HTMLAnchorElement {
 
 		day: Day;
 
@@ -29,7 +29,8 @@ namespace TheDatepicker {
 		private yearElement: HTMLElement | null = null;
 		private weeksElements: HTMLElement[] = [];
 		private daysElements: HTMLElement[][] = [];
-		private daysContentsElements: HTMLDayContentElement[][] = [];
+		private daysButtonsElements: HTMLDayButtonElement[][] = [];
+		private daysContentsElements: HTMLElement[][] = [];
 
 		public constructor(options: Options, htmlHelper: HtmlHelper) {
 			this.options = options;
@@ -373,6 +374,7 @@ namespace TheDatepicker {
 
 		protected createTableBodyElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
 			this.daysElements = [];
+			this.daysButtonsElements = [];
 			this.daysContentsElements = [];
 
 			const rows = [];
@@ -395,7 +397,13 @@ namespace TheDatepicker {
 
 				if (week !== null) {
 					for (let dayIndex = 0; dayIndex < this.daysElements[weekIndex].length; dayIndex++) {
-						this.updateDayElement(viewModel, this.daysElements[weekIndex][dayIndex], this.daysContentsElements[weekIndex][dayIndex], week[dayIndex]);
+						this.updateDayElement(
+							viewModel,
+							this.daysElements[weekIndex][dayIndex],
+							this.daysButtonsElements[weekIndex][dayIndex],
+							this.daysContentsElements[weekIndex][dayIndex],
+							week[dayIndex]
+						);
 					}
 				}
 			}
@@ -403,31 +411,42 @@ namespace TheDatepicker {
 
 		protected createTableRowElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
 			const cells = [];
+			const cellsButtons = [];
 			const cellsContents = [];
 			for (let index = 0; index < 7; index++) {
 				const cell = this.htmlHelper.createTableCell();
+				const cellButton = this.createTableCellButtonElement(viewModel, datepicker);
 				const cellContent = this.createTableCellContentElement(viewModel, datepicker);
 
 				cells.push(cell);
+				cellsButtons.push(cellButton);
 				cellsContents.push(cellContent);
 
-				cell.appendChild(cellContent);
+				cell.appendChild(cellButton);
+				cellButton.appendChild(cellContent);
 			}
 			this.daysElements.push(cells);
+			this.daysButtonsElements.push(cellsButtons);
 			this.daysContentsElements.push(cellsContents);
 
 			return this.htmlHelper.createTableRow('week', cells as HTMLTableCellElement[]);
 		}
 
-		protected updateDayElement(viewModel: ViewModel, dayElement: HTMLElement, dayContentElement: HTMLDayContentElement, day: Day): void {
-			dayContentElement.day = day;
+		protected updateDayElement(
+			viewModel: ViewModel,
+			dayElement: HTMLElement,
+			dayButtonElement: HTMLDayButtonElement,
+			dayContentElement: HTMLElement,
+			day: Day
+		): void {
+			dayButtonElement.day = day;
 			dayElement.className = '';
 			this.htmlHelper.addClass(dayElement, 'cell');
 
 			if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
 				dayContentElement.innerText = '';
-				dayContentElement.removeAttribute('href');
-				dayContentElement.style.visibility = 'hidden';
+				dayButtonElement.removeAttribute('href');
+				dayButtonElement.style.visibility = 'hidden';
 				return;
 			}
 
@@ -455,39 +474,46 @@ namespace TheDatepicker {
 				dayElement.className += ' ' + customClasses[index];
 			}
 
-			dayContentElement.style.visibility = 'visible';
+			dayButtonElement.style.visibility = 'visible';
 			dayContentElement.innerText = this.options.getCellContent(day);
 
 			if (day.isAvailable) {
-				dayContentElement.href = '#';
+				dayButtonElement.href = '#';
 			} else {
-				dayContentElement.removeAttribute('href');
+				dayButtonElement.removeAttribute('href');
 			}
 
 			if (day.isFocused) {
-				dayContentElement.focus();
+				dayButtonElement.focus();
 			}
 		}
 
-		protected createTableCellContentElement(viewModel: ViewModel, datepicker: Datepicker): HTMLDayContentElement {
-			const cellContent = this.htmlHelper.createAnchor((event: Event) => {
-				viewModel.selectDay(event, cellContent.day, false, true, true);
+		protected createTableCellButtonElement(viewModel: ViewModel, datepicker: Datepicker): HTMLDayButtonElement {
+			const cellButton = this.htmlHelper.createAnchor((event: Event) => {
+				viewModel.selectDay(event, cellButton.day, false, true, true);
 				if (this.options.isHiddenOnSelect()) {
 					datepicker.close(event);
 				}
-			}) as HTMLDayContentElement;
+			}) as HTMLDayButtonElement;
 
-			cellContent.onfocus = (event: FocusEvent) => {
-				viewModel.highlightDay(event || window.event, cellContent.day);
+			cellButton.onfocus = (event: FocusEvent) => {
+				viewModel.highlightDay(event || window.event, cellButton.day);
 			};
 
-			cellContent.onmouseenter = () => {
+			cellButton.onmouseenter = () => {
 				viewModel.cancelHighlight();
 			};
 
-			cellContent.onmouseleave = () => {
+			cellButton.onmouseleave = () => {
 				viewModel.cancelHighlight();
 			};
+
+			return cellButton;
+		}
+
+		protected createTableCellContentElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+			const cellContent = this.htmlHelper.createSpan();
+			this.htmlHelper.addClass(cellContent, 'day-content');
 
 			return cellContent;
 		}
