@@ -18,9 +18,11 @@ namespace TheDatepicker {
 		private readonly htmlHelper: HtmlHelper;
 
 		private containerElement: HTMLElement | null = null;
+		private controlElement: HTMLElement | null = null;
 		private goBackElement: HTMLElement | null = null;
 		private goForwardElement: HTMLElement | null = null;
 		private titleElement: HTMLElement | null = null;
+		private titleContentElement: HTMLElement | null = null;
 		private resetElement: HTMLElement | null = null;
 		private closeElement: HTMLElement | null = null;
 		private monthSelect: HTMLSelectElement | null = null;
@@ -48,6 +50,7 @@ namespace TheDatepicker {
 			}
 
 			this.updateContainerElement(viewModel, datepicker.input);
+			this.updateTopElement(viewModel, datepicker.input);
 			this.updateTitleElement(viewModel);
 			this.updateCloseElement(viewModel, datepicker.input);
 			this.updateResetElement(viewModel);
@@ -99,23 +102,34 @@ namespace TheDatepicker {
 
 			navigation.appendChild(this.createGoForwardElement(viewModel));
 
+			this.controlElement = control;
+
 			return header;
+		}
+
+		protected updateTopElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
+			const isVisible = this.options.getTitle() !== ''
+				|| this.options.isResetButtonShown()
+				|| this.isCloseElementVisible(input);
+			this.controlElement.style.display = isVisible ? '' : 'none';
+			this.titleElement.style.display = isVisible ? '' : 'none';
 		}
 
 		protected createTitleElement(viewModel: ViewModel): HTMLElement {
 			const titleElement = this.htmlHelper.createDiv('title');
-			const titleSpan = this.htmlHelper.createSpan();
-			titleElement.appendChild(titleSpan);
-			this.htmlHelper.addClass(titleSpan, 'title-content');
-			this.titleElement = titleSpan;
+			const titleContent = this.htmlHelper.createSpan();
+			titleElement.appendChild(titleContent);
+			this.htmlHelper.addClass(titleContent, 'title-content');
+			this.titleElement = titleElement;
+			this.titleContentElement = titleContent;
 
 			return titleElement;
 		}
 
 		protected updateTitleElement(viewModel: ViewModel): void {
 			const title = this.options.getTitle();
-			this.titleElement.style.display = title !== '' ? '' : 'none';
-			this.titleElement.innerText = title;
+			this.titleContentElement.style.display = title !== '' ? '' : 'none';
+			this.titleContentElement.innerText = title;
 		}
 
 		protected createResetElement(viewModel: ViewModel): HTMLElement {
@@ -148,8 +162,12 @@ namespace TheDatepicker {
 			return closeElement;
 		}
 
+		protected isCloseElementVisible(input: HTMLInputElement | null): boolean {
+			return input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown();
+		}
+
 		protected updateCloseElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
-			this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? '' : 'none';
+			this.closeElement.style.display = this.isCloseElementVisible(input) ? '' : 'none';
 		}
 
 		protected createGoBackElement(viewModel: ViewModel): HTMLElement {
@@ -208,11 +226,11 @@ namespace TheDatepicker {
 			});
 
 			const monthElement = this.htmlHelper.createDiv('month');
-			const monthSpan = this.htmlHelper.createSpan();
+			const monthContent = this.htmlHelper.createSpan();
 			monthElement.appendChild(selectElement);
-			monthElement.appendChild(monthSpan);
+			monthElement.appendChild(monthContent);
 
-			this.monthElement = monthSpan;
+			this.monthElement = monthContent;
 			this.monthSelect = selectElement;
 
 			return monthElement;
@@ -263,11 +281,11 @@ namespace TheDatepicker {
 			});
 
 			const yearElement = this.htmlHelper.createDiv('year');
-			const yearSpan = this.htmlHelper.createSpan();
+			const yearContent = this.htmlHelper.createSpan();
 			yearElement.appendChild(selectElement);
-			yearElement.appendChild(yearSpan);
+			yearElement.appendChild(yearContent);
 
-			this.yearElement = yearSpan;
+			this.yearElement = yearContent;
 			this.yearSelect = selectElement;
 
 			return yearElement;

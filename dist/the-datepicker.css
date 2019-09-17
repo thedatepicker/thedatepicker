@@ -54,6 +54,9 @@
   display: inline-block;
   font-weight: bold;
 }
+.the-datepicker-container .the-datepicker-navigation {
+  margin-top: 0.3em;
+}
 .the-datepicker-container .the-datepicker-go {
   display: inline-block;
   width: 15%;

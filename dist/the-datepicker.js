@@ -1343,9 +1343,11 @@ var TheDatepicker;
     var Template = (function () {
         function Template(options, htmlHelper) {
             this.containerElement = null;
+            this.controlElement = null;
             this.goBackElement = null;
             this.goForwardElement = null;
             this.titleElement = null;
+            this.titleContentElement = null;
             this.resetElement = null;
             this.closeElement = null;
             this.monthSelect = null;
@@ -1368,6 +1370,7 @@ var TheDatepicker;
                 datepicker.container.appendChild(this.createSkeleton(viewModel, datepicker));
             }
             this.updateContainerElement(viewModel, datepicker.input);
+            this.updateTopElement(viewModel, datepicker.input);
             this.updateTitleElement(viewModel);
             this.updateCloseElement(viewModel, datepicker.input);
             this.updateResetElement(viewModel);
@@ -1404,20 +1407,29 @@ var TheDatepicker;
             state.appendChild(this.createMonthElement(viewModel));
             state.appendChild(this.createYearElement(viewModel));
             navigation.appendChild(this.createGoForwardElement(viewModel));
+            this.controlElement = control;
             return header;
+        };
+        Template.prototype.updateTopElement = function (viewModel, input) {
+            var isVisible = this.options.getTitle() !== ''
+                || this.options.isResetButtonShown()
+                || this.isCloseElementVisible(input);
+            this.controlElement.style.display = isVisible ? '' : 'none';
+            this.titleElement.style.display = isVisible ? '' : 'none';
         };
         Template.prototype.createTitleElement = function (viewModel) {
             var titleElement = this.htmlHelper.createDiv('title');
-            var titleSpan = this.htmlHelper.createSpan();
-            titleElement.appendChild(titleSpan);
-            this.htmlHelper.addClass(titleSpan, 'title-content');
-            this.titleElement = titleSpan;
+            var titleContent = this.htmlHelper.createSpan();
+            titleElement.appendChild(titleContent);
+            this.htmlHelper.addClass(titleContent, 'title-content');
+            this.titleElement = titleElement;
+            this.titleContentElement = titleContent;
             return titleElement;
         };
         Template.prototype.updateTitleElement = function (viewModel) {
             var title = this.options.getTitle();
-            this.titleElement.style.display = title !== '' ? '' : 'none';
-            this.titleElement.innerText = title;
+            this.titleContentElement.style.display = title !== '' ? '' : 'none';
+            this.titleContentElement.innerText = title;
         };
         Template.prototype.createResetElement = function (viewModel) {
             var resetElement = this.htmlHelper.createDiv('reset');
@@ -1442,8 +1454,11 @@ var TheDatepicker;
             this.closeElement = closeElement;
             return closeElement;
         };
+        Template.prototype.isCloseElementVisible = function (input) {
+            return input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown();
+        };
         Template.prototype.updateCloseElement = function (viewModel, input) {
-            this.closeElement.style.display = input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown() ? '' : 'none';
+            this.closeElement.style.display = this.isCloseElementVisible(input) ? '' : 'none';
         };
         Template.prototype.createGoBackElement = function (viewModel) {
             return this.createGoElement(viewModel, false);
@@ -1492,10 +1507,10 @@ var TheDatepicker;
                 viewModel.goToMonth(event, newMonth);
             });
             var monthElement = this.htmlHelper.createDiv('month');
-            var monthSpan = this.htmlHelper.createSpan();
+            var monthContent = this.htmlHelper.createSpan();
             monthElement.appendChild(selectElement);
-            monthElement.appendChild(monthSpan);
-            this.monthElement = monthSpan;
+            monthElement.appendChild(monthContent);
+            this.monthElement = monthContent;
             this.monthSelect = selectElement;
             return monthElement;
         };
@@ -1537,10 +1552,10 @@ var TheDatepicker;
                 viewModel.goToMonth(event, newMonth);
             });
             var yearElement = this.htmlHelper.createDiv('year');
-            var yearSpan = this.htmlHelper.createSpan();
+            var yearContent = this.htmlHelper.createSpan();
             yearElement.appendChild(selectElement);
-            yearElement.appendChild(yearSpan);
-            this.yearElement = yearSpan;
+            yearElement.appendChild(yearContent);
+            this.yearElement = yearContent;
             this.yearSelect = selectElement;
             return yearElement;
         };

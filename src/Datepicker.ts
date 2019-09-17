@@ -25,7 +25,6 @@ namespace TheDatepicker {
 	// todo min/max month zakešovanej
 	// todo třídu na wrapper
 	// todo rozhodnout zda je nahoře nebo dole (další třída)
-	// todo inline block měnit na none
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
