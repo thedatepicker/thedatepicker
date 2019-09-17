@@ -373,6 +373,8 @@ var TheDatepicker;
             this.options = options !== null ? options.clone() : new TheDatepicker.Options();
             this.dateConverter = new TheDatepicker.DateConverter(this.options.translator);
             this.viewModel = new TheDatepicker.ViewModel(this.options, this);
+            this.triggerReady(input);
+            this.triggerReady(container);
         }
         Datepicker.prototype.render = function () {
             var _this = this;
@@ -623,6 +625,13 @@ var TheDatepicker;
             if (this.inputListenerRemover !== null) {
                 this.inputListenerRemover();
                 this.inputListenerRemover = null;
+            }
+        };
+        Datepicker.prototype.triggerReady = function (element) {
+            if (typeof element.datepickerReadyListeners !== 'undefined') {
+                for (var index = 0; index < element.datepickerReadyListeners.length; index++) {
+                    element.datepickerReadyListeners[index](this);
+                }
             }
         };
         Datepicker.activateViewModel = function (event, viewModel) {
@@ -2203,3 +2212,13 @@ var TheDatepicker;
     }());
     TheDatepicker.Options = Options;
 })(TheDatepicker || (TheDatepicker = {}));
+HTMLElement.prototype.onDatepickerReady = function (callback) {
+    if (typeof this.datepicker !== 'undefined') {
+        callback(this.datepicker);
+        return;
+    }
+    if (typeof this.datepickerReadyListeners === 'undefined') {
+        this.datepickerReadyListeners = [];
+    }
+    this.datepickerReadyListeners.push(callback);
+};

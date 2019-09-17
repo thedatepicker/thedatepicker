@@ -26,17 +26,18 @@ namespace TheDatepicker {
 	// todo třídu na wrapper
 	// todo rozhodnout zda je nahoře nebo dole (další třída)
 	// todo inline block měnit na none
-	// todo trigrovat change event
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
 		datepicker?: Datepicker;
+		datepickerReadyListeners?: ((datepicker: Datepicker) => void)[]
 
 	}
 
 	interface HTMLDatepickerContainerElement extends HTMLElement {
 
 		datepicker?: Datepicker;
+		datepickerReadyListeners?: ((datepicker: Datepicker) => void)[]
 		onfocusin?: (event: FocusEvent) => void;
 
 	}
@@ -124,6 +125,9 @@ namespace TheDatepicker {
 			this.options = options !== null ? options.clone() : new Options();
 			this.dateConverter = new DateConverter(this.options.translator);
 			this.viewModel = new ViewModel(this.options, this);
+
+			this.triggerReady(input);
+			this.triggerReady(container);
 		}
 
 		public render(): void {
@@ -415,6 +419,14 @@ namespace TheDatepicker {
 			if (this.inputListenerRemover !== null) {
 				this.inputListenerRemover();
 				this.inputListenerRemover = null;
+			}
+		}
+
+		private triggerReady(element: HTMLDatepickerInputElement | HTMLDatepickerContainerElement): void {
+			if (typeof element.datepickerReadyListeners !== 'undefined') {
+				for (let index = 0; index < element.datepickerReadyListeners.length; index++) {
+					element.datepickerReadyListeners[index](this);
+				}
 			}
 		}
 
