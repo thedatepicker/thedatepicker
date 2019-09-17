@@ -64,11 +64,11 @@ namespace TheDatepicker {
 		private showCloseButton = true;
 		private title = '';
 		private yearDropdownItemsLimit = 200;
-		public goBackHtml = '&lt;';
-		public goForwardHtml = '&gt;';
-		public closeHtml = '&times;';
-		public resetHtml = '&olarr;';
-		public deselectHtml = '&times;';
+		private goBackHtml = '&lt;';
+		private goForwardHtml = '&gt;';
+		private closeHtml = '&times;';
+		private resetHtml = '&olarr;';
+		private deselectHtml = '&times;';
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
@@ -78,9 +78,53 @@ namespace TheDatepicker {
 			beforeGo: [],
 		};
 
-		public constructor() {
-			this.translator = new Translator();
-			this.template = new Template(this, new HtmlHelper(this));
+		public constructor(
+			translator: Translator | null = null,
+			template: Template | null = null
+		) {
+			this.translator = translator !== null ? translator : new Translator();
+			this.template = template !== null ? template : new Template(this, new HtmlHelper(this));
+		}
+
+		public clone(): Options {
+			const options = new Options(this.translator, this.template);
+
+			options.hideOnBlur = this.hideOnBlur;
+			options.hideOnSelect = this.hideOnSelect;
+			options.minDate = this.minDate;
+			options.maxDate = this.maxDate;
+			options.initialDate = this.initialDate;
+			options.initialMonth = this.initialMonth;
+			options.firstDayOfWeek = this.firstDayOfWeek;
+			options.dateAvailabilityResolver = this.dateAvailabilityResolver;
+			options.cellContentResolver = this.cellContentResolver;
+			options.cellClassesResolver = this.cellClassesResolver;
+			options.inputFormat = this.inputFormat;
+			options.daysOutOfMonthVisible = this.daysOutOfMonthVisible;
+			options.fixedRowsCount = this.fixedRowsCount;
+			options.toggleSelection = this.toggleSelection;
+			options.allowEmpty = this.allowEmpty;
+			options.showDeselectButton = this.showDeselectButton;
+			options.showResetButton = this.showResetButton;
+			options.monthAsDropdown = this.monthAsDropdown;
+			options.yearAsDropdown = this.yearAsDropdown;
+			options.classesPrefix = this.classesPrefix;
+			options.showCloseButton = this.showCloseButton;
+			options.title = this.title;
+			options.yearDropdownItemsLimit = this.yearDropdownItemsLimit;
+			options.goBackHtml = this.goBackHtml;
+			options.goForwardHtml = this.goForwardHtml;
+			options.closeHtml = this.closeHtml;
+			options.resetHtml = this.resetHtml;
+			options.deselectHtml = this.deselectHtml;
+			options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
+			options.listeners.select = this.listeners.select.slice(0);
+			options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
+			options.listeners.switch = this.listeners.switch.slice(0);
+			options.listeners.go = this.listeners.go.slice(0);
+			options.listeners.beforeGo = this.listeners.beforeGo.slice(0);
+
+			return options
 		}
 
 		// Setting to true will display datepicker only when input or datepicker itself is focused,
@@ -412,7 +456,7 @@ namespace TheDatepicker {
 		public getInitialDate(): Date | null {
 			if (this.isAllowedEmpty()) {
 				return this.initialDate !== null && this.isDateInValidity(this.initialDate) && this.isDateAvailable(this.initialDate)
-					? this.initialDate
+					? new Date(this.initialDate.getTime())
 					: null;
 			}
 

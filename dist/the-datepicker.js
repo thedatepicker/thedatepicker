@@ -327,8 +327,9 @@ var TheDatepicker;
         InitializationPhase[InitializationPhase["Destroyed"] = 4] = "Destroyed";
     })(InitializationPhase || (InitializationPhase = {}));
     var Datepicker = (function () {
-        function Datepicker(input, container) {
+        function Datepicker(input, container, options) {
             if (container === void 0) { container = null; }
+            if (options === void 0) { options = null; }
             this.initializationPhase = InitializationPhase.Untouched;
             this.inputListenerRemover = null;
             this.listenerRemovers = [];
@@ -341,6 +342,9 @@ var TheDatepicker;
             }
             if (input === null && container === null) {
                 throw new Error('At least one of input or container is mandatory.');
+            }
+            if (options !== null && !(options instanceof TheDatepicker.Options)) {
+                throw new Error('Options was expected to be an instance of Options');
             }
             this.document = document;
             var duplicateError = 'There is already a datepicker present on ';
@@ -366,7 +370,7 @@ var TheDatepicker;
             container.datepicker = this;
             this.input = input;
             this.container = container;
-            this.options = new TheDatepicker.Options();
+            this.options = options !== null ? options.clone() : new TheDatepicker.Options();
             this.dateConverter = new TheDatepicker.DateConverter(this.options.translator);
             this.viewModel = new TheDatepicker.ViewModel(this.options, this);
         }
@@ -1744,7 +1748,9 @@ var TheDatepicker;
         EventType["BeforeGo"] = "beforeGo";
     })(EventType = TheDatepicker.EventType || (TheDatepicker.EventType = {}));
     var Options = (function () {
-        function Options() {
+        function Options(translator, template) {
+            if (translator === void 0) { translator = null; }
+            if (template === void 0) { template = null; }
             this.hideOnBlur = true;
             this.hideOnSelect = true;
             this.minDate = null;
@@ -1781,9 +1787,47 @@ var TheDatepicker;
                 go: [],
                 beforeGo: []
             };
-            this.translator = new TheDatepicker.Translator();
-            this.template = new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper(this));
+            this.translator = translator !== null ? translator : new TheDatepicker.Translator();
+            this.template = template !== null ? template : new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper(this));
         }
+        Options.prototype.clone = function () {
+            var options = new Options(this.translator, this.template);
+            options.hideOnBlur = this.hideOnBlur;
+            options.hideOnSelect = this.hideOnSelect;
+            options.minDate = this.minDate;
+            options.maxDate = this.maxDate;
+            options.initialDate = this.initialDate;
+            options.initialMonth = this.initialMonth;
+            options.firstDayOfWeek = this.firstDayOfWeek;
+            options.dateAvailabilityResolver = this.dateAvailabilityResolver;
+            options.cellContentResolver = this.cellContentResolver;
+            options.cellClassesResolver = this.cellClassesResolver;
+            options.inputFormat = this.inputFormat;
+            options.daysOutOfMonthVisible = this.daysOutOfMonthVisible;
+            options.fixedRowsCount = this.fixedRowsCount;
+            options.toggleSelection = this.toggleSelection;
+            options.allowEmpty = this.allowEmpty;
+            options.showDeselectButton = this.showDeselectButton;
+            options.showResetButton = this.showResetButton;
+            options.monthAsDropdown = this.monthAsDropdown;
+            options.yearAsDropdown = this.yearAsDropdown;
+            options.classesPrefix = this.classesPrefix;
+            options.showCloseButton = this.showCloseButton;
+            options.title = this.title;
+            options.yearDropdownItemsLimit = this.yearDropdownItemsLimit;
+            options.goBackHtml = this.goBackHtml;
+            options.goForwardHtml = this.goForwardHtml;
+            options.closeHtml = this.closeHtml;
+            options.resetHtml = this.resetHtml;
+            options.deselectHtml = this.deselectHtml;
+            options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
+            options.listeners.select = this.listeners.select.slice(0);
+            options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
+            options.listeners["switch"] = this.listeners["switch"].slice(0);
+            options.listeners.go = this.listeners.go.slice(0);
+            options.listeners.beforeGo = this.listeners.beforeGo.slice(0);
+            return options;
+        };
         Options.prototype.setHideOnBlur = function (value) {
             this.hideOnBlur = !!value;
         };
@@ -1949,7 +1993,7 @@ var TheDatepicker;
         Options.prototype.getInitialDate = function () {
             if (this.isAllowedEmpty()) {
                 return this.initialDate !== null && this.isDateInValidity(this.initialDate) && this.isDateAvailable(this.initialDate)
-                    ? this.initialDate
+                    ? new Date(this.initialDate.getTime())
                     : null;
             }
             var initialDate = this.initialDate !== null ? new Date(this.initialDate.getTime()) : TheDatepicker.Helper.resetTime(new Date());

@@ -23,6 +23,11 @@ namespace TheDatepicker {
 	// todo BEM zápis CSS
 	// todo fixed rows count nedrží správnou velikost pokud nejsou zobrazeny out of month
 	// todo min/max month zakešovanej
+	// todo třídu na wrapper
+	// todo rozhodnout zda je nahoře nebo dole (další třída)
+	// todo inline block měnit na none
+	// todo trigrovat change event
+	// todo parsovat "tomorrow"
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -74,7 +79,8 @@ namespace TheDatepicker {
 
 		public constructor(
 			input: HTMLDatepickerInputElement | null,
-			container: HTMLDatepickerContainerElement | null = null
+			container: HTMLDatepickerContainerElement | null = null,
+			options: Options | null = null
 		) {
 			if (input !== null && !Helper.isElement(input)) {
 				throw new Error('Input was expected to be null or an HTMLElement.');
@@ -84,6 +90,9 @@ namespace TheDatepicker {
 			}
 			if (input === null && container === null) {
 				throw new Error('At least one of input or container is mandatory.');
+			}
+			if (options !== null && !(options instanceof Options)) {
+				throw new Error('Options was expected to be an instance of Options');
 			}
 
 			this.document = document;
@@ -113,7 +122,7 @@ namespace TheDatepicker {
 			this.input = input;
 			this.container = container;
 
-			this.options = new Options();
+			this.options = options !== null ? options.clone() : new Options();
 			this.dateConverter = new DateConverter(this.options.translator);
 			this.viewModel = new ViewModel(this.options, this);
 		}
