@@ -347,6 +347,7 @@ var TheDatepicker;
                 throw new Error('Options was expected to be an instance of Options');
             }
             this.document = document;
+            this.options = options !== null ? options.clone() : new TheDatepicker.Options();
             var duplicateError = 'There is already a datepicker present on ';
             this.isContainerExternal = container !== null;
             if (container === null) {
@@ -370,7 +371,6 @@ var TheDatepicker;
             container.datepicker = this;
             this.input = input;
             this.container = container;
-            this.options = options !== null ? options.clone() : new TheDatepicker.Options();
             this.dateConverter = new TheDatepicker.DateConverter(this.options.translator);
             this.viewModel = new TheDatepicker.ViewModel(this.options, this);
             this.triggerReady(input);
@@ -434,7 +434,7 @@ var TheDatepicker;
                 this.render();
                 Datepicker.hasClickedViewModel = true;
             }
-            if (!Datepicker.activateViewModel(event, this.viewModel)) {
+            if (!Datepicker.activateViewModel(event, this)) {
                 return false;
             }
             if (this.input !== null) {
@@ -602,7 +602,7 @@ var TheDatepicker;
             }
             this.removeInitialInputListener();
             var hit = function (event) {
-                Datepicker.activateViewModel(event, _this.viewModel);
+                Datepicker.activateViewModel(event, _this);
                 Datepicker.hasClickedViewModel = true;
             };
             this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.container, TheDatepicker.ListenerType.MouseDown, hit));
@@ -635,7 +635,43 @@ var TheDatepicker;
                 }
             }
         };
-        Datepicker.activateViewModel = function (event, viewModel) {
+        Datepicker.prototype.fixPosition = function () {
+            if (this.isContainerExternal || !this.options.isHiddenOnBlur() || !this.options.isPositionFixingEnabled()) {
+                return;
+            }
+            var windowTop = window.pageYOffset || this.document.documentElement.scrollTop;
+            var windowHeight = window.innerHeight || Math.max(this.document.documentElement.clientHeight, this.document.body.clientHeight);
+            var windowBottom = windowTop + windowHeight;
+            var inputTop = 0;
+            var parentElement = this.input;
+            while (parentElement !== null && !isNaN(parentElement.offsetLeft) && !isNaN(parentElement.offsetTop)) {
+                inputTop += parentElement.offsetTop - parentElement.scrollTop;
+                parentElement = parentElement.offsetParent;
+            }
+            var inputBottom = inputTop + this.input.offsetHeight;
+            var containerHeight = this.container.offsetHeight;
+            var locationClass = '';
+            var locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
+            if (locateOver) {
+                locationClass = ' ' + this.options.getClassesPrefix() + 'board-over';
+            }
+            this.container.className = this.options.getClassesPrefix() + 'board' + locationClass;
+            var childNodes = this.container.childNodes;
+            if (childNodes.length > 0) {
+                var child = childNodes[0];
+                if (locateOver) {
+                    var move = this.input.offsetHeight + this.container.offsetHeight;
+                    child.style.position = 'relative';
+                    child.style.top = '-' + move.toString() + 'px';
+                }
+                else {
+                    child.style.position = '';
+                    child.style.top = '';
+                }
+            }
+        };
+        Datepicker.activateViewModel = function (event, datepicker) {
+            var viewModel = datepicker !== null ? datepicker.viewModel : null;
             if (Datepicker.activeViewModel === viewModel) {
                 return true;
             }
@@ -649,6 +685,7 @@ var TheDatepicker;
             if (!viewModel.setActive(event, true)) {
                 return false;
             }
+            datepicker.fixPosition();
             Datepicker.activeViewModel = viewModel;
             return true;
         };
@@ -1809,6 +1846,7 @@ var TheDatepicker;
             this.closeHtml = '&times;';
             this.resetHtml = '&olarr;';
             this.deselectHtml = '&times;';
+            this.positionFixing = true;
             this.listeners = {
                 beforeSelect: [],
                 select: [],
@@ -1850,6 +1888,7 @@ var TheDatepicker;
             options.closeHtml = this.closeHtml;
             options.resetHtml = this.resetHtml;
             options.deselectHtml = this.deselectHtml;
+            options.positionFixing = this.positionFixing;
             options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
             options.listeners.select = this.listeners.select.slice(0);
             options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
@@ -1888,15 +1927,15 @@ var TheDatepicker;
             this.firstDayOfWeek = dayOfWeek;
         };
         Options.prototype.setDateAvailabilityResolver = function (resolver) {
-            TheDatepicker.Helper.checkFunction('Date availability resolver', resolver);
+            TheDatepicker.Helper.checkFunction('Resolver', resolver);
             this.dateAvailabilityResolver = resolver;
         };
         Options.prototype.setCellContentResolver = function (resolver) {
-            TheDatepicker.Helper.checkFunction('Cell content resolver', resolver);
+            TheDatepicker.Helper.checkFunction('Resolver', resolver);
             this.cellContentResolver = resolver;
         };
         Options.prototype.setCellClassesResolver = function (resolver) {
-            TheDatepicker.Helper.checkFunction('Cell classes resolver', resolver);
+            TheDatepicker.Helper.checkFunction('Resolver', resolver);
             this.cellClassesResolver = resolver;
         };
         Options.prototype.setInputFormat = function (format) {
@@ -1940,7 +1979,7 @@ var TheDatepicker;
             this.title = title;
         };
         Options.prototype.setYearDropdownItemsLimit = function (limit) {
-            this.yearDropdownItemsLimit = TheDatepicker.Helper.checkNumber('Year dropdown items limit', limit, true);
+            this.yearDropdownItemsLimit = TheDatepicker.Helper.checkNumber('Items limit', limit, true);
         };
         Options.prototype.setGoBackHtml = function (html) {
             TheDatepicker.Helper.checkString('Html', html);
@@ -1961,6 +2000,9 @@ var TheDatepicker;
         Options.prototype.setDeselectHtml = function (html) {
             TheDatepicker.Helper.checkString('Html', html);
             this.deselectHtml = html;
+        };
+        Options.prototype.setPositionFixing = function (value) {
+            this.positionFixing = !!value;
         };
         Options.prototype.onBeforeSelect = function (listener) {
             this.onEventListener(EventType.BeforeSelect, listener);
@@ -2169,6 +2211,9 @@ var TheDatepicker;
         };
         Options.prototype.getInputFormat = function () {
             return this.inputFormat;
+        };
+        Options.prototype.isPositionFixingEnabled = function () {
+            return this.positionFixing;
         };
         Options.prototype.checkConstraints = function (minDate, maxDate) {
             if (minDate !== null

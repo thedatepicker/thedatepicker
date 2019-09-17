@@ -69,6 +69,7 @@ namespace TheDatepicker {
 		private closeHtml = '&times;';
 		private resetHtml = '&olarr;';
 		private deselectHtml = '&times;';
+		private positionFixing = true;
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
@@ -117,6 +118,7 @@ namespace TheDatepicker {
 			options.closeHtml = this.closeHtml;
 			options.resetHtml = this.resetHtml;
 			options.deselectHtml = this.deselectHtml;
+			options.positionFixing = this.positionFixing;
 			options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
 			options.listeners.select = this.listeners.select.slice(0);
 			options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
@@ -214,7 +216,7 @@ namespace TheDatepicker {
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not,
 		// or null to make available all days.
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
-			Helper.checkFunction('Date availability resolver', resolver);
+			Helper.checkFunction('Resolver', resolver);
 			this.dateAvailabilityResolver = resolver;
 		}
 
@@ -222,13 +224,13 @@ namespace TheDatepicker {
 		// or null for default behavior.
 		// Default callback returns day number.
 		public setCellContentResolver(resolver: CellContentResolver | null): void {
-			Helper.checkFunction('Cell content resolver', resolver);
+			Helper.checkFunction('Resolver', resolver);
 			this.cellContentResolver = resolver;
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
 		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
-			Helper.checkFunction('Cell classes resolver', resolver);
+			Helper.checkFunction('Resolver', resolver);
 			this.cellClassesResolver = resolver;
 		}
 
@@ -330,7 +332,7 @@ namespace TheDatepicker {
 		// Works only when the setting YearAsDropdown is set to true.
 		// Default is 200.
 		public setYearDropdownItemsLimit(limit: number): void {
-			this.yearDropdownItemsLimit = Helper.checkNumber('Year dropdown items limit', limit, true);
+			this.yearDropdownItemsLimit = Helper.checkNumber('Items limit', limit, true);
 		}
 
 		// Sets html for go back button.
@@ -366,6 +368,13 @@ namespace TheDatepicker {
 		public setDeselectHtml(html: string): void {
 			Helper.checkString('Html', html);
 			this.deselectHtml = html;
+		}
+
+		// Setting to true will render datepicker over the input when there's no enough space to fit it under.
+		// Works only when there is no custom container and setting HideOnBlur is set to true.
+		// defaults to true
+		public setPositionFixing(value: boolean): void {
+			this.positionFixing = !!value;
 		}
 
 		// Callback to be called just before the day is selected or deselected.
@@ -643,6 +652,10 @@ namespace TheDatepicker {
 
 		public getInputFormat(): string {
 			return this.inputFormat;
+		}
+
+		public isPositionFixingEnabled(): boolean {
+			return this.positionFixing;
 		}
 
 		private checkConstraints(minDate: Date | null, maxDate: Date | null): void {

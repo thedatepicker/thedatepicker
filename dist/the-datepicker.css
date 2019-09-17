@@ -1,7 +1,14 @@
+.the-datepicker-board .the-datepicker-container {
+  border-top-left-radius: 0;
+}
+.the-datepicker-board.the-datepicker-board-over .the-datepicker-container {
+  border-top-left-radius: 0.3em;
+  border-bottom-left-radius: 0;
+}
 .the-datepicker-container {
   background-color: #fff;
   border: 1px solid #ccc;
-  border-radius: 0 0.3em 0.3em 0.3em;
+  border-radius: 0.3em;
   padding: 0.4em;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1em;

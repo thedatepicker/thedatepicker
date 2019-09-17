@@ -23,7 +23,12 @@ namespace TheDatepicker {
 	// todo BEM zápis CSS
 	// todo fixed rows count nedrží správnou velikost pokud nejsou zobrazeny out of month
 	// todo min/max month zakešovanej
-	// todo rozhodnout zda je nahoře nebo dole (další třída)
+	// todo nastavení undefined apod by to mohlo brát jako = null (ale zase aby tam nějaký argument vůbec poslal) ?
+	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
+	// todo přejmenovat třídu vnitřího elementu container ať se to neplete?
+	// todo šipky v inputu přehazují dny :(
+	// todo klik na nějaký den a pak mačkání šipek nehajlajtuje
+	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -94,6 +99,7 @@ namespace TheDatepicker {
 			}
 
 			this.document = document;
+			this.options = options !== null ? options.clone() : new Options();
 
 			const duplicateError = 'There is already a datepicker present on ';
 			this.isContainerExternal = container !== null;
@@ -120,7 +126,6 @@ namespace TheDatepicker {
 			this.input = input;
 			this.container = container;
 
-			this.options = options !== null ? options.clone() : new Options();
 			this.dateConverter = new DateConverter(this.options.translator);
 			this.viewModel = new ViewModel(this.options, this);
 
@@ -197,7 +202,7 @@ namespace TheDatepicker {
 				Datepicker.hasClickedViewModel = true;
 			}
 
-			if (!Datepicker.activateViewModel(event, this.viewModel)) {
+			if (!Datepicker.activateViewModel(event, this)) {
 				return false;
 			}
 
@@ -390,7 +395,7 @@ namespace TheDatepicker {
 			this.removeInitialInputListener();
 
 			const hit = (event: Event) => {
-				Datepicker.activateViewModel(event, this.viewModel);
+				Datepicker.activateViewModel(event, this);
 				Datepicker.hasClickedViewModel = true;
 			};
 
@@ -429,7 +434,49 @@ namespace TheDatepicker {
 			}
 		}
 
-		private static activateViewModel(event: Event | null, viewModel: ViewModel | null): boolean {
+		private fixPosition(): void {
+			if (this.isContainerExternal || !this.options.isHiddenOnBlur() || !this.options.isPositionFixingEnabled()) {
+				return;
+			}
+
+			const windowTop = window.pageYOffset || this.document.documentElement.scrollTop;
+			const windowHeight = window.innerHeight || Math.max(this.document.documentElement.clientHeight, this.document.body.clientHeight);
+			const windowBottom = windowTop + windowHeight;
+
+			let inputTop = 0;
+			let parentElement: HTMLElement = this.input;
+			while(parentElement !== null && !isNaN(parentElement.offsetLeft) && !isNaN(parentElement.offsetTop)) {
+				inputTop += parentElement.offsetTop - parentElement.scrollTop;
+				parentElement = parentElement.offsetParent as HTMLElement;
+			}
+			const inputBottom = inputTop + this.input.offsetHeight;
+			const containerHeight = this.container.offsetHeight;
+
+			let locationClass = '';
+			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
+			if (locateOver) {
+				locationClass = ' ' + this.options.getClassesPrefix() + 'board-over';
+			}
+
+			this.container.className = this.options.getClassesPrefix() + 'board' + locationClass;
+
+			const childNodes = this.container.childNodes;
+			if (childNodes.length > 0) {
+				const child = childNodes[0] as HTMLElement;
+				if (locateOver) {
+					const move = this.input.offsetHeight + this.container.offsetHeight;
+					child.style.position = 'relative';
+					child.style.top = '-' + move.toString() + 'px';
+				} else {
+					child.style.position = '';
+					child.style.top = '';
+				}
+			}
+		}
+
+		private static activateViewModel(event: Event | null, datepicker: Datepicker | null): boolean {
+			const viewModel = datepicker !== null ? datepicker.viewModel : null;
+
 			if (Datepicker.activeViewModel === viewModel) {
 				return true;
 			}
@@ -446,6 +493,8 @@ namespace TheDatepicker {
 			if (!viewModel.setActive(event, true)) {
 				return false;
 			}
+
+			datepicker.fixPosition();
 
 			Datepicker.activeViewModel = viewModel;
 

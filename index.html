@@ -125,6 +125,9 @@
 					<label>datepicker.options.setYearAsDropdown(<input type="checkbox" id="yearAsDropdown" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
 						&nbsp;<textarea rows="3" cols="40" id="dateAvailabilityResolver">return true;</textarea><br>
 						});</label>
@@ -435,6 +438,13 @@
 			yearAsDropdownInput.onchange = function () {
 				updateSetting(yearAsDropdownInput, function () {
 					datepicker.options.setYearAsDropdown(yearAsDropdownInput.checked);
+				});
+			};
+
+			var positionFixingInput = document.getElementById('positionFixing');
+			positionFixingInput.onchange = function () {
+				updateSetting(positionFixingInput, function () {
+					datepicker.options.setPositionFixing(positionFixingInput.checked);
 				});
 			};
 
