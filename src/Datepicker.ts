@@ -323,7 +323,7 @@ namespace TheDatepicker {
 			const deselectButton = this.document.createElement('a');
 			deselectButton.innerHTML = this.options.getDeselectHtml();
 			deselectButton.style.position = 'relative';
-			deselectButton.style.left = '-12px';
+			deselectButton.style.left = '-0.8em';
 			deselectButton.href = '#';
 			deselectButton.onclick = (event: MouseEvent) => {
 				event = event || window.event as MouseEvent;
