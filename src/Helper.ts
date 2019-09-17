@@ -68,6 +68,12 @@ namespace TheDatepicker {
 					return Helper.resetTime(new Date());
 				}
 
+				if (value === 'tomorrow') {
+					const date = Helper.resetTime(new Date());
+					date.setDate(date.getDate() + 1);
+					return date;
+				}
+
 				const matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
 				if (matches !== null) {
 					const date = Helper.resetTime(new Date());

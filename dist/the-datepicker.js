@@ -752,25 +752,30 @@ var TheDatepicker;
                 if (value === 'today' || value === 'now') {
                     return Helper.resetTime(new Date());
                 }
+                if (value === 'tomorrow') {
+                    var date_1 = Helper.resetTime(new Date());
+                    date_1.setDate(date_1.getDate() + 1);
+                    return date_1;
+                }
                 var matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
                 if (matches !== null) {
-                    var date_1 = Helper.resetTime(new Date());
+                    var date_2 = Helper.resetTime(new Date());
                     var amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
                     switch (matches[3].toLowerCase()) {
                         case 'day':
                         case 'days':
-                            date_1.setDate(date_1.getDate() + amount);
+                            date_2.setDate(date_2.getDate() + amount);
                             break;
                         case 'month':
                         case 'months':
-                            date_1.setMonth(date_1.getMonth() + amount);
+                            date_2.setMonth(date_2.getMonth() + amount);
                             break;
                         case 'year':
                         case 'years':
-                            date_1.setFullYear(date_1.getFullYear() + amount);
+                            date_2.setFullYear(date_2.getFullYear() + amount);
                             break;
                     }
-                    return date_1;
+                    return date_2;
                 }
                 var date = new Date(value);
                 if (!isNaN(date.getTime())) {
@@ -1226,8 +1231,8 @@ var TheDatepicker;
                 days.push(day);
             }
             if (this.options.hasFixedRowsCount()) {
-                for (var date_2 = appendDaysCount + 1; days.length < 6 * 7; date_2++) {
-                    var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date_2));
+                for (var date_3 = appendDaysCount + 1; days.length < 6 * 7; date_3++) {
+                    var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date_3));
                     day.isInCurrentMonth = false;
                     days.push(day);
                 }

@@ -27,7 +27,6 @@ namespace TheDatepicker {
 	// todo rozhodnout zda je nahoře nebo dole (další třída)
 	// todo inline block měnit na none
 	// todo trigrovat change event
-	// todo parsovat "tomorrow"
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
