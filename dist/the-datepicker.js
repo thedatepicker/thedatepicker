@@ -527,6 +527,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.createContainer = function () {
             var container = this.document.createElement('div');
+            container.className = this.options.getClassesPrefix() + 'board';
             container.style.position = 'absolute';
             container.style.zIndex = '99';
             return container;

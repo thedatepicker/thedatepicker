@@ -23,7 +23,6 @@ namespace TheDatepicker {
 	// todo BEM zápis CSS
 	// todo fixed rows count nedrží správnou velikost pokud nejsou zobrazeny out of month
 	// todo min/max month zakešovanej
-	// todo třídu na wrapper
 	// todo rozhodnout zda je nahoře nebo dole (další třída)
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
@@ -307,6 +306,7 @@ namespace TheDatepicker {
 
 		private createContainer(): HTMLElement {
 			const container = this.document.createElement('div');
+			container.className = this.options.getClassesPrefix() + 'board';
 			container.style.position = 'absolute';
 			container.style.zIndex = '99';
 
