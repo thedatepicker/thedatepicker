@@ -11,7 +11,6 @@ namespace TheDatepicker {
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
-	// todo initialdate by mělo mít vyšší prioritu než initialMonth
 	// todo křížek by to mohl zavřít ale nechat focus v inputu (klik do inputu by to zas otevřel)
 	// todo dám minDate 1999-12-01, vyberu 1999-12-31, v inputu změnim datum na 1998-12-31, nic, změnim to zpět na 1999-12-31, vybere se mi prvního
 	// todo BEM zápis CSS

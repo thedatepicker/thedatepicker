@@ -419,11 +419,11 @@ namespace TheDatepicker {
 		}
 
 		public getInitialMonth(): Date {
-			const initialMonth = this.initialMonth !== null
-				? new Date(this.initialMonth.getTime())
+			const initialMonth = this.initialDate !== null
+				? new Date(this.initialDate.getTime())
 				: (
-					this.initialDate !== null
-						? new Date(this.initialDate.getTime())
+					this.initialMonth !== null
+						? new Date(this.initialMonth.getTime())
 						: Helper.resetTime(new Date())
 				);
 			initialMonth.setDate(1);

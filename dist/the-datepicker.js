@@ -1243,10 +1243,10 @@ var TheDatepicker;
             this.offEventListener(EventType.Go, listener);
         };
         Options.prototype.getInitialMonth = function () {
-            var initialMonth = this.initialMonth !== null
-                ? new Date(this.initialMonth.getTime())
-                : (this.initialDate !== null
-                    ? new Date(this.initialDate.getTime())
+            var initialMonth = this.initialDate !== null
+                ? new Date(this.initialDate.getTime())
+                : (this.initialMonth !== null
+                    ? new Date(this.initialMonth.getTime())
                     : TheDatepicker.Helper.resetTime(new Date()));
             initialMonth.setDate(1);
             return this.correctMonth(initialMonth);
