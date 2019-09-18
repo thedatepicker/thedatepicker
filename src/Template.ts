@@ -110,7 +110,7 @@ namespace TheDatepicker {
 		protected updateTopElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
 			const isVisible = this.options.getTitle() !== ''
 				|| this.options.isResetButtonShown()
-				|| this.isCloseElementVisible(input);
+				|| (input !== null && this.options.isCloseButtonShown());
 			this.controlElement.style.display = isVisible ? '' : 'none';
 			this.titleElement.style.display = isVisible ? '' : 'none';
 		}
@@ -162,12 +162,8 @@ namespace TheDatepicker {
 			return closeElement;
 		}
 
-		protected isCloseElementVisible(input: HTMLInputElement | null): boolean {
-			return input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown();
-		}
-
 		protected updateCloseElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
-			this.closeElement.style.display = this.isCloseElementVisible(input) ? '' : 'none';
+			this.closeElement.style.display = input !== null && this.options.isCloseButtonShown() ? '' : 'none';
 		}
 
 		protected createGoBackElement(viewModel: ViewModel): HTMLElement {

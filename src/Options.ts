@@ -526,7 +526,7 @@ namespace TheDatepicker {
 		}
 
 		public hasToggleSelection(): boolean {
-			return this.toggleSelection;
+			return this.allowEmpty && this.toggleSelection;
 		}
 
 		public isAllowedEmpty(): boolean {
@@ -534,7 +534,7 @@ namespace TheDatepicker {
 		}
 
 		public isDeselectButtonShown(): boolean {
-			return this.showDeselectButton;
+			return this.allowEmpty && this.showDeselectButton;
 		}
 
 		public isResetButtonShown(): boolean {
@@ -554,7 +554,7 @@ namespace TheDatepicker {
 		}
 
 		public isCloseButtonShown(): boolean {
-			return this.showCloseButton;
+			return this.hideOnBlur && this.showCloseButton;
 		}
 
 		public getTitle(): string {
@@ -647,7 +647,7 @@ namespace TheDatepicker {
 		}
 
 		public isHiddenOnSelect(): boolean {
-			return this.hideOnSelect;
+			return this.hideOnBlur && this.hideOnSelect;
 		}
 
 		public getInputFormat(): string {
@@ -655,7 +655,7 @@ namespace TheDatepicker {
 		}
 
 		public isPositionFixingEnabled(): boolean {
-			return this.positionFixing;
+			return this.hideOnBlur && this.positionFixing;
 		}
 
 		private checkConstraints(minDate: Date | null, maxDate: Date | null): void {

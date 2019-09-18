@@ -534,7 +534,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.createDeselectElement = function () {
             var _this = this;
-            if (this.input === null || !this.options.isDeselectButtonShown() || !this.options.isAllowedEmpty()) {
+            if (this.input === null || !this.options.isDeselectButtonShown()) {
                 return null;
             }
             var deselectElement = this.document.createElement('span');
@@ -556,7 +556,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.updateDeselectButton = function () {
             if (this.input !== null && this.deselectElement !== null) {
-                var isVisible = this.options.isDeselectButtonShown() && this.options.isAllowedEmpty() && this.input.value !== '';
+                var isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
                 this.deselectElement.style.visibility = isVisible ? 'visible' : 'hidden';
             }
         };
@@ -636,7 +636,7 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.fixPosition = function () {
-            if (this.isContainerExternal || !this.options.isHiddenOnBlur() || !this.options.isPositionFixingEnabled()) {
+            if (this.isContainerExternal || !this.options.isPositionFixingEnabled()) {
                 return;
             }
             var windowTop = window.pageYOffset || this.document.documentElement.scrollTop;
@@ -1451,7 +1451,7 @@ var TheDatepicker;
         Template.prototype.updateTopElement = function (viewModel, input) {
             var isVisible = this.options.getTitle() !== ''
                 || this.options.isResetButtonShown()
-                || this.isCloseElementVisible(input);
+                || (input !== null && this.options.isCloseButtonShown());
             this.controlElement.style.display = isVisible ? '' : 'none';
             this.titleElement.style.display = isVisible ? '' : 'none';
         };
@@ -1492,11 +1492,8 @@ var TheDatepicker;
             this.closeElement = closeElement;
             return closeElement;
         };
-        Template.prototype.isCloseElementVisible = function (input) {
-            return input !== null && this.options.isHiddenOnBlur() && this.options.isCloseButtonShown();
-        };
         Template.prototype.updateCloseElement = function (viewModel, input) {
-            this.closeElement.style.display = this.isCloseElementVisible(input) ? '' : 'none';
+            this.closeElement.style.display = input !== null && this.options.isCloseButtonShown() ? '' : 'none';
         };
         Template.prototype.createGoBackElement = function (viewModel) {
             return this.createGoElement(viewModel, false);
@@ -2116,13 +2113,13 @@ var TheDatepicker;
             return this.fixedRowsCount;
         };
         Options.prototype.hasToggleSelection = function () {
-            return this.toggleSelection;
+            return this.allowEmpty && this.toggleSelection;
         };
         Options.prototype.isAllowedEmpty = function () {
             return this.allowEmpty;
         };
         Options.prototype.isDeselectButtonShown = function () {
-            return this.showDeselectButton;
+            return this.allowEmpty && this.showDeselectButton;
         };
         Options.prototype.isResetButtonShown = function () {
             return this.showResetButton;
@@ -2137,7 +2134,7 @@ var TheDatepicker;
             return this.classesPrefix;
         };
         Options.prototype.isCloseButtonShown = function () {
-            return this.showCloseButton;
+            return this.hideOnBlur && this.showCloseButton;
         };
         Options.prototype.getTitle = function () {
             return this.title;
@@ -2207,13 +2204,13 @@ var TheDatepicker;
             return this.hideOnBlur;
         };
         Options.prototype.isHiddenOnSelect = function () {
-            return this.hideOnSelect;
+            return this.hideOnBlur && this.hideOnSelect;
         };
         Options.prototype.getInputFormat = function () {
             return this.inputFormat;
         };
         Options.prototype.isPositionFixingEnabled = function () {
-            return this.positionFixing;
+            return this.hideOnBlur && this.positionFixing;
         };
         Options.prototype.checkConstraints = function (minDate, maxDate) {
             if (minDate !== null

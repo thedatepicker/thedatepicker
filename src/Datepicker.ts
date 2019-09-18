@@ -27,7 +27,6 @@ namespace TheDatepicker {
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
 	// todo přejmenovat třídu vnitřího elementu container ať se to neplete?
 	// todo šipky v inputu přehazují dny :(
-	// todo klik na nějaký den a pak mačkání šipek nehajlajtuje
 	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
@@ -319,7 +318,7 @@ namespace TheDatepicker {
 		}
 
 		private createDeselectElement(): HTMLElement | null {
-			if (this.input === null || !this.options.isDeselectButtonShown() || !this.options.isAllowedEmpty()) {
+			if (this.input === null || !this.options.isDeselectButtonShown()) {
 				return null;
 			}
 
@@ -344,7 +343,7 @@ namespace TheDatepicker {
 
 		private updateDeselectButton(): void {
 			if (this.input !== null && this.deselectElement !== null) {
-				const isVisible = this.options.isDeselectButtonShown() && this.options.isAllowedEmpty() && this.input.value !== '';
+				const isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
 				this.deselectElement.style.visibility = isVisible ? 'visible' : 'hidden';
 			}
 		}
@@ -435,7 +434,7 @@ namespace TheDatepicker {
 		}
 
 		private fixPosition(): void {
-			if (this.isContainerExternal || !this.options.isHiddenOnBlur() || !this.options.isPositionFixingEnabled()) {
+			if (this.isContainerExternal || !this.options.isPositionFixingEnabled()) {
 				return;
 			}
 
