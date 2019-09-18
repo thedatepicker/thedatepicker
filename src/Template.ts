@@ -46,7 +46,7 @@ namespace TheDatepicker {
 				}
 
 				datepicker.container.innerHTML = '';
-				datepicker.container.appendChild(this.createSkeleton(viewModel, datepicker));
+				datepicker.container.appendChild(this.createSkeleton(viewModel));
 			}
 
 			this.updateContainerElement(viewModel, datepicker.input);
@@ -61,10 +61,10 @@ namespace TheDatepicker {
 			this.updateWeeksElements(viewModel);
 		}
 
-		protected createSkeleton(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createSkeleton(viewModel: ViewModel): HTMLElement {
 			const container = this.htmlHelper.createDiv('container');
-			container.appendChild(this.createHeaderElement(viewModel, datepicker));
-			container.appendChild(this.createBodyElement(viewModel, datepicker));
+			container.appendChild(this.createHeaderElement(viewModel));
+			container.appendChild(this.createBodyElement(viewModel));
 
 			this.containerElement = container;
 
@@ -75,7 +75,7 @@ namespace TheDatepicker {
 			this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
 		}
 
-		protected createHeaderElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createHeaderElement(viewModel: ViewModel): HTMLElement {
 			const header = this.htmlHelper.createDiv('header');
 
 			const top = this.htmlHelper.createDiv('top');
@@ -87,7 +87,7 @@ namespace TheDatepicker {
 			top.appendChild(control);
 
 			control.appendChild(this.createResetElement(viewModel));
-			control.appendChild(this.createCloseElement(viewModel, datepicker));
+			control.appendChild(this.createCloseElement(viewModel));
 
 			const navigation = this.htmlHelper.createDiv('navigation');
 			header.appendChild(navigation);
@@ -149,10 +149,10 @@ namespace TheDatepicker {
 			this.resetElement.style.display = this.options.isResetButtonShown() ? '' : 'none';
 		}
 
-		protected createCloseElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createCloseElement(viewModel: ViewModel): HTMLElement {
 			const closeElement = this.htmlHelper.createDiv('close');
 			const closeButton = this.htmlHelper.createAnchor((event: Event) => {
-				datepicker.close(event);
+				viewModel.close(event);
 			});
 
 			closeButton.innerHTML = this.options.getCloseHtml();
@@ -355,9 +355,9 @@ namespace TheDatepicker {
 			this.yearElement.style.display = from < to ? 'none' : '';
 		}
 
-		protected createTableElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createTableElement(viewModel: ViewModel): HTMLElement {
 			const tableHeader = this.createTableHeaderElement(viewModel) as HTMLTableSectionElement;
-			const tableBody = this.createTableBodyElement(viewModel, datepicker) as HTMLTableSectionElement;
+			const tableBody = this.createTableBodyElement(viewModel) as HTMLTableSectionElement;
 
 			return this.htmlHelper.createTable('table', tableHeader, tableBody);
 		}
@@ -386,14 +386,14 @@ namespace TheDatepicker {
 			return headerCell;
 		}
 
-		protected createTableBodyElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createTableBodyElement(viewModel: ViewModel): HTMLElement {
 			this.daysElements = [];
 			this.daysButtonsElements = [];
 			this.daysContentsElements = [];
 
 			const rows = [];
 			for (let index = 0; index < 6; index++) {
-				rows.push(this.createTableRowElement(viewModel, datepicker));
+				rows.push(this.createTableRowElement(viewModel));
 			}
 			this.weeksElements = rows;
 
@@ -423,14 +423,14 @@ namespace TheDatepicker {
 			}
 		}
 
-		protected createTableRowElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createTableRowElement(viewModel: ViewModel): HTMLElement {
 			const cells = [];
 			const cellsButtons = [];
 			const cellsContents = [];
 			for (let index = 0; index < 7; index++) {
 				const cell = this.htmlHelper.createTableCell();
-				const cellButton = this.createTableCellButtonElement(viewModel, datepicker);
-				const cellContent = this.createTableCellContentElement(viewModel, datepicker);
+				const cellButton = this.createTableCellButtonElement(viewModel);
+				const cellContent = this.createTableCellContentElement(viewModel);
 
 				cells.push(cell);
 				cellsButtons.push(cellButton);
@@ -502,11 +502,11 @@ namespace TheDatepicker {
 			}
 		}
 
-		protected createTableCellButtonElement(viewModel: ViewModel, datepicker: Datepicker): HTMLDayButtonElement {
+		protected createTableCellButtonElement(viewModel: ViewModel): HTMLDayButtonElement {
 			const cellButton = this.htmlHelper.createAnchor((event: Event) => {
 				viewModel.selectDay(event, cellButton.day, false, true, true);
 				if (this.options.isHiddenOnSelect()) {
-					datepicker.close(event);
+					viewModel.close(event);
 				}
 			}) as HTMLDayButtonElement;
 
@@ -525,16 +525,16 @@ namespace TheDatepicker {
 			return cellButton;
 		}
 
-		protected createTableCellContentElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createTableCellContentElement(viewModel: ViewModel): HTMLElement {
 			const cellContent = this.htmlHelper.createSpan();
 			this.htmlHelper.addClass(cellContent, 'day-content');
 
 			return cellContent;
 		}
 
-		protected createBodyElement(viewModel: ViewModel, datepicker: Datepicker): HTMLElement {
+		protected createBodyElement(viewModel: ViewModel): HTMLElement {
 			const body = this.htmlHelper.createDiv('body');
-			body.appendChild(this.createTableElement(viewModel, datepicker));
+			body.appendChild(this.createTableElement(viewModel));
 
 			return body;
 		}

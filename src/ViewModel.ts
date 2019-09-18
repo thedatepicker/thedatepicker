@@ -72,6 +72,10 @@ namespace TheDatepicker {
 			return this.active;
 		}
 
+		public close(event: Event): boolean {
+			return this.datepicker.close(event);
+		}
+
 		public getCurrentMonth(): Date {
 			if (this.currentMonth === null) {
 				this.currentMonth = this.options.getInitialMonth();
