@@ -14,6 +14,7 @@ namespace TheDatepicker {
 		public selectedDate: Date | null = null;
 
 		private readonly today: Date;
+		private readonly template: Template;
 
 		private currentMonth: Date | null = null;
 		private highlightedDay: Day | null = null;
@@ -25,6 +26,7 @@ namespace TheDatepicker {
 			private readonly datepicker: Datepicker
 		) {
 			this.today = Helper.resetTime(new Date());
+			this.template = new Template(this.options, new HtmlHelper(this.options), datepicker.container, datepicker.input !== null)
 		}
 
 		public render(): void {
@@ -44,7 +46,7 @@ namespace TheDatepicker {
 				return;
 			}
 
-			this.options.template.render(this, this.datepicker);
+			this.template.render(this);
 			this.datepicker.updateInput();
 		}
 

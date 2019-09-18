@@ -1,4 +1,3 @@
-/// <reference path="Template.ts" />
 /// <reference path="Translator.ts" />
 /// <reference path="Day.ts" />
 /// <reference path="Helper.ts" />
@@ -39,7 +38,6 @@ namespace TheDatepicker {
 	export class Options {
 
 		public readonly translator: Translator;
-		public readonly template: Template;
 
 		private hideOnBlur = true;
 		private hideOnSelect = true;
@@ -79,16 +77,12 @@ namespace TheDatepicker {
 			beforeGo: [],
 		};
 
-		public constructor(
-			translator: Translator | null = null,
-			template: Template | null = null
-		) {
+		public constructor(translator: Translator | null = null) {
 			this.translator = translator !== null ? translator : new Translator();
-			this.template = template !== null ? template : new Template(this, new HtmlHelper(this));
 		}
 
 		public clone(): Options {
-			const options = new Options(this.translator, this.template);
+			const options = new Options(this.translator);
 
 			options.hideOnBlur = this.hideOnBlur;
 			options.hideOnSelect = this.hideOnSelect;

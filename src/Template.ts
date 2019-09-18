@@ -14,9 +14,6 @@ namespace TheDatepicker {
 
 		// todo nějak hezky aby šlo snadno customizovat uspořádání prvků
 
-		private readonly options: Options;
-		private readonly htmlHelper: HtmlHelper;
-
 		private containerElement: HTMLElement | null = null;
 		private controlElement: HTMLElement | null = null;
 		private goBackElement: HTMLElement | null = null;
@@ -34,25 +31,28 @@ namespace TheDatepicker {
 		private daysButtonsElements: HTMLDayButtonElement[][] = [];
 		private daysContentsElements: HTMLElement[][] = [];
 
-		public constructor(options: Options, htmlHelper: HtmlHelper) {
-			this.options = options;
-			this.htmlHelper = htmlHelper;
+		public constructor(
+			private readonly options: Options,
+			private readonly htmlHelper: HtmlHelper,
+			private readonly container: HTMLElement,
+			private readonly hasInput: boolean
+		) {
 		}
 
-		public render(viewModel: ViewModel, datepicker: Datepicker): void {
+		public render(viewModel: ViewModel): void {
 			if (this.containerElement === null) {
-				if (datepicker.input !== null && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
+				if (this.hasInput && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
 					return;
 				}
 
-				datepicker.container.innerHTML = '';
-				datepicker.container.appendChild(this.createSkeleton(viewModel));
+				this.container.innerHTML = '';
+				this.container.appendChild(this.createSkeleton(viewModel));
 			}
 
-			this.updateContainerElement(viewModel, datepicker.input);
-			this.updateTopElement(viewModel, datepicker.input);
+			this.updateContainerElement(viewModel);
+			this.updateTopElement(viewModel);
 			this.updateTitleElement(viewModel);
-			this.updateCloseElement(viewModel, datepicker.input);
+			this.updateCloseElement(viewModel);
 			this.updateResetElement(viewModel);
 			this.updateGoBackElement(viewModel);
 			this.updateGoForwardElement(viewModel);
@@ -71,8 +71,8 @@ namespace TheDatepicker {
 			return container;
 		}
 
-		protected updateContainerElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
-			this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
+		protected updateContainerElement(viewModel: ViewModel): void {
+			this.containerElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
 		}
 
 		protected createHeaderElement(viewModel: ViewModel): HTMLElement {
@@ -107,10 +107,10 @@ namespace TheDatepicker {
 			return header;
 		}
 
-		protected updateTopElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
+		protected updateTopElement(viewModel: ViewModel): void {
 			const isVisible = this.options.getTitle() !== ''
 				|| this.options.isResetButtonShown()
-				|| (input !== null && this.options.isCloseButtonShown());
+				|| (this.hasInput && this.options.isCloseButtonShown());
 			this.controlElement.style.display = isVisible ? '' : 'none';
 			this.titleElement.style.display = isVisible ? '' : 'none';
 		}
@@ -162,8 +162,8 @@ namespace TheDatepicker {
 			return closeElement;
 		}
 
-		protected updateCloseElement(viewModel: ViewModel, input: HTMLInputElement | null): void {
-			this.closeElement.style.display = input !== null && this.options.isCloseButtonShown() ? '' : 'none';
+		protected updateCloseElement(viewModel: ViewModel): void {
+			this.closeElement.style.display = this.hasInput && this.options.isCloseButtonShown() ? '' : 'none';
 		}
 
 		protected createGoBackElement(viewModel: ViewModel): HTMLElement {

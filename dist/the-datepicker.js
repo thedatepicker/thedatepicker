@@ -1020,791 +1020,6 @@ var TheDatepicker;
 })(TheDatepicker || (TheDatepicker = {}));
 var TheDatepicker;
 (function (TheDatepicker) {
-    var MoveDirection;
-    (function (MoveDirection) {
-        MoveDirection[MoveDirection["Left"] = -1] = "Left";
-        MoveDirection[MoveDirection["Up"] = -7] = "Up";
-        MoveDirection[MoveDirection["Right"] = 1] = "Right";
-        MoveDirection[MoveDirection["Down"] = 7] = "Down";
-    })(MoveDirection = TheDatepicker.MoveDirection || (TheDatepicker.MoveDirection = {}));
-    var ViewModel = (function () {
-        function ViewModel(options, datepicker) {
-            this.options = options;
-            this.datepicker = datepicker;
-            this.selectedDate = null;
-            this.currentMonth = null;
-            this.highlightedDay = null;
-            this.isHighlightedDayFocused = false;
-            this.active = false;
-            this.today = TheDatepicker.Helper.resetTime(new Date());
-        }
-        ViewModel.prototype.render = function () {
-            if (this.selectedDate !== null) {
-                if ((!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate))
-                    && this.cancelSelection(null)) {
-                    return;
-                }
-            }
-            else if (!this.options.isAllowedEmpty() && this.selectDay(null, this.options.getInitialDate(), false)) {
-                return;
-            }
-            var correctMonth = this.options.correctMonth(this.getCurrentMonth());
-            if (this.goToMonth(null, correctMonth)) {
-                return;
-            }
-            this.options.template.render(this, this.datepicker);
-            this.datepicker.updateInput();
-        };
-        ViewModel.prototype.setActive = function (event, value) {
-            if (this.active === value) {
-                return true;
-            }
-            if (!this.triggerOnBeforeSwitch(event, value)) {
-                return false;
-            }
-            this.active = value;
-            if (this.options.isHiddenOnBlur()) {
-                this.render();
-            }
-            this.triggerOnSwitch(event, value);
-            return true;
-        };
-        ViewModel.prototype.isActive = function () {
-            return this.active;
-        };
-        ViewModel.prototype.close = function (event) {
-            return this.datepicker.close(event);
-        };
-        ViewModel.prototype.getCurrentMonth = function () {
-            if (this.currentMonth === null) {
-                this.currentMonth = this.options.getInitialMonth();
-            }
-            return this.currentMonth;
-        };
-        ViewModel.prototype.canGoBack = function () {
-            var newMonth = new Date(this.getCurrentMonth().getTime());
-            newMonth.setMonth(newMonth.getMonth() - 1);
-            return this.canGoToMonth(newMonth);
-        };
-        ViewModel.prototype.canGoForward = function () {
-            var newMonth = new Date(this.getCurrentMonth().getTime());
-            newMonth.setMonth(newMonth.getMonth() + 1);
-            return this.canGoToMonth(newMonth);
-        };
-        ViewModel.prototype.canGoToMonth = function (month) {
-            return this.options.isMonthInValidity(month);
-        };
-        ViewModel.prototype.goBack = function (event) {
-            var newMonth = new Date(this.getCurrentMonth().getTime());
-            newMonth.setMonth(newMonth.getMonth() - 1);
-            return this.goToMonth(event, newMonth);
-        };
-        ViewModel.prototype.goForward = function (event) {
-            var newMonth = new Date(this.getCurrentMonth().getTime());
-            newMonth.setMonth(newMonth.getMonth() + 1);
-            return this.goToMonth(event, newMonth);
-        };
-        ViewModel.prototype.goToMonth = function (event, month, doCancelHighlight) {
-            if (doCancelHighlight === void 0) { doCancelHighlight = true; }
-            month = TheDatepicker.Helper.resetTime(new Date(month.getTime()));
-            month.setDate(1);
-            if (month.getTime() === this.getCurrentMonth().getTime() || !this.canGoToMonth(month)) {
-                return false;
-            }
-            if (!this.triggerOnBeforeGo(event, month, this.currentMonth)) {
-                return false;
-            }
-            this.currentMonth = month;
-            if (!doCancelHighlight || !this.cancelHighlight()) {
-                this.render();
-            }
-            this.triggerOnGo(event, month, this.currentMonth);
-            return true;
-        };
-        ViewModel.prototype.reset = function (event) {
-            var isMonthChanged = this.goToMonth(event, this.options.getInitialMonth());
-            var isDaySelected = this.selectDay(event, this.options.getInitialDate(), false);
-            return isMonthChanged || isDaySelected;
-        };
-        ViewModel.prototype.selectDay = function (event, date, doUpdateMonth, doHighlight, canToggle) {
-            if (doUpdateMonth === void 0) { doUpdateMonth = true; }
-            if (doHighlight === void 0) { doHighlight = false; }
-            if (canToggle === void 0) { canToggle = false; }
-            if (date === null) {
-                return this.cancelSelection(event);
-            }
-            var day;
-            if (date instanceof TheDatepicker.Day) {
-                day = date;
-                date = day.getDate();
-            }
-            else {
-                day = this.createDay(date);
-            }
-            if (!day.isAvailable) {
-                return false;
-            }
-            if (day.isEqualToDate(this.selectedDate)) {
-                if (canToggle && this.options.hasToggleSelection()) {
-                    return this.cancelSelection(event);
-                }
-                return false;
-            }
-            var previousDay = this.selectedDate !== null ? this.createDay(this.selectedDate) : null;
-            if (!this.triggerOnBeforeSelect(event, day, previousDay)) {
-                return false;
-            }
-            this.selectedDate = day.getDate();
-            if (doHighlight) {
-                this.highlightedDay = day;
-                this.isHighlightedDayFocused = true;
-            }
-            if (!doUpdateMonth || !this.goToMonth(event, date)) {
-                this.render();
-            }
-            this.triggerOnSelect(event, day, previousDay);
-            return true;
-        };
-        ViewModel.prototype.selectDateSince = function (event, date) {
-            var maxDate = this.options.getMaxDate();
-            var maxLoops = 100;
-            var day = this.createDay(date);
-            date = day.getDate();
-            while (!day.isAvailable && maxLoops > 0) {
-                date.setDate(day.dayNumber + 1);
-                if (maxDate !== null && date.getTime() > maxDate.getTime()) {
-                    break;
-                }
-                day = this.createDay(date);
-                maxLoops--;
-            }
-            return this.selectDay(event, date);
-        };
-        ViewModel.prototype.highlightDay = function (event, day, doUpdateMonth) {
-            if (doUpdateMonth === void 0) { doUpdateMonth = false; }
-            if (!day.isAvailable) {
-                return false;
-            }
-            if (day.isEqualToDay(this.highlightedDay)) {
-                return false;
-            }
-            this.highlightedDay = day;
-            this.isHighlightedDayFocused = true;
-            var date = day.getDate();
-            if (!doUpdateMonth || !this.goToMonth(event, date, false)) {
-                this.render();
-            }
-            return true;
-        };
-        ViewModel.prototype.highlightFirstAvailableDay = function (event) {
-            var date = new Date(this.getCurrentMonth().getTime());
-            var maxDate = this.options.getMaxDate();
-            var day = this.createDay(date);
-            while (!day.isAvailable) {
-                date.setDate(day.dayNumber + 1);
-                if (date.getDate() === 1) {
-                    break;
-                }
-                if (maxDate !== null && date.getTime() > maxDate.getTime()) {
-                    break;
-                }
-                day = this.createDay(date);
-            }
-            return this.highlightDay(event, day);
-        };
-        ViewModel.prototype.highlightSiblingDay = function (event, day, direction) {
-            var newDay = day;
-            var date = newDay.getDate();
-            var maxLoops = 100;
-            do {
-                date.setDate(newDay.dayNumber + direction);
-                newDay = this.createDay(date);
-                if (!newDay.isInValidity) {
-                    break;
-                }
-                maxLoops--;
-            } while (!newDay.isAvailable && maxLoops > 0);
-            return this.highlightDay(event, newDay, true);
-        };
-        ViewModel.prototype.cancelSelection = function (event) {
-            if (!this.options.isAllowedEmpty()) {
-                return false;
-            }
-            if (this.selectedDate === null) {
-                return false;
-            }
-            var previousDay = this.createDay(this.selectedDate);
-            if (!this.triggerOnBeforeSelect(event, null, previousDay)) {
-                return false;
-            }
-            this.selectedDate = null;
-            this.render();
-            this.triggerOnSelect(event, null, previousDay);
-            return true;
-        };
-        ViewModel.prototype.cancelHighlight = function () {
-            if (this.highlightedDay === null) {
-                return false;
-            }
-            this.highlightedDay = null;
-            this.render();
-            return true;
-        };
-        ViewModel.prototype.getWeekDays = function () {
-            var weekDays = [];
-            for (var day = 0; day < 7; day++) {
-                weekDays.push((this.options.getFirstDayOfWeek() + day) % 7);
-            }
-            return weekDays;
-        };
-        ViewModel.prototype.getWeeks = function () {
-            var date;
-            var days = [];
-            var currentMonth = this.getCurrentMonth();
-            var firstDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-            var lastMonthDaysCount = (new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0)).getDate();
-            var prependDaysCount = (firstDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7;
-            for (date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
-                var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
-                day.isInCurrentMonth = false;
-                days.push(day);
-            }
-            var lastDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
-            var monthDaysCount = lastDateOfMonth.getDate();
-            for (date = 1; date <= monthDaysCount; date++) {
-                days.push(this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), date)));
-            }
-            var appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7);
-            for (date = 1; date <= appendDaysCount; date++) {
-                var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
-                day.isInCurrentMonth = false;
-                days.push(day);
-            }
-            if (this.options.hasFixedRowsCount()) {
-                for (var date_3 = appendDaysCount + 1; days.length < 6 * 7; date_3++) {
-                    var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date_3));
-                    day.isInCurrentMonth = false;
-                    days.push(day);
-                }
-            }
-            var weeks = [];
-            for (var i = 0; i < days.length; i += 7) {
-                weeks.push(days.slice(i, i + 7));
-            }
-            return weeks;
-        };
-        ViewModel.prototype.triggerKeyPress = function (event, target) {
-            if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Left, TheDatepicker.KeyCode.Up, TheDatepicker.KeyCode.Right, TheDatepicker.KeyCode.Down], event.keyCode)) {
-                TheDatepicker.Helper.preventDefault(event);
-                if (this.highlightedDay !== null) {
-                    this.highlightSiblingDay(event, this.highlightedDay, this.translateKeyCodeToMoveDirection(event.keyCode));
-                }
-                else if (this.selectedDate !== null
-                    && this.selectedDate.getFullYear() === this.getCurrentMonth().getFullYear()
-                    && this.selectedDate.getMonth() === this.getCurrentMonth().getMonth()) {
-                    this.highlightSiblingDay(event, this.createDay(this.selectedDate), this.translateKeyCodeToMoveDirection(event.keyCode));
-                }
-                else {
-                    this.highlightFirstAvailableDay(event);
-                }
-            }
-        };
-        ViewModel.prototype.triggerOnBeforeSelect = function (event, day, previousDay) {
-            return this.options.triggerEvent(TheDatepicker.EventType.BeforeSelect, function (listener) {
-                return listener.call(day, event, day, previousDay);
-            });
-        };
-        ViewModel.prototype.triggerOnSelect = function (event, day, previousDay) {
-            this.options.triggerEvent(TheDatepicker.EventType.Select, function (listener) {
-                return listener.call(day, event, day, previousDay);
-            });
-        };
-        ViewModel.prototype.triggerOnBeforeSwitch = function (event, isOpening) {
-            var _this = this;
-            return this.options.triggerEvent(TheDatepicker.EventType.BeforeSwitch, function (listener) {
-                return listener.call(_this.datepicker, event, isOpening);
-            });
-        };
-        ViewModel.prototype.triggerOnSwitch = function (event, isOpening) {
-            var _this = this;
-            this.options.triggerEvent(TheDatepicker.EventType.Switch, function (listener) {
-                return listener.call(_this.datepicker, event, isOpening);
-            });
-        };
-        ViewModel.prototype.triggerOnBeforeGo = function (event, month, previousMonth) {
-            return this.options.triggerEvent(TheDatepicker.EventType.BeforeGo, function (listener) {
-                return listener.call(month, event, month, previousMonth);
-            });
-        };
-        ViewModel.prototype.triggerOnGo = function (event, month, previousMonth) {
-            this.options.triggerEvent(TheDatepicker.EventType.Go, function (listener) {
-                return listener.call(month, event, month, previousMonth);
-            });
-        };
-        ViewModel.prototype.createDay = function (date) {
-            date = TheDatepicker.Helper.resetTime(new Date(date.getTime()));
-            var day = new TheDatepicker.Day(date);
-            day.isToday = date.getTime() === this.today.getTime();
-            day.isPast = date.getTime() < this.today.getTime();
-            day.isInValidity = this.options.isDateInValidity(date);
-            day.isAvailable = day.isInValidity && this.options.isDateAvailable(date);
-            if (day.isAvailable) {
-                if (day.isEqualToDate(this.selectedDate)) {
-                    day.isSelected = true;
-                }
-                if (day.isEqualToDay(this.highlightedDay)) {
-                    day.isHighlighted = true;
-                    if (this.isHighlightedDayFocused) {
-                        day.isFocused = true;
-                    }
-                }
-            }
-            return day;
-        };
-        ViewModel.prototype.translateKeyCodeToMoveDirection = function (key) {
-            switch (key) {
-                case TheDatepicker.KeyCode.Left:
-                    return MoveDirection.Left;
-                case TheDatepicker.KeyCode.Up:
-                    return MoveDirection.Up;
-                case TheDatepicker.KeyCode.Right:
-                    return MoveDirection.Right;
-                case TheDatepicker.KeyCode.Down:
-                    return MoveDirection.Down;
-                default:
-                    throw new Error('Invalid key code: ' + key);
-            }
-        };
-        return ViewModel;
-    }());
-    TheDatepicker.ViewModel = ViewModel;
-})(TheDatepicker || (TheDatepicker = {}));
-var TheDatepicker;
-(function (TheDatepicker) {
-    var Template = (function () {
-        function Template(options, htmlHelper) {
-            this.containerElement = null;
-            this.controlElement = null;
-            this.goBackElement = null;
-            this.goForwardElement = null;
-            this.titleElement = null;
-            this.titleContentElement = null;
-            this.resetElement = null;
-            this.closeElement = null;
-            this.monthSelect = null;
-            this.monthElement = null;
-            this.yearSelect = null;
-            this.yearElement = null;
-            this.weeksElements = [];
-            this.daysElements = [];
-            this.daysButtonsElements = [];
-            this.daysContentsElements = [];
-            this.options = options;
-            this.htmlHelper = htmlHelper;
-        }
-        Template.prototype.render = function (viewModel, datepicker) {
-            if (this.containerElement === null) {
-                if (datepicker.input !== null && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
-                    return;
-                }
-                datepicker.container.innerHTML = '';
-                datepicker.container.appendChild(this.createSkeleton(viewModel));
-            }
-            this.updateContainerElement(viewModel, datepicker.input);
-            this.updateTopElement(viewModel, datepicker.input);
-            this.updateTitleElement(viewModel);
-            this.updateCloseElement(viewModel, datepicker.input);
-            this.updateResetElement(viewModel);
-            this.updateGoBackElement(viewModel);
-            this.updateGoForwardElement(viewModel);
-            this.updateMonthElement(viewModel);
-            this.updateYearElement(viewModel);
-            this.updateWeeksElements(viewModel);
-        };
-        Template.prototype.createSkeleton = function (viewModel) {
-            var container = this.htmlHelper.createDiv('container');
-            container.appendChild(this.createHeaderElement(viewModel));
-            container.appendChild(this.createBodyElement(viewModel));
-            this.containerElement = container;
-            return container;
-        };
-        Template.prototype.updateContainerElement = function (viewModel, input) {
-            this.containerElement.style.display = input === null || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
-        };
-        Template.prototype.createHeaderElement = function (viewModel) {
-            var header = this.htmlHelper.createDiv('header');
-            var top = this.htmlHelper.createDiv('top');
-            header.appendChild(top);
-            top.appendChild(this.createTitleElement(viewModel));
-            var control = this.htmlHelper.createDiv('control');
-            top.appendChild(control);
-            control.appendChild(this.createResetElement(viewModel));
-            control.appendChild(this.createCloseElement(viewModel));
-            var navigation = this.htmlHelper.createDiv('navigation');
-            header.appendChild(navigation);
-            navigation.appendChild(this.createGoBackElement(viewModel));
-            var state = this.htmlHelper.createDiv('state');
-            navigation.appendChild(state);
-            state.appendChild(this.createMonthElement(viewModel));
-            state.appendChild(this.createYearElement(viewModel));
-            navigation.appendChild(this.createGoForwardElement(viewModel));
-            this.controlElement = control;
-            return header;
-        };
-        Template.prototype.updateTopElement = function (viewModel, input) {
-            var isVisible = this.options.getTitle() !== ''
-                || this.options.isResetButtonShown()
-                || (input !== null && this.options.isCloseButtonShown());
-            this.controlElement.style.display = isVisible ? '' : 'none';
-            this.titleElement.style.display = isVisible ? '' : 'none';
-        };
-        Template.prototype.createTitleElement = function (viewModel) {
-            var titleElement = this.htmlHelper.createDiv('title');
-            var titleContent = this.htmlHelper.createSpan();
-            titleElement.appendChild(titleContent);
-            this.htmlHelper.addClass(titleContent, 'title-content');
-            this.titleElement = titleElement;
-            this.titleContentElement = titleContent;
-            return titleElement;
-        };
-        Template.prototype.updateTitleElement = function (viewModel) {
-            var title = this.options.getTitle();
-            this.titleContentElement.style.display = title !== '' ? '' : 'none';
-            this.titleContentElement.innerText = title;
-        };
-        Template.prototype.createResetElement = function (viewModel) {
-            var resetElement = this.htmlHelper.createDiv('reset');
-            var resetButton = this.htmlHelper.createAnchor(function (event) {
-                viewModel.reset(event);
-            });
-            resetButton.innerHTML = this.options.getResetHtml();
-            resetElement.appendChild(resetButton);
-            this.resetElement = resetElement;
-            return resetElement;
-        };
-        Template.prototype.updateResetElement = function (viewModel) {
-            this.resetElement.style.display = this.options.isResetButtonShown() ? '' : 'none';
-        };
-        Template.prototype.createCloseElement = function (viewModel) {
-            var closeElement = this.htmlHelper.createDiv('close');
-            var closeButton = this.htmlHelper.createAnchor(function (event) {
-                viewModel.close(event);
-            });
-            closeButton.innerHTML = this.options.getCloseHtml();
-            closeElement.appendChild(closeButton);
-            this.closeElement = closeElement;
-            return closeElement;
-        };
-        Template.prototype.updateCloseElement = function (viewModel, input) {
-            this.closeElement.style.display = input !== null && this.options.isCloseButtonShown() ? '' : 'none';
-        };
-        Template.prototype.createGoBackElement = function (viewModel) {
-            return this.createGoElement(viewModel, false);
-        };
-        Template.prototype.createGoForwardElement = function (viewModel) {
-            return this.createGoElement(viewModel, true);
-        };
-        Template.prototype.createGoElement = function (viewModel, directionForward) {
-            var goElement = this.htmlHelper.createDiv('go');
-            this.htmlHelper.addClass(goElement, directionForward ? 'go-next' : 'go-previous');
-            var goButton = this.htmlHelper.createAnchor(function (event) {
-                if (directionForward) {
-                    viewModel.goForward(event);
-                }
-                else {
-                    viewModel.goBack(event);
-                }
-            });
-            goButton.innerHTML = directionForward ? this.options.getGoForwardHtml() : this.options.getGoBackHtml();
-            goElement.appendChild(goButton);
-            if (directionForward) {
-                this.goForwardElement = goButton;
-            }
-            else {
-                this.goBackElement = goButton;
-            }
-            return goElement;
-        };
-        Template.prototype.updateGoBackElement = function (viewModel) {
-            this.goBackElement.style.visibility = viewModel.canGoBack() ? 'visible' : 'hidden';
-        };
-        Template.prototype.updateGoForwardElement = function (viewModel) {
-            this.goForwardElement.style.visibility = viewModel.canGoForward() ? 'visible' : 'hidden';
-        };
-        Template.prototype.createMonthElement = function (viewModel) {
-            var options = [];
-            for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
-                options.push({
-                    value: monthNumber,
-                    label: this.options.translator.translateMonth(monthNumber)
-                });
-            }
-            var selectElement = this.htmlHelper.createSelectInput(options, function (event, monthNumber) {
-                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
-                newMonth.setMonth(monthNumber);
-                viewModel.goToMonth(event, newMonth);
-            });
-            var monthElement = this.htmlHelper.createDiv('month');
-            var monthContent = this.htmlHelper.createSpan();
-            monthElement.appendChild(selectElement);
-            monthElement.appendChild(monthContent);
-            this.monthElement = monthContent;
-            this.monthSelect = selectElement;
-            return monthElement;
-        };
-        Template.prototype.updateMonthElement = function (viewModel) {
-            var currentMonth = viewModel.getCurrentMonth().getMonth();
-            this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
-            if (!this.options.isMonthAsDropdown()) {
-                this.monthSelect.style.display = 'none';
-                this.monthElement.style.display = '';
-                return;
-            }
-            var valuesCount = 0;
-            for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
-                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
-                newMonth.setMonth(monthNumber);
-                var option = this.monthSelect.getElementsByTagName('option')[monthNumber];
-                var canGoToMonth = viewModel.canGoToMonth(newMonth);
-                option.disabled = !canGoToMonth;
-                option.style.display = canGoToMonth ? '' : 'none';
-                valuesCount += canGoToMonth ? 1 : 0;
-            }
-            this.monthSelect.value = currentMonth.toString();
-            this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
-            this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
-        };
-        Template.prototype.createYearElement = function (viewModel) {
-            var _this = this;
-            var selectElement = this.htmlHelper.createSelectInput([], function (event, year) {
-                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
-                newMonth.setFullYear(year);
-                var minMonth = _this.options.getMinMonth();
-                var maxMonth = _this.options.getMaxMonth();
-                if (minMonth !== null && newMonth.getTime() < minMonth.getTime()) {
-                    newMonth = minMonth;
-                }
-                if (maxMonth !== null && newMonth.getTime() > maxMonth.getTime()) {
-                    newMonth = maxMonth;
-                }
-                viewModel.goToMonth(event, newMonth);
-            });
-            var yearElement = this.htmlHelper.createDiv('year');
-            var yearContent = this.htmlHelper.createSpan();
-            yearElement.appendChild(selectElement);
-            yearElement.appendChild(yearContent);
-            this.yearElement = yearContent;
-            this.yearSelect = selectElement;
-            return yearElement;
-        };
-        Template.prototype.updateYearElement = function (viewModel) {
-            var currentYear = viewModel.getCurrentMonth().getFullYear();
-            this.yearElement.innerText = currentYear.toString();
-            if (!this.options.isYearAsDropdown()) {
-                this.yearSelect.style.display = 'none';
-                this.yearElement.style.display = '';
-                return;
-            }
-            var minDate = this.options.getMinDate();
-            var maxDate = this.options.getMaxDate();
-            var minYear = minDate !== null ? minDate.getFullYear() : null;
-            var maxYear = maxDate !== null ? maxDate.getFullYear() : null;
-            var limit = this.options.getYearDropdownItemsLimit() - 1;
-            var maxAppend = Math.ceil(limit / 2);
-            var from = currentYear - (limit - maxAppend);
-            var to = currentYear + maxAppend;
-            if (minYear !== null && from < minYear) {
-                to += minYear - from;
-                if (maxYear !== null && to > maxYear) {
-                    to = maxYear;
-                }
-                from = minYear;
-            }
-            else if (maxYear !== null && to > maxYear) {
-                from -= to - maxYear;
-                if (minYear !== null && from < minYear) {
-                    from = minYear;
-                }
-                to = maxYear;
-            }
-            var options = this.yearSelect.getElementsByTagName('option');
-            var firstOption = options.length > 0 ? parseInt(options[0].value, 10) : null;
-            var lastOption = options.length > 0 ? parseInt(options[options.length - 1].value, 10) : null;
-            var prepend = [];
-            var append = [];
-            var remove = [];
-            for (var year = from; year <= to; year++) {
-                if (firstOption === null || year < firstOption) {
-                    prepend.push(year);
-                }
-                else if (year > lastOption) {
-                    append.push(year);
-                }
-            }
-            for (var index = 0; index < options.length; index++) {
-                var year = parseInt(options[index].value, 10);
-                if (year < from || year > to) {
-                    remove.push(options[index]);
-                }
-            }
-            for (var index = 0; index < remove.length; index++) {
-                this.yearSelect.removeChild(remove[index]);
-            }
-            for (var index = prepend.length - 1; index >= 0; index--) {
-                this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(prepend[index], prepend[index].toString()), this.yearSelect.firstChild);
-            }
-            for (var index = 0; index < append.length; index++) {
-                this.yearSelect.appendChild(this.htmlHelper.createSelectOption(append[index], append[index].toString()));
-            }
-            this.yearSelect.value = currentYear.toString();
-            this.yearSelect.style.display = from < to ? '' : 'none';
-            this.yearElement.style.display = from < to ? 'none' : '';
-        };
-        Template.prototype.createTableElement = function (viewModel) {
-            var tableHeader = this.createTableHeaderElement(viewModel);
-            var tableBody = this.createTableBodyElement(viewModel);
-            return this.htmlHelper.createTable('table', tableHeader, tableBody);
-        };
-        Template.prototype.createTableHeaderElement = function (viewModel) {
-            var weekDays = viewModel.getWeekDays();
-            var cells = [];
-            for (var index = 0; index < weekDays.length; index++) {
-                var dayOfWeek = weekDays[index];
-                cells.push(this.createTableHeaderCellElement(viewModel, dayOfWeek));
-            }
-            return this.htmlHelper.createTableHeader('table-header', cells);
-        };
-        Template.prototype.createTableHeaderCellElement = function (viewModel, dayOfWeek) {
-            var headerCell = this.htmlHelper.createTableHeaderCell('table-header-cell');
-            if (dayOfWeek === TheDatepicker.DayOfWeek.Saturday || dayOfWeek === TheDatepicker.DayOfWeek.Sunday) {
-                this.htmlHelper.addClass(headerCell, 'weekend');
-            }
-            headerCell.innerText = this.options.translator.translateDayOfWeek(dayOfWeek);
-            return headerCell;
-        };
-        Template.prototype.createTableBodyElement = function (viewModel) {
-            this.daysElements = [];
-            this.daysButtonsElements = [];
-            this.daysContentsElements = [];
-            var rows = [];
-            for (var index = 0; index < 6; index++) {
-                rows.push(this.createTableRowElement(viewModel));
-            }
-            this.weeksElements = rows;
-            return this.htmlHelper.createTableBody('table-body', rows);
-        };
-        Template.prototype.updateWeeksElements = function (viewModel) {
-            var weeks = viewModel.getWeeks();
-            for (var weekIndex = 0; weekIndex < this.weeksElements.length; weekIndex++) {
-                var weekElement = this.weeksElements[weekIndex];
-                var week = weeks.length > weekIndex ? weeks[weekIndex] : null;
-                weekElement.style.display = week !== null ? '' : 'none';
-                if (week !== null) {
-                    for (var dayIndex = 0; dayIndex < this.daysElements[weekIndex].length; dayIndex++) {
-                        this.updateDayElement(viewModel, this.daysElements[weekIndex][dayIndex], this.daysButtonsElements[weekIndex][dayIndex], this.daysContentsElements[weekIndex][dayIndex], week[dayIndex]);
-                    }
-                }
-            }
-        };
-        Template.prototype.createTableRowElement = function (viewModel) {
-            var cells = [];
-            var cellsButtons = [];
-            var cellsContents = [];
-            for (var index = 0; index < 7; index++) {
-                var cell = this.htmlHelper.createTableCell();
-                var cellButton = this.createTableCellButtonElement(viewModel);
-                var cellContent = this.createTableCellContentElement(viewModel);
-                cells.push(cell);
-                cellsButtons.push(cellButton);
-                cellsContents.push(cellContent);
-                cell.appendChild(cellButton);
-                cellButton.appendChild(cellContent);
-            }
-            this.daysElements.push(cells);
-            this.daysButtonsElements.push(cellsButtons);
-            this.daysContentsElements.push(cellsContents);
-            return this.htmlHelper.createTableRow('week', cells);
-        };
-        Template.prototype.updateDayElement = function (viewModel, dayElement, dayButtonElement, dayContentElement, day) {
-            dayButtonElement.day = day;
-            dayElement.className = '';
-            this.htmlHelper.addClass(dayElement, 'cell');
-            if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
-                dayContentElement.innerText = '';
-                dayButtonElement.removeAttribute('href');
-                dayButtonElement.style.visibility = 'hidden';
-                return;
-            }
-            this.htmlHelper.addClass(dayElement, 'day');
-            if (day.isToday) {
-                this.htmlHelper.addClass(dayElement, 'today');
-            }
-            if (day.isWeekend) {
-                this.htmlHelper.addClass(dayElement, 'weekend');
-            }
-            if (!day.isAvailable) {
-                this.htmlHelper.addClass(dayElement, 'unavailable');
-            }
-            if (!day.isInCurrentMonth) {
-                this.htmlHelper.addClass(dayElement, 'outside');
-            }
-            if (day.isHighlighted) {
-                this.htmlHelper.addClass(dayElement, 'highlighted');
-            }
-            if (day.isSelected) {
-                this.htmlHelper.addClass(dayElement, 'selected');
-            }
-            var customClasses = this.options.getCellClasses(day);
-            for (var index = 0; index < customClasses.length; index++) {
-                dayElement.className += ' ' + customClasses[index];
-            }
-            dayButtonElement.style.visibility = 'visible';
-            dayContentElement.innerText = this.options.getCellContent(day);
-            if (day.isAvailable) {
-                dayButtonElement.href = '#';
-            }
-            else {
-                dayButtonElement.removeAttribute('href');
-            }
-            if (day.isFocused) {
-                dayButtonElement.focus();
-            }
-        };
-        Template.prototype.createTableCellButtonElement = function (viewModel) {
-            var _this = this;
-            var cellButton = this.htmlHelper.createAnchor(function (event) {
-                viewModel.selectDay(event, cellButton.day, false, true, true);
-                if (_this.options.isHiddenOnSelect()) {
-                    viewModel.close(event);
-                }
-            });
-            cellButton.onfocus = function (event) {
-                viewModel.highlightDay(event || window.event, cellButton.day);
-            };
-            cellButton.onmouseenter = function () {
-                viewModel.cancelHighlight();
-            };
-            cellButton.onmouseleave = function () {
-                viewModel.cancelHighlight();
-            };
-            return cellButton;
-        };
-        Template.prototype.createTableCellContentElement = function (viewModel) {
-            var cellContent = this.htmlHelper.createSpan();
-            this.htmlHelper.addClass(cellContent, 'day-content');
-            return cellContent;
-        };
-        Template.prototype.createBodyElement = function (viewModel) {
-            var body = this.htmlHelper.createDiv('body');
-            body.appendChild(this.createTableElement(viewModel));
-            return body;
-        };
-        return Template;
-    }());
-    TheDatepicker.Template = Template;
-})(TheDatepicker || (TheDatepicker = {}));
-var TheDatepicker;
-(function (TheDatepicker) {
     var EventType;
     (function (EventType) {
         EventType["BeforeSelect"] = "beforeSelect";
@@ -1815,9 +1030,8 @@ var TheDatepicker;
         EventType["BeforeGo"] = "beforeGo";
     })(EventType = TheDatepicker.EventType || (TheDatepicker.EventType = {}));
     var Options = (function () {
-        function Options(translator, template) {
+        function Options(translator) {
             if (translator === void 0) { translator = null; }
-            if (template === void 0) { template = null; }
             this.hideOnBlur = true;
             this.hideOnSelect = true;
             this.minDate = null;
@@ -1856,10 +1070,9 @@ var TheDatepicker;
                 beforeGo: []
             };
             this.translator = translator !== null ? translator : new TheDatepicker.Translator();
-            this.template = template !== null ? template : new TheDatepicker.Template(this, new TheDatepicker.HtmlHelper(this));
         }
         Options.prototype.clone = function () {
-            var options = new Options(this.translator, this.template);
+            var options = new Options(this.translator);
             options.hideOnBlur = this.hideOnBlur;
             options.hideOnSelect = this.hideOnSelect;
             options.minDate = this.minDate;
@@ -2272,6 +1485,794 @@ var TheDatepicker;
         return Options;
     }());
     TheDatepicker.Options = Options;
+})(TheDatepicker || (TheDatepicker = {}));
+var TheDatepicker;
+(function (TheDatepicker) {
+    var MoveDirection;
+    (function (MoveDirection) {
+        MoveDirection[MoveDirection["Left"] = -1] = "Left";
+        MoveDirection[MoveDirection["Up"] = -7] = "Up";
+        MoveDirection[MoveDirection["Right"] = 1] = "Right";
+        MoveDirection[MoveDirection["Down"] = 7] = "Down";
+    })(MoveDirection = TheDatepicker.MoveDirection || (TheDatepicker.MoveDirection = {}));
+    var ViewModel = (function () {
+        function ViewModel(options, datepicker) {
+            this.options = options;
+            this.datepicker = datepicker;
+            this.selectedDate = null;
+            this.currentMonth = null;
+            this.highlightedDay = null;
+            this.isHighlightedDayFocused = false;
+            this.active = false;
+            this.today = TheDatepicker.Helper.resetTime(new Date());
+            this.template = new TheDatepicker.Template(this.options, new TheDatepicker.HtmlHelper(this.options), datepicker.container, datepicker.input !== null);
+        }
+        ViewModel.prototype.render = function () {
+            if (this.selectedDate !== null) {
+                if ((!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate))
+                    && this.cancelSelection(null)) {
+                    return;
+                }
+            }
+            else if (!this.options.isAllowedEmpty() && this.selectDay(null, this.options.getInitialDate(), false)) {
+                return;
+            }
+            var correctMonth = this.options.correctMonth(this.getCurrentMonth());
+            if (this.goToMonth(null, correctMonth)) {
+                return;
+            }
+            this.template.render(this);
+            this.datepicker.updateInput();
+        };
+        ViewModel.prototype.setActive = function (event, value) {
+            if (this.active === value) {
+                return true;
+            }
+            if (!this.triggerOnBeforeSwitch(event, value)) {
+                return false;
+            }
+            this.active = value;
+            if (this.options.isHiddenOnBlur()) {
+                this.render();
+            }
+            this.triggerOnSwitch(event, value);
+            return true;
+        };
+        ViewModel.prototype.isActive = function () {
+            return this.active;
+        };
+        ViewModel.prototype.close = function (event) {
+            return this.datepicker.close(event);
+        };
+        ViewModel.prototype.getCurrentMonth = function () {
+            if (this.currentMonth === null) {
+                this.currentMonth = this.options.getInitialMonth();
+            }
+            return this.currentMonth;
+        };
+        ViewModel.prototype.canGoBack = function () {
+            var newMonth = new Date(this.getCurrentMonth().getTime());
+            newMonth.setMonth(newMonth.getMonth() - 1);
+            return this.canGoToMonth(newMonth);
+        };
+        ViewModel.prototype.canGoForward = function () {
+            var newMonth = new Date(this.getCurrentMonth().getTime());
+            newMonth.setMonth(newMonth.getMonth() + 1);
+            return this.canGoToMonth(newMonth);
+        };
+        ViewModel.prototype.canGoToMonth = function (month) {
+            return this.options.isMonthInValidity(month);
+        };
+        ViewModel.prototype.goBack = function (event) {
+            var newMonth = new Date(this.getCurrentMonth().getTime());
+            newMonth.setMonth(newMonth.getMonth() - 1);
+            return this.goToMonth(event, newMonth);
+        };
+        ViewModel.prototype.goForward = function (event) {
+            var newMonth = new Date(this.getCurrentMonth().getTime());
+            newMonth.setMonth(newMonth.getMonth() + 1);
+            return this.goToMonth(event, newMonth);
+        };
+        ViewModel.prototype.goToMonth = function (event, month, doCancelHighlight) {
+            if (doCancelHighlight === void 0) { doCancelHighlight = true; }
+            month = TheDatepicker.Helper.resetTime(new Date(month.getTime()));
+            month.setDate(1);
+            if (month.getTime() === this.getCurrentMonth().getTime() || !this.canGoToMonth(month)) {
+                return false;
+            }
+            if (!this.triggerOnBeforeGo(event, month, this.currentMonth)) {
+                return false;
+            }
+            this.currentMonth = month;
+            if (!doCancelHighlight || !this.cancelHighlight()) {
+                this.render();
+            }
+            this.triggerOnGo(event, month, this.currentMonth);
+            return true;
+        };
+        ViewModel.prototype.reset = function (event) {
+            var isMonthChanged = this.goToMonth(event, this.options.getInitialMonth());
+            var isDaySelected = this.selectDay(event, this.options.getInitialDate(), false);
+            return isMonthChanged || isDaySelected;
+        };
+        ViewModel.prototype.selectDay = function (event, date, doUpdateMonth, doHighlight, canToggle) {
+            if (doUpdateMonth === void 0) { doUpdateMonth = true; }
+            if (doHighlight === void 0) { doHighlight = false; }
+            if (canToggle === void 0) { canToggle = false; }
+            if (date === null) {
+                return this.cancelSelection(event);
+            }
+            var day;
+            if (date instanceof TheDatepicker.Day) {
+                day = date;
+                date = day.getDate();
+            }
+            else {
+                day = this.createDay(date);
+            }
+            if (!day.isAvailable) {
+                return false;
+            }
+            if (day.isEqualToDate(this.selectedDate)) {
+                if (canToggle && this.options.hasToggleSelection()) {
+                    return this.cancelSelection(event);
+                }
+                return false;
+            }
+            var previousDay = this.selectedDate !== null ? this.createDay(this.selectedDate) : null;
+            if (!this.triggerOnBeforeSelect(event, day, previousDay)) {
+                return false;
+            }
+            this.selectedDate = day.getDate();
+            if (doHighlight) {
+                this.highlightedDay = day;
+                this.isHighlightedDayFocused = true;
+            }
+            if (!doUpdateMonth || !this.goToMonth(event, date)) {
+                this.render();
+            }
+            this.triggerOnSelect(event, day, previousDay);
+            return true;
+        };
+        ViewModel.prototype.selectDateSince = function (event, date) {
+            var maxDate = this.options.getMaxDate();
+            var maxLoops = 100;
+            var day = this.createDay(date);
+            date = day.getDate();
+            while (!day.isAvailable && maxLoops > 0) {
+                date.setDate(day.dayNumber + 1);
+                if (maxDate !== null && date.getTime() > maxDate.getTime()) {
+                    break;
+                }
+                day = this.createDay(date);
+                maxLoops--;
+            }
+            return this.selectDay(event, date);
+        };
+        ViewModel.prototype.highlightDay = function (event, day, doUpdateMonth) {
+            if (doUpdateMonth === void 0) { doUpdateMonth = false; }
+            if (!day.isAvailable) {
+                return false;
+            }
+            if (day.isEqualToDay(this.highlightedDay)) {
+                return false;
+            }
+            this.highlightedDay = day;
+            this.isHighlightedDayFocused = true;
+            var date = day.getDate();
+            if (!doUpdateMonth || !this.goToMonth(event, date, false)) {
+                this.render();
+            }
+            return true;
+        };
+        ViewModel.prototype.highlightFirstAvailableDay = function (event) {
+            var date = new Date(this.getCurrentMonth().getTime());
+            var maxDate = this.options.getMaxDate();
+            var day = this.createDay(date);
+            while (!day.isAvailable) {
+                date.setDate(day.dayNumber + 1);
+                if (date.getDate() === 1) {
+                    break;
+                }
+                if (maxDate !== null && date.getTime() > maxDate.getTime()) {
+                    break;
+                }
+                day = this.createDay(date);
+            }
+            return this.highlightDay(event, day);
+        };
+        ViewModel.prototype.highlightSiblingDay = function (event, day, direction) {
+            var newDay = day;
+            var date = newDay.getDate();
+            var maxLoops = 100;
+            do {
+                date.setDate(newDay.dayNumber + direction);
+                newDay = this.createDay(date);
+                if (!newDay.isInValidity) {
+                    break;
+                }
+                maxLoops--;
+            } while (!newDay.isAvailable && maxLoops > 0);
+            return this.highlightDay(event, newDay, true);
+        };
+        ViewModel.prototype.cancelSelection = function (event) {
+            if (!this.options.isAllowedEmpty()) {
+                return false;
+            }
+            if (this.selectedDate === null) {
+                return false;
+            }
+            var previousDay = this.createDay(this.selectedDate);
+            if (!this.triggerOnBeforeSelect(event, null, previousDay)) {
+                return false;
+            }
+            this.selectedDate = null;
+            this.render();
+            this.triggerOnSelect(event, null, previousDay);
+            return true;
+        };
+        ViewModel.prototype.cancelHighlight = function () {
+            if (this.highlightedDay === null) {
+                return false;
+            }
+            this.highlightedDay = null;
+            this.render();
+            return true;
+        };
+        ViewModel.prototype.getWeekDays = function () {
+            var weekDays = [];
+            for (var day = 0; day < 7; day++) {
+                weekDays.push((this.options.getFirstDayOfWeek() + day) % 7);
+            }
+            return weekDays;
+        };
+        ViewModel.prototype.getWeeks = function () {
+            var date;
+            var days = [];
+            var currentMonth = this.getCurrentMonth();
+            var firstDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+            var lastMonthDaysCount = (new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0)).getDate();
+            var prependDaysCount = (firstDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7;
+            for (date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
+                var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
+                day.isInCurrentMonth = false;
+                days.push(day);
+            }
+            var lastDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+            var monthDaysCount = lastDateOfMonth.getDate();
+            for (date = 1; date <= monthDaysCount; date++) {
+                days.push(this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), date)));
+            }
+            var appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7);
+            for (date = 1; date <= appendDaysCount; date++) {
+                var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+                day.isInCurrentMonth = false;
+                days.push(day);
+            }
+            if (this.options.hasFixedRowsCount()) {
+                for (var date_3 = appendDaysCount + 1; days.length < 6 * 7; date_3++) {
+                    var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date_3));
+                    day.isInCurrentMonth = false;
+                    days.push(day);
+                }
+            }
+            var weeks = [];
+            for (var i = 0; i < days.length; i += 7) {
+                weeks.push(days.slice(i, i + 7));
+            }
+            return weeks;
+        };
+        ViewModel.prototype.triggerKeyPress = function (event, target) {
+            if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Left, TheDatepicker.KeyCode.Up, TheDatepicker.KeyCode.Right, TheDatepicker.KeyCode.Down], event.keyCode)) {
+                TheDatepicker.Helper.preventDefault(event);
+                if (this.highlightedDay !== null) {
+                    this.highlightSiblingDay(event, this.highlightedDay, this.translateKeyCodeToMoveDirection(event.keyCode));
+                }
+                else if (this.selectedDate !== null
+                    && this.selectedDate.getFullYear() === this.getCurrentMonth().getFullYear()
+                    && this.selectedDate.getMonth() === this.getCurrentMonth().getMonth()) {
+                    this.highlightSiblingDay(event, this.createDay(this.selectedDate), this.translateKeyCodeToMoveDirection(event.keyCode));
+                }
+                else {
+                    this.highlightFirstAvailableDay(event);
+                }
+            }
+        };
+        ViewModel.prototype.triggerOnBeforeSelect = function (event, day, previousDay) {
+            return this.options.triggerEvent(TheDatepicker.EventType.BeforeSelect, function (listener) {
+                return listener.call(day, event, day, previousDay);
+            });
+        };
+        ViewModel.prototype.triggerOnSelect = function (event, day, previousDay) {
+            this.options.triggerEvent(TheDatepicker.EventType.Select, function (listener) {
+                return listener.call(day, event, day, previousDay);
+            });
+        };
+        ViewModel.prototype.triggerOnBeforeSwitch = function (event, isOpening) {
+            var _this = this;
+            return this.options.triggerEvent(TheDatepicker.EventType.BeforeSwitch, function (listener) {
+                return listener.call(_this.datepicker, event, isOpening);
+            });
+        };
+        ViewModel.prototype.triggerOnSwitch = function (event, isOpening) {
+            var _this = this;
+            this.options.triggerEvent(TheDatepicker.EventType.Switch, function (listener) {
+                return listener.call(_this.datepicker, event, isOpening);
+            });
+        };
+        ViewModel.prototype.triggerOnBeforeGo = function (event, month, previousMonth) {
+            return this.options.triggerEvent(TheDatepicker.EventType.BeforeGo, function (listener) {
+                return listener.call(month, event, month, previousMonth);
+            });
+        };
+        ViewModel.prototype.triggerOnGo = function (event, month, previousMonth) {
+            this.options.triggerEvent(TheDatepicker.EventType.Go, function (listener) {
+                return listener.call(month, event, month, previousMonth);
+            });
+        };
+        ViewModel.prototype.createDay = function (date) {
+            date = TheDatepicker.Helper.resetTime(new Date(date.getTime()));
+            var day = new TheDatepicker.Day(date);
+            day.isToday = date.getTime() === this.today.getTime();
+            day.isPast = date.getTime() < this.today.getTime();
+            day.isInValidity = this.options.isDateInValidity(date);
+            day.isAvailable = day.isInValidity && this.options.isDateAvailable(date);
+            if (day.isAvailable) {
+                if (day.isEqualToDate(this.selectedDate)) {
+                    day.isSelected = true;
+                }
+                if (day.isEqualToDay(this.highlightedDay)) {
+                    day.isHighlighted = true;
+                    if (this.isHighlightedDayFocused) {
+                        day.isFocused = true;
+                    }
+                }
+            }
+            return day;
+        };
+        ViewModel.prototype.translateKeyCodeToMoveDirection = function (key) {
+            switch (key) {
+                case TheDatepicker.KeyCode.Left:
+                    return MoveDirection.Left;
+                case TheDatepicker.KeyCode.Up:
+                    return MoveDirection.Up;
+                case TheDatepicker.KeyCode.Right:
+                    return MoveDirection.Right;
+                case TheDatepicker.KeyCode.Down:
+                    return MoveDirection.Down;
+                default:
+                    throw new Error('Invalid key code: ' + key);
+            }
+        };
+        return ViewModel;
+    }());
+    TheDatepicker.ViewModel = ViewModel;
+})(TheDatepicker || (TheDatepicker = {}));
+var TheDatepicker;
+(function (TheDatepicker) {
+    var Template = (function () {
+        function Template(options, htmlHelper, container, hasInput) {
+            this.options = options;
+            this.htmlHelper = htmlHelper;
+            this.container = container;
+            this.hasInput = hasInput;
+            this.containerElement = null;
+            this.controlElement = null;
+            this.goBackElement = null;
+            this.goForwardElement = null;
+            this.titleElement = null;
+            this.titleContentElement = null;
+            this.resetElement = null;
+            this.closeElement = null;
+            this.monthSelect = null;
+            this.monthElement = null;
+            this.yearSelect = null;
+            this.yearElement = null;
+            this.weeksElements = [];
+            this.daysElements = [];
+            this.daysButtonsElements = [];
+            this.daysContentsElements = [];
+        }
+        Template.prototype.render = function (viewModel) {
+            if (this.containerElement === null) {
+                if (this.hasInput && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
+                    return;
+                }
+                this.container.innerHTML = '';
+                this.container.appendChild(this.createSkeleton(viewModel));
+            }
+            this.updateContainerElement(viewModel);
+            this.updateTopElement(viewModel);
+            this.updateTitleElement(viewModel);
+            this.updateCloseElement(viewModel);
+            this.updateResetElement(viewModel);
+            this.updateGoBackElement(viewModel);
+            this.updateGoForwardElement(viewModel);
+            this.updateMonthElement(viewModel);
+            this.updateYearElement(viewModel);
+            this.updateWeeksElements(viewModel);
+        };
+        Template.prototype.createSkeleton = function (viewModel) {
+            var container = this.htmlHelper.createDiv('container');
+            container.appendChild(this.createHeaderElement(viewModel));
+            container.appendChild(this.createBodyElement(viewModel));
+            this.containerElement = container;
+            return container;
+        };
+        Template.prototype.updateContainerElement = function (viewModel) {
+            this.containerElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
+        };
+        Template.prototype.createHeaderElement = function (viewModel) {
+            var header = this.htmlHelper.createDiv('header');
+            var top = this.htmlHelper.createDiv('top');
+            header.appendChild(top);
+            top.appendChild(this.createTitleElement(viewModel));
+            var control = this.htmlHelper.createDiv('control');
+            top.appendChild(control);
+            control.appendChild(this.createResetElement(viewModel));
+            control.appendChild(this.createCloseElement(viewModel));
+            var navigation = this.htmlHelper.createDiv('navigation');
+            header.appendChild(navigation);
+            navigation.appendChild(this.createGoBackElement(viewModel));
+            var state = this.htmlHelper.createDiv('state');
+            navigation.appendChild(state);
+            state.appendChild(this.createMonthElement(viewModel));
+            state.appendChild(this.createYearElement(viewModel));
+            navigation.appendChild(this.createGoForwardElement(viewModel));
+            this.controlElement = control;
+            return header;
+        };
+        Template.prototype.updateTopElement = function (viewModel) {
+            var isVisible = this.options.getTitle() !== ''
+                || this.options.isResetButtonShown()
+                || (this.hasInput && this.options.isCloseButtonShown());
+            this.controlElement.style.display = isVisible ? '' : 'none';
+            this.titleElement.style.display = isVisible ? '' : 'none';
+        };
+        Template.prototype.createTitleElement = function (viewModel) {
+            var titleElement = this.htmlHelper.createDiv('title');
+            var titleContent = this.htmlHelper.createSpan();
+            titleElement.appendChild(titleContent);
+            this.htmlHelper.addClass(titleContent, 'title-content');
+            this.titleElement = titleElement;
+            this.titleContentElement = titleContent;
+            return titleElement;
+        };
+        Template.prototype.updateTitleElement = function (viewModel) {
+            var title = this.options.getTitle();
+            this.titleContentElement.style.display = title !== '' ? '' : 'none';
+            this.titleContentElement.innerText = title;
+        };
+        Template.prototype.createResetElement = function (viewModel) {
+            var resetElement = this.htmlHelper.createDiv('reset');
+            var resetButton = this.htmlHelper.createAnchor(function (event) {
+                viewModel.reset(event);
+            });
+            resetButton.innerHTML = this.options.getResetHtml();
+            resetElement.appendChild(resetButton);
+            this.resetElement = resetElement;
+            return resetElement;
+        };
+        Template.prototype.updateResetElement = function (viewModel) {
+            this.resetElement.style.display = this.options.isResetButtonShown() ? '' : 'none';
+        };
+        Template.prototype.createCloseElement = function (viewModel) {
+            var closeElement = this.htmlHelper.createDiv('close');
+            var closeButton = this.htmlHelper.createAnchor(function (event) {
+                viewModel.close(event);
+            });
+            closeButton.innerHTML = this.options.getCloseHtml();
+            closeElement.appendChild(closeButton);
+            this.closeElement = closeElement;
+            return closeElement;
+        };
+        Template.prototype.updateCloseElement = function (viewModel) {
+            this.closeElement.style.display = this.hasInput && this.options.isCloseButtonShown() ? '' : 'none';
+        };
+        Template.prototype.createGoBackElement = function (viewModel) {
+            return this.createGoElement(viewModel, false);
+        };
+        Template.prototype.createGoForwardElement = function (viewModel) {
+            return this.createGoElement(viewModel, true);
+        };
+        Template.prototype.createGoElement = function (viewModel, directionForward) {
+            var goElement = this.htmlHelper.createDiv('go');
+            this.htmlHelper.addClass(goElement, directionForward ? 'go-next' : 'go-previous');
+            var goButton = this.htmlHelper.createAnchor(function (event) {
+                if (directionForward) {
+                    viewModel.goForward(event);
+                }
+                else {
+                    viewModel.goBack(event);
+                }
+            });
+            goButton.innerHTML = directionForward ? this.options.getGoForwardHtml() : this.options.getGoBackHtml();
+            goElement.appendChild(goButton);
+            if (directionForward) {
+                this.goForwardElement = goButton;
+            }
+            else {
+                this.goBackElement = goButton;
+            }
+            return goElement;
+        };
+        Template.prototype.updateGoBackElement = function (viewModel) {
+            this.goBackElement.style.visibility = viewModel.canGoBack() ? 'visible' : 'hidden';
+        };
+        Template.prototype.updateGoForwardElement = function (viewModel) {
+            this.goForwardElement.style.visibility = viewModel.canGoForward() ? 'visible' : 'hidden';
+        };
+        Template.prototype.createMonthElement = function (viewModel) {
+            var options = [];
+            for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
+                options.push({
+                    value: monthNumber,
+                    label: this.options.translator.translateMonth(monthNumber)
+                });
+            }
+            var selectElement = this.htmlHelper.createSelectInput(options, function (event, monthNumber) {
+                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
+                newMonth.setMonth(monthNumber);
+                viewModel.goToMonth(event, newMonth);
+            });
+            var monthElement = this.htmlHelper.createDiv('month');
+            var monthContent = this.htmlHelper.createSpan();
+            monthElement.appendChild(selectElement);
+            monthElement.appendChild(monthContent);
+            this.monthElement = monthContent;
+            this.monthSelect = selectElement;
+            return monthElement;
+        };
+        Template.prototype.updateMonthElement = function (viewModel) {
+            var currentMonth = viewModel.getCurrentMonth().getMonth();
+            this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
+            if (!this.options.isMonthAsDropdown()) {
+                this.monthSelect.style.display = 'none';
+                this.monthElement.style.display = '';
+                return;
+            }
+            var valuesCount = 0;
+            for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
+                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
+                newMonth.setMonth(monthNumber);
+                var option = this.monthSelect.getElementsByTagName('option')[monthNumber];
+                var canGoToMonth = viewModel.canGoToMonth(newMonth);
+                option.disabled = !canGoToMonth;
+                option.style.display = canGoToMonth ? '' : 'none';
+                valuesCount += canGoToMonth ? 1 : 0;
+            }
+            this.monthSelect.value = currentMonth.toString();
+            this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
+            this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
+        };
+        Template.prototype.createYearElement = function (viewModel) {
+            var _this = this;
+            var selectElement = this.htmlHelper.createSelectInput([], function (event, year) {
+                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
+                newMonth.setFullYear(year);
+                var minMonth = _this.options.getMinMonth();
+                var maxMonth = _this.options.getMaxMonth();
+                if (minMonth !== null && newMonth.getTime() < minMonth.getTime()) {
+                    newMonth = minMonth;
+                }
+                if (maxMonth !== null && newMonth.getTime() > maxMonth.getTime()) {
+                    newMonth = maxMonth;
+                }
+                viewModel.goToMonth(event, newMonth);
+            });
+            var yearElement = this.htmlHelper.createDiv('year');
+            var yearContent = this.htmlHelper.createSpan();
+            yearElement.appendChild(selectElement);
+            yearElement.appendChild(yearContent);
+            this.yearElement = yearContent;
+            this.yearSelect = selectElement;
+            return yearElement;
+        };
+        Template.prototype.updateYearElement = function (viewModel) {
+            var currentYear = viewModel.getCurrentMonth().getFullYear();
+            this.yearElement.innerText = currentYear.toString();
+            if (!this.options.isYearAsDropdown()) {
+                this.yearSelect.style.display = 'none';
+                this.yearElement.style.display = '';
+                return;
+            }
+            var minDate = this.options.getMinDate();
+            var maxDate = this.options.getMaxDate();
+            var minYear = minDate !== null ? minDate.getFullYear() : null;
+            var maxYear = maxDate !== null ? maxDate.getFullYear() : null;
+            var limit = this.options.getYearDropdownItemsLimit() - 1;
+            var maxAppend = Math.ceil(limit / 2);
+            var from = currentYear - (limit - maxAppend);
+            var to = currentYear + maxAppend;
+            if (minYear !== null && from < minYear) {
+                to += minYear - from;
+                if (maxYear !== null && to > maxYear) {
+                    to = maxYear;
+                }
+                from = minYear;
+            }
+            else if (maxYear !== null && to > maxYear) {
+                from -= to - maxYear;
+                if (minYear !== null && from < minYear) {
+                    from = minYear;
+                }
+                to = maxYear;
+            }
+            var options = this.yearSelect.getElementsByTagName('option');
+            var firstOption = options.length > 0 ? parseInt(options[0].value, 10) : null;
+            var lastOption = options.length > 0 ? parseInt(options[options.length - 1].value, 10) : null;
+            var prepend = [];
+            var append = [];
+            var remove = [];
+            for (var year = from; year <= to; year++) {
+                if (firstOption === null || year < firstOption) {
+                    prepend.push(year);
+                }
+                else if (year > lastOption) {
+                    append.push(year);
+                }
+            }
+            for (var index = 0; index < options.length; index++) {
+                var year = parseInt(options[index].value, 10);
+                if (year < from || year > to) {
+                    remove.push(options[index]);
+                }
+            }
+            for (var index = 0; index < remove.length; index++) {
+                this.yearSelect.removeChild(remove[index]);
+            }
+            for (var index = prepend.length - 1; index >= 0; index--) {
+                this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(prepend[index], prepend[index].toString()), this.yearSelect.firstChild);
+            }
+            for (var index = 0; index < append.length; index++) {
+                this.yearSelect.appendChild(this.htmlHelper.createSelectOption(append[index], append[index].toString()));
+            }
+            this.yearSelect.value = currentYear.toString();
+            this.yearSelect.style.display = from < to ? '' : 'none';
+            this.yearElement.style.display = from < to ? 'none' : '';
+        };
+        Template.prototype.createTableElement = function (viewModel) {
+            var tableHeader = this.createTableHeaderElement(viewModel);
+            var tableBody = this.createTableBodyElement(viewModel);
+            return this.htmlHelper.createTable('table', tableHeader, tableBody);
+        };
+        Template.prototype.createTableHeaderElement = function (viewModel) {
+            var weekDays = viewModel.getWeekDays();
+            var cells = [];
+            for (var index = 0; index < weekDays.length; index++) {
+                var dayOfWeek = weekDays[index];
+                cells.push(this.createTableHeaderCellElement(viewModel, dayOfWeek));
+            }
+            return this.htmlHelper.createTableHeader('table-header', cells);
+        };
+        Template.prototype.createTableHeaderCellElement = function (viewModel, dayOfWeek) {
+            var headerCell = this.htmlHelper.createTableHeaderCell('table-header-cell');
+            if (dayOfWeek === TheDatepicker.DayOfWeek.Saturday || dayOfWeek === TheDatepicker.DayOfWeek.Sunday) {
+                this.htmlHelper.addClass(headerCell, 'weekend');
+            }
+            headerCell.innerText = this.options.translator.translateDayOfWeek(dayOfWeek);
+            return headerCell;
+        };
+        Template.prototype.createTableBodyElement = function (viewModel) {
+            this.daysElements = [];
+            this.daysButtonsElements = [];
+            this.daysContentsElements = [];
+            var rows = [];
+            for (var index = 0; index < 6; index++) {
+                rows.push(this.createTableRowElement(viewModel));
+            }
+            this.weeksElements = rows;
+            return this.htmlHelper.createTableBody('table-body', rows);
+        };
+        Template.prototype.updateWeeksElements = function (viewModel) {
+            var weeks = viewModel.getWeeks();
+            for (var weekIndex = 0; weekIndex < this.weeksElements.length; weekIndex++) {
+                var weekElement = this.weeksElements[weekIndex];
+                var week = weeks.length > weekIndex ? weeks[weekIndex] : null;
+                weekElement.style.display = week !== null ? '' : 'none';
+                if (week !== null) {
+                    for (var dayIndex = 0; dayIndex < this.daysElements[weekIndex].length; dayIndex++) {
+                        this.updateDayElement(viewModel, this.daysElements[weekIndex][dayIndex], this.daysButtonsElements[weekIndex][dayIndex], this.daysContentsElements[weekIndex][dayIndex], week[dayIndex]);
+                    }
+                }
+            }
+        };
+        Template.prototype.createTableRowElement = function (viewModel) {
+            var cells = [];
+            var cellsButtons = [];
+            var cellsContents = [];
+            for (var index = 0; index < 7; index++) {
+                var cell = this.htmlHelper.createTableCell();
+                var cellButton = this.createTableCellButtonElement(viewModel);
+                var cellContent = this.createTableCellContentElement(viewModel);
+                cells.push(cell);
+                cellsButtons.push(cellButton);
+                cellsContents.push(cellContent);
+                cell.appendChild(cellButton);
+                cellButton.appendChild(cellContent);
+            }
+            this.daysElements.push(cells);
+            this.daysButtonsElements.push(cellsButtons);
+            this.daysContentsElements.push(cellsContents);
+            return this.htmlHelper.createTableRow('week', cells);
+        };
+        Template.prototype.updateDayElement = function (viewModel, dayElement, dayButtonElement, dayContentElement, day) {
+            dayButtonElement.day = day;
+            dayElement.className = '';
+            this.htmlHelper.addClass(dayElement, 'cell');
+            if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
+                dayContentElement.innerText = '';
+                dayButtonElement.removeAttribute('href');
+                dayButtonElement.style.visibility = 'hidden';
+                return;
+            }
+            this.htmlHelper.addClass(dayElement, 'day');
+            if (day.isToday) {
+                this.htmlHelper.addClass(dayElement, 'today');
+            }
+            if (day.isWeekend) {
+                this.htmlHelper.addClass(dayElement, 'weekend');
+            }
+            if (!day.isAvailable) {
+                this.htmlHelper.addClass(dayElement, 'unavailable');
+            }
+            if (!day.isInCurrentMonth) {
+                this.htmlHelper.addClass(dayElement, 'outside');
+            }
+            if (day.isHighlighted) {
+                this.htmlHelper.addClass(dayElement, 'highlighted');
+            }
+            if (day.isSelected) {
+                this.htmlHelper.addClass(dayElement, 'selected');
+            }
+            var customClasses = this.options.getCellClasses(day);
+            for (var index = 0; index < customClasses.length; index++) {
+                dayElement.className += ' ' + customClasses[index];
+            }
+            dayButtonElement.style.visibility = 'visible';
+            dayContentElement.innerText = this.options.getCellContent(day);
+            if (day.isAvailable) {
+                dayButtonElement.href = '#';
+            }
+            else {
+                dayButtonElement.removeAttribute('href');
+            }
+            if (day.isFocused) {
+                dayButtonElement.focus();
+            }
+        };
+        Template.prototype.createTableCellButtonElement = function (viewModel) {
+            var _this = this;
+            var cellButton = this.htmlHelper.createAnchor(function (event) {
+                viewModel.selectDay(event, cellButton.day, false, true, true);
+                if (_this.options.isHiddenOnSelect()) {
+                    viewModel.close(event);
+                }
+            });
+            cellButton.onfocus = function (event) {
+                viewModel.highlightDay(event || window.event, cellButton.day);
+            };
+            cellButton.onmouseenter = function () {
+                viewModel.cancelHighlight();
+            };
+            cellButton.onmouseleave = function () {
+                viewModel.cancelHighlight();
+            };
+            return cellButton;
+        };
+        Template.prototype.createTableCellContentElement = function (viewModel) {
+            var cellContent = this.htmlHelper.createSpan();
+            this.htmlHelper.addClass(cellContent, 'day-content');
+            return cellContent;
+        };
+        Template.prototype.createBodyElement = function (viewModel) {
+            var body = this.htmlHelper.createDiv('body');
+            body.appendChild(this.createTableElement(viewModel));
+            return body;
+        };
+        return Template;
+    }());
+    TheDatepicker.Template = Template;
 })(TheDatepicker || (TheDatepicker = {}));
 HTMLElement.prototype.onDatepickerReady = function (callback) {
     if (typeof this.datepicker !== 'undefined') {
