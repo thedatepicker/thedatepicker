@@ -2219,7 +2219,7 @@ var TheDatepicker;
             dayElement.className = '';
             this.htmlHelper.addClass(dayElement, 'cell');
             if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
-                dayContentElement.innerText = '';
+                dayContentElement.innerHTML = '&nbsp;';
                 dayButtonElement.removeAttribute('href');
                 dayButtonElement.style.visibility = 'hidden';
                 return;

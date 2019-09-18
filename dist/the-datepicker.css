@@ -114,12 +114,14 @@
 .the-datepicker__container td.the-datepicker__cell {
   padding: 0;
 }
-.the-datepicker__container td.the-datepicker__day a.the-datepicker__button {
+.the-datepicker__container td.the-datepicker__cell a.the-datepicker__button {
   padding: 0.1em;
 }
-.the-datepicker__container td.the-datepicker__day a.the-datepicker__button .the-datepicker__day-content {
+.the-datepicker__container td.the-datepicker__cell a.the-datepicker__button .the-datepicker__day-content {
   display: block;
   padding: 0.6em 0;
+}
+.the-datepicker__container td.the-datepicker__day a.the-datepicker__button .the-datepicker__day-content {
   text-align: center;
   border-radius: 0.3em;
 }
