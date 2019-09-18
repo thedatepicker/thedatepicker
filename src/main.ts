@@ -1,7 +1,7 @@
 // @ts-ignore
 HTMLElement.prototype.onDatepickerReady = function (callback: (datepicker: TheDatepicker.Datepicker) => void): void {
 	if (typeof this.datepicker !== 'undefined') {
-		callback(this.datepicker);
+		callback.call(this, this.datepicker);
 		return;
 	}
 
