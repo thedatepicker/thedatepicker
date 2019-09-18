@@ -55,7 +55,7 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			if (!this.triggerOnBeforeSwitch(event, value)) {
+			if (!this.triggerOnBeforeOpenAndClose(event, value)) {
 				return false;
 			}
 
@@ -65,7 +65,7 @@ namespace TheDatepicker {
 				this.render();
 			}
 
-			this.triggerOnSwitch(event, value);
+			this.triggerOnOpenAndClose(event, value);
 
 			return true;
 		}
@@ -383,14 +383,14 @@ namespace TheDatepicker {
 			});
 		}
 
-		private triggerOnBeforeSwitch(event: Event | null, isOpening: boolean): boolean {
-			return this.options.triggerEvent(EventType.BeforeSwitch, (listener: SwitchEvent) => {
+		private triggerOnBeforeOpenAndClose(event: Event | null, isOpening: boolean): boolean {
+			return this.options.triggerEvent(EventType.BeforeOpenAndClose, (listener: OpenAndCloseEvent) => {
 				return listener.call(this.datepicker, event, isOpening);
 			});
 		}
 
-		private triggerOnSwitch(event: Event | null, isOpening: boolean): void {
-			this.options.triggerEvent(EventType.Switch, (listener: SwitchEvent) => {
+		private triggerOnOpenAndClose(event: Event | null, isOpening: boolean): void {
+			this.options.triggerEvent(EventType.OpenAndClose, (listener: OpenAndCloseEvent) => {
 				return listener.call(this.datepicker, event, isOpening);
 			});
 		}

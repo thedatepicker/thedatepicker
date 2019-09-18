@@ -1055,8 +1055,8 @@ var TheDatepicker;
     (function (EventType) {
         EventType["BeforeSelect"] = "beforeSelect";
         EventType["Select"] = "select";
-        EventType["BeforeSwitch"] = "beforeSwitch";
-        EventType["Switch"] = "switch";
+        EventType["BeforeOpenAndClose"] = "beforeOpenAndClose";
+        EventType["OpenAndClose"] = "openAndClose";
         EventType["MonthChange"] = "monthChange";
         EventType["BeforeMonthChange"] = "beforeMonthChange";
     })(EventType = TheDatepicker.EventType || (TheDatepicker.EventType = {}));
@@ -1097,8 +1097,8 @@ var TheDatepicker;
             this.listeners = {
                 beforeSelect: [],
                 select: [],
-                beforeSwitch: [],
-                "switch": [],
+                beforeOpenAndClose: [],
+                openAndClose: [],
                 monthChange: [],
                 beforeMonthChange: []
             };
@@ -1139,8 +1139,8 @@ var TheDatepicker;
             options.positionFixing = this.positionFixing;
             options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
             options.listeners.select = this.listeners.select.slice(0);
-            options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
-            options.listeners["switch"] = this.listeners["switch"].slice(0);
+            options.listeners.beforeOpenAndClose = this.listeners.beforeOpenAndClose.slice(0);
+            options.listeners.openAndClose = this.listeners.openAndClose.slice(0);
             options.listeners.monthChange = this.listeners.monthChange.slice(0);
             options.listeners.beforeMonthChange = this.listeners.beforeMonthChange.slice(0);
             return options;
@@ -1252,19 +1252,19 @@ var TheDatepicker;
             if (listener === void 0) { listener = null; }
             this.offEventListener(EventType.Select, listener);
         };
-        Options.prototype.onBeforeSwitch = function (listener) {
-            this.onEventListener(EventType.BeforeSwitch, listener);
+        Options.prototype.onBeforeOpenAndClose = function (listener) {
+            this.onEventListener(EventType.BeforeOpenAndClose, listener);
         };
-        Options.prototype.offBeforeSwitch = function (listener) {
+        Options.prototype.offBeforeOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.BeforeSwitch, listener);
+            this.offEventListener(EventType.BeforeOpenAndClose, listener);
         };
-        Options.prototype.onSwitch = function (listener) {
-            this.onEventListener(EventType.Switch, listener);
+        Options.prototype.onOpenAndClose = function (listener) {
+            this.onEventListener(EventType.OpenAndClose, listener);
         };
-        Options.prototype.offSwitch = function (listener) {
+        Options.prototype.offOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.Switch, listener);
+            this.offEventListener(EventType.OpenAndClose, listener);
         };
         Options.prototype.onBeforeMonthChange = function (listener) {
             this.onEventListener(EventType.BeforeMonthChange, listener);
@@ -1538,14 +1538,14 @@ var TheDatepicker;
             if (this.active === value) {
                 return true;
             }
-            if (!this.triggerOnBeforeSwitch(event, value)) {
+            if (!this.triggerOnBeforeOpenAndClose(event, value)) {
                 return false;
             }
             this.active = value;
             if (this.options.isHiddenOnBlur()) {
                 this.render();
             }
-            this.triggerOnSwitch(event, value);
+            this.triggerOnOpenAndClose(event, value);
             return true;
         };
         ViewModel.prototype.isActive = function () {
@@ -1798,15 +1798,15 @@ var TheDatepicker;
                 return listener.call(day, event, day, previousDay);
             });
         };
-        ViewModel.prototype.triggerOnBeforeSwitch = function (event, isOpening) {
+        ViewModel.prototype.triggerOnBeforeOpenAndClose = function (event, isOpening) {
             var _this = this;
-            return this.options.triggerEvent(TheDatepicker.EventType.BeforeSwitch, function (listener) {
+            return this.options.triggerEvent(TheDatepicker.EventType.BeforeOpenAndClose, function (listener) {
                 return listener.call(_this.datepicker, event, isOpening);
             });
         };
-        ViewModel.prototype.triggerOnSwitch = function (event, isOpening) {
+        ViewModel.prototype.triggerOnOpenAndClose = function (event, isOpening) {
             var _this = this;
-            this.options.triggerEvent(TheDatepicker.EventType.Switch, function (listener) {
+            this.options.triggerEvent(TheDatepicker.EventType.OpenAndClose, function (listener) {
                 return listener.call(_this.datepicker, event, isOpening);
             });
         };

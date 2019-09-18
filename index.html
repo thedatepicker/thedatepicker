@@ -153,13 +153,13 @@
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeSwitch((event, isOpening) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onBeforeSwitch"></textarea><br>
+					<label>datepicker.options.onBeforeOpenAndClose((event, isOpening) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onBeforeOpenAndClose"></textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onSwitch((event, isOpening) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onSwitch"></textarea><br>
+					<label>datepicker.options.onOpenAndClose((event, isOpening) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onOpenAndClose"></textarea><br>
 					});</label>
 				</li>
 				<li>
@@ -488,14 +488,14 @@
 				updateListener('select', onSelectInput.value, 'event, day, previousDay');
 			};
 
-			var onBeforeSwitchInput = document.getElementById('onBeforeSwitch');
-			onBeforeSwitchInput.onchange = function () {
-				updateListener('beforeSwitch', onBeforeSwitchInput.value, 'event, isOpening');
+			var onBeforeOpenAndCloseInput = document.getElementById('onBeforeOpenAndClose');
+			onBeforeOpenAndCloseInput.onchange = function () {
+				updateListener('beforeOpenAndClose', onBeforeOpenAndCloseInput.value, 'event, isOpening');
 			};
 
-			var onSwitchInput = document.getElementById('onSwitch');
-			onSwitchInput.onchange = function () {
-				updateListener('switch', onSwitchInput.value, 'event, isOpening');
+			var onOpenAndCloseInput = document.getElementById('onOpenAndClose');
+			onOpenAndCloseInput.onchange = function () {
+				updateListener('openAndClose', onOpenAndCloseInput.value, 'event, isOpening');
 			};
 
 			var onBeforeMonthChangeInput = document.getElementById('onBeforeMonthChange');

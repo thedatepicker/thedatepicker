@@ -7,24 +7,24 @@ namespace TheDatepicker {
 	export enum EventType {
 		BeforeSelect = 'beforeSelect',
 		Select = 'select',
-		BeforeSwitch = 'beforeSwitch',
-		Switch = 'switch',
+		BeforeOpenAndClose = 'beforeOpenAndClose',
+		OpenAndClose = 'openAndClose',
 		MonthChange = 'monthChange',
 		BeforeMonthChange = 'beforeMonthChange',
 	}
 
 	export type SelectEvent = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
-	export type SwitchEvent = (event: Event | null, isOpening: boolean) => boolean;
+	export type OpenAndCloseEvent = (event: Event | null, isOpening: boolean) => boolean;
 	export type MonthChangeEvent = (event: Event | null, month: Date, previousMonth: Date) => boolean;
-	type OneOfEvent = SelectEvent | SwitchEvent | MonthChangeEvent;
-	type AnyEvent = SelectEvent & SwitchEvent & MonthChangeEvent;
+	type OneOfEvent = SelectEvent | OpenAndCloseEvent | MonthChangeEvent;
+	type AnyEvent = SelectEvent & OpenAndCloseEvent & MonthChangeEvent;
 	type EventCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
 		beforeSelect: SelectEvent[]
 		select: SelectEvent[]
-		beforeSwitch: SwitchEvent[]
-		switch: SwitchEvent[]
+		beforeOpenAndClose: OpenAndCloseEvent[]
+		openAndClose: OpenAndCloseEvent[]
 		monthChange: MonthChangeEvent[]
 		beforeMonthChange: MonthChangeEvent[]
 	}
@@ -73,8 +73,8 @@ namespace TheDatepicker {
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
-			beforeSwitch: [],
-			switch: [],
+			beforeOpenAndClose: [],
+			openAndClose: [],
 			monthChange: [],
 			beforeMonthChange: [],
 		};
@@ -119,8 +119,8 @@ namespace TheDatepicker {
 			options.positionFixing = this.positionFixing;
 			options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
 			options.listeners.select = this.listeners.select.slice(0);
-			options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
-			options.listeners.switch = this.listeners.switch.slice(0);
+			options.listeners.beforeOpenAndClose = this.listeners.beforeOpenAndClose.slice(0);
+			options.listeners.openAndClose = this.listeners.openAndClose.slice(0);
 			options.listeners.monthChange = this.listeners.monthChange.slice(0);
 			options.listeners.beforeMonthChange = this.listeners.beforeMonthChange.slice(0);
 
@@ -385,22 +385,22 @@ namespace TheDatepicker {
 		// Callback to be called just before the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		// If callback returns false, action stops and datepicker will not be opened / closed.
-		public onBeforeSwitch(listener: SwitchEvent) {
-			this.onEventListener(EventType.BeforeSwitch, listener as AnyEvent);
+		public onBeforeOpenAndClose(listener: OpenAndCloseEvent) {
+			this.onEventListener(EventType.BeforeOpenAndClose, listener as AnyEvent);
 		}
 
-		public offBeforeSwitch(listener: SwitchEvent | null = null): void {
-			this.offEventListener(EventType.BeforeSwitch, listener);
+		public offBeforeOpenAndClose(listener: OpenAndCloseEvent | null = null): void {
+			this.offEventListener(EventType.BeforeOpenAndClose, listener);
 		}
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
-		public onSwitch(listener: SwitchEvent) {
-			this.onEventListener(EventType.Switch, listener as AnyEvent);
+		public onOpenAndClose(listener: OpenAndCloseEvent) {
+			this.onEventListener(EventType.OpenAndClose, listener as AnyEvent);
 		}
 
-		public offSwitch(listener: SwitchEvent | null = null): void {
-			this.offEventListener(EventType.Switch, listener);
+		public offOpenAndClose(listener: OpenAndCloseEvent | null = null): void {
+			this.offEventListener(EventType.OpenAndClose, listener);
 		}
 
 		// Callback to be called just before displayed month is changed.
