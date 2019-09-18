@@ -541,7 +541,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.createContainer = function () {
             var container = this.document.createElement('div');
-            container.className = this.options.getClassesPrefix() + 'board';
+            container.className = this.options.getClassesPrefix() + 'container';
             container.style.position = 'absolute';
             container.style.zIndex = '99';
             return container;
@@ -666,9 +666,9 @@ var TheDatepicker;
             var locationClass = '';
             var locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
             if (locateOver) {
-                locationClass = ' ' + this.options.getClassesPrefix() + 'board--over';
+                locationClass = ' ' + this.options.getClassesPrefix() + 'container--over';
             }
-            this.container.className = this.options.getClassesPrefix() + 'board' + locationClass;
+            this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
             var childNodes = this.container.childNodes;
             if (childNodes.length > 0) {
                 var child = childNodes[0];
@@ -1057,8 +1057,8 @@ var TheDatepicker;
         EventType["Select"] = "select";
         EventType["BeforeSwitch"] = "beforeSwitch";
         EventType["Switch"] = "switch";
-        EventType["Go"] = "go";
-        EventType["BeforeGo"] = "beforeGo";
+        EventType["MonthChange"] = "monthChange";
+        EventType["BeforeMonthChange"] = "beforeMonthChange";
     })(EventType = TheDatepicker.EventType || (TheDatepicker.EventType = {}));
     var Options = (function () {
         function Options(translator) {
@@ -1099,8 +1099,8 @@ var TheDatepicker;
                 select: [],
                 beforeSwitch: [],
                 "switch": [],
-                go: [],
-                beforeGo: []
+                monthChange: [],
+                beforeMonthChange: []
             };
             this.translator = translator !== null ? translator : new TheDatepicker.Translator();
         }
@@ -1141,8 +1141,8 @@ var TheDatepicker;
             options.listeners.select = this.listeners.select.slice(0);
             options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
             options.listeners["switch"] = this.listeners["switch"].slice(0);
-            options.listeners.go = this.listeners.go.slice(0);
-            options.listeners.beforeGo = this.listeners.beforeGo.slice(0);
+            options.listeners.monthChange = this.listeners.monthChange.slice(0);
+            options.listeners.beforeMonthChange = this.listeners.beforeMonthChange.slice(0);
             return options;
         };
         Options.prototype.setHideOnBlur = function (value) {
@@ -1266,19 +1266,19 @@ var TheDatepicker;
             if (listener === void 0) { listener = null; }
             this.offEventListener(EventType.Switch, listener);
         };
-        Options.prototype.onBeforeGo = function (listener) {
-            this.onEventListener(EventType.BeforeGo, listener);
+        Options.prototype.onBeforeMonthChange = function (listener) {
+            this.onEventListener(EventType.BeforeMonthChange, listener);
         };
-        Options.prototype.offBeforeGo = function (listener) {
+        Options.prototype.offBeforeMonthChange = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.BeforeGo, listener);
+            this.offEventListener(EventType.BeforeMonthChange, listener);
         };
-        Options.prototype.onGo = function (listener) {
-            this.onEventListener(EventType.Go, listener);
+        Options.prototype.onMonthChange = function (listener) {
+            this.onEventListener(EventType.MonthChange, listener);
         };
-        Options.prototype.offGo = function (listener) {
+        Options.prototype.offMonthChange = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.Go, listener);
+            this.offEventListener(EventType.MonthChange, listener);
         };
         Options.prototype.getInitialMonth = function () {
             var initialMonth = this.initialDate !== null
@@ -1590,14 +1590,14 @@ var TheDatepicker;
             if (month.getTime() === this.getCurrentMonth().getTime() || !this.canGoToMonth(month)) {
                 return false;
             }
-            if (!this.triggerOnBeforeGo(event, month, this.currentMonth)) {
+            if (!this.triggerOnBeforeMonthChange(event, month, this.currentMonth)) {
                 return false;
             }
             this.currentMonth = month;
             if (!doCancelHighlight || !this.cancelHighlight()) {
                 this.render();
             }
-            this.triggerOnGo(event, month, this.currentMonth);
+            this.triggerOnMonthChange(event, month, this.currentMonth);
             return true;
         };
         ViewModel.prototype.reset = function (event) {
@@ -1810,13 +1810,13 @@ var TheDatepicker;
                 return listener.call(_this.datepicker, event, isOpening);
             });
         };
-        ViewModel.prototype.triggerOnBeforeGo = function (event, month, previousMonth) {
-            return this.options.triggerEvent(TheDatepicker.EventType.BeforeGo, function (listener) {
+        ViewModel.prototype.triggerOnBeforeMonthChange = function (event, month, previousMonth) {
+            return this.options.triggerEvent(TheDatepicker.EventType.BeforeMonthChange, function (listener) {
                 return listener.call(month, event, month, previousMonth);
             });
         };
-        ViewModel.prototype.triggerOnGo = function (event, month, previousMonth) {
-            this.options.triggerEvent(TheDatepicker.EventType.Go, function (listener) {
+        ViewModel.prototype.triggerOnMonthChange = function (event, month, previousMonth) {
+            this.options.triggerEvent(TheDatepicker.EventType.MonthChange, function (listener) {
                 return listener.call(month, event, month, previousMonth);
             });
         };
@@ -1866,7 +1866,7 @@ var TheDatepicker;
             this.htmlHelper = htmlHelper;
             this.container = container;
             this.hasInput = hasInput;
-            this.containerElement = null;
+            this.mainElement = null;
             this.controlElement = null;
             this.goBackElement = null;
             this.goForwardElement = null;
@@ -1884,14 +1884,14 @@ var TheDatepicker;
             this.daysContentsElements = [];
         }
         Template.prototype.render = function (viewModel) {
-            if (this.containerElement === null) {
+            if (this.mainElement === null) {
                 if (this.hasInput && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
                     return;
                 }
                 this.container.innerHTML = '';
                 this.container.appendChild(this.createSkeleton(viewModel));
             }
-            this.updateContainerElement(viewModel);
+            this.updateMainElement(viewModel);
             this.updateTopElement(viewModel);
             this.updateTitleElement(viewModel);
             this.updateCloseElement(viewModel);
@@ -1903,14 +1903,14 @@ var TheDatepicker;
             this.updateWeeksElements(viewModel);
         };
         Template.prototype.createSkeleton = function (viewModel) {
-            var container = this.htmlHelper.createDiv('container');
-            container.appendChild(this.createHeaderElement(viewModel));
-            container.appendChild(this.createBodyElement(viewModel));
-            this.containerElement = container;
-            return container;
+            var main = this.htmlHelper.createDiv('main');
+            main.appendChild(this.createHeaderElement(viewModel));
+            main.appendChild(this.createBodyElement(viewModel));
+            this.mainElement = main;
+            return main;
         };
-        Template.prototype.updateContainerElement = function (viewModel) {
-            this.containerElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
+        Template.prototype.updateMainElement = function (viewModel) {
+            this.mainElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
         };
         Template.prototype.createBodyElement = function (viewModel) {
             var body = this.htmlHelper.createDiv('body');

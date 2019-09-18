@@ -163,13 +163,13 @@
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeGo((event, month, previousMonth) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onBeforeGo"></textarea><br>
+					<label>datepicker.options.onBeforeMonthChange((event, month, previousMonth) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onBeforeMonthChange"></textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onGo((event, month, previousMonth) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onGo"></textarea><br>
+					<label>datepicker.options.onMonthChange((event, month, previousMonth) => {<br>
+						&nbsp;<textarea rows="3" cols="40" id="onMonthChange"></textarea><br>
 					});</label>
 				</li>
 				<li>
@@ -498,14 +498,14 @@
 				updateListener('switch', onSwitchInput.value, 'event, isOpening');
 			};
 
-			var onBeforeGoInput = document.getElementById('onBeforeGo');
-			onBeforeGoInput.onchange = function () {
-				updateListener('beforeGo', onBeforeGoInput.value, 'event, month, previousMonth');
+			var onBeforeMonthChangeInput = document.getElementById('onBeforeMonthChange');
+			onBeforeMonthChangeInput.onchange = function () {
+				updateListener('beforeMonthChange', onBeforeMonthChangeInput.value, 'event, month, previousMonth');
 			};
 
-			var onGoInput = document.getElementById('onGo');
-			onGoInput.onchange = function () {
-				updateListener('go', onGoInput.value, 'event, month, previousMonth');
+			var onMonthChangeInput = document.getElementById('onMonthChange');
+			onMonthChangeInput.onchange = function () {
+				updateListener('monthChange', onMonthChangeInput.value, 'event, month, previousMonth');
 			};
 
 			var classesPrefixInput = document.getElementById('classesPrefix');

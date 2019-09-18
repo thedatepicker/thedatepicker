@@ -122,7 +122,7 @@ namespace TheDatepicker {
 				return false;
 			}
 
-			if (!this.triggerOnBeforeGo(event, month, this.currentMonth)) {
+			if (!this.triggerOnBeforeMonthChange(event, month, this.currentMonth)) {
 				return false;
 			}
 
@@ -131,7 +131,7 @@ namespace TheDatepicker {
 				this.render();
 			}
 
-			this.triggerOnGo(event, month, this.currentMonth);
+			this.triggerOnMonthChange(event, month, this.currentMonth);
 
 			return true;
 		}
@@ -395,14 +395,14 @@ namespace TheDatepicker {
 			});
 		}
 
-		private triggerOnBeforeGo(event: Event | null, month: Date, previousMonth: Date): boolean {
-			return this.options.triggerEvent(EventType.BeforeGo, (listener: GoEvent) => {
+		private triggerOnBeforeMonthChange(event: Event | null, month: Date, previousMonth: Date): boolean {
+			return this.options.triggerEvent(EventType.BeforeMonthChange, (listener: MonthChangeEvent) => {
 				return listener.call(month, event, month, previousMonth);
 			});
 		}
 
-		private triggerOnGo(event: Event | null, month: Date, previousMonth: Date): void {
-			this.options.triggerEvent(EventType.Go, (listener: GoEvent) => {
+		private triggerOnMonthChange(event: Event | null, month: Date, previousMonth: Date): void {
+			this.options.triggerEvent(EventType.MonthChange, (listener: MonthChangeEvent) => {
 				return listener.call(month, event, month, previousMonth);
 			});
 		}

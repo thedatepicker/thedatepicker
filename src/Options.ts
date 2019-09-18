@@ -9,15 +9,15 @@ namespace TheDatepicker {
 		Select = 'select',
 		BeforeSwitch = 'beforeSwitch',
 		Switch = 'switch',
-		Go = 'go',
-		BeforeGo = 'beforeGo',
+		MonthChange = 'monthChange',
+		BeforeMonthChange = 'beforeMonthChange',
 	}
 
 	export type SelectEvent = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
 	export type SwitchEvent = (event: Event | null, isOpening: boolean) => boolean;
-	export type GoEvent = (event: Event | null, month: Date, previousMonth: Date) => boolean;
-	type OneOfEvent = SelectEvent | SwitchEvent | GoEvent;
-	type AnyEvent = SelectEvent & SwitchEvent & GoEvent;
+	export type MonthChangeEvent = (event: Event | null, month: Date, previousMonth: Date) => boolean;
+	type OneOfEvent = SelectEvent | SwitchEvent | MonthChangeEvent;
+	type AnyEvent = SelectEvent & SwitchEvent & MonthChangeEvent;
 	type EventCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
@@ -25,8 +25,8 @@ namespace TheDatepicker {
 		select: SelectEvent[]
 		beforeSwitch: SwitchEvent[]
 		switch: SwitchEvent[]
-		go: GoEvent[]
-		beforeGo: GoEvent[]
+		monthChange: MonthChangeEvent[]
+		beforeMonthChange: MonthChangeEvent[]
 	}
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
@@ -75,8 +75,8 @@ namespace TheDatepicker {
 			select: [],
 			beforeSwitch: [],
 			switch: [],
-			go: [],
-			beforeGo: [],
+			monthChange: [],
+			beforeMonthChange: [],
 		};
 
 		public constructor(translator: Translator | null = null) {
@@ -121,8 +121,8 @@ namespace TheDatepicker {
 			options.listeners.select = this.listeners.select.slice(0);
 			options.listeners.beforeSwitch = this.listeners.beforeSwitch.slice(0);
 			options.listeners.switch = this.listeners.switch.slice(0);
-			options.listeners.go = this.listeners.go.slice(0);
-			options.listeners.beforeGo = this.listeners.beforeGo.slice(0);
+			options.listeners.monthChange = this.listeners.monthChange.slice(0);
+			options.listeners.beforeMonthChange = this.listeners.beforeMonthChange.slice(0);
 
 			return options
 		}
@@ -406,22 +406,22 @@ namespace TheDatepicker {
 		// Callback to be called just before displayed month is changed.
 		// An Event instance, month (Date instance set to first day of month) which is going to be displayed and month (Date instance) which was displayed before are given on input.
 		// If callback returns false, month will not be changed.
-		public onBeforeGo(listener: GoEvent) {
-			this.onEventListener(EventType.BeforeGo, listener as AnyEvent);
+		public onBeforeMonthChange(listener: MonthChangeEvent) {
+			this.onEventListener(EventType.BeforeMonthChange, listener as AnyEvent);
 		}
 
-		public offBeforeGo(listener: GoEvent | null = null): void {
-			this.offEventListener(EventType.BeforeGo, listener);
+		public offBeforeMonthChange(listener: MonthChangeEvent | null = null): void {
+			this.offEventListener(EventType.BeforeMonthChange, listener);
 		}
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
-		public onGo(listener: GoEvent) {
-			this.onEventListener(EventType.Go, listener as AnyEvent);
+		public onMonthChange(listener: MonthChangeEvent) {
+			this.onEventListener(EventType.MonthChange, listener as AnyEvent);
 		}
 
-		public offGo(listener: GoEvent | null = null): void {
-			this.offEventListener(EventType.Go, listener);
+		public offMonthChange(listener: MonthChangeEvent | null = null): void {
+			this.offEventListener(EventType.MonthChange, listener);
 		}
 
 		public getInitialMonth(): Date {
