@@ -11,7 +11,6 @@ namespace TheDatepicker {
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
-	// todo min/max month zakešovanej
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
 	// todo přejmenovat třídu vnitřího elementu container ať se to neplete?
 	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik

@@ -107,6 +107,17 @@ namespace TheDatepicker {
 			throw new Error(parameterName + 'was expected to be a valid Date string or valid Date or null.');
 		}
 
+		public static normalizeMonth(date: Date | null): Date | null {
+			if (date === null) {
+				return null;
+			}
+
+			const month = new Date(date.getTime());
+			month.setDate(1);
+
+			return month;
+		}
+
 		public static isElement(element: HTMLElement): boolean {
 			return typeof element === 'object'
 				&& element.nodeType === 1

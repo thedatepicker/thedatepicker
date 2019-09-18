@@ -847,6 +847,14 @@ var TheDatepicker;
             }
             throw new Error(parameterName + 'was expected to be a valid Date string or valid Date or null.');
         };
+        Helper.normalizeMonth = function (date) {
+            if (date === null) {
+                return null;
+            }
+            var month = new Date(date.getTime());
+            month.setDate(1);
+            return month;
+        };
         Helper.isElement = function (element) {
             return typeof element === 'object'
                 && element.nodeType === 1
@@ -1059,6 +1067,8 @@ var TheDatepicker;
             this.hideOnSelect = true;
             this.minDate = null;
             this.maxDate = null;
+            this.minMonth = null;
+            this.maxMonth = null;
             this.initialDate = null;
             this.initialMonth = null;
             this.firstDayOfWeek = TheDatepicker.DayOfWeek.Monday;
@@ -1100,6 +1110,8 @@ var TheDatepicker;
             options.hideOnSelect = this.hideOnSelect;
             options.minDate = this.minDate;
             options.maxDate = this.maxDate;
+            options.minMonth = this.minMonth;
+            options.maxMonth = this.maxMonth;
             options.initialDate = this.initialDate;
             options.initialMonth = this.initialMonth;
             options.firstDayOfWeek = this.firstDayOfWeek;
@@ -1143,11 +1155,13 @@ var TheDatepicker;
             var normalizedDate = TheDatepicker.Helper.normalizeDate('Min date', date);
             this.checkConstraints(normalizedDate, this.maxDate);
             this.minDate = normalizedDate;
+            this.minMonth = TheDatepicker.Helper.normalizeMonth(normalizedDate);
         };
         Options.prototype.setMaxDate = function (date) {
             var normalizedDate = TheDatepicker.Helper.normalizeDate('Max date', date);
             this.checkConstraints(this.minDate, normalizedDate);
             this.maxDate = normalizedDate;
+            this.maxMonth = TheDatepicker.Helper.normalizeMonth(normalizedDate);
         };
         Options.prototype.setInitialMonth = function (month) {
             this.initialMonth = TheDatepicker.Helper.normalizeDate('Initial month', month);
@@ -1369,20 +1383,10 @@ var TheDatepicker;
             return this.maxDate;
         };
         Options.prototype.getMinMonth = function () {
-            if (this.minDate === null) {
-                return null;
-            }
-            var minMonth = new Date(this.minDate.getTime());
-            minMonth.setDate(1);
-            return minMonth;
+            return this.minMonth;
         };
         Options.prototype.getMaxMonth = function () {
-            if (this.maxDate === null) {
-                return null;
-            }
-            var maxMonth = new Date(this.maxDate.getTime());
-            maxMonth.setDate(1);
-            return maxMonth;
+            return this.maxMonth;
         };
         Options.prototype.getYearDropdownItemsLimit = function () {
             return this.yearDropdownItemsLimit;

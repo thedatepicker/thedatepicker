@@ -43,6 +43,8 @@ namespace TheDatepicker {
 		private hideOnSelect = true;
 		private minDate: Date | null = null;
 		private maxDate: Date | null = null;
+		private minMonth: Date | null = null;
+		private maxMonth: Date | null = null;
 		private initialDate: Date | null = null;
 		private initialMonth: Date | null = null;
 		private firstDayOfWeek = DayOfWeek.Monday;
@@ -88,6 +90,8 @@ namespace TheDatepicker {
 			options.hideOnSelect = this.hideOnSelect;
 			options.minDate = this.minDate;
 			options.maxDate = this.maxDate;
+			options.minMonth = this.minMonth;
+			options.maxMonth = this.maxMonth;
 			options.initialDate = this.initialDate;
 			options.initialMonth = this.initialMonth;
 			options.firstDayOfWeek = this.firstDayOfWeek;
@@ -151,6 +155,7 @@ namespace TheDatepicker {
 			const normalizedDate = Helper.normalizeDate('Min date', date);
 			this.checkConstraints(normalizedDate, this.maxDate);
 			this.minDate = normalizedDate;
+			this.minMonth = Helper.normalizeMonth(normalizedDate);
 		}
 
 		// Maximal date which can be selected (inclusive).
@@ -165,6 +170,7 @@ namespace TheDatepicker {
 			const normalizedDate = Helper.normalizeDate('Max date', date);
 			this.checkConstraints(this.minDate, normalizedDate);
 			this.maxDate = normalizedDate;
+			this.maxMonth = Helper.normalizeMonth(normalizedDate);
 		}
 
 		// Month to be rendered when datepicker opened first time.
@@ -548,25 +554,11 @@ namespace TheDatepicker {
 		}
 
 		public getMinMonth(): Date | null {
-			if (this.minDate === null) {
-				return null;
-			}
-
-			const minMonth = new Date(this.minDate.getTime());
-			minMonth.setDate(1);
-
-			return minMonth;
+			return this.minMonth;
 		}
 
 		public getMaxMonth(): Date | null {
-			if (this.maxDate === null) {
-				return null;
-			}
-
-			const maxMonth = new Date(this.maxDate.getTime());
-			maxMonth.setDate(1);
-
-			return maxMonth;
+			return this.maxMonth;
 		}
 
 		public getYearDropdownItemsLimit(): number {
