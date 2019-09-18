@@ -965,6 +965,7 @@ var TheDatepicker;
         };
         HtmlHelper.prototype.createTableHeaderCell = function (className) {
             var cell = this.document.createElement('th');
+            cell.scope = 'col';
             this.addClass(cell, className);
             return cell;
         };

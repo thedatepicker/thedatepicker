@@ -70,6 +70,7 @@ namespace TheDatepicker {
 
 		public createTableHeaderCell(className: string): HTMLTableHeaderCellElement {
 			const cell = this.document.createElement('th');
+			cell.scope = 'col';
 			this.addClass(cell, className);
 
 			return cell;

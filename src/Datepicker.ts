@@ -4,7 +4,6 @@ namespace TheDatepicker {
 
 	// todo jsou potřeba ty originální on* ? asi jo ale jak se to zachová např. s jquery?
 	// todo mělo by smysl držet identitu dní?
-	// todo levý horní roh zkosený pokud to není input mode
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo static metody šětří výkon
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
@@ -12,7 +11,6 @@ namespace TheDatepicker {
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
-	// todo scope="col", <col>
 	// todo option setMinDate apod. by mohly přijímat i undefined apod.
 	// todo initialdate by mělo mít vyšší prioritu než initialMonth
 	// todo poslední css zlobí ve Slv
