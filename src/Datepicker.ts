@@ -12,8 +12,6 @@ namespace TheDatepicker {
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
 	// todo initialdate by mělo mít vyšší prioritu než initialMonth
-	// todo poslední css zlobí ve Slv
-	// todo ve FF manipulace šipkama v inputu blurne
 	// todo křížek by to mohl zavřít ale nechat focus v inputu (klik do inputu by to zas otevřel)
 	// todo dám minDate 1999-12-01, vyberu 1999-12-31, v inputu změnim datum na 1998-12-31, nic, změnim to zpět na 1999-12-31, vybere se mi prvního
 	// todo BEM zápis CSS
@@ -21,7 +19,6 @@ namespace TheDatepicker {
 	// todo min/max month zakešovanej
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
 	// todo přejmenovat třídu vnitřího elementu container ať se to neplete?
-	// todo šipky v inputu přehazují dny :(
 	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
@@ -373,13 +370,8 @@ namespace TheDatepicker {
 				Helper.addEventListener(this.document, ListenerType.MouseDown, checkMiss);
 				Helper.addEventListener(this.document, ListenerType.FocusIn, checkMiss);
 				Helper.addEventListener(this.document, ListenerType.KeyDown, (event: KeyboardEvent) => {
-					const target = event.target || event.srcElement;
-					if (target !== null && target === this.input) {
-						return;
-					}
-
 					if (Datepicker.activeViewModel !== null) {
-						Datepicker.activeViewModel.triggerKeyPress(event, target as HTMLElement);
+						Datepicker.activeViewModel.triggerKeyPress(event);
 					}
 				});
 
@@ -406,6 +398,9 @@ namespace TheDatepicker {
 				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.Focus, hit));
 				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.Blur, () => {
 					this.updateInput();
+				}));
+				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.KeyDown, (event: KeyboardEvent) => {
+					Helper.stopPropagation(event);
 				}));
 				this.listenerRemovers.push(Helper.addEventListener(this.input, ListenerType.KeyUp, (event: KeyboardEvent) => {
 					this.readInput(event);

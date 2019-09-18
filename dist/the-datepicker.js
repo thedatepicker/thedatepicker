@@ -580,12 +580,8 @@ var TheDatepicker;
                 TheDatepicker.Helper.addEventListener(this.document, TheDatepicker.ListenerType.MouseDown, checkMiss);
                 TheDatepicker.Helper.addEventListener(this.document, TheDatepicker.ListenerType.FocusIn, checkMiss);
                 TheDatepicker.Helper.addEventListener(this.document, TheDatepicker.ListenerType.KeyDown, function (event) {
-                    var target = event.target || event.srcElement;
-                    if (target !== null && target === _this.input) {
-                        return;
-                    }
                     if (Datepicker.activeViewModel !== null) {
-                        Datepicker.activeViewModel.triggerKeyPress(event, target);
+                        Datepicker.activeViewModel.triggerKeyPress(event);
                     }
                 });
                 Datepicker.areGlobalListenersInitialized = true;
@@ -606,6 +602,9 @@ var TheDatepicker;
                 this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.Focus, hit));
                 this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.Blur, function () {
                     _this.updateInput();
+                }));
+                this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.KeyDown, function (event) {
+                    TheDatepicker.Helper.stopPropagation(event);
                 }));
                 this.listenerRemovers.push(TheDatepicker.Helper.addEventListener(this.input, TheDatepicker.ListenerType.KeyUp, function (event) {
                     _this.readInput(event);
@@ -1745,7 +1744,7 @@ var TheDatepicker;
             }
             return weeks;
         };
-        ViewModel.prototype.triggerKeyPress = function (event, target) {
+        ViewModel.prototype.triggerKeyPress = function (event) {
             if (TheDatepicker.Helper.inArray([TheDatepicker.KeyCode.Left, TheDatepicker.KeyCode.Up, TheDatepicker.KeyCode.Right, TheDatepicker.KeyCode.Down], event.keyCode)) {
                 TheDatepicker.Helper.preventDefault(event);
                 if (this.highlightedDay !== null) {

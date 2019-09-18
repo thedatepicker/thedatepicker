@@ -353,7 +353,7 @@ namespace TheDatepicker {
 			return weeks;
 		}
 
-		public triggerKeyPress(event: KeyboardEvent, target: HTMLElement): void {
+		public triggerKeyPress(event: KeyboardEvent): void {
 			if (Helper.inArray([KeyCode.Left, KeyCode.Up, KeyCode.Right, KeyCode.Down], event.keyCode)) {
 				Helper.preventDefault(event);
 
