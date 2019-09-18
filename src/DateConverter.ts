@@ -14,6 +14,36 @@ namespace TheDatepicker {
 
 	}
 
+	class ParsedDateData {
+
+		public day: number | null = null;
+		public month: number | null = null;
+		public year: number | null = null;
+
+		createDate(): Date {
+			if (this.day === null || this.month === null || this.year === null) {
+				throw new CannotParseDateException();
+			}
+
+			let date = new Date(this.year, this.month - 1, this.day);
+			if (isNaN(date.getTime())) {
+				throw new CannotParseDateException();
+			}
+
+			while (date.getDate() !== this.day || date.getMonth() !== this.month - 1 || date.getFullYear() !== this.year) {
+				if (this.day > 28) {
+					this.day--;
+					date = new Date(this.year, this.month - 1, this.day);
+				} else {
+					throw new CannotParseDateException();
+				}
+			}
+
+			return date;
+		}
+
+	}
+
 	export class DateConverter implements DateConverterInterface {
 
 		private readonly escapeChar = '\\';
@@ -55,7 +85,7 @@ namespace TheDatepicker {
 				return null;
 			}
 
-			const date = new Date();
+			const dateData = new ParsedDateData();
 			let escapeNext = false;
 			let textPosition = 0;
 			for (let position = 0; position < format.length; position++) {
@@ -72,7 +102,7 @@ namespace TheDatepicker {
 					const parser = this.getParser(char);
 					if (parser !== null) {
 						try {
-							textPosition += parser.call(this, text.substring(textPosition), date);
+							textPosition += parser.call(this, text.substring(textPosition), dateData);
 						} catch (error) {
 							if (!(error instanceof CannotParseDateException)) {
 								throw error;
@@ -86,10 +116,6 @@ namespace TheDatepicker {
 							} else {
 								throw error;
 							}
-						}
-
-						if (isNaN(date.getTime())) {
-							throw new CannotParseDateException();
 						}
 						continue;
 					}
@@ -111,7 +137,7 @@ namespace TheDatepicker {
 				textPosition++;
 			}
 
-			return date;
+			return dateData.createDate();
 		}
 
 		private getFormatter(type: string): ((date: Date) => string) | null {
@@ -196,7 +222,7 @@ namespace TheDatepicker {
 			return year.substring(year.length - 2);
 		}
 
-		private getParser(type: string): ((text: string, date: Date) => number) | null {
+		private getParser(type: string): ((text: string, dateData: ParsedDateData) => number) | null {
 			switch (type) {
 				case 'j':
 				case 'd':
@@ -223,7 +249,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		private parseDay(text: string, date: Date): number {
+		private parseDay(text: string, dateData: ParsedDateData): number {
 			let took = 0;
 			while (text.substring(0, 1) === '0') {
 				text = text.substring(1);
@@ -238,12 +264,12 @@ namespace TheDatepicker {
 				}
 			}
 
-			date.setDate(parseInt(day, 10));
+			dateData.day = parseInt(day, 10);
 
 			return took + day.length;
 		}
 
-		private parseDayOfWeekTextual(text: string, date: Date): number {
+		private parseDayOfWeekTextual(text: string): number {
 			let maxLength = 0;
 			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
 				const translation = this.translator.translateDayOfWeek(dayOfWeek);
@@ -266,7 +292,7 @@ namespace TheDatepicker {
 			return took;
 		}
 
-		private parseMonth(text: string, date: Date): number {
+		private parseMonth(text: string, dateData: ParsedDateData): number {
 			let took = 0;
 			while (text.substring(0, 1) === '0') {
 				text = text.substring(1);
@@ -281,17 +307,17 @@ namespace TheDatepicker {
 				}
 			}
 
-			date.setMonth(parseInt(month, 10) - 1);
+			dateData.month = parseInt(month, 10);
 
 			return took + month.length;
 		}
 
-		private parseMonthTextual(text: string, date: Date): number {
-			for (let month = 0; month < 12; month++) {
-				const translation = this.translator.translateMonth(month);
+		private parseMonthTextual(text: string, dateData: ParsedDateData): number {
+			for (let month = 1; month <= 12; month++) {
+				const translation = this.translator.translateMonth(month - 1);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-					date.setMonth(month);
+					dateData.month = month;
 					return translation.length;
 				}
 			}
@@ -299,7 +325,7 @@ namespace TheDatepicker {
 			throw new CannotParseDateException();
 		}
 
-		private parseYear(text: string, date: Date): number {
+		private parseYear(text: string, dateData: ParsedDateData): number {
 			let isNegative = false;
 			if (text.substring(0, 1) === '-') {
 				isNegative = true;
@@ -319,12 +345,12 @@ namespace TheDatepicker {
 				year = -year;
 			}
 
-			date.setFullYear(year);
+			dateData.year = year;
 
 			return yearLength + (isNegative ? 1 : 0);
 		}
 
-		private parseYearTwoDigits(text: string, date: Date): number {
+		private parseYearTwoDigits(text: string, dateData: ParsedDateData): number {
 			const yearEnd = text.substring(0, 2);
 			if (!/[0-9]{2}/.test(yearEnd)) {
 				throw new CannotParseDateException();
@@ -333,7 +359,7 @@ namespace TheDatepicker {
 			const currentYear = (new Date()).getFullYear().toString();
 			const yearBeginning = currentYear.substring(0, currentYear.length - 2);
 
-			date.setFullYear(parseInt(yearBeginning + yearEnd, 10));
+			dateData.year = parseInt(yearBeginning + yearEnd, 10);
 
 			return 2;
 		}

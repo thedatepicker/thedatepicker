@@ -11,14 +11,14 @@ namespace TheDatepicker {
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
-	// todo křížek by to mohl zavřít ale nechat focus v inputu (klik do inputu by to zas otevřel)
-	// todo dám minDate 1999-12-01, vyberu 1999-12-31, v inputu změnim datum na 1998-12-31, nic, změnim to zpět na 1999-12-31, vybere se mi prvního
 	// todo BEM zápis CSS
 	// todo fixed rows count nedrží správnou velikost pokud nejsou zobrazeny out of month
 	// todo min/max month zakešovanej
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
 	// todo přejmenovat třídu vnitřího elementu container ať se to neplete?
 	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
+	// todo v IE 9 se spontáně blurne input
+	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

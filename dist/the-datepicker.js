@@ -50,6 +50,33 @@ var TheDatepicker;
         return CannotParseDateException;
     }());
     TheDatepicker.CannotParseDateException = CannotParseDateException;
+    var ParsedDateData = (function () {
+        function ParsedDateData() {
+            this.day = null;
+            this.month = null;
+            this.year = null;
+        }
+        ParsedDateData.prototype.createDate = function () {
+            if (this.day === null || this.month === null || this.year === null) {
+                throw new CannotParseDateException();
+            }
+            var date = new Date(this.year, this.month - 1, this.day);
+            if (isNaN(date.getTime())) {
+                throw new CannotParseDateException();
+            }
+            while (date.getDate() !== this.day || date.getMonth() !== this.month - 1 || date.getFullYear() !== this.year) {
+                if (this.day > 28) {
+                    this.day--;
+                    date = new Date(this.year, this.month - 1, this.day);
+                }
+                else {
+                    throw new CannotParseDateException();
+                }
+            }
+            return date;
+        };
+        return ParsedDateData;
+    }());
     var DateConverter = (function () {
         function DateConverter(translator) {
             this.translator = translator;
@@ -82,7 +109,7 @@ var TheDatepicker;
             if (text === '') {
                 return null;
             }
-            var date = new Date();
+            var dateData = new ParsedDateData();
             var escapeNext = false;
             var textPosition = 0;
             for (var position = 0; position < format.length; position++) {
@@ -98,7 +125,7 @@ var TheDatepicker;
                     var parser = this.getParser(char);
                     if (parser !== null) {
                         try {
-                            textPosition += parser.call(this, text.substring(textPosition), date);
+                            textPosition += parser.call(this, text.substring(textPosition), dateData);
                         }
                         catch (error) {
                             if (!(error instanceof CannotParseDateException)) {
@@ -113,9 +140,6 @@ var TheDatepicker;
                             else {
                                 throw error;
                             }
-                        }
-                        if (isNaN(date.getTime())) {
-                            throw new CannotParseDateException();
                         }
                         continue;
                     }
@@ -134,7 +158,7 @@ var TheDatepicker;
                 }
                 textPosition++;
             }
-            return date;
+            return dateData.createDate();
         };
         DateConverter.prototype.getFormatter = function (type) {
             switch (type) {
@@ -211,7 +235,7 @@ var TheDatepicker;
                     return null;
             }
         };
-        DateConverter.prototype.parseDay = function (text, date) {
+        DateConverter.prototype.parseDay = function (text, dateData) {
             var took = 0;
             while (text.substring(0, 1) === '0') {
                 text = text.substring(1);
@@ -224,10 +248,10 @@ var TheDatepicker;
                     throw new CannotParseDateException();
                 }
             }
-            date.setDate(parseInt(day, 10));
+            dateData.day = parseInt(day, 10);
             return took + day.length;
         };
-        DateConverter.prototype.parseDayOfWeekTextual = function (text, date) {
+        DateConverter.prototype.parseDayOfWeekTextual = function (text) {
             var maxLength = 0;
             for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
                 var translation = this.translator.translateDayOfWeek(dayOfWeek);
@@ -246,7 +270,7 @@ var TheDatepicker;
             }
             return took;
         };
-        DateConverter.prototype.parseMonth = function (text, date) {
+        DateConverter.prototype.parseMonth = function (text, dateData) {
             var took = 0;
             while (text.substring(0, 1) === '0') {
                 text = text.substring(1);
@@ -259,20 +283,20 @@ var TheDatepicker;
                     throw new CannotParseDateException();
                 }
             }
-            date.setMonth(parseInt(month, 10) - 1);
+            dateData.month = parseInt(month, 10);
             return took + month.length;
         };
-        DateConverter.prototype.parseMonthTextual = function (text, date) {
-            for (var month = 0; month < 12; month++) {
-                var translation = this.translator.translateMonth(month);
+        DateConverter.prototype.parseMonthTextual = function (text, dateData) {
+            for (var month = 1; month <= 12; month++) {
+                var translation = this.translator.translateMonth(month - 1);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-                    date.setMonth(month);
+                    dateData.month = month;
                     return translation.length;
                 }
             }
             throw new CannotParseDateException();
         };
-        DateConverter.prototype.parseYear = function (text, date) {
+        DateConverter.prototype.parseYear = function (text, dateData) {
             var isNegative = false;
             if (text.substring(0, 1) === '-') {
                 isNegative = true;
@@ -289,17 +313,17 @@ var TheDatepicker;
             if (isNegative) {
                 year = -year;
             }
-            date.setFullYear(year);
+            dateData.year = year;
             return yearLength + (isNegative ? 1 : 0);
         };
-        DateConverter.prototype.parseYearTwoDigits = function (text, date) {
+        DateConverter.prototype.parseYearTwoDigits = function (text, dateData) {
             var yearEnd = text.substring(0, 2);
             if (!/[0-9]{2}/.test(yearEnd)) {
                 throw new CannotParseDateException();
             }
             var currentYear = (new Date()).getFullYear().toString();
             var yearBeginning = currentYear.substring(0, currentYear.length - 2);
-            date.setFullYear(parseInt(yearBeginning + yearEnd, 10));
+            dateData.year = parseInt(yearBeginning + yearEnd, 10);
             return 2;
         };
         return DateConverter;
