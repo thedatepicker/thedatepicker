@@ -216,9 +216,12 @@ namespace TheDatepicker {
 			}
 
 			const selectElement = this.htmlHelper.createSelectInput(options, (event: Event, monthNumber: number) => {
-				const newMonth = new Date(viewModel.getCurrentMonth().getTime());
+				const currentMonth = viewModel.getCurrentMonth();
+				const newMonth = new Date(currentMonth.getTime());
 				newMonth.setMonth(monthNumber);
-				viewModel.goToMonth(event, newMonth);
+				if (!viewModel.goToMonth(event, newMonth)) {
+					this.monthSelect.value = currentMonth.getMonth().toString();
+				}
 			});
 
 			const monthElement = this.htmlHelper.createDiv('month');
@@ -261,7 +264,8 @@ namespace TheDatepicker {
 
 		protected createYearElement(viewModel: ViewModel): HTMLElement {
 			const selectElement = this.htmlHelper.createSelectInput([], (event: Event, year: number) => {
-				let newMonth = new Date(viewModel.getCurrentMonth().getTime());
+				const currentMonth = viewModel.getCurrentMonth();
+				let newMonth = new Date(currentMonth.getTime());
 				newMonth.setFullYear(year);
 
 				const minMonth = this.options.getMinMonth();
@@ -273,7 +277,9 @@ namespace TheDatepicker {
 					newMonth = maxMonth;
 				}
 
-				viewModel.goToMonth(event, newMonth);
+				if (!viewModel.goToMonth(event, newMonth)) {
+					this.yearSelect.value = currentMonth.getFullYear().toString();
+				}
 			});
 
 			const yearElement = this.htmlHelper.createDiv('year');

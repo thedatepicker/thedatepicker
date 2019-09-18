@@ -8,7 +8,6 @@ namespace TheDatepicker {
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo static metody šětří výkon
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
-	// todo při změně měsíce selectem když onBeforeGo vrátí false by se neměla změnit hodnota selectu
 	// todo proč výběr data volá Template.render() tolikrát?
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější

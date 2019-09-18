@@ -2003,6 +2003,7 @@ var TheDatepicker;
             this.goForwardElement.style.visibility = viewModel.canGoForward() ? 'visible' : 'hidden';
         };
         Template.prototype.createMonthElement = function (viewModel) {
+            var _this = this;
             var options = [];
             for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
                 options.push({
@@ -2011,9 +2012,12 @@ var TheDatepicker;
                 });
             }
             var selectElement = this.htmlHelper.createSelectInput(options, function (event, monthNumber) {
-                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
+                var currentMonth = viewModel.getCurrentMonth();
+                var newMonth = new Date(currentMonth.getTime());
                 newMonth.setMonth(monthNumber);
-                viewModel.goToMonth(event, newMonth);
+                if (!viewModel.goToMonth(event, newMonth)) {
+                    _this.monthSelect.value = currentMonth.getMonth().toString();
+                }
             });
             var monthElement = this.htmlHelper.createDiv('month');
             var monthContent = this.htmlHelper.createSpan();
@@ -2048,7 +2052,8 @@ var TheDatepicker;
         Template.prototype.createYearElement = function (viewModel) {
             var _this = this;
             var selectElement = this.htmlHelper.createSelectInput([], function (event, year) {
-                var newMonth = new Date(viewModel.getCurrentMonth().getTime());
+                var currentMonth = viewModel.getCurrentMonth();
+                var newMonth = new Date(currentMonth.getTime());
                 newMonth.setFullYear(year);
                 var minMonth = _this.options.getMinMonth();
                 var maxMonth = _this.options.getMaxMonth();
@@ -2058,7 +2063,9 @@ var TheDatepicker;
                 if (maxMonth !== null && newMonth.getTime() > maxMonth.getTime()) {
                     newMonth = maxMonth;
                 }
-                viewModel.goToMonth(event, newMonth);
+                if (!viewModel.goToMonth(event, newMonth)) {
+                    _this.yearSelect.value = currentMonth.getFullYear().toString();
+                }
             });
             var yearElement = this.htmlHelper.createDiv('year');
             var yearContent = this.htmlHelper.createSpan();
