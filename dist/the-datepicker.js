@@ -28,19 +28,17 @@ var TheDatepicker;
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
             dayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek);
-            TheDatepicker.Helper.checkString('Translation', translation);
             if (dayOfWeek < 0 || dayOfWeek > 6) {
                 throw new Error('Day of week was expected to be a number from 0 to 6.');
             }
-            this.dayOfWeekTranslations[dayOfWeek] = translation;
+            this.dayOfWeekTranslations[dayOfWeek] = TheDatepicker.Helper.checkString('Translation', translation);
         };
         Translator.prototype.setMonthTranslation = function (month, translation) {
             month = TheDatepicker.Helper.checkNumber('Month', month);
-            TheDatepicker.Helper.checkString('Translation', translation);
             if (month < 0 || month > 11) {
                 throw new Error('Month was expected to be a number from 0 to 11.');
             }
-            this.monthTranslations[month] = translation;
+            this.monthTranslations[month] = TheDatepicker.Helper.checkString('Translation', translation);
         };
         Translator.prototype.translateDayOfWeek = function (dayOfWeek) {
             return this.dayOfWeekTranslations[dayOfWeek];
@@ -792,7 +790,7 @@ var TheDatepicker;
             return date;
         };
         Helper.normalizeDate = function (parameterName, value) {
-            if (value === null) {
+            if (!value) {
                 return null;
             }
             if (typeof value === 'string') {
@@ -891,9 +889,13 @@ var TheDatepicker;
         };
         Helper.checkString = function (parameterName, value, checkNonEmpty) {
             if (checkNonEmpty === void 0) { checkNonEmpty = false; }
+            if (!checkNonEmpty && !value) {
+                return '';
+            }
             if (typeof value !== 'string' || (checkNonEmpty && value === '')) {
                 throw new Error(parameterName + ' was expected to be a' + (checkNonEmpty ? ' non empty' : '') + ' string.');
             }
+            return value;
         };
         Helper.checkNumber = function (parameterName, value, isPositive) {
             if (isPositive === void 0) { isPositive = false; }
@@ -905,9 +907,13 @@ var TheDatepicker;
         };
         Helper.checkFunction = function (parameterName, value, isNullable) {
             if (isNullable === void 0) { isNullable = true; }
-            if ((!isNullable || value !== null) && typeof value !== 'function') {
+            if (isNullable && !value) {
+                return null;
+            }
+            if (typeof value !== 'function') {
                 throw new Error(parameterName + ' was expected to be a function' + (isNullable ? ' or null' : '') + '.');
             }
+            return value;
         };
         return Helper;
     }());
@@ -1141,20 +1147,16 @@ var TheDatepicker;
             this.firstDayOfWeek = dayOfWeek;
         };
         Options.prototype.setDateAvailabilityResolver = function (resolver) {
-            TheDatepicker.Helper.checkFunction('Resolver', resolver);
-            this.dateAvailabilityResolver = resolver;
+            this.dateAvailabilityResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
         };
         Options.prototype.setCellContentResolver = function (resolver) {
-            TheDatepicker.Helper.checkFunction('Resolver', resolver);
-            this.cellContentResolver = resolver;
+            this.cellContentResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
         };
         Options.prototype.setCellClassesResolver = function (resolver) {
-            TheDatepicker.Helper.checkFunction('Resolver', resolver);
-            this.cellClassesResolver = resolver;
+            this.cellClassesResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
         };
         Options.prototype.setInputFormat = function (format) {
-            TheDatepicker.Helper.checkString('Input format', format, true);
-            this.inputFormat = format;
+            this.inputFormat = TheDatepicker.Helper.checkString('Input format', format, true);
         };
         Options.prototype.setDaysOutOfMonthVisible = function (value) {
             this.daysOutOfMonthVisible = !!value;
@@ -1181,39 +1183,31 @@ var TheDatepicker;
             this.yearAsDropdown = !!value;
         };
         Options.prototype.setClassesPrefix = function (prefix) {
-            TheDatepicker.Helper.checkString('Prefix', prefix);
-            this.classesPrefix = prefix;
+            this.classesPrefix = TheDatepicker.Helper.checkString('Prefix', prefix);
         };
         Options.prototype.setShowCloseButton = function (value) {
             this.showCloseButton = !!value;
         };
         Options.prototype.setTitle = function (title) {
-            title = title === null ? '' : title;
-            TheDatepicker.Helper.checkString('Title', title);
-            this.title = title;
+            this.title = TheDatepicker.Helper.checkString('Title', title);
         };
         Options.prototype.setYearDropdownItemsLimit = function (limit) {
             this.yearDropdownItemsLimit = TheDatepicker.Helper.checkNumber('Items limit', limit, true);
         };
         Options.prototype.setGoBackHtml = function (html) {
-            TheDatepicker.Helper.checkString('Html', html);
-            this.goBackHtml = html;
+            this.goBackHtml = TheDatepicker.Helper.checkString('Html', html);
         };
         Options.prototype.setGoForwardHtml = function (html) {
-            TheDatepicker.Helper.checkString('Html', html);
-            this.goForwardHtml = html;
+            this.goForwardHtml = TheDatepicker.Helper.checkString('Html', html);
         };
         Options.prototype.setCloseHtml = function (html) {
-            TheDatepicker.Helper.checkString('Html', html);
-            this.closeHtml = html;
+            this.closeHtml = TheDatepicker.Helper.checkString('Html', html);
         };
         Options.prototype.setResetHtml = function (html) {
-            TheDatepicker.Helper.checkString('Html', html);
-            this.resetHtml = html;
+            this.resetHtml = TheDatepicker.Helper.checkString('Html', html);
         };
         Options.prototype.setDeselectHtml = function (html) {
-            TheDatepicker.Helper.checkString('Html', html);
-            this.deselectHtml = html;
+            this.deselectHtml = TheDatepicker.Helper.checkString('Html', html);
         };
         Options.prototype.setPositionFixing = function (value) {
             this.positionFixing = !!value;
@@ -1457,11 +1451,10 @@ var TheDatepicker;
             return null;
         };
         Options.prototype.onEventListener = function (eventType, listener) {
-            TheDatepicker.Helper.checkFunction('Event listener', listener, false);
-            this.listeners[eventType].push(listener);
+            this.listeners[eventType].push(TheDatepicker.Helper.checkFunction('Event listener', listener, false));
         };
         Options.prototype.offEventListener = function (eventType, listener) {
-            TheDatepicker.Helper.checkFunction('Event listener', listener);
+            listener = TheDatepicker.Helper.checkFunction('Event listener', listener);
             if (listener === null) {
                 this.listeners[eventType] = [];
             }

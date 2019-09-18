@@ -59,7 +59,7 @@ namespace TheDatepicker {
 		}
 
 		public static normalizeDate(parameterName: string, value: Date | string | null): Date | null {
-			if (value === null) {
+			if (!value) {
 				return null;
 			}
 
@@ -175,10 +175,14 @@ namespace TheDatepicker {
 			}
 		}
 
-		public static checkString(parameterName: string, value: string, checkNonEmpty = false): void {
+		public static checkString(parameterName: string, value: string | null, checkNonEmpty = false): string {
+			if (!checkNonEmpty && !value) {
+				return '';
+			}
 			if (typeof value !== 'string' || (checkNonEmpty && value === '')) {
 				throw new Error(parameterName + ' was expected to be a' + (checkNonEmpty ? ' non empty' : '') + ' string.');
 			}
+			return value;
 		}
 
 		public static checkNumber(parameterName: string, value: number, isPositive = false): number {
@@ -189,10 +193,14 @@ namespace TheDatepicker {
 			return value;
 		}
 
-		public static checkFunction(parameterName: string, value: Function, isNullable = true): void {
-			if ((!isNullable || value !== null) && typeof value !== 'function') {
+		public static checkFunction(parameterName: string, value: Function | null, isNullable = true): Function | null {
+			if (isNullable && !value) {
+				return null;
+			}
+			if (typeof value !== 'function') {
 				throw new Error(parameterName + ' was expected to be a function' + (isNullable ? ' or null' : '') + '.');
 			}
+			return value;
 		}
 
 	}

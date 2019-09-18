@@ -210,22 +210,19 @@ namespace TheDatepicker {
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not,
 		// or null to make available all days.
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
-			Helper.checkFunction('Resolver', resolver);
-			this.dateAvailabilityResolver = resolver;
+			this.dateAvailabilityResolver = Helper.checkFunction('Resolver', resolver) as DateAvailabilityResolver;
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns string representing content of day cell,
 		// or null for default behavior.
 		// Default callback returns day number.
 		public setCellContentResolver(resolver: CellContentResolver | null): void {
-			Helper.checkFunction('Resolver', resolver);
-			this.cellContentResolver = resolver;
+			this.cellContentResolver = Helper.checkFunction('Resolver', resolver) as (CellContentResolver | null);
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
 		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
-			Helper.checkFunction('Resolver', resolver);
-			this.cellClassesResolver = resolver;
+			this.cellClassesResolver = Helper.checkFunction('Resolver', resolver) as (CellClassesResolver | null);
 		}
 
 		// Format in which date is printed as an input value.
@@ -243,8 +240,7 @@ namespace TheDatepicker {
 		// Works only when there an input exists.
 		// defaults to "j. n. Y"
 		public setInputFormat(format: string): void {
-			Helper.checkString('Input format', format, true);
-			this.inputFormat = format;
+			this.inputFormat = Helper.checkString('Input format', format, true);
 		}
 
 		// Setting to false will hide days which belongs to other months.
@@ -302,8 +298,7 @@ namespace TheDatepicker {
 		// CSS classes of datepicker elements will be prefixed with given string.
 		// defaults to "the-datepicker-"
 		public setClassesPrefix(prefix: string): void {
-			Helper.checkString('Prefix', prefix);
-			this.classesPrefix = prefix;
+			this.classesPrefix = Helper.checkString('Prefix', prefix);
 		}
 
 		// Setting to true will show button for closing datepicker.
@@ -317,9 +312,7 @@ namespace TheDatepicker {
 		// null for no title
 		// defaults to no title
 		public setTitle(title: string | null): void {
-			title = title === null ? '' : title;
-			Helper.checkString('Title', title);
-			this.title = title;
+			this.title = Helper.checkString('Title', title);
 		}
 
 		// Limit of number of items in year dropdown list.
@@ -332,36 +325,31 @@ namespace TheDatepicker {
 		// Sets html for go back button.
 		// Defaults to "&lt;"
 		public setGoBackHtml(html: string): void {
-			Helper.checkString('Html', html);
-			this.goBackHtml = html;
+			this.goBackHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for go forward button.
 		// Defaults to "&gt;"
 		public setGoForwardHtml(html: string): void {
-			Helper.checkString('Html', html);
-			this.goForwardHtml = html;
+			this.goForwardHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for close button.
 		// Defaults to "&times;"
 		public setCloseHtml(html: string): void {
-			Helper.checkString('Html', html);
-			this.closeHtml = html;
+			this.closeHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for reset button.
 		// Defaults to "&olarr;"
 		public setResetHtml(html: string): void {
-			Helper.checkString('Html', html);
-			this.resetHtml = html;
+			this.resetHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for deselect button.
 		// Defaults to "&times;"
 		public setDeselectHtml(html: string): void {
-			Helper.checkString('Html', html);
-			this.deselectHtml = html;
+			this.deselectHtml = Helper.checkString('Html', html);
 		}
 
 		// Setting to true will render datepicker over the input when there's no enough space to fit it under.
@@ -689,12 +677,11 @@ namespace TheDatepicker {
 		}
 
 		public onEventListener(eventType: EventType, listener: AnyEvent) {
-			Helper.checkFunction('Event listener', listener, false);
-			this.listeners[eventType].push(listener);
+			this.listeners[eventType].push(Helper.checkFunction('Event listener', listener, false) as AnyEvent);
 		}
 
 		private offEventListener(eventType: EventType, listener: OneOfEvent | null): void {
-			Helper.checkFunction('Event listener', listener);
+			listener = Helper.checkFunction('Event listener', listener) as (OneOfEvent | null);
 
 			if (listener === null) {
 				this.listeners[eventType] = [];
