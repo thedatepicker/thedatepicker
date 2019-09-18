@@ -58,7 +58,7 @@ namespace TheDatepicker {
 		private showResetButton = false;
 		private monthAsDropdown = true;
 		private yearAsDropdown = true;
-		private classesPrefix = 'the-datepicker-';
+		private classesPrefix = 'the-datepicker__';
 		private showCloseButton = true;
 		private title = '';
 		private yearDropdownItemsLimit = 200;
@@ -292,7 +292,7 @@ namespace TheDatepicker {
 		}
 
 		// CSS classes of datepicker elements will be prefixed with given string.
-		// defaults to "the-datepicker-"
+		// defaults to "the-datepicker__"
 		public setClassesPrefix(prefix: string): void {
 			this.classesPrefix = Helper.checkString('Prefix', prefix);
 		}

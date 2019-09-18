@@ -75,6 +75,13 @@ namespace TheDatepicker {
 			this.containerElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
 		}
 
+		protected createBodyElement(viewModel: ViewModel): HTMLElement {
+			const body = this.htmlHelper.createDiv('body');
+			body.appendChild(this.createTableElement(viewModel));
+
+			return body;
+		}
+
 		protected createHeaderElement(viewModel: ViewModel): HTMLElement {
 			const header = this.htmlHelper.createDiv('header');
 
@@ -365,7 +372,7 @@ namespace TheDatepicker {
 			const tableHeader = this.createTableHeaderElement(viewModel) as HTMLTableSectionElement;
 			const tableBody = this.createTableBodyElement(viewModel) as HTMLTableSectionElement;
 
-			return this.htmlHelper.createTable('table', tableHeader, tableBody);
+			return this.htmlHelper.createTable('calendar', tableHeader, tableBody);
 		}
 
 		protected createTableHeaderElement(viewModel: ViewModel): HTMLElement {
@@ -377,14 +384,14 @@ namespace TheDatepicker {
 				cells.push(this.createTableHeaderCellElement(viewModel, dayOfWeek));
 			}
 
-			return this.htmlHelper.createTableHeader('table-header', cells as HTMLTableHeaderCellElement[]);
+			return this.htmlHelper.createTableHeader('calendar-header', cells as HTMLTableHeaderCellElement[]);
 		}
 
 		protected createTableHeaderCellElement(viewModel: ViewModel, dayOfWeek: DayOfWeek): HTMLElement {
-			const headerCell = this.htmlHelper.createTableHeaderCell('table-header-cell');
+			const headerCell = this.htmlHelper.createTableHeaderCell('week-day');
 
 			if (dayOfWeek === DayOfWeek.Saturday || dayOfWeek === DayOfWeek.Sunday) {
-				this.htmlHelper.addClass(headerCell, 'weekend');
+				this.htmlHelper.addClass(headerCell, 'week-day--weekend');
 			}
 
 			headerCell.innerText = this.options.translator.translateDayOfWeek(dayOfWeek);
@@ -403,7 +410,7 @@ namespace TheDatepicker {
 			}
 			this.weeksElements = rows;
 
-			return this.htmlHelper.createTableBody('table-body', rows as HTMLTableRowElement[]);
+			return this.htmlHelper.createTableBody('calendar-body', rows as HTMLTableRowElement[]);
 		}
 
 		protected updateWeeksElements(viewModel: ViewModel): void {
@@ -472,22 +479,22 @@ namespace TheDatepicker {
 
 			this.htmlHelper.addClass(dayElement, 'day');
 			if (day.isToday) {
-				this.htmlHelper.addClass(dayElement, 'today');
+				this.htmlHelper.addClass(dayElement, 'day--today');
 			}
 			if (day.isWeekend) {
-				this.htmlHelper.addClass(dayElement, 'weekend');
+				this.htmlHelper.addClass(dayElement, 'day--weekend');
 			}
 			if (!day.isAvailable) {
-				this.htmlHelper.addClass(dayElement, 'unavailable');
+				this.htmlHelper.addClass(dayElement, 'day--unavailable');
 			}
 			if (!day.isInCurrentMonth) {
-				this.htmlHelper.addClass(dayElement, 'outside');
+				this.htmlHelper.addClass(dayElement, 'day--outside');
 			}
 			if (day.isHighlighted) {
-				this.htmlHelper.addClass(dayElement, 'highlighted');
+				this.htmlHelper.addClass(dayElement, 'day--highlighted');
 			}
 			if (day.isSelected) {
-				this.htmlHelper.addClass(dayElement, 'selected');
+				this.htmlHelper.addClass(dayElement, 'day--selected');
 			}
 			const customClasses = this.options.getCellClasses(day);
 			for (let index = 0; index < customClasses.length; index++) {
@@ -536,13 +543,6 @@ namespace TheDatepicker {
 			this.htmlHelper.addClass(cellContent, 'day-content');
 
 			return cellContent;
-		}
-
-		protected createBodyElement(viewModel: ViewModel): HTMLElement {
-			const body = this.htmlHelper.createDiv('body');
-			body.appendChild(this.createTableElement(viewModel));
-
-			return body;
 		}
 
 	}

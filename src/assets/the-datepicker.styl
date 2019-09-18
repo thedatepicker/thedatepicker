@@ -5,15 +5,15 @@ $highlight-background = #d1e8ff
 $table-header-color = #666
 $border = #ccc
 
-.the-datepicker-board
-	.the-datepicker-container
+.the-datepicker__board
+	.the-datepicker__container
 		border-top-left-radius 0
-	&.the-datepicker-board-over
-		.the-datepicker-container
+	&.the-datepicker__board--over
+		.the-datepicker__container
 			border-top-left-radius 0.3em
 			border-bottom-left-radius 0
 
-.the-datepicker-container
+.the-datepicker__container
 	background-color white
 	border 1px solid $border
 	border-radius 0.3em
@@ -22,10 +22,10 @@ $border = #ccc
 	line-height 1em
 	box-sizing border-box
 
-	.the-datepicker-body
+	.the-datepicker__body
 		margin-top 1em
 
-	th.the-datepicker-table-header-cell
+	th.the-datepicker__week-day
 		width 2.1em
 		min-width 2.1em
 		max-width 2.1em
@@ -36,7 +36,7 @@ $border = #ccc
 		color $table-header-color
 		font-size 0.85em
 
-	a.the-datepicker-button
+	a.the-datepicker__button
 		display block
 		width 2.1em
 		min-width 2.1em
@@ -50,56 +50,56 @@ $border = #ccc
 			background-color $highlight-background
 			text-decoration none
 
-	.the-datepicker-title
+	.the-datepicker__title
 		display inline-block
 		width 70%
 
-	.the-datepicker-title-content
+	.the-datepicker__title-content
 		display inline-block
 		padding 0.5em
 
-	.the-datepicker-control
+	.the-datepicker__control
 		display inline-block
 		width 30%
 		text-align right
 
-	.the-datepicker-reset, .the-datepicker-close
+	.the-datepicker__reset, .the-datepicker__close
 		display inline-block
 		font-weight bold
 
-	.the-datepicker-navigation
+	.the-datepicker__navigation
 		margin-top 0.3em
 
-	.the-datepicker-go
+	.the-datepicker__go
 		display inline-block
 		width 15%
-		a.the-datepicker-button
+		a.the-datepicker__button
 			display inline-block
 			font-weight bold
 
-	.the-datepicker-go-next
+	.the-datepicker__go-next
 		text-align right
 
-	.the-datepicker-state
+	.the-datepicker__state
 		display inline-block
 		width 70%
 
-	.the-datepicker-month
+	.the-datepicker__month
 		display inline-block
 		width 62%
 		text-align center
 
-	.the-datepicker-year
+	.the-datepicker__year
 		display inline-block
 		width 38%
 		text-align center
 
-	select.the-datepicker-select
+	select.the-datepicker__select
 		font-size 0.9em
 		margin 0
 		padding 0
 
-	table.the-datepicker-table
+	table.the-datepicker__calendar
 		display table
 		border-collapse collapse
 		thead
@@ -111,51 +111,51 @@ $border = #ccc
 			td, th
 				display table-cell
 
-	td.the-datepicker-cell
+	td.the-datepicker__cell
 		padding 0
 
-	td.the-datepicker-day
-		a.the-datepicker-button
+	td.the-datepicker__day
+		a.the-datepicker__button
 			padding 0.1em
-			.the-datepicker-day-content
+			.the-datepicker__day-content
 				display block
 				padding 0.6em 0
 				text-align center
 				border-radius 0.3em
 			&:hover
 				background-color transparent
-				.the-datepicker-day-content
+				.the-datepicker__day-content
 					background-color $highlight-background
 
-	td.the-datepicker-highlighted
-		a.the-datepicker-button
-			.the-datepicker-day-content
+	td.the-datepicker__day--highlighted
+		a.the-datepicker__button
+			.the-datepicker__day-content
 				background-color $highlight-background
 
-	td.the-datepicker-outside
-		a.the-datepicker-button
+	td.the-datepicker__day--outside
+		a.the-datepicker__button
 			color $weak-color
 
-	td.the-datepicker-unavailable
-		a.the-datepicker-button
+	td.the-datepicker__day--unavailable
+		a.the-datepicker__button
 			color $unavailable-color
 			&:hover
-				.the-datepicker-day-content
+				.the-datepicker__day-content
 					background-color transparent
 
-	td.the-datepicker-selected, td.the-datepicker-selected.the-datepicker-highlighted
-		a.the-datepicker-button
+	td.the-datepicker__day--selected, td.the-datepicker__day--selected.the-datepicker__day--highlighted
+		a.the-datepicker__button
 			color white
-			.the-datepicker-day-content
+			.the-datepicker__day-content
 				background-color $base-color
 			&:hover
-				.the-datepicker-day-content
+				.the-datepicker__day-content
 					background-color $base-color
 
-	.the-datepicker-weekend, td.the-datepicker-today
+	.the-datepicker__day--weekend, .the-datepicker__week-day--weekend, td.the-datepicker__day--today
 		font-weight bold
 
-.the-datepicker-deselect a
+.the-datepicker__deselect a
 	text-decoration none
 	color $base-color
 	font-weight bold

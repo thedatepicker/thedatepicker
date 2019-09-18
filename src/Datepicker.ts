@@ -11,7 +11,6 @@ namespace TheDatepicker {
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
-	// todo BEM zápis CSS
 	// todo fixed rows count nedrží správnou velikost pokud nejsou zobrazeny out of month
 	// todo min/max month zakešovanej
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
@@ -443,7 +442,7 @@ namespace TheDatepicker {
 			let locationClass = '';
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
 			if (locateOver) {
-				locationClass = ' ' + this.options.getClassesPrefix() + 'board-over';
+				locationClass = ' ' + this.options.getClassesPrefix() + 'board--over';
 			}
 
 			this.container.className = this.options.getClassesPrefix() + 'board' + locationClass;
