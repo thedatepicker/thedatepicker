@@ -12,7 +12,6 @@ namespace TheDatepicker {
 	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
-	// todo přejmenovat třídu vnitřího elementu container ať se to neplete?
 	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
 	// todo v IE 9 se spontáně blurne input
 	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
@@ -298,7 +297,7 @@ namespace TheDatepicker {
 
 		private createContainer(): HTMLElement {
 			const container = this.document.createElement('div');
-			container.className = this.options.getClassesPrefix() + 'board';
+			container.className = this.options.getClassesPrefix() + 'container';
 			container.style.position = 'absolute';
 			container.style.zIndex = '99';
 
@@ -440,10 +439,10 @@ namespace TheDatepicker {
 			let locationClass = '';
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
 			if (locateOver) {
-				locationClass = ' ' + this.options.getClassesPrefix() + 'board--over';
+				locationClass = ' ' + this.options.getClassesPrefix() + 'container--over';
 			}
 
-			this.container.className = this.options.getClassesPrefix() + 'board' + locationClass;
+			this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
 
 			const childNodes = this.container.childNodes;
 			if (childNodes.length > 0) {

@@ -14,7 +14,7 @@ namespace TheDatepicker {
 
 		// todo nějak hezky aby šlo snadno customizovat uspořádání prvků
 
-		private containerElement: HTMLElement | null = null;
+		private mainElement: HTMLElement | null = null;
 		private controlElement: HTMLElement | null = null;
 		private goBackElement: HTMLElement | null = null;
 		private goForwardElement: HTMLElement | null = null;
@@ -40,7 +40,7 @@ namespace TheDatepicker {
 		}
 
 		public render(viewModel: ViewModel): void {
-			if (this.containerElement === null) {
+			if (this.mainElement === null) {
 				if (this.hasInput && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
 					return;
 				}
@@ -49,7 +49,7 @@ namespace TheDatepicker {
 				this.container.appendChild(this.createSkeleton(viewModel));
 			}
 
-			this.updateContainerElement(viewModel);
+			this.updateMainElement(viewModel);
 			this.updateTopElement(viewModel);
 			this.updateTitleElement(viewModel);
 			this.updateCloseElement(viewModel);
@@ -62,17 +62,17 @@ namespace TheDatepicker {
 		}
 
 		protected createSkeleton(viewModel: ViewModel): HTMLElement {
-			const container = this.htmlHelper.createDiv('container');
-			container.appendChild(this.createHeaderElement(viewModel));
-			container.appendChild(this.createBodyElement(viewModel));
+			const main = this.htmlHelper.createDiv('main');
+			main.appendChild(this.createHeaderElement(viewModel));
+			main.appendChild(this.createBodyElement(viewModel));
 
-			this.containerElement = container;
+			this.mainElement = main;
 
-			return container;
+			return main;
 		}
 
-		protected updateContainerElement(viewModel: ViewModel): void {
-			this.containerElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
+		protected updateMainElement(viewModel: ViewModel): void {
+			this.mainElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
 		}
 
 		protected createBodyElement(viewModel: ViewModel): HTMLElement {
