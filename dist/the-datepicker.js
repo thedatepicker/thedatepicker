@@ -27,18 +27,10 @@ var TheDatepicker;
             ];
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
-            dayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek);
-            if (dayOfWeek < 0 || dayOfWeek > 6) {
-                throw new Error('Day of week was expected to be a number from 0 to 6.');
-            }
-            this.dayOfWeekTranslations[dayOfWeek] = TheDatepicker.Helper.checkString('Translation', translation);
+            this.dayOfWeekTranslations[TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper.checkString('Translation', translation);
         };
         Translator.prototype.setMonthTranslation = function (month, translation) {
-            month = TheDatepicker.Helper.checkNumber('Month', month);
-            if (month < 0 || month > 11) {
-                throw new Error('Month was expected to be a number from 0 to 11.');
-            }
-            this.monthTranslations[month] = TheDatepicker.Helper.checkString('Translation', translation);
+            this.monthTranslations[TheDatepicker.Helper.checkNumber('Month', month, 0, 11)] = TheDatepicker.Helper.checkString('Translation', translation);
         };
         Translator.prototype.translateDayOfWeek = function (dayOfWeek) {
             return this.dayOfWeekTranslations[dayOfWeek];
@@ -897,11 +889,12 @@ var TheDatepicker;
             }
             return value;
         };
-        Helper.checkNumber = function (parameterName, value, isPositive) {
-            if (isPositive === void 0) { isPositive = false; }
+        Helper.checkNumber = function (parameterName, value, min, max) {
+            if (min === void 0) { min = null; }
+            if (max === void 0) { max = null; }
             value = typeof value === 'string' ? parseInt(value) : value;
-            if (typeof value !== 'number' || isNaN(value) || (isPositive && value <= 0)) {
-                throw new Error(parameterName + ' was expected to be a valid' + (isPositive ? ' positive' : '') + ' number.');
+            if (typeof value !== 'number' || isNaN(value) || (min !== null && value < min) || (max !== null && value > max)) {
+                throw new Error(parameterName + ' was expected to be a valid number' + (min !== null ? ' from ' + min : '') + (max !== null ? ' to ' + max : '') + '.');
             }
             return value;
         };
@@ -1140,11 +1133,7 @@ var TheDatepicker;
             this.initialDate = TheDatepicker.Helper.normalizeDate('Initial date', value);
         };
         Options.prototype.setFirstDayOfWeek = function (dayOfWeek) {
-            dayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek);
-            if (dayOfWeek < 0 || dayOfWeek > 6) {
-                throw new Error('First day of week was expected to be a number from 0 to 6.');
-            }
-            this.firstDayOfWeek = dayOfWeek;
+            this.firstDayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek, 0, 6);
         };
         Options.prototype.setDateAvailabilityResolver = function (resolver) {
             this.dateAvailabilityResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
@@ -1192,7 +1181,7 @@ var TheDatepicker;
             this.title = TheDatepicker.Helper.checkString('Title', title);
         };
         Options.prototype.setYearDropdownItemsLimit = function (limit) {
-            this.yearDropdownItemsLimit = TheDatepicker.Helper.checkNumber('Items limit', limit, true);
+            this.yearDropdownItemsLimit = TheDatepicker.Helper.checkNumber('Items limit', limit, 1);
         };
         Options.prototype.setGoBackHtml = function (html) {
             this.goBackHtml = TheDatepicker.Helper.checkString('Html', html);

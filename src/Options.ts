@@ -200,11 +200,7 @@ namespace TheDatepicker {
 		// or integer from 0 to 6; 0 = Sunday, 1 = Monday, ... 6 = Saturday
 		// defaults to Monday
 		public setFirstDayOfWeek(dayOfWeek: DayOfWeek): void {
-			dayOfWeek = Helper.checkNumber('First day of week', dayOfWeek);
-			if (dayOfWeek < 0 || dayOfWeek > 6) {
-				throw new Error('First day of week was expected to be a number from 0 to 6.')
-			}
-			this.firstDayOfWeek = dayOfWeek;
+			this.firstDayOfWeek = Helper.checkNumber('First day of week', dayOfWeek, 0, 6);
 		}
 
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not,
@@ -319,7 +315,7 @@ namespace TheDatepicker {
 		// Works only when the setting YearAsDropdown is set to true.
 		// Default is 200.
 		public setYearDropdownItemsLimit(limit: number): void {
-			this.yearDropdownItemsLimit = Helper.checkNumber('Items limit', limit, true);
+			this.yearDropdownItemsLimit = Helper.checkNumber('Items limit', limit, 1);
 		}
 
 		// Sets html for go back button.
