@@ -58,9 +58,13 @@ namespace TheDatepicker {
 			return date;
 		}
 
-		public static normalizeDate(parameterName: string, value: Date | string | null): Date | null {
+		public static normalizeDate(parameterName: string, value: Day | Date | string | null): Date | null {
 			if (!value) {
 				return null;
+			}
+
+			if (value instanceof Day) {
+				return value.getDate();
 			}
 
 			if (typeof value === 'string') {

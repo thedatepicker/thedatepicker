@@ -808,6 +808,9 @@ var TheDatepicker;
             if (!value) {
                 return null;
             }
+            if (value instanceof TheDatepicker.Day) {
+                return value.getDate();
+            }
             if (typeof value === 'string') {
                 if (value === 'today' || value === 'now') {
                     return Helper.resetTime(new Date());

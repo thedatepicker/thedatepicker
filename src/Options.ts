@@ -147,11 +147,12 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
+		// or instance of Day
 		// or "now", "today" or "tomorrow" or string in format "<sign> <number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no limit
 		// defaults to no limit
-		public setMinDate(date: Date | string | null): void {
+		public setMinDate(date: Day | Date | string | null): void {
 			const normalizedDate = Helper.normalizeDate('Min date', date);
 			this.checkConstraints(normalizedDate, this.maxDate);
 			this.minDate = normalizedDate;
@@ -162,11 +163,12 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
+		// or instance of Day
 		// or "now", "today" or "tomorrow" or string in format "<sign> <number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no limit
 		// defaults to no limit
-		public setMaxDate(date: Date | string | null): void {
+		public setMaxDate(date: Day | Date | string | null): void {
 			const normalizedDate = Helper.normalizeDate('Max date', date);
 			this.checkConstraints(this.minDate, normalizedDate);
 			this.maxDate = normalizedDate;
@@ -192,12 +194,13 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
+		// or instance of Day
 		// or "now", "today" or "tomorrow" or string in format "<sign> <number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no value
 		// It's overloaded by direct input value, if any.
 		// defaults to null
-		public setInitialDate(value: Date | string | null): void {
+		public setInitialDate(value: Day | Date | string | null): void {
 			this.initialDate = Helper.normalizeDate('Initial date', value);
 		}
 
