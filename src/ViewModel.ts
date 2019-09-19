@@ -373,13 +373,13 @@ namespace TheDatepicker {
 
 		private triggerOnBeforeSelect(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
 			return this.options.triggerEvent(EventType.BeforeSelect, (listener: SelectEvent) => {
-				return listener.call(day, event, day, previousDay);
+				return listener.call(this.datepicker, event, day, previousDay);
 			});
 		}
 
 		private triggerOnSelect(event: Event | null, day: Day | null, previousDay: Day | null): void {
 			this.options.triggerEvent(EventType.Select, (listener: SelectEvent) => {
-				return listener.call(day, event, day, previousDay);
+				return listener.call(this.datepicker, event, day, previousDay);
 			});
 		}
 
@@ -397,13 +397,13 @@ namespace TheDatepicker {
 
 		private triggerOnBeforeMonthChange(event: Event | null, month: Date, previousMonth: Date): boolean {
 			return this.options.triggerEvent(EventType.BeforeMonthChange, (listener: MonthChangeEvent) => {
-				return listener.call(month, event, month, previousMonth);
+				return listener.call(this.datepicker, event, month, previousMonth);
 			});
 		}
 
 		private triggerOnMonthChange(event: Event | null, month: Date, previousMonth: Date): void {
 			this.options.triggerEvent(EventType.MonthChange, (listener: MonthChangeEvent) => {
-				return listener.call(month, event, month, previousMonth);
+				return listener.call(this.datepicker, event, month, previousMonth);
 			});
 		}
 
