@@ -400,13 +400,13 @@ var TheDatepicker;
                         this.open();
                         return;
                     }
-                    this.viewModel.selectDay(null, this.options.findPossibleAvailableDate(this.viewModel.selectedDate), false);
+                    this.viewModel.selectPossibleDate();
                     this.updateDeselectButton();
                     return;
                 case InitializationPhase.Untouched:
                     this.preselectFromInput();
                     this.createDeselectElement();
-                    this.viewModel.selectDay(null, this.options.getInitialDate(), false);
+                    this.viewModel.selectInitialDate(null);
                     this.updateInput();
                     if (this.input !== null && this.options.isHiddenOnBlur()) {
                         if (this.input === this.document.activeElement) {
@@ -506,7 +506,7 @@ var TheDatepicker;
             try {
                 var date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
                 if (date !== null) {
-                    return this.viewModel.selectDateSince(event, date);
+                    return this.viewModel.selectNearestDate(event, date);
                 }
                 return this.viewModel.cancelSelection(event);
             }
@@ -1300,6 +1300,9 @@ var TheDatepicker;
                     : null;
             }
             date = date !== null ? new Date(date.getTime()) : TheDatepicker.Helper.resetTime(new Date());
+            return this.findNearestAvailableDate(date);
+        };
+        Options.prototype.findNearestAvailableDate = function (date) {
             date = this.correctDate(date);
             if (this.isDateAvailable(date)) {
                 return date;
@@ -1515,7 +1518,7 @@ var TheDatepicker;
             this.template = new TheDatepicker.Template(this.options, new TheDatepicker.HtmlHelper(this.options), datepicker.container, datepicker.input !== null);
         }
         ViewModel.prototype.render = function () {
-            if (this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false)) {
+            if (this.selectPossibleDate()) {
                 return;
             }
             var correctMonth = this.options.correctMonth(this.getCurrentMonth());
@@ -1593,7 +1596,7 @@ var TheDatepicker;
         };
         ViewModel.prototype.reset = function (event) {
             var isMonthChanged = this.goToMonth(event, this.options.getInitialMonth());
-            var isDaySelected = this.selectDay(event, this.options.getInitialDate(), false);
+            var isDaySelected = this.selectInitialDate(event);
             return isMonthChanged || isDaySelected;
         };
         ViewModel.prototype.selectDay = function (event, date, doUpdateMonth, doHighlight, canToggle) {
@@ -1635,20 +1638,14 @@ var TheDatepicker;
             this.triggerOnSelect(event, day, previousDay);
             return true;
         };
-        ViewModel.prototype.selectDateSince = function (event, date) {
-            var maxDate = this.options.getMaxDate();
-            var maxLoops = 1000;
-            var day = this.createDay(date);
-            date = day.getDate();
-            while (!day.isAvailable && maxLoops > 0) {
-                date.setDate(day.dayNumber + 1);
-                if (maxDate !== null && date.getTime() > maxDate.getTime()) {
-                    break;
-                }
-                day = this.createDay(date);
-                maxLoops--;
-            }
-            return this.selectDay(event, date);
+        ViewModel.prototype.selectNearestDate = function (event, date) {
+            return this.selectDay(event, this.options.findNearestAvailableDate(date));
+        };
+        ViewModel.prototype.selectPossibleDate = function () {
+            return this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false);
+        };
+        ViewModel.prototype.selectInitialDate = function (event) {
+            return this.selectDay(event, this.options.getInitialDate(), false);
         };
         ViewModel.prototype.highlightDay = function (event, day, doUpdateMonth) {
             if (doUpdateMonth === void 0) { doUpdateMonth = false; }

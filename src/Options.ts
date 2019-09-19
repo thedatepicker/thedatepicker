@@ -461,6 +461,11 @@ namespace TheDatepicker {
 			}
 
 			date = date !== null ? new Date(date.getTime()) : Helper.resetTime(new Date());
+
+			return this.findNearestAvailableDate(date);
+		}
+
+		public findNearestAvailableDate(date: Date): Date {
 			date = this.correctDate(date);
 
 			if (this.isDateAvailable(date)) {

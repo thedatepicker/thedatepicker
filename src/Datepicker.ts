@@ -145,7 +145,7 @@ namespace TheDatepicker {
 						return;
 					}
 
-					this.viewModel.selectDay(null, this.options.findPossibleAvailableDate(this.viewModel.selectedDate), false);
+					this.viewModel.selectPossibleDate();
 					this.updateDeselectButton();
 
 					return;
@@ -154,7 +154,7 @@ namespace TheDatepicker {
 					this.preselectFromInput();
 					this.createDeselectElement();
 
-					this.viewModel.selectDay(null, this.options.getInitialDate(), false);
+					this.viewModel.selectInitialDate(null);
 					this.updateInput();
 
 					if (this.input !== null && this.options.isHiddenOnBlur()) {
@@ -271,7 +271,7 @@ namespace TheDatepicker {
 			try {
 				const date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
 				if (date !== null) {
-					return this.viewModel.selectDateSince(event, date);
+					return this.viewModel.selectNearestDate(event, date);
 				}
 				return this.viewModel.cancelSelection(event);
 

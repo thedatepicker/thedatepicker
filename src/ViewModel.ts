@@ -30,7 +30,7 @@ namespace TheDatepicker {
 		}
 
 		public render(): void {
-			if (this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false)) {
+			if (this.selectPossibleDate()) {
 				return;
 			}
 
@@ -131,7 +131,7 @@ namespace TheDatepicker {
 
 		public reset(event: Event | null): boolean {
 			const isMonthChanged = this.goToMonth(event, this.options.getInitialMonth());
-			const isDaySelected = this.selectDay(event, this.options.getInitialDate(), false);
+			const isDaySelected = this.selectInitialDate(event);
 
 			return isMonthChanged || isDaySelected;
 		}
@@ -183,23 +183,16 @@ namespace TheDatepicker {
 			return true;
 		}
 
-		public selectDateSince(event: Event | null, date: Date): boolean {
-			const maxDate = this.options.getMaxDate();
-			let maxLoops = 1000; // infinite loop prevention
+		public selectNearestDate(event: Event | null, date: Date): boolean {
+			return this.selectDay(event, this.options.findNearestAvailableDate(date));
+		}
 
-			let day = this.createDay(date);
-			date = day.getDate();
-			while (!day.isAvailable && maxLoops > 0) {
-				date.setDate(day.dayNumber + 1);
-				if (maxDate !== null && date.getTime() > maxDate.getTime()) {
-					break;
-				}
+		public selectPossibleDate(): boolean {
+			return this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false);
+		}
 
-				day = this.createDay(date);
-				maxLoops--;
-			}
-
-			return this.selectDay(event, date);
+		public selectInitialDate(event: Event | null): boolean {
+			return this.selectDay(event, this.options.getInitialDate(), false);
 		}
 
 		public highlightDay(event: Event, day: Day, doUpdateMonth = false): boolean {
