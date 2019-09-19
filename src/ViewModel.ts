@@ -188,11 +188,25 @@ namespace TheDatepicker {
 		}
 
 		public selectPossibleDate(): boolean {
-			return this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false);
+			try {
+				return this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false);
+			} catch (error) {
+				if (!(error instanceof AvailableDateNotFoundException)) {
+					throw error;
+				}
+				return this.cancelSelection(null, true);
+			}
 		}
 
 		public selectInitialDate(event: Event | null): boolean {
-			return this.selectDay(event, this.options.getInitialDate(), false);
+			try {
+				return this.selectDay(event, this.options.getInitialDate(), false);
+			} catch (error) {
+				if (!(error instanceof AvailableDateNotFoundException)) {
+					throw error;
+				}
+				return this.cancelSelection(null, true);
+			}
 		}
 
 		public highlightDay(event: Event, day: Day, doUpdateMonth = false): boolean {
@@ -253,8 +267,8 @@ namespace TheDatepicker {
 			return this.highlightDay(event, newDay, true);
 		}
 
-		public cancelSelection(event: Event | null): boolean {
-			if (!this.options.isAllowedEmpty()) {
+		public cancelSelection(event: Event | null, force = false): boolean {
+			if (!this.options.isAllowedEmpty() && !force) {
 				return false;
 			}
 

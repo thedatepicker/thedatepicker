@@ -1054,6 +1054,12 @@ var TheDatepicker;
         EventType["MonthChange"] = "monthChange";
         EventType["BeforeMonthChange"] = "beforeMonthChange";
     })(EventType = TheDatepicker.EventType || (TheDatepicker.EventType = {}));
+    var AvailableDateNotFoundException = (function () {
+        function AvailableDateNotFoundException() {
+        }
+        return AvailableDateNotFoundException;
+    }());
+    TheDatepicker.AvailableDateNotFoundException = AvailableDateNotFoundException;
     var Options = (function () {
         function Options(translator) {
             if (translator === void 0) { translator = null; }
@@ -1300,7 +1306,11 @@ var TheDatepicker;
                     : null;
             }
             date = date !== null ? new Date(date.getTime()) : TheDatepicker.Helper.resetTime(new Date());
-            return this.findNearestAvailableDate(date);
+            date = this.findNearestAvailableDate(date);
+            if (date !== null) {
+                return date;
+            }
+            throw new AvailableDateNotFoundException();
         };
         Options.prototype.findNearestAvailableDate = function (date) {
             date = this.correctDate(date);
@@ -1642,10 +1652,26 @@ var TheDatepicker;
             return this.selectDay(event, this.options.findNearestAvailableDate(date));
         };
         ViewModel.prototype.selectPossibleDate = function () {
-            return this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false);
+            try {
+                return this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false);
+            }
+            catch (error) {
+                if (!(error instanceof TheDatepicker.AvailableDateNotFoundException)) {
+                    throw error;
+                }
+                return this.cancelSelection(null, true);
+            }
         };
         ViewModel.prototype.selectInitialDate = function (event) {
-            return this.selectDay(event, this.options.getInitialDate(), false);
+            try {
+                return this.selectDay(event, this.options.getInitialDate(), false);
+            }
+            catch (error) {
+                if (!(error instanceof TheDatepicker.AvailableDateNotFoundException)) {
+                    throw error;
+                }
+                return this.cancelSelection(null, true);
+            }
         };
         ViewModel.prototype.highlightDay = function (event, day, doUpdateMonth) {
             if (doUpdateMonth === void 0) { doUpdateMonth = false; }
@@ -1693,8 +1719,9 @@ var TheDatepicker;
             } while (!newDay.isAvailable && maxLoops > 0);
             return this.highlightDay(event, newDay, true);
         };
-        ViewModel.prototype.cancelSelection = function (event) {
-            if (!this.options.isAllowedEmpty()) {
+        ViewModel.prototype.cancelSelection = function (event, force) {
+            if (force === void 0) { force = false; }
+            if (!this.options.isAllowedEmpty() && !force) {
                 return false;
             }
             if (this.selectedDate === null) {

@@ -13,6 +13,10 @@ namespace TheDatepicker {
 		BeforeMonthChange = 'beforeMonthChange',
 	}
 
+	export class AvailableDateNotFoundException {
+
+	}
+
 	export type SelectEvent = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
 	export type OpenAndCloseEvent = (event: Event | null, isOpening: boolean) => boolean;
 	export type MonthChangeEvent = (event: Event | null, month: Date, previousMonth: Date) => boolean;
@@ -461,8 +465,12 @@ namespace TheDatepicker {
 			}
 
 			date = date !== null ? new Date(date.getTime()) : Helper.resetTime(new Date());
+			date = this.findNearestAvailableDate(date);
+			if (date !== null) {
+				return date;
+			}
 
-			return this.findNearestAvailableDate(date);
+			throw new AvailableDateNotFoundException();
 		}
 
 		public findNearestAvailableDate(date: Date): Date {
