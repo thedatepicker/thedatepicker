@@ -722,6 +722,9 @@ var TheDatepicker;
         Day.prototype.getDate = function () {
             return new Date(this.year, this.month - 1, this.dayNumber, 0, 0, 0, 0);
         };
+        Day.prototype.getFormatted = function () {
+            return this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.dayNumber).slice(-2);
+        };
         Day.prototype.isEqualToDate = function (date) {
             return date !== null
                 && this.dayNumber === date.getDate()
@@ -2219,8 +2222,7 @@ var TheDatepicker;
         };
         Template.prototype.updateDayElement = function (viewModel, dayElement, dayButtonElement, dayContentElement, day) {
             dayButtonElement.day = day;
-            var date = day.getDate();
-            dayElement.setAttribute('data-date', date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2));
+            dayElement.setAttribute('data-date', day.getFormatted());
             dayElement.className = '';
             this.htmlHelper.addClass(dayElement, 'cell');
             if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {

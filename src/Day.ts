@@ -29,6 +29,10 @@ namespace TheDatepicker {
 			return new Date(this.year, this.month - 1, this.dayNumber, 0, 0, 0, 0);
 		}
 
+		public getFormatted(): string {
+			return this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.dayNumber).slice(-2);
+		}
+
 		public isEqualToDate(date: Date): boolean {
 			return date !== null
 				&& this.dayNumber === date.getDate()

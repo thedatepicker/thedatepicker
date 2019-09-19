@@ -467,8 +467,7 @@ namespace TheDatepicker {
 			day: Day
 		): void {
 			dayButtonElement.day = day;
-			const date = day.getDate();
-			dayElement.setAttribute('data-date', date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2));
+			dayElement.setAttribute('data-date', day.getFormatted());
 			dayElement.className = '';
 			this.htmlHelper.addClass(dayElement, 'cell');
 
