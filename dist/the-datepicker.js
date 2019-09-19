@@ -2269,8 +2269,9 @@ var TheDatepicker;
         Template.prototype.createTableCellButtonElement = function (viewModel) {
             var _this = this;
             var cellButton = this.htmlHelper.createAnchor(function (event) {
-                viewModel.selectDay(event, cellButton.day, false, true, true);
-                if (_this.options.isHiddenOnSelect()) {
+                var previous = viewModel.selectedDate;
+                var isSelected = viewModel.selectDay(event, cellButton.day, false, true, true);
+                if (_this.options.isHiddenOnSelect() && (isSelected || (previous !== null && cellButton.day.isEqualToDate(previous)))) {
                     viewModel.close(event);
                 }
             });

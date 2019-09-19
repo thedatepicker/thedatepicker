@@ -518,8 +518,9 @@ namespace TheDatepicker {
 
 		protected createTableCellButtonElement(viewModel: ViewModel): HTMLDayButtonElement {
 			const cellButton = this.htmlHelper.createAnchor((event: Event) => {
-				viewModel.selectDay(event, cellButton.day, false, true, true);
-				if (this.options.isHiddenOnSelect()) {
+				const previous = viewModel.selectedDate;
+				const isSelected = viewModel.selectDay(event, cellButton.day, false, true, true);
+				if (this.options.isHiddenOnSelect() && (isSelected || (previous !== null && cellButton.day.isEqualToDate(previous)))) {
 					viewModel.close(event);
 				}
 			}) as HTMLDayButtonElement;

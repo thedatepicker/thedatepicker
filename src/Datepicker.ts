@@ -16,6 +16,7 @@ namespace TheDatepicker {
 	// todo v IE 9 se spontáně blurne input
 	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
 	// todo createDay zviditelnit z venku aby si případně mohl zjistit jaké vlastnosti den má
+	// todo zřejmě když je isSelectedDayFocused tak po ruční úpravě inputu zmizí inputu focus
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
