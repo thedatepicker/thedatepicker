@@ -1304,7 +1304,7 @@ var TheDatepicker;
             if (this.isDateAvailable(date)) {
                 return date;
             }
-            var maxLoops = 150;
+            var maxLoops = 1000;
             var increasedDate = date;
             var decreasedDate = new Date(date.getTime());
             do {
@@ -1637,7 +1637,7 @@ var TheDatepicker;
         };
         ViewModel.prototype.selectDateSince = function (event, date) {
             var maxDate = this.options.getMaxDate();
-            var maxLoops = 100;
+            var maxLoops = 1000;
             var day = this.createDay(date);
             date = day.getDate();
             while (!day.isAvailable && maxLoops > 0) {
@@ -1685,7 +1685,7 @@ var TheDatepicker;
         ViewModel.prototype.highlightSiblingDay = function (event, day, direction) {
             var newDay = day;
             var date = newDay.getDate();
-            var maxLoops = 100;
+            var maxLoops = 1000;
             do {
                 date.setDate(newDay.dayNumber + direction);
                 newDay = this.createDay(date);

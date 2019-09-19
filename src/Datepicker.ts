@@ -18,7 +18,6 @@ namespace TheDatepicker {
 	// todo createDay zviditelnit z venku aby si případně mohl zjistit jaké vlastnosti den má
 	// todo zřejmě když je isSelectedDayFocused tak po ruční úpravě inputu zmizí inputu focus
 	// todo onOen a onClose přecejen? (společně vedle onOpenAndClose)
-	// todo zvýšit maxLoops?
 	// todo používat a || b místo a !== null ? a : b
 	//      !a místo a === null    ??
 

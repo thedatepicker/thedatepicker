@@ -467,7 +467,7 @@ namespace TheDatepicker {
 				return date;
 			}
 
-			let maxLoops = 150; // infinite loop prevention
+			let maxLoops = 1000; // infinite loop prevention
 			let increasedDate: Date | null = date;
 			let decreasedDate: Date | null = new Date(date.getTime());
 			do {

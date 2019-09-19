@@ -185,7 +185,7 @@ namespace TheDatepicker {
 
 		public selectDateSince(event: Event | null, date: Date): boolean {
 			const maxDate = this.options.getMaxDate();
-			let maxLoops = 100; // infinite loop prevention
+			let maxLoops = 1000; // infinite loop prevention
 
 			let day = this.createDay(date);
 			date = day.getDate();
@@ -245,7 +245,7 @@ namespace TheDatepicker {
 		public highlightSiblingDay(event: Event, day: Day, direction: MoveDirection): boolean {
 			let newDay = day;
 			let date = newDay.getDate();
-			let maxLoops = 100; // infinite loop prevention
+			let maxLoops = 1000; // infinite loop prevention
 
 			do {
 				date.setDate(newDay.dayNumber + direction);
