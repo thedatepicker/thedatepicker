@@ -2259,6 +2259,9 @@ var TheDatepicker;
             if (day.isToday) {
                 this.htmlHelper.addClass(dayElement, 'day--today');
             }
+            if (day.isPast) {
+                this.htmlHelper.addClass(dayElement, 'day--past');
+            }
             if (day.isWeekend) {
                 this.htmlHelper.addClass(dayElement, 'day--weekend');
             }
