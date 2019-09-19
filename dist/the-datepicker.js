@@ -839,7 +839,7 @@ var TheDatepicker;
             else if (Helper.isValidDate(value)) {
                 return Helper.resetTime(new Date(value.getTime()));
             }
-            throw new Error(parameterName + 'was expected to be a valid Date string or valid Date or null.');
+            throw new Error(parameterName + ' was expected to be a valid Date string or valid Date or Day or null.');
         };
         Helper.normalizeMonth = function (date) {
             if (date === null) {

@@ -108,7 +108,7 @@ namespace TheDatepicker {
 				return Helper.resetTime(new Date(value.getTime()));
 			}
 
-			throw new Error(parameterName + 'was expected to be a valid Date string or valid Date or null.');
+			throw new Error(parameterName + ' was expected to be a valid Date string or valid Date or Day or null.');
 		}
 
 		public static normalizeMonth(date: Date | null): Date | null {
