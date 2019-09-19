@@ -581,7 +581,7 @@ namespace TheDatepicker {
 				return this.cellContentResolver(day);
 			}
 
-			return day.dayNumber.toString();
+			return day.dayNumber + '';
 		}
 
 		public getCellClasses(day: Day): string[] {

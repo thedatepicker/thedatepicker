@@ -227,7 +227,7 @@ namespace TheDatepicker {
 				const newMonth = new Date(currentMonth.getTime());
 				newMonth.setMonth(monthNumber);
 				if (!viewModel.goToMonth(event, newMonth)) {
-					this.monthSelect.value = currentMonth.getMonth().toString();
+					this.monthSelect.value = currentMonth.getMonth() + '';
 				}
 			});
 
@@ -263,7 +263,7 @@ namespace TheDatepicker {
 				valuesCount += canGoToMonth ? 1 : 0;
 			}
 
-			this.monthSelect.value = currentMonth.toString();
+			this.monthSelect.value = currentMonth + '';
 
 			this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
 			this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
@@ -285,7 +285,7 @@ namespace TheDatepicker {
 				}
 
 				if (!viewModel.goToMonth(event, newMonth)) {
-					this.yearSelect.value = currentMonth.getFullYear().toString();
+					this.yearSelect.value = currentMonth.getFullYear() + '';
 				}
 			});
 
@@ -302,7 +302,7 @@ namespace TheDatepicker {
 
 		protected updateYearElement(viewModel: ViewModel): void {
 			const currentYear = viewModel.getCurrentMonth().getFullYear();
-			this.yearElement.innerText = currentYear.toString();
+			this.yearElement.innerText = currentYear + '';
 
 			if (!this.options.isYearAsDropdown()) {
 				this.yearSelect.style.display = 'none';
@@ -356,13 +356,13 @@ namespace TheDatepicker {
 				this.yearSelect.removeChild(remove[index]);
 			}
 			for (let index = prepend.length - 1; index >= 0; index--) {
-				this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(prepend[index], prepend[index].toString()), this.yearSelect.firstChild);
+				this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(prepend[index], prepend[index] + ''), this.yearSelect.firstChild);
 			}
 			for (let index = 0; index < append.length; index++) {
-				this.yearSelect.appendChild(this.htmlHelper.createSelectOption(append[index], append[index].toString()));
+				this.yearSelect.appendChild(this.htmlHelper.createSelectOption(append[index], append[index] + ''));
 			}
 
-			this.yearSelect.value = currentYear.toString();
+			this.yearSelect.value = currentYear + '';
 
 			this.yearSelect.style.display = from < to ? '' : 'none';
 			this.yearElement.style.display = from < to ? 'none' : '';

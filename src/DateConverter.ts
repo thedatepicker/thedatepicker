@@ -180,7 +180,7 @@ namespace TheDatepicker {
 		}
 
 		private formatDay(date: Date): string {
-			return date.getDate().toString();
+			return date.getDate() + '';
 		}
 
 		private formatDayWithLeadingZero(date: Date): string {
@@ -192,7 +192,7 @@ namespace TheDatepicker {
 		}
 
 		private formatMonth(date: Date): string {
-			return (date.getMonth() + 1).toString();
+			return (date.getMonth() + 1) + '';
 		}
 
 		private formatMonthWithLeadingZero(date: Date): string {
@@ -204,11 +204,11 @@ namespace TheDatepicker {
 		}
 
 		private formatYear(date: Date): string {
-			return date.getFullYear().toString();
+			return date.getFullYear() + '';
 		}
 
 		private formatYearTwoDigits(date: Date): string {
-			const year = date.getFullYear().toString();
+			const year = date.getFullYear() + '';
 			return year.substring(year.length - 2);
 		}
 
@@ -346,7 +346,7 @@ namespace TheDatepicker {
 				throw new CannotParseDateException();
 			}
 
-			const currentYear = (new Date()).getFullYear().toString();
+			const currentYear = (new Date()).getFullYear() + '';
 			const yearBeginning = currentYear.substring(0, currentYear.length - 2);
 
 			dateData.year = parseInt(yearBeginning + yearEnd, 10);

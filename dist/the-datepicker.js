@@ -183,7 +183,7 @@ var TheDatepicker;
             }
         };
         DateConverter.prototype.formatDay = function (date) {
-            return date.getDate().toString();
+            return date.getDate() + '';
         };
         DateConverter.prototype.formatDayWithLeadingZero = function (date) {
             return ('0' + date.getDate()).slice(-2);
@@ -192,7 +192,7 @@ var TheDatepicker;
             return this.translator.translateDayOfWeek(date.getDay());
         };
         DateConverter.prototype.formatMonth = function (date) {
-            return (date.getMonth() + 1).toString();
+            return (date.getMonth() + 1) + '';
         };
         DateConverter.prototype.formatMonthWithLeadingZero = function (date) {
             return ('0' + (date.getMonth() + 1)).slice(-2);
@@ -201,10 +201,10 @@ var TheDatepicker;
             return this.translator.translateMonth(date.getMonth());
         };
         DateConverter.prototype.formatYear = function (date) {
-            return date.getFullYear().toString();
+            return date.getFullYear() + '';
         };
         DateConverter.prototype.formatYearTwoDigits = function (date) {
-            var year = date.getFullYear().toString();
+            var year = date.getFullYear() + '';
             return year.substring(year.length - 2);
         };
         DateConverter.prototype.getParser = function (type) {
@@ -313,7 +313,7 @@ var TheDatepicker;
             if (!/[0-9]{2}/.test(yearEnd)) {
                 throw new CannotParseDateException();
             }
-            var currentYear = (new Date()).getFullYear().toString();
+            var currentYear = (new Date()).getFullYear() + '';
             var yearBeginning = currentYear.substring(0, currentYear.length - 2);
             dateData.year = parseInt(yearBeginning + yearEnd, 10);
             return 2;
@@ -667,7 +667,7 @@ var TheDatepicker;
                 if (locateOver) {
                     var move = this.input.offsetHeight + this.container.offsetHeight;
                     child.style.position = 'relative';
-                    child.style.top = '-' + move.toString() + 'px';
+                    child.style.top = '-' + move + 'px';
                 }
                 else {
                     child.style.position = '';
@@ -1029,7 +1029,7 @@ var TheDatepicker;
         };
         HtmlHelper.prototype.createSelectOption = function (value, label) {
             var option = this.document.createElement('option');
-            option.value = value.toString();
+            option.value = value + '';
             option.innerText = label;
             return option;
         };
@@ -1396,7 +1396,7 @@ var TheDatepicker;
             if (this.cellContentResolver !== null) {
                 return this.cellContentResolver(day);
             }
-            return day.dayNumber.toString();
+            return day.dayNumber + '';
         };
         Options.prototype.getCellClasses = function (day) {
             if (this.cellClassesResolver !== null) {
@@ -2030,7 +2030,7 @@ var TheDatepicker;
                 var newMonth = new Date(currentMonth.getTime());
                 newMonth.setMonth(monthNumber);
                 if (!viewModel.goToMonth(event, newMonth)) {
-                    _this.monthSelect.value = currentMonth.getMonth().toString();
+                    _this.monthSelect.value = currentMonth.getMonth() + '';
                 }
             });
             var monthElement = this.htmlHelper.createDiv('month');
@@ -2059,7 +2059,7 @@ var TheDatepicker;
                 option.style.display = canGoToMonth ? '' : 'none';
                 valuesCount += canGoToMonth ? 1 : 0;
             }
-            this.monthSelect.value = currentMonth.toString();
+            this.monthSelect.value = currentMonth + '';
             this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
             this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
         };
@@ -2078,7 +2078,7 @@ var TheDatepicker;
                     newMonth = maxMonth;
                 }
                 if (!viewModel.goToMonth(event, newMonth)) {
-                    _this.yearSelect.value = currentMonth.getFullYear().toString();
+                    _this.yearSelect.value = currentMonth.getFullYear() + '';
                 }
             });
             var yearElement = this.htmlHelper.createDiv('year');
@@ -2091,7 +2091,7 @@ var TheDatepicker;
         };
         Template.prototype.updateYearElement = function (viewModel) {
             var currentYear = viewModel.getCurrentMonth().getFullYear();
-            this.yearElement.innerText = currentYear.toString();
+            this.yearElement.innerText = currentYear + '';
             if (!this.options.isYearAsDropdown()) {
                 this.yearSelect.style.display = 'none';
                 this.yearElement.style.display = '';
@@ -2143,12 +2143,12 @@ var TheDatepicker;
                 this.yearSelect.removeChild(remove[index]);
             }
             for (var index = prepend.length - 1; index >= 0; index--) {
-                this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(prepend[index], prepend[index].toString()), this.yearSelect.firstChild);
+                this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(prepend[index], prepend[index] + ''), this.yearSelect.firstChild);
             }
             for (var index = 0; index < append.length; index++) {
-                this.yearSelect.appendChild(this.htmlHelper.createSelectOption(append[index], append[index].toString()));
+                this.yearSelect.appendChild(this.htmlHelper.createSelectOption(append[index], append[index] + ''));
             }
-            this.yearSelect.value = currentYear.toString();
+            this.yearSelect.value = currentYear + '';
             this.yearSelect.style.display = from < to ? '' : 'none';
             this.yearElement.style.display = from < to ? 'none' : '';
         };

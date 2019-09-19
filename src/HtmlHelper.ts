@@ -123,7 +123,7 @@ namespace TheDatepicker {
 
 		public createSelectOption(value: number, label: string): HTMLOptionElement {
 			const option = this.document.createElement('option');
-			option.value = value.toString();
+			option.value = value + '';
 			option.innerText = label;
 
 			return option;
