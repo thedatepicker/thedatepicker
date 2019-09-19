@@ -160,11 +160,11 @@
 .the-datepicker__main td.the-datepicker__day--today {
   font-weight: bold;
 }
-.the-datepicker__deselect a {
+.the-datepicker__deselect-button {
   text-decoration: none;
   color: #007eff;
   font-weight: bold;
 }
-.the-datepicker__deselect a:hover {
+.the-datepicker__deselect-button:hover {
   text-decoration: none;
 }

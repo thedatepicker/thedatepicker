@@ -556,6 +556,7 @@ var TheDatepicker;
                 _this.viewModel.cancelSelection(event);
             };
             deselectElement.className = this.options.getClassesPrefix() + 'deselect';
+            deselectButton.className = this.options.getClassesPrefix() + 'deselect-button';
             deselectElement.appendChild(deselectButton);
             this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
             this.deselectElement = deselectElement;
