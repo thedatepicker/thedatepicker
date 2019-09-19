@@ -74,6 +74,7 @@ namespace TheDatepicker {
 		private resetHtml = '&olarr;';
 		private deselectHtml = '&times;';
 		private positionFixing = true;
+		private today: Date | null = null;
 		private listeners: Listeners = {
 			beforeSelect: [],
 			select: [],
@@ -157,7 +158,7 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMinDate(date: Day | Date | string | null): void {
-			const normalizedDate = Helper.normalizeDate('Min date', date);
+			const normalizedDate = Helper.normalizeDate('Min date', date, this);
 			this.checkConstraints(normalizedDate, this.maxDate);
 			this.minDate = normalizedDate;
 			this.minMonth = Helper.normalizeMonth(normalizedDate);
@@ -173,7 +174,7 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMaxDate(date: Day | Date | string | null): void {
-			const normalizedDate = Helper.normalizeDate('Max date', date);
+			const normalizedDate = Helper.normalizeDate('Max date', date, this);
 			this.checkConstraints(this.minDate, normalizedDate);
 			this.maxDate = normalizedDate;
 			this.maxMonth = Helper.normalizeMonth(normalizedDate);
@@ -191,7 +192,7 @@ namespace TheDatepicker {
 		// or null for current month
 		// defaults to current month
 		public setInitialMonth(month: Date | string | null): void {
-			this.initialMonth = Helper.normalizeDate('Initial month', month);
+			this.initialMonth = Helper.normalizeDate('Initial month', month, this);
 		}
 
 		// Preselected date.
@@ -205,7 +206,7 @@ namespace TheDatepicker {
 		// It's overloaded by direct input value, if any.
 		// defaults to null
 		public setInitialDate(value: Day | Date | string | null): void {
-			this.initialDate = Helper.normalizeDate('Initial date', value);
+			this.initialDate = Helper.normalizeDate('Initial date', value, this);
 		}
 
 		// Day of week when weeks start.
@@ -368,6 +369,19 @@ namespace TheDatepicker {
 			this.positionFixing = !!value;
 		}
 
+		// Sets mock/fake today.
+		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
+		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
+		// or instance of Date
+		// or instance of Day
+		// or "now", "today" or "tomorrow" or string in format "<sign> <number> <unit>"
+		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
+		// null for real today
+		// defaults to null
+		public setToday(date: Day | Date | string | null): void {
+			this.today = Helper.normalizeDate('Today', date, this);
+		}
+
 		// Callback to be called just before the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
@@ -437,7 +451,7 @@ namespace TheDatepicker {
 				: (
 					this.initialMonth !== null
 						? new Date(this.initialMonth.getTime())
-						: Helper.resetTime(new Date())
+						: this.getToday()
 				);
 			initialMonth.setDate(1);
 
@@ -464,7 +478,7 @@ namespace TheDatepicker {
 					: null;
 			}
 
-			date = date !== null ? new Date(date.getTime()) : Helper.resetTime(new Date());
+			date = date !== null ? new Date(date.getTime()) : this.getToday();
 			date = this.findNearestAvailableDate(date);
 			if (date !== null) {
 				return date;
@@ -646,6 +660,10 @@ namespace TheDatepicker {
 
 		public isPositionFixingEnabled(): boolean {
 			return this.hideOnBlur && this.positionFixing;
+		}
+
+		public getToday(): Date {
+			return this.today !== null ? new Date(this.today.getTime()) : Helper.resetTime(new Date());
 		}
 
 		private checkConstraints(minDate: Date | null, maxDate: Date | null): void {

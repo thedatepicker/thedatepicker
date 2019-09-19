@@ -13,7 +13,6 @@ namespace TheDatepicker {
 
 		public selectedDate: Date | null = null;
 
-		private readonly today: Date;
 		private readonly template: Template;
 
 		private currentMonth: Date | null = null;
@@ -25,7 +24,6 @@ namespace TheDatepicker {
 			private readonly options: Options,
 			private readonly datepicker: Datepicker
 		) {
-			this.today = Helper.resetTime(new Date());
 			this.template = new Template(this.options, new HtmlHelper(this.options), datepicker.container, datepicker.input !== null)
 		}
 
@@ -409,10 +407,11 @@ namespace TheDatepicker {
 
 		private createDay(date: Date): Day {
 			date = Helper.resetTime(new Date(date.getTime()));
+			const today = this.options.getToday();
 
 			const day = new Day(date);
-			day.isToday = date.getTime() === this.today.getTime();
-			day.isPast = date.getTime() < this.today.getTime();
+			day.isToday = date.getTime() === today.getTime();
+			day.isPast = date.getTime() < today.getTime();
 			day.isInValidity = this.options.isDateInValidity(date);
 			day.isAvailable = day.isInValidity && this.options.isDateAvailable(date);
 

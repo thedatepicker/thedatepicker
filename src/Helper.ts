@@ -58,7 +58,7 @@ namespace TheDatepicker {
 			return date;
 		}
 
-		public static normalizeDate(parameterName: string, value: Day | Date | string | null): Date | null {
+		public static normalizeDate(parameterName: string, value: Day | Date | string | null, options: Options): Date | null {
 			if (!value) {
 				return null;
 			}
@@ -69,18 +69,18 @@ namespace TheDatepicker {
 
 			if (typeof value === 'string') {
 				if (value === 'today' || value === 'now') {
-					return Helper.resetTime(new Date());
+					return options.getToday();
 				}
 
 				if (value === 'tomorrow') {
-					const date = Helper.resetTime(new Date());
+					const date = options.getToday();
 					date.setDate(date.getDate() + 1);
 					return date;
 				}
 
 				const matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
 				if (matches !== null) {
-					const date = Helper.resetTime(new Date());
+					const date = options.getToday();
 					const amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
 					switch (matches[3].toLowerCase()) {
 						case 'day':

@@ -176,6 +176,9 @@
 					<label>datepicker.options.setClassesPrefix(<input type="text" size="15" id="classesPrefix" value="the-datepicker__">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setToday(<input type="text" size="15" id="today">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setGoBackHtml(<input type="text" size="15" id="goBackHtml" value="&amp;lt;">);</label>
 				</li>
 				<li>
@@ -512,6 +515,13 @@
 			classesPrefixInput.onchange = function () {
 				updateSetting(classesPrefixInput, function () {
 					datepicker.options.setClassesPrefix(classesPrefixInput.value);
+				});
+			};
+
+			var todayInput = document.getElementById('today');
+			todayInput.onchange = function () {
+				updateSetting(todayInput, function () {
+					datepicker.options.setToday(todayInput.value);
 				});
 			};
 

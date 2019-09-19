@@ -117,7 +117,7 @@ namespace TheDatepicker {
 			this.input = input;
 			this.container = container;
 
-			this.dateConverter = new DateConverter(this.options.translator);
+			this.dateConverter = new DateConverter(this.options);
 			this.viewModel = new ViewModel(this.options, this);
 
 			this.triggerReady(input);
@@ -252,7 +252,7 @@ namespace TheDatepicker {
 		}
 
 		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
-			return this.viewModel.selectDay(event, Helper.normalizeDate('Date', date), doUpdateMonth);
+			return this.viewModel.selectDay(event, Helper.normalizeDate('Date', date, this.options), doUpdateMonth);
 		}
 
 		public getSelectedDate(): Date | null {
@@ -260,7 +260,7 @@ namespace TheDatepicker {
 		}
 
 		public goToMonth(month: Date | string, event: Event | null = null): boolean {
-			return this.viewModel.goToMonth(event, Helper.normalizeDate('Month', month));
+			return this.viewModel.goToMonth(event, Helper.normalizeDate('Month', month, this.options));
 		}
 
 		public readInput(event: Event | null = null): boolean {

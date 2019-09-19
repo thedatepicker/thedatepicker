@@ -48,7 +48,7 @@ namespace TheDatepicker {
 
 		private readonly escapeChar = '\\';
 
-		public constructor(private readonly translator: Translator) {
+		public constructor(private readonly options: Options) {
 		}
 
 		public formatDate(format: string, date: Date): string {
@@ -188,7 +188,7 @@ namespace TheDatepicker {
 		}
 
 		private formatDayOfWeekTextual(date: Date): string {
-			return this.translator.translateDayOfWeek(date.getDay());
+			return this.options.translator.translateDayOfWeek(date.getDay());
 		}
 
 		private formatMonth(date: Date): string {
@@ -200,7 +200,7 @@ namespace TheDatepicker {
 		}
 
 		private formatMonthTextual(date: Date): string {
-			return this.translator.translateMonth(date.getMonth());
+			return this.options.translator.translateMonth(date.getMonth());
 		}
 
 		private formatYear(date: Date): string {
@@ -262,7 +262,7 @@ namespace TheDatepicker {
 		private parseDayOfWeekTextual(text: string): number {
 			let maxLength = 0;
 			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-				const translation = this.translator.translateDayOfWeek(dayOfWeek);
+				const translation = this.options.translator.translateDayOfWeek(dayOfWeek);
 				maxLength = Math.max(maxLength, translation.length);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
@@ -304,7 +304,7 @@ namespace TheDatepicker {
 
 		private parseMonthTextual(text: string, dateData: ParsedDateData): number {
 			for (let month = 1; month <= 12; month++) {
-				const translation = this.translator.translateMonth(month - 1);
+				const translation = this.options.translator.translateMonth(month - 1);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
 					dateData.month = month;
@@ -346,7 +346,7 @@ namespace TheDatepicker {
 				throw new CannotParseDateException();
 			}
 
-			const currentYear = (new Date()).getFullYear() + '';
+			const currentYear = (this.options.getToday()).getFullYear() + '';
 			const yearBeginning = currentYear.substring(0, currentYear.length - 2);
 
 			dateData.year = parseInt(yearBeginning + yearEnd, 10);

@@ -78,8 +78,8 @@ var TheDatepicker;
         return ParsedDateData;
     }());
     var DateConverter = (function () {
-        function DateConverter(translator) {
-            this.translator = translator;
+        function DateConverter(options) {
+            this.options = options;
             this.escapeChar = '\\';
         }
         DateConverter.prototype.formatDate = function (format, date) {
@@ -189,7 +189,7 @@ var TheDatepicker;
             return ('0' + date.getDate()).slice(-2);
         };
         DateConverter.prototype.formatDayOfWeekTextual = function (date) {
-            return this.translator.translateDayOfWeek(date.getDay());
+            return this.options.translator.translateDayOfWeek(date.getDay());
         };
         DateConverter.prototype.formatMonth = function (date) {
             return (date.getMonth() + 1) + '';
@@ -198,7 +198,7 @@ var TheDatepicker;
             return ('0' + (date.getMonth() + 1)).slice(-2);
         };
         DateConverter.prototype.formatMonthTextual = function (date) {
-            return this.translator.translateMonth(date.getMonth());
+            return this.options.translator.translateMonth(date.getMonth());
         };
         DateConverter.prototype.formatYear = function (date) {
             return date.getFullYear() + '';
@@ -246,7 +246,7 @@ var TheDatepicker;
         DateConverter.prototype.parseDayOfWeekTextual = function (text) {
             var maxLength = 0;
             for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-                var translation = this.translator.translateDayOfWeek(dayOfWeek);
+                var translation = this.options.translator.translateDayOfWeek(dayOfWeek);
                 maxLength = Math.max(maxLength, translation.length);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     return translation.length;
@@ -280,7 +280,7 @@ var TheDatepicker;
         };
         DateConverter.prototype.parseMonthTextual = function (text, dateData) {
             for (var month = 1; month <= 12; month++) {
-                var translation = this.translator.translateMonth(month - 1);
+                var translation = this.options.translator.translateMonth(month - 1);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     dateData.month = month;
                     return translation.length;
@@ -313,7 +313,7 @@ var TheDatepicker;
             if (!/[0-9]{2}/.test(yearEnd)) {
                 throw new CannotParseDateException();
             }
-            var currentYear = (new Date()).getFullYear() + '';
+            var currentYear = (this.options.getToday()).getFullYear() + '';
             var yearBeginning = currentYear.substring(0, currentYear.length - 2);
             dateData.year = parseInt(yearBeginning + yearEnd, 10);
             return 2;
@@ -377,7 +377,7 @@ var TheDatepicker;
             container.datepicker = this;
             this.input = input;
             this.container = container;
-            this.dateConverter = new TheDatepicker.DateConverter(this.options.translator);
+            this.dateConverter = new TheDatepicker.DateConverter(this.options);
             this.viewModel = new TheDatepicker.ViewModel(this.options, this);
             this.triggerReady(input);
             this.triggerReady(container);
@@ -489,14 +489,14 @@ var TheDatepicker;
         Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
             if (doUpdateMonth === void 0) { doUpdateMonth = true; }
             if (event === void 0) { event = null; }
-            return this.viewModel.selectDay(event, TheDatepicker.Helper.normalizeDate('Date', date), doUpdateMonth);
+            return this.viewModel.selectDay(event, TheDatepicker.Helper.normalizeDate('Date', date, this.options), doUpdateMonth);
         };
         Datepicker.prototype.getSelectedDate = function () {
             return this.viewModel.selectedDate;
         };
         Datepicker.prototype.goToMonth = function (month, event) {
             if (event === void 0) { event = null; }
-            return this.viewModel.goToMonth(event, TheDatepicker.Helper.normalizeDate('Month', month));
+            return this.viewModel.goToMonth(event, TheDatepicker.Helper.normalizeDate('Month', month, this.options));
         };
         Datepicker.prototype.readInput = function (event) {
             if (event === void 0) { event = null; }
@@ -795,7 +795,7 @@ var TheDatepicker;
             date.setMilliseconds(0);
             return date;
         };
-        Helper.normalizeDate = function (parameterName, value) {
+        Helper.normalizeDate = function (parameterName, value, options) {
             if (!value) {
                 return null;
             }
@@ -804,16 +804,16 @@ var TheDatepicker;
             }
             if (typeof value === 'string') {
                 if (value === 'today' || value === 'now') {
-                    return Helper.resetTime(new Date());
+                    return options.getToday();
                 }
                 if (value === 'tomorrow') {
-                    var date_1 = Helper.resetTime(new Date());
+                    var date_1 = options.getToday();
                     date_1.setDate(date_1.getDate() + 1);
                     return date_1;
                 }
                 var matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
                 if (matches !== null) {
-                    var date_2 = Helper.resetTime(new Date());
+                    var date_2 = options.getToday();
                     var amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
                     switch (matches[3].toLowerCase()) {
                         case 'day':
@@ -1094,6 +1094,7 @@ var TheDatepicker;
             this.resetHtml = '&olarr;';
             this.deselectHtml = '&times;';
             this.positionFixing = true;
+            this.today = null;
             this.listeners = {
                 beforeSelect: [],
                 select: [],
@@ -1152,22 +1153,22 @@ var TheDatepicker;
             this.hideOnSelect = !!value;
         };
         Options.prototype.setMinDate = function (date) {
-            var normalizedDate = TheDatepicker.Helper.normalizeDate('Min date', date);
+            var normalizedDate = TheDatepicker.Helper.normalizeDate('Min date', date, this);
             this.checkConstraints(normalizedDate, this.maxDate);
             this.minDate = normalizedDate;
             this.minMonth = TheDatepicker.Helper.normalizeMonth(normalizedDate);
         };
         Options.prototype.setMaxDate = function (date) {
-            var normalizedDate = TheDatepicker.Helper.normalizeDate('Max date', date);
+            var normalizedDate = TheDatepicker.Helper.normalizeDate('Max date', date, this);
             this.checkConstraints(this.minDate, normalizedDate);
             this.maxDate = normalizedDate;
             this.maxMonth = TheDatepicker.Helper.normalizeMonth(normalizedDate);
         };
         Options.prototype.setInitialMonth = function (month) {
-            this.initialMonth = TheDatepicker.Helper.normalizeDate('Initial month', month);
+            this.initialMonth = TheDatepicker.Helper.normalizeDate('Initial month', month, this);
         };
         Options.prototype.setInitialDate = function (value) {
-            this.initialDate = TheDatepicker.Helper.normalizeDate('Initial date', value);
+            this.initialDate = TheDatepicker.Helper.normalizeDate('Initial date', value, this);
         };
         Options.prototype.setFirstDayOfWeek = function (dayOfWeek) {
             this.firstDayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek, 0, 6);
@@ -1238,6 +1239,9 @@ var TheDatepicker;
         Options.prototype.setPositionFixing = function (value) {
             this.positionFixing = !!value;
         };
+        Options.prototype.setToday = function (date) {
+            this.today = TheDatepicker.Helper.normalizeDate('Today', date, this);
+        };
         Options.prototype.onBeforeSelect = function (listener) {
             this.onEventListener(EventType.BeforeSelect, listener);
         };
@@ -1285,7 +1289,7 @@ var TheDatepicker;
                 ? new Date(this.initialDate.getTime())
                 : (this.initialMonth !== null
                     ? new Date(this.initialMonth.getTime())
-                    : TheDatepicker.Helper.resetTime(new Date()));
+                    : this.getToday());
             initialMonth.setDate(1);
             return this.correctMonth(initialMonth);
         };
@@ -1305,7 +1309,7 @@ var TheDatepicker;
                     ? new Date(date.getTime())
                     : null;
             }
-            date = date !== null ? new Date(date.getTime()) : TheDatepicker.Helper.resetTime(new Date());
+            date = date !== null ? new Date(date.getTime()) : this.getToday();
             date = this.findNearestAvailableDate(date);
             if (date !== null) {
                 return date;
@@ -1449,6 +1453,9 @@ var TheDatepicker;
         Options.prototype.isPositionFixingEnabled = function () {
             return this.hideOnBlur && this.positionFixing;
         };
+        Options.prototype.getToday = function () {
+            return this.today !== null ? new Date(this.today.getTime()) : TheDatepicker.Helper.resetTime(new Date());
+        };
         Options.prototype.checkConstraints = function (minDate, maxDate) {
             if (minDate !== null
                 && maxDate !== null
@@ -1524,7 +1531,6 @@ var TheDatepicker;
             this.highlightedDay = null;
             this.isHighlightedDayFocused = false;
             this.active = false;
-            this.today = TheDatepicker.Helper.resetTime(new Date());
             this.template = new TheDatepicker.Template(this.options, new TheDatepicker.HtmlHelper(this.options), datepicker.container, datepicker.input !== null);
         }
         ViewModel.prototype.render = function () {
@@ -1841,9 +1847,10 @@ var TheDatepicker;
         };
         ViewModel.prototype.createDay = function (date) {
             date = TheDatepicker.Helper.resetTime(new Date(date.getTime()));
+            var today = this.options.getToday();
             var day = new TheDatepicker.Day(date);
-            day.isToday = date.getTime() === this.today.getTime();
-            day.isPast = date.getTime() < this.today.getTime();
+            day.isToday = date.getTime() === today.getTime();
+            day.isPast = date.getTime() < today.getTime();
             day.isInValidity = this.options.isDateInValidity(date);
             day.isAvailable = day.isInValidity && this.options.isDateAvailable(date);
             if (day.isAvailable) {
