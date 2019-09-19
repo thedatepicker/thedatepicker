@@ -423,6 +423,7 @@ namespace TheDatepicker {
 					day.isHighlighted = true;
 					if (this.isHighlightedDayFocused) {
 						day.isFocused = true;
+						this.isHighlightedDayFocused = false;
 					}
 				}
 			}
