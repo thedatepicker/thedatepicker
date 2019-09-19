@@ -186,11 +186,7 @@ var TheDatepicker;
             return date.getDate().toString();
         };
         DateConverter.prototype.formatDayWithLeadingZero = function (date) {
-            var day = date.getDate().toString();
-            if (day.length === 1) {
-                day = '0' + day;
-            }
-            return day;
+            return ('0' + date.getDate()).slice(-2);
         };
         DateConverter.prototype.formatDayOfWeekTextual = function (date) {
             return this.translator.translateDayOfWeek(date.getDay());
@@ -199,11 +195,7 @@ var TheDatepicker;
             return (date.getMonth() + 1).toString();
         };
         DateConverter.prototype.formatMonthWithLeadingZero = function (date) {
-            var month = (date.getMonth() + 1).toString();
-            if (month.length === 1) {
-                month = '0' + month;
-            }
-            return month;
+            return ('0' + (date.getMonth() + 1)).slice(-2);
         };
         DateConverter.prototype.formatMonthTextual = function (date) {
             return this.translator.translateMonth(date.getMonth());
@@ -1792,13 +1784,15 @@ var TheDatepicker;
             }
         };
         ViewModel.prototype.triggerOnBeforeSelect = function (event, day, previousDay) {
+            var _this = this;
             return this.options.triggerEvent(TheDatepicker.EventType.BeforeSelect, function (listener) {
-                return listener.call(day, event, day, previousDay);
+                return listener.call(_this.datepicker, event, day, previousDay);
             });
         };
         ViewModel.prototype.triggerOnSelect = function (event, day, previousDay) {
+            var _this = this;
             this.options.triggerEvent(TheDatepicker.EventType.Select, function (listener) {
-                return listener.call(day, event, day, previousDay);
+                return listener.call(_this.datepicker, event, day, previousDay);
             });
         };
         ViewModel.prototype.triggerOnBeforeOpenAndClose = function (event, isOpening) {
@@ -1814,13 +1808,15 @@ var TheDatepicker;
             });
         };
         ViewModel.prototype.triggerOnBeforeMonthChange = function (event, month, previousMonth) {
+            var _this = this;
             return this.options.triggerEvent(TheDatepicker.EventType.BeforeMonthChange, function (listener) {
-                return listener.call(month, event, month, previousMonth);
+                return listener.call(_this.datepicker, event, month, previousMonth);
             });
         };
         ViewModel.prototype.triggerOnMonthChange = function (event, month, previousMonth) {
+            var _this = this;
             this.options.triggerEvent(TheDatepicker.EventType.MonthChange, function (listener) {
-                return listener.call(month, event, month, previousMonth);
+                return listener.call(_this.datepicker, event, month, previousMonth);
             });
         };
         ViewModel.prototype.createDay = function (date) {
@@ -2223,6 +2219,8 @@ var TheDatepicker;
         };
         Template.prototype.updateDayElement = function (viewModel, dayElement, dayButtonElement, dayContentElement, day) {
             dayButtonElement.day = day;
+            var date = day.getDate();
+            dayElement.setAttribute('data-date', date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2));
             dayElement.className = '';
             this.htmlHelper.addClass(dayElement, 'cell');
             if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
@@ -2296,7 +2294,7 @@ var TheDatepicker;
 })(TheDatepicker || (TheDatepicker = {}));
 HTMLElement.prototype.onDatepickerReady = function (callback) {
     if (typeof this.datepicker !== 'undefined') {
-        callback(this.datepicker);
+        callback.call(this, this.datepicker);
         return;
     }
     if (typeof this.datepickerReadyListeners === 'undefined') {

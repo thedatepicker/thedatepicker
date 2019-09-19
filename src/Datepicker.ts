@@ -15,6 +15,8 @@ namespace TheDatepicker {
 	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
 	// todo v IE 9 se spontáně blurne input
 	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
+	// todo toString() = 5+'' :)
+	// todo createDay zviditelnit z venku aby si případně mohl zjistit jaké vlastnosti den má
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

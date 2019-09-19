@@ -184,12 +184,7 @@ namespace TheDatepicker {
 		}
 
 		private formatDayWithLeadingZero(date: Date): string {
-			let day = date.getDate().toString();
-			if (day.length === 1) {
-				day = '0' + day;
-			}
-
-			return day;
+			return ('0' + date.getDate()).slice(-2);
 		}
 
 		private formatDayOfWeekTextual(date: Date): string {
@@ -201,12 +196,7 @@ namespace TheDatepicker {
 		}
 
 		private formatMonthWithLeadingZero(date: Date): string {
-			let month = (date.getMonth() + 1).toString();
-			if (month.length === 1) {
-				month = '0' + month;
-			}
-
-			return month;
+			return ('0' + (date.getMonth() + 1)).slice(-2);
 		}
 
 		private formatMonthTextual(date: Date): string {
