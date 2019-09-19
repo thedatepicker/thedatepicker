@@ -30,14 +30,7 @@ namespace TheDatepicker {
 		}
 
 		public render(): void {
-			if (this.selectedDate !== null) {
-				if (
-					(!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate))
-					&& this.cancelSelection(null)
-				) {
-					return;
-				}
-			} else if (!this.options.isAllowedEmpty() && this.selectDay(null, this.options.getInitialDate(), false)) {
+			if (this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false)) {
 				return;
 			}
 

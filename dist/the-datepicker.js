@@ -400,13 +400,8 @@ var TheDatepicker;
                         this.open();
                         return;
                     }
+                    this.viewModel.selectDay(null, this.options.findPossibleAvailableDate(this.viewModel.selectedDate), false);
                     this.updateDeselectButton();
-                    if (this.viewModel.selectedDate !== null && (!this.options.isDateInValidity(this.viewModel.selectedDate) || !this.options.isDateAvailable(this.viewModel.selectedDate))) {
-                        this.viewModel.cancelSelection(null);
-                    }
-                    else if (this.viewModel.selectedDate == null && !this.options.isAllowedEmpty()) {
-                        this.viewModel.selectDay(null, this.options.getInitialDate(), false);
-                    }
                     return;
                 case InitializationPhase.Untouched:
                     this.preselectFromInput();
@@ -792,7 +787,7 @@ var TheDatepicker;
         }
         Helper.resetTime = function (date) {
             if (date === null) {
-                return;
+                return null;
             }
             date.setHours(0);
             date.setMinutes(0);
@@ -1296,19 +1291,22 @@ var TheDatepicker;
             return correctMonth !== null ? correctMonth : month;
         };
         Options.prototype.getInitialDate = function () {
+            return this.findPossibleAvailableDate(this.initialDate);
+        };
+        Options.prototype.findPossibleAvailableDate = function (date) {
             if (this.isAllowedEmpty()) {
-                return this.initialDate !== null && this.isDateInValidity(this.initialDate) && this.isDateAvailable(this.initialDate)
-                    ? new Date(this.initialDate.getTime())
+                return date !== null && this.isDateInValidity(date) && this.isDateAvailable(date)
+                    ? new Date(date.getTime())
                     : null;
             }
-            var initialDate = this.initialDate !== null ? new Date(this.initialDate.getTime()) : TheDatepicker.Helper.resetTime(new Date());
-            initialDate = this.correctDate(initialDate);
-            if (this.isDateAvailable(initialDate)) {
-                return initialDate;
+            date = date !== null ? new Date(date.getTime()) : TheDatepicker.Helper.resetTime(new Date());
+            date = this.correctDate(date);
+            if (this.isDateAvailable(date)) {
+                return date;
             }
             var maxLoops = 150;
-            var increasedDate = initialDate;
-            var decreasedDate = new Date(initialDate.getTime());
+            var increasedDate = date;
+            var decreasedDate = new Date(date.getTime());
             do {
                 if (increasedDate !== null) {
                     increasedDate.setDate(increasedDate.getDate() + 1);
@@ -1517,13 +1515,7 @@ var TheDatepicker;
             this.template = new TheDatepicker.Template(this.options, new TheDatepicker.HtmlHelper(this.options), datepicker.container, datepicker.input !== null);
         }
         ViewModel.prototype.render = function () {
-            if (this.selectedDate !== null) {
-                if ((!this.options.isDateInValidity(this.selectedDate) || !this.options.isDateAvailable(this.selectedDate))
-                    && this.cancelSelection(null)) {
-                    return;
-                }
-            }
-            else if (!this.options.isAllowedEmpty() && this.selectDay(null, this.options.getInitialDate(), false)) {
+            if (this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false)) {
                 return;
             }
             var correctMonth = this.options.correctMonth(this.getCurrentMonth());

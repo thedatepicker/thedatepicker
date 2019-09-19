@@ -47,7 +47,7 @@ namespace TheDatepicker {
 
 		public static resetTime(date: Date | null): Date | null {
 			if (date === null) {
-				return;
+				return null;
 			}
 
 			date.setHours(0);

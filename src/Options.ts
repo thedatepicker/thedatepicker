@@ -450,22 +450,26 @@ namespace TheDatepicker {
 		}
 
 		public getInitialDate(): Date | null {
+			return this.findPossibleAvailableDate(this.initialDate);
+		}
+
+		public findPossibleAvailableDate(date: Date | null): Date | null {
 			if (this.isAllowedEmpty()) {
-				return this.initialDate !== null && this.isDateInValidity(this.initialDate) && this.isDateAvailable(this.initialDate)
-					? new Date(this.initialDate.getTime())
+				return date !== null && this.isDateInValidity(date) && this.isDateAvailable(date)
+					? new Date(date.getTime())
 					: null;
 			}
 
-			let initialDate = this.initialDate !== null ? new Date(this.initialDate.getTime()) : Helper.resetTime(new Date());
-			initialDate = this.correctDate(initialDate);
+			date = date !== null ? new Date(date.getTime()) : Helper.resetTime(new Date());
+			date = this.correctDate(date);
 
-			if (this.isDateAvailable(initialDate)) {
-				return initialDate;
+			if (this.isDateAvailable(date)) {
+				return date;
 			}
 
 			let maxLoops = 150; // infinite loop prevention
-			let increasedDate: Date | null = initialDate;
-			let decreasedDate: Date | null = new Date(initialDate.getTime());
+			let increasedDate: Date | null = date;
+			let decreasedDate: Date | null = new Date(date.getTime());
 			do {
 				if (increasedDate !== null) {
 					increasedDate.setDate(increasedDate.getDate() + 1);
@@ -495,7 +499,7 @@ namespace TheDatepicker {
 			return this.calculateDateCorrection(date) === null;
 		}
 
-		public correctDate(date: Date): Date {
+		private correctDate(date: Date): Date {
 			const correctDate = this.calculateDateCorrection(date);
 			return correctDate !== null ? correctDate : date;
 		}
@@ -667,7 +671,7 @@ namespace TheDatepicker {
 			return null;
 		}
 
-		public onEventListener(eventType: EventType, listener: AnyEvent) {
+		private onEventListener(eventType: EventType, listener: AnyEvent) {
 			this.listeners[eventType].push(Helper.checkFunction('Event listener', listener, false) as AnyEvent);
 		}
 

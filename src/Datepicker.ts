@@ -17,8 +17,10 @@ namespace TheDatepicker {
 	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
 	// todo createDay zviditelnit z venku aby si případně mohl zjistit jaké vlastnosti den má
 	// todo zřejmě když je isSelectedDayFocused tak po ruční úpravě inputu zmizí inputu focus
-	// todo když není allow empty a změní se availabilita tak že selected date není platné, zůstane tam
 	// todo onOen a onClose přecejen? (společně vedle onOpenAndClose)
+	// todo zvýšit maxLoops?
+	// todo používat a || b místo a !== null ? a : b
+	//      !a místo a === null    ??
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -144,12 +146,8 @@ namespace TheDatepicker {
 						return;
 					}
 
+					this.viewModel.selectDay(null, this.options.findPossibleAvailableDate(this.viewModel.selectedDate), false);
 					this.updateDeselectButton();
-					if (this.viewModel.selectedDate !== null && (!this.options.isDateInValidity(this.viewModel.selectedDate) || !this.options.isDateAvailable(this.viewModel.selectedDate))) {
-						this.viewModel.cancelSelection(null);
-					} else if (this.viewModel.selectedDate == null && !this.options.isAllowedEmpty()) {
-						this.viewModel.selectDay(null, this.options.getInitialDate(), false);
-					}
 
 					return;
 
