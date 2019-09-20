@@ -492,7 +492,7 @@ var TheDatepicker;
             return this.viewModel.selectDay(event, TheDatepicker.Helper.normalizeDate('Date', date, this.options), doUpdateMonth);
         };
         Datepicker.prototype.getSelectedDate = function () {
-            return this.viewModel.selectedDate;
+            return this.viewModel.selectedDate !== null ? new Date(this.viewModel.selectedDate.getTime()) : null;
         };
         Datepicker.prototype.goToMonth = function (month, event) {
             if (event === void 0) { event = null; }

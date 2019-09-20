@@ -255,7 +255,7 @@ namespace TheDatepicker {
 		}
 
 		public getSelectedDate(): Date | null {
-			return this.viewModel.selectedDate;
+			return this.viewModel.selectedDate !== null ? new Date(this.viewModel.selectedDate.getTime()) : null;
 		}
 
 		public goToMonth(month: Date | string, event: Event | null = null): boolean {
