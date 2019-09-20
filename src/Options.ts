@@ -385,7 +385,7 @@ namespace TheDatepicker {
 		// Callback to be called just before the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
-		public onBeforeSelect(listener: SelectEvent) {
+		public onBeforeSelect(listener: SelectEvent): void {
 			this.onEventListener(EventType.BeforeSelect, listener as AnyEvent);
 		}
 
@@ -395,7 +395,7 @@ namespace TheDatepicker {
 
 		// Callback to be called immediately after the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
-		public onSelect(listener: SelectEvent) {
+		public onSelect(listener: SelectEvent): void {
 			this.onEventListener(EventType.Select, listener as AnyEvent);
 		}
 
@@ -406,7 +406,7 @@ namespace TheDatepicker {
 		// Callback to be called just before the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		// If callback returns false, action stops and datepicker will not be opened / closed.
-		public onBeforeOpenAndClose(listener: OpenAndCloseEvent) {
+		public onBeforeOpenAndClose(listener: OpenAndCloseEvent): void {
 			this.onEventListener(EventType.BeforeOpenAndClose, listener as AnyEvent);
 		}
 
@@ -416,7 +416,7 @@ namespace TheDatepicker {
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
-		public onOpenAndClose(listener: OpenAndCloseEvent) {
+		public onOpenAndClose(listener: OpenAndCloseEvent): void {
 			this.onEventListener(EventType.OpenAndClose, listener as AnyEvent);
 		}
 
@@ -427,7 +427,7 @@ namespace TheDatepicker {
 		// Callback to be called just before displayed month is changed.
 		// An Event instance, month (Date instance set to first day of month) which is going to be displayed and month (Date instance) which was displayed before are given on input.
 		// If callback returns false, month will not be changed.
-		public onBeforeMonthChange(listener: MonthChangeEvent) {
+		public onBeforeMonthChange(listener: MonthChangeEvent): void {
 			this.onEventListener(EventType.BeforeMonthChange, listener as AnyEvent);
 		}
 
@@ -437,7 +437,7 @@ namespace TheDatepicker {
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
-		public onMonthChange(listener: MonthChangeEvent) {
+		public onMonthChange(listener: MonthChangeEvent): void {
 			this.onEventListener(EventType.MonthChange, listener as AnyEvent);
 		}
 
