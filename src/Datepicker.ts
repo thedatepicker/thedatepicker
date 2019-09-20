@@ -19,6 +19,7 @@ namespace TheDatepicker {
 	// todo onOen a onClose přecejen? (společně vedle onOpenAndClose)
 	// todo používat a || b místo a !== null ? a : b
 	//      !a místo a === null    ??
+	// todo modifierClasses aby fungovaly i pro external container?
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
@@ -146,6 +147,7 @@ namespace TheDatepicker {
 
 					this.viewModel.selectPossibleDate();
 					this.updateDeselectButton();
+					this.updateContainer();
 
 					return;
 
@@ -293,15 +295,29 @@ namespace TheDatepicker {
 				: '';
 
 			this.updateDeselectButton();
+			this.updateContainer();
 		}
 
 		private createContainer(): HTMLElement {
 			const container = this.document.createElement('div');
-			container.className = this.options.getClassesPrefix() + 'container';
+			container.className = this.getContainerClassName();
 			container.style.position = 'absolute';
 			container.style.zIndex = '99';
 
 			return container;
+		}
+
+		private updateContainer(): void {
+			if (this.isContainerExternal) {
+				return;
+			}
+			this.container.className = this.getContainerClassName();
+			// todo je třeba zde určit zda je --over
+		}
+
+		private getContainerClassName(): string {
+			const extraClasses = this.options.getModifierClasses().join(' ')
+			return this.options.getClassesPrefix() + 'container' + (extraClasses !== '' ? ' ' + extraClasses : '');
 		}
 
 		private createDeselectElement(): HTMLElement | null {
@@ -437,13 +453,10 @@ namespace TheDatepicker {
 			const inputBottom = inputTop + this.input.offsetHeight;
 			const containerHeight = this.container.offsetHeight;
 
-			let locationClass = '';
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
 			if (locateOver) {
-				locationClass = ' ' + this.options.getClassesPrefix() + 'container--over';
+				this.container.className = + ' ' + this.options.getClassesPrefix() + 'container--over';
 			}
-
-			this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
 
 			const childNodes = this.container.childNodes;
 			if (childNodes.length > 0) {

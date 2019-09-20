@@ -74,6 +74,7 @@ namespace TheDatepicker {
 		private resetHtml = '&olarr;';
 		private deselectHtml = '&times;';
 		private positionFixing = true;
+		private modifierClasses: string[] = [];
 		private today: Date | null = null;
 		private listeners: Listeners = {
 			beforeSelect: [],
@@ -122,6 +123,7 @@ namespace TheDatepicker {
 			options.resetHtml = this.resetHtml;
 			options.deselectHtml = this.deselectHtml;
 			options.positionFixing = this.positionFixing;
+			options.modifierClasses = this.modifierClasses.slice(0);
 			options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
 			options.listeners.select = this.listeners.select.slice(0);
 			options.listeners.beforeOpenAndClose = this.listeners.beforeOpenAndClose.slice(0);
@@ -367,6 +369,28 @@ namespace TheDatepicker {
 		// defaults to true
 		public setPositionFixing(value: boolean): void {
 			this.positionFixing = !!value;
+		}
+
+		// Sets extra CSS class for datepicker container.
+		// Works only when there is no custom container.
+		// Use removeModifierClass to remove previously added class or removeAllModifierClasses to remove all previously added.
+		public addModifierClass(name: string): void {
+			this.modifierClasses.push(Helper.checkString('Modifier class', name, true));
+		}
+
+		public removeModifierClass(name: string | null = null): void {
+			name = Helper.checkString('Modifier class', name, true);
+			const newClasses = [];
+			for (let index = 0; index < this.modifierClasses.length; index++) {
+				if (this.modifierClasses[index] !== name) {
+					newClasses.push(name);
+				}
+			}
+			this.modifierClasses = newClasses;
+		}
+
+		public removeAllModifierClasses(): void {
+			this.modifierClasses = [];
 		}
 
 		// Sets mock/fake today.
@@ -660,6 +684,10 @@ namespace TheDatepicker {
 
 		public isPositionFixingEnabled(): boolean {
 			return this.hideOnBlur && this.positionFixing;
+		}
+
+		public getModifierClasses(): string[] {
+			return this.modifierClasses;
 		}
 
 		public getToday(): Date {
