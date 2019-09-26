@@ -484,6 +484,10 @@ namespace TheDatepicker {
 				return false;
 			}
 
+			if (Datepicker.activeViewModel !== activeViewModel) {
+				return true;
+			}
+
 			datepicker.fixPosition();
 
 			Datepicker.activeViewModel = viewModel;

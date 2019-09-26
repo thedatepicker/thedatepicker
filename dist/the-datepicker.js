@@ -690,6 +690,9 @@ var TheDatepicker;
             if (!viewModel.setActive(event, true)) {
                 return false;
             }
+            if (Datepicker.activeViewModel !== activeViewModel) {
+                return true;
+            }
             datepicker.fixPosition();
             Datepicker.activeViewModel = viewModel;
             return true;
