@@ -461,13 +461,18 @@ namespace TheDatepicker {
 
 		private static activateViewModel(event: Event | null, datepicker: Datepicker | null): boolean {
 			const viewModel = datepicker !== null ? datepicker.viewModel : null;
+			const activeViewModel = Datepicker.activeViewModel;
 
-			if (Datepicker.activeViewModel === viewModel) {
+			if (activeViewModel === viewModel) {
 				return true;
 			}
 
-			if (Datepicker.activeViewModel !== null && !Datepicker.activeViewModel.setActive(event, false)) {
+			if (activeViewModel !== null && !activeViewModel.setActive(event, false)) {
 				return false;
+			}
+
+			if (Datepicker.activeViewModel !== activeViewModel) {
+				return true;
 			}
 
 			if (viewModel === null) {

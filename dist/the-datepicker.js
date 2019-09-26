@@ -673,11 +673,15 @@ var TheDatepicker;
         };
         Datepicker.activateViewModel = function (event, datepicker) {
             var viewModel = datepicker !== null ? datepicker.viewModel : null;
-            if (Datepicker.activeViewModel === viewModel) {
+            var activeViewModel = Datepicker.activeViewModel;
+            if (activeViewModel === viewModel) {
                 return true;
             }
-            if (Datepicker.activeViewModel !== null && !Datepicker.activeViewModel.setActive(event, false)) {
+            if (activeViewModel !== null && !activeViewModel.setActive(event, false)) {
                 return false;
+            }
+            if (Datepicker.activeViewModel !== activeViewModel) {
+                return true;
             }
             if (viewModel === null) {
                 Datepicker.activeViewModel = null;
