@@ -19,6 +19,8 @@ namespace TheDatepicker {
 	// todo onOen a onClose přecejen? (společně vedle onOpenAndClose)
 	// todo používat a || b místo a !== null ? a : b
 	//      !a místo a === null    ??
+	// todo lepší parser datumu ("1. January -30 years")
+	// todo multiselect, rangeselect, multirangeselect
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
