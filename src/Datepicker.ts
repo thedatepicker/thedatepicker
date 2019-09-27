@@ -25,21 +25,30 @@ namespace TheDatepicker {
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
 		datepicker?: Datepicker;
-		datepickerReadyListeners?: ((datepicker: Datepicker) => void)[]
 
 	}
 
 	interface HTMLDatepickerContainerElement extends HTMLElement {
 
 		datepicker?: Datepicker;
-		datepickerReadyListeners?: ((datepicker: Datepicker) => void)[]
 		onfocusin?: (event: FocusEvent) => void;
 
 	}
 
+	type HTMLDatepickerElement = HTMLDatepickerInputElement | HTMLDatepickerContainerElement;
+
 	interface DocumentInterface extends Document {
 
 		onfocusin?: (event: FocusEvent) => void;
+
+	}
+
+	type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
+
+	interface DatepickerReadyListener {
+
+		element: HTMLDatepickerElement;
+		callback: ReadyListener;
 
 	}
 
@@ -68,6 +77,7 @@ namespace TheDatepicker {
 		private listenerRemovers: (() => void)[] = [];
 		private deselectElement: HTMLSpanElement | null = null;
 
+		private static readyListeners: DatepickerReadyListener[] = [];
 		private static areGlobalListenersInitialized = false;
 		private static activeViewModel: ViewModel | null = null;
 		private static hasClickedViewModel = false;
@@ -297,6 +307,18 @@ namespace TheDatepicker {
 			this.updateDeselectButton();
 		}
 
+		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener): void {
+			if (typeof element.datepicker !== 'undefined' && element.datepicker instanceof Datepicker) {
+				element.datepicker.triggerReadyListener(callback, element);
+				return;
+			}
+
+			Datepicker.readyListeners.push({
+				element,
+				callback
+			});
+		};
+
 		private createContainer(): HTMLElement {
 			const container = this.document.createElement('div');
 			container.className = this.options.getClassesPrefix() + 'container';
@@ -413,12 +435,18 @@ namespace TheDatepicker {
 			}
 		}
 
-		private triggerReady(element: HTMLDatepickerInputElement | HTMLDatepickerContainerElement): void {
-			if (typeof element.datepickerReadyListeners !== 'undefined') {
-				for (let index = 0; index < element.datepickerReadyListeners.length; index++) {
-					element.datepickerReadyListeners[index](this);
+		private triggerReady(element: HTMLDatepickerElement): void {
+			for (let index = Datepicker.readyListeners.length - 1; index >= 0; index--) {
+				const listener = Datepicker.readyListeners[index];
+				if (listener.element === element) {
+					this.triggerReadyListener(listener.callback, element);
+					Datepicker.readyListeners.splice(index, 1);
 				}
 			}
+		}
+
+		private triggerReadyListener(callback: ReadyListener, element: HTMLDatepickerElement): void {
+			callback.call(element, this, element);
 		}
 
 		private fixPosition(): void {
@@ -498,4 +526,7 @@ namespace TheDatepicker {
 		}
 
 	}
+
+	export const onDatepickerReady = Datepicker.onDatepickerReady;
+
 }

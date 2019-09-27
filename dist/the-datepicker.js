@@ -526,6 +526,17 @@ var TheDatepicker;
                 : '';
             this.updateDeselectButton();
         };
+        Datepicker.onDatepickerReady = function (element, callback) {
+            if (typeof element.datepicker !== 'undefined' && element.datepicker instanceof Datepicker) {
+                element.datepicker.triggerReadyListener(callback, element);
+                return;
+            }
+            Datepicker.readyListeners.push({
+                element: element,
+                callback: callback
+            });
+        };
+        ;
         Datepicker.prototype.createContainer = function () {
             var container = this.document.createElement('div');
             container.className = this.options.getClassesPrefix() + 'container';
@@ -630,11 +641,16 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.triggerReady = function (element) {
-            if (typeof element.datepickerReadyListeners !== 'undefined') {
-                for (var index = 0; index < element.datepickerReadyListeners.length; index++) {
-                    element.datepickerReadyListeners[index](this);
+            for (var index = Datepicker.readyListeners.length - 1; index >= 0; index--) {
+                var listener = Datepicker.readyListeners[index];
+                if (listener.element === element) {
+                    this.triggerReadyListener(listener.callback, element);
+                    Datepicker.readyListeners.splice(index, 1);
                 }
             }
+        };
+        Datepicker.prototype.triggerReadyListener = function (callback, element) {
+            callback.call(element, this, element);
         };
         Datepicker.prototype.fixPosition = function () {
             if (this.isContainerExternal || !this.options.isPositionFixingEnabled()) {
@@ -697,12 +713,14 @@ var TheDatepicker;
             Datepicker.activeViewModel = viewModel;
             return true;
         };
+        Datepicker.readyListeners = [];
         Datepicker.areGlobalListenersInitialized = false;
         Datepicker.activeViewModel = null;
         Datepicker.hasClickedViewModel = false;
         return Datepicker;
     }());
     TheDatepicker.Datepicker = Datepicker;
+    TheDatepicker.onDatepickerReady = Datepicker.onDatepickerReady;
 })(TheDatepicker || (TheDatepicker = {}));
 var TheDatepicker;
 (function (TheDatepicker) {
@@ -2335,13 +2353,3 @@ var TheDatepicker;
     }());
     TheDatepicker.Template = Template;
 })(TheDatepicker || (TheDatepicker = {}));
-HTMLElement.prototype.onDatepickerReady = function (callback) {
-    if (typeof this.datepicker !== 'undefined') {
-        callback.call(this, this.datepicker);
-        return;
-    }
-    if (typeof this.datepickerReadyListeners === 'undefined') {
-        this.datepickerReadyListeners = [];
-    }
-    this.datepickerReadyListeners.push(callback);
-};
