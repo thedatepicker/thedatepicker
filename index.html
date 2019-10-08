@@ -92,7 +92,7 @@
 					<label>datepicker.options.setMaxDate(<input type="text" size="15" id="maxDate">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setYearDropdownItemsLimit(<input type="text" size="15" id="yearDropdownItemsLimit" value="200">);</label>
+					<label>datepicker.options.setDropdownItemsLimit(<input type="text" size="15" id="dropdownItemsLimit" value="200">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setDaysOutOfMonthVisible(<input type="checkbox" id="daysOutOfMonthVisible">);</label>
@@ -123,6 +123,9 @@
 				</li>
 				<li>
 					<label>datepicker.options.setYearAsDropdown(<input type="checkbox" id="yearAsDropdown" checked="checked">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setMonthAndYearSeparated(<input type="checkbox" id="monthAndYearSeparated" checked="checked">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
@@ -367,10 +370,10 @@
 				});
 			};
 
-			var yearDropdownItemsLimitInput = document.getElementById('yearDropdownItemsLimit');
-			yearDropdownItemsLimitInput.onchange = function () {
-				updateSetting(yearDropdownItemsLimitInput, function () {
-					datepicker.options.setYearDropdownItemsLimit(yearDropdownItemsLimitInput.value !== '' ? yearDropdownItemsLimitInput.value : null);
+			var dropdownItemsLimitInput = document.getElementById('dropdownItemsLimit');
+			dropdownItemsLimitInput.onchange = function () {
+				updateSetting(dropdownItemsLimitInput, function () {
+					datepicker.options.setDropdownItemsLimit(dropdownItemsLimitInput.value !== '' ? dropdownItemsLimitInput.value : null);
 				});
 			};
 
@@ -441,6 +444,13 @@
 			yearAsDropdownInput.onchange = function () {
 				updateSetting(yearAsDropdownInput, function () {
 					datepicker.options.setYearAsDropdown(yearAsDropdownInput.checked);
+				});
+			};
+
+			var monthAndYearSeparatedInput = document.getElementById('monthAndYearSeparated');
+			monthAndYearSeparatedInput.onchange = function () {
+				updateSetting(monthAndYearSeparatedInput, function () {
+					datepicker.options.setMonthAndYearSeparated(monthAndYearSeparatedInput.checked);
 				});
 			};
 

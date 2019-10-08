@@ -1048,7 +1048,7 @@ var TheDatepicker;
                 input.appendChild(this.createSelectOption(options[index].value, options[index].label));
             }
             input.onchange = function (event) {
-                onChange(event || window.event, parseInt(input.value, 10));
+                onChange(event || window.event, input.value);
             };
             input.onkeydown = function (event) {
                 event = event || window.event;
@@ -1058,7 +1058,7 @@ var TheDatepicker;
         };
         HtmlHelper.prototype.createSelectOption = function (value, label) {
             var option = this.document.createElement('option');
-            option.value = value + '';
+            option.value = value;
             option.innerText = label;
             return option;
         };
@@ -1114,10 +1114,11 @@ var TheDatepicker;
             this.showResetButton = false;
             this.monthAsDropdown = true;
             this.yearAsDropdown = true;
+            this.monthAndYearSeparated = true;
             this.classesPrefix = 'the-datepicker__';
             this.showCloseButton = true;
             this.title = '';
-            this.yearDropdownItemsLimit = 200;
+            this.dropdownItemsLimit = 200;
             this.goBackHtml = '&lt;';
             this.goForwardHtml = '&gt;';
             this.closeHtml = '&times;';
@@ -1158,10 +1159,11 @@ var TheDatepicker;
             options.showResetButton = this.showResetButton;
             options.monthAsDropdown = this.monthAsDropdown;
             options.yearAsDropdown = this.yearAsDropdown;
+            options.monthAndYearSeparated = this.monthAndYearSeparated;
             options.classesPrefix = this.classesPrefix;
             options.showCloseButton = this.showCloseButton;
             options.title = this.title;
-            options.yearDropdownItemsLimit = this.yearDropdownItemsLimit;
+            options.dropdownItemsLimit = this.dropdownItemsLimit;
             options.goBackHtml = this.goBackHtml;
             options.goForwardHtml = this.goForwardHtml;
             options.closeHtml = this.closeHtml;
@@ -1239,6 +1241,9 @@ var TheDatepicker;
         Options.prototype.setYearAsDropdown = function (value) {
             this.yearAsDropdown = !!value;
         };
+        Options.prototype.setMonthAndYearSeparated = function (value) {
+            this.monthAndYearSeparated = !!value;
+        };
         Options.prototype.setClassesPrefix = function (prefix) {
             this.classesPrefix = TheDatepicker.Helper.checkString('Prefix', prefix);
         };
@@ -1248,8 +1253,8 @@ var TheDatepicker;
         Options.prototype.setTitle = function (title) {
             this.title = TheDatepicker.Helper.checkString('Title', title);
         };
-        Options.prototype.setYearDropdownItemsLimit = function (limit) {
-            this.yearDropdownItemsLimit = TheDatepicker.Helper.checkNumber('Items limit', limit, 1);
+        Options.prototype.setDropdownItemsLimit = function (limit) {
+            this.dropdownItemsLimit = TheDatepicker.Helper.checkNumber('Items limit', limit, 1);
         };
         Options.prototype.setGoBackHtml = function (html) {
             this.goBackHtml = TheDatepicker.Helper.checkString('Html', html);
@@ -1411,6 +1416,9 @@ var TheDatepicker;
         Options.prototype.isYearAsDropdown = function () {
             return this.yearAsDropdown;
         };
+        Options.prototype.isMonthAndYearSeparated = function () {
+            return this.monthAndYearSeparated;
+        };
         Options.prototype.getClassesPrefix = function () {
             return this.classesPrefix;
         };
@@ -1432,8 +1440,8 @@ var TheDatepicker;
         Options.prototype.getMaxMonth = function () {
             return this.maxMonth;
         };
-        Options.prototype.getYearDropdownItemsLimit = function () {
-            return this.yearDropdownItemsLimit;
+        Options.prototype.getDropdownItemsLimit = function () {
+            return this.dropdownItemsLimit;
         };
         Options.prototype.isDateAvailable = function (date) {
             if (this.dateAvailabilityResolver !== null) {
@@ -1935,6 +1943,8 @@ var TheDatepicker;
             this.monthElement = null;
             this.yearSelect = null;
             this.yearElement = null;
+            this.monthAndYearSelect = null;
+            this.monthAndYearElement = null;
             this.weeksElements = [];
             this.daysElements = [];
             this.daysButtonsElements = [];
@@ -1957,6 +1967,7 @@ var TheDatepicker;
             this.updateGoForwardElement(viewModel);
             this.updateMonthElement(viewModel);
             this.updateYearElement(viewModel);
+            this.updateMonthAndYearElement(viewModel);
             this.updateWeeksElements(viewModel);
         };
         Template.prototype.createSkeleton = function (viewModel) {
@@ -1988,8 +1999,13 @@ var TheDatepicker;
             navigation.appendChild(this.createGoBackElement(viewModel));
             var state = this.htmlHelper.createDiv('state');
             navigation.appendChild(state);
-            state.appendChild(this.createMonthElement(viewModel));
-            state.appendChild(this.createYearElement(viewModel));
+            if (this.options.isMonthAndYearSeparated()) {
+                state.appendChild(this.createMonthElement(viewModel));
+                state.appendChild(this.createYearElement(viewModel));
+            }
+            else {
+                state.appendChild(this.createMonthAndYearElement(viewModel));
+            }
             navigation.appendChild(this.createGoForwardElement(viewModel));
             this.controlElement = control;
             return header;
@@ -2079,14 +2095,14 @@ var TheDatepicker;
             var options = [];
             for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
                 options.push({
-                    value: monthNumber,
+                    value: monthNumber + '',
                     label: this.options.translator.translateMonth(monthNumber)
                 });
             }
             var selectElement = this.htmlHelper.createSelectInput(options, function (event, monthNumber) {
                 var currentMonth = viewModel.getCurrentMonth();
                 var newMonth = new Date(currentMonth.getTime());
-                newMonth.setMonth(monthNumber);
+                newMonth.setMonth(parseInt(monthNumber, 10));
                 if (!viewModel.goToMonth(event, newMonth)) {
                     _this.monthSelect.value = currentMonth.getMonth() + '';
                 }
@@ -2100,6 +2116,9 @@ var TheDatepicker;
             return monthElement;
         };
         Template.prototype.updateMonthElement = function (viewModel) {
+            if (this.monthElement === null) {
+                return;
+            }
             var currentMonth = viewModel.getCurrentMonth().getMonth();
             this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
             if (!this.options.isMonthAsDropdown()) {
@@ -2126,7 +2145,7 @@ var TheDatepicker;
             var selectElement = this.htmlHelper.createSelectInput([], function (event, year) {
                 var currentMonth = viewModel.getCurrentMonth();
                 var newMonth = new Date(currentMonth.getTime());
-                newMonth.setFullYear(year);
+                newMonth.setFullYear(parseInt(year, 10));
                 var minMonth = _this.options.getMinMonth();
                 var maxMonth = _this.options.getMaxMonth();
                 if (minMonth !== null && newMonth.getTime() < minMonth.getTime()) {
@@ -2148,6 +2167,9 @@ var TheDatepicker;
             return yearElement;
         };
         Template.prototype.updateYearElement = function (viewModel) {
+            if (this.yearElement === null) {
+                return;
+            }
             var currentYear = viewModel.getCurrentMonth().getFullYear();
             this.yearElement.innerText = currentYear + '';
             if (!this.options.isYearAsDropdown()) {
@@ -2159,56 +2181,159 @@ var TheDatepicker;
             var maxDate = this.options.getMaxDate();
             var minYear = minDate !== null ? minDate.getFullYear() : null;
             var maxYear = maxDate !== null ? maxDate.getFullYear() : null;
-            var limit = this.options.getYearDropdownItemsLimit() - 1;
-            var maxAppend = Math.ceil(limit / 2);
-            var from = currentYear - (limit - maxAppend);
-            var to = currentYear + maxAppend;
-            if (minYear !== null && from < minYear) {
-                to += minYear - from;
-                if (maxYear !== null && to > maxYear) {
-                    to = maxYear;
-                }
-                from = minYear;
-            }
-            else if (maxYear !== null && to > maxYear) {
-                from -= to - maxYear;
-                if (minYear !== null && from < minYear) {
-                    from = minYear;
-                }
-                to = maxYear;
-            }
+            var range = this.calculateDropdownRange(currentYear, minYear, maxYear);
             var options = this.yearSelect.getElementsByTagName('option');
-            var firstOption = options.length > 0 ? parseInt(options[0].value, 10) : null;
-            var lastOption = options.length > 0 ? parseInt(options[options.length - 1].value, 10) : null;
+            var diff = this.calculateDropdownDiff(options, range, function (value) {
+                return parseInt(value, 10);
+            });
+            for (var index = 0; index < diff.remove.length; index++) {
+                this.yearSelect.removeChild(diff.remove[index]);
+            }
+            for (var index = diff.prepend.length - 1; index >= 0; index--) {
+                this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(diff.prepend[index] + '', diff.prepend[index] + ''), this.yearSelect.firstChild);
+            }
+            for (var index = 0; index < diff.append.length; index++) {
+                this.yearSelect.appendChild(this.htmlHelper.createSelectOption(diff.append[index] + '', diff.append[index] + ''));
+            }
+            this.yearSelect.value = currentYear + '';
+            this.yearSelect.style.display = range.from < range.to ? '' : 'none';
+            this.yearElement.style.display = range.from < range.to ? 'none' : '';
+        };
+        Template.prototype.createMonthAndYearElement = function (viewModel) {
+            var _this = this;
+            var monthAndYear = this.htmlHelper.createDiv('month-year');
+            var selectElement = this.htmlHelper.createSelectInput([], function (event, value) {
+                var currentMonth = viewModel.getCurrentMonth();
+                var newMonth = new Date(currentMonth.getTime());
+                var data = _this.parseMonthAndYearOptionValue(value);
+                newMonth.setFullYear(data.year);
+                newMonth.setMonth(data.month);
+                if (!viewModel.goToMonth(event, newMonth)) {
+                    _this.monthAndYearSelect.value = _this.getMonthAndYearOptionValue({
+                        month: currentMonth.getMonth(),
+                        year: currentMonth.getFullYear()
+                    });
+                }
+            });
+            var monthAndYearContent = this.htmlHelper.createSpan();
+            this.monthAndYearElement = monthAndYearContent;
+            this.monthAndYearSelect = selectElement;
+            monthAndYear.appendChild(monthAndYearContent);
+            monthAndYear.appendChild(selectElement);
+            return monthAndYear;
+        };
+        Template.prototype.updateMonthAndYearElement = function (viewModel) {
+            var _this = this;
+            if (this.monthAndYearElement === null) {
+                return;
+            }
+            var currentMonth = viewModel.getCurrentMonth();
+            var currentData = {
+                month: currentMonth.getMonth(),
+                year: currentMonth.getFullYear()
+            };
+            var currentIndex = this.calculateMonthAndYearIndex(currentData);
+            this.monthAndYearElement.innerText = this.translateMonthAndYear(currentData);
+            if (!this.options.isYearAsDropdown() || !this.options.isMonthAsDropdown()) {
+                this.monthAndYearSelect.style.display = 'none';
+                this.monthAndYearElement.style.display = '';
+                return;
+            }
+            var minDate = this.options.getMinDate();
+            var maxDate = this.options.getMaxDate();
+            var minIndex = minDate !== null ? minDate.getFullYear() * 12 + minDate.getMonth() : null;
+            var maxIndex = maxDate !== null ? maxDate.getFullYear() * 12 + maxDate.getMonth() : null;
+            var range = this.calculateDropdownRange(currentIndex, minIndex, maxIndex);
+            var options = this.monthAndYearSelect.getElementsByTagName('option');
+            var diff = this.calculateDropdownDiff(options, range, function (value) {
+                return _this.calculateMonthAndYearIndex(_this.parseMonthAndYearOptionValue(value));
+            });
+            for (var index = 0; index < diff.remove.length; index++) {
+                this.monthAndYearSelect.removeChild(diff.remove[index]);
+            }
+            for (var index = diff.prepend.length - 1; index >= 0; index--) {
+                var data = this.getMonthAndYearByIndex(diff.prepend[index]);
+                this.monthAndYearSelect.insertBefore(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)), this.monthAndYearSelect.firstChild);
+            }
+            for (var index = 0; index < diff.append.length; index++) {
+                var data = this.getMonthAndYearByIndex(diff.append[index]);
+                this.monthAndYearSelect.appendChild(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)));
+            }
+            this.monthAndYearSelect.value = this.getMonthAndYearOptionValue(currentData);
+            this.monthAndYearSelect.style.display = range.from < range.to ? '' : 'none';
+            this.monthAndYearElement.style.display = range.from < range.to ? 'none' : '';
+        };
+        Template.prototype.translateMonthAndYear = function (data) {
+            return this.options.translator.translateMonth(data.month) + ' ' + data.year;
+        };
+        Template.prototype.calculateMonthAndYearIndex = function (data) {
+            return data.year * 12 + data.month;
+        };
+        Template.prototype.getMonthAndYearByIndex = function (index) {
+            return {
+                year: Math.floor(index / 12),
+                month: index % 12
+            };
+        };
+        Template.prototype.getMonthAndYearOptionValue = function (data) {
+            return data.year + '-' + data.month;
+        };
+        Template.prototype.parseMonthAndYearOptionValue = function (value) {
+            var parts = value.split('-');
+            return {
+                month: parseInt(parts[1], 10),
+                year: parseInt(parts[0], 10)
+            };
+        };
+        Template.prototype.calculateDropdownRange = function (current, min, max) {
+            var limit = this.options.getDropdownItemsLimit() - 1;
+            var maxAppend = Math.ceil(limit / 2);
+            var from = current - (limit - maxAppend);
+            var to = current + maxAppend;
+            if (min !== null && from < min) {
+                to += min - from;
+                if (max !== null && to > max) {
+                    to = max;
+                }
+                from = min;
+            }
+            else if (max !== null && to > max) {
+                from -= to - max;
+                if (min !== null && from < min) {
+                    from = min;
+                }
+                to = max;
+            }
+            return {
+                from: from,
+                to: to
+            };
+        };
+        Template.prototype.calculateDropdownDiff = function (options, newRange, getNumerical) {
+            var firstOption = options.length > 0 ? getNumerical(options[0].value) : null;
+            var lastOption = options.length > 0 ? getNumerical(options[options.length - 1].value) : null;
             var prepend = [];
             var append = [];
             var remove = [];
-            for (var year = from; year <= to; year++) {
-                if (firstOption === null || year < firstOption) {
-                    prepend.push(year);
+            for (var value = newRange.from; value <= newRange.to; value++) {
+                if (firstOption === null || value < firstOption) {
+                    prepend.push(value);
                 }
-                else if (year > lastOption) {
-                    append.push(year);
+                else if (value > lastOption) {
+                    append.push(value);
                 }
             }
             for (var index = 0; index < options.length; index++) {
-                var year = parseInt(options[index].value, 10);
-                if (year < from || year > to) {
+                var value = getNumerical(options[index].value);
+                if (value < newRange.from || value > newRange.to) {
                     remove.push(options[index]);
                 }
             }
-            for (var index = 0; index < remove.length; index++) {
-                this.yearSelect.removeChild(remove[index]);
-            }
-            for (var index = prepend.length - 1; index >= 0; index--) {
-                this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(prepend[index], prepend[index] + ''), this.yearSelect.firstChild);
-            }
-            for (var index = 0; index < append.length; index++) {
-                this.yearSelect.appendChild(this.htmlHelper.createSelectOption(append[index], append[index] + ''));
-            }
-            this.yearSelect.value = currentYear + '';
-            this.yearSelect.style.display = from < to ? '' : 'none';
-            this.yearElement.style.display = from < to ? 'none' : '';
+            return {
+                prepend: prepend,
+                append: append,
+                remove: remove
+            };
         };
         Template.prototype.createTableElement = function (viewModel) {
             var tableHeader = this.createTableHeaderElement(viewModel);

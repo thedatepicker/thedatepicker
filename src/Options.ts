@@ -64,10 +64,11 @@ namespace TheDatepicker {
 		private showResetButton = false;
 		private monthAsDropdown = true;
 		private yearAsDropdown = true;
+		private monthAndYearSeparated = true;
 		private classesPrefix = 'the-datepicker__';
 		private showCloseButton = true;
 		private title = '';
-		private yearDropdownItemsLimit = 200;
+		private dropdownItemsLimit = 200;
 		private goBackHtml = '&lt;';
 		private goForwardHtml = '&gt;';
 		private closeHtml = '&times;';
@@ -112,10 +113,11 @@ namespace TheDatepicker {
 			options.showResetButton = this.showResetButton;
 			options.monthAsDropdown = this.monthAsDropdown;
 			options.yearAsDropdown = this.yearAsDropdown;
+			options.monthAndYearSeparated = this.monthAndYearSeparated;
 			options.classesPrefix = this.classesPrefix;
 			options.showCloseButton = this.showCloseButton;
 			options.title = this.title;
-			options.yearDropdownItemsLimit = this.yearDropdownItemsLimit;
+			options.dropdownItemsLimit = this.dropdownItemsLimit;
 			options.goBackHtml = this.goBackHtml;
 			options.goForwardHtml = this.goForwardHtml;
 			options.closeHtml = this.closeHtml;
@@ -305,6 +307,13 @@ namespace TheDatepicker {
 			this.yearAsDropdown = !!value;
 		}
 
+		// Setting to true will render month and year in header each in separate element.
+		// It will be rendered as a dropdown only when both settings MonthAsDropdown and YearAsDropdown are set to true.
+		// defaults to true
+		public setMonthAndYearSeparated(value: boolean): void {
+			this.monthAndYearSeparated = !!value;
+		}
+
 		// CSS classes of datepicker elements will be prefixed with given string.
 		// defaults to "the-datepicker__"
 		public setClassesPrefix(prefix: string): void {
@@ -325,11 +334,10 @@ namespace TheDatepicker {
 			this.title = Helper.checkString('Title', title);
 		}
 
-		// Limit of number of items in year dropdown list.
-		// Works only when the setting YearAsDropdown is set to true.
+		// Limit of number of items in dropdown list.
 		// Default is 200.
-		public setYearDropdownItemsLimit(limit: number): void {
-			this.yearDropdownItemsLimit = Helper.checkNumber('Items limit', limit, 1);
+		public setDropdownItemsLimit(limit: number): void {
+			this.dropdownItemsLimit = Helper.checkNumber('Items limit', limit, 1);
 		}
 
 		// Sets html for go back button.
@@ -567,6 +575,10 @@ namespace TheDatepicker {
 			return this.yearAsDropdown;
 		}
 
+		public isMonthAndYearSeparated(): boolean {
+			return this.monthAndYearSeparated;
+		}
+
 		public getClassesPrefix(): string {
 			return this.classesPrefix;
 		}
@@ -595,8 +607,8 @@ namespace TheDatepicker {
 			return this.maxMonth;
 		}
 
-		public getYearDropdownItemsLimit(): number {
-			return this.yearDropdownItemsLimit;
+		public getDropdownItemsLimit(): number {
+			return this.dropdownItemsLimit;
 		}
 
 		public isDateAvailable(date: Date): boolean {
