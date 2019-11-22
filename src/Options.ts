@@ -25,23 +25,34 @@ namespace TheDatepicker {
 	type EventCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
-		beforeSelect: SelectEvent[]
-		select: SelectEvent[]
-		beforeOpenAndClose: OpenAndCloseEvent[]
-		openAndClose: OpenAndCloseEvent[]
-		monthChange: MonthChangeEvent[]
-		beforeMonthChange: MonthChangeEvent[]
+		beforeSelect: SelectEvent[];
+		select: SelectEvent[];
+		beforeOpenAndClose: OpenAndCloseEvent[];
+		openAndClose: OpenAndCloseEvent[];
+		monthChange: MonthChangeEvent[];
+		beforeMonthChange: MonthChangeEvent[];
 	}
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
 
 	type CellContentResolver = (day: Day) => string;
 
+	type CellContentStructureResolverInit = () => HTMLElement;
+
+	type CellContentStructureResolverUpdate = (element: HTMLElement, day: Day) => void;
+
+	interface CellContentStructureResolver {
+		init: CellContentStructureResolverInit;
+		update: CellContentStructureResolverUpdate;
+	}
+
 	type CellClassesResolver = (day: Day) => string[];
 
 	export class Options {
 
 		public readonly translator: Translator;
+
+		private readonly document: Document;
 
 		private hideOnBlur = true;
 		private hideOnSelect = true;
@@ -54,6 +65,7 @@ namespace TheDatepicker {
 		private firstDayOfWeek = DayOfWeek.Monday;
 		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
 		private cellContentResolver: CellContentResolver | null = null;
+		private cellContentStructureResolver: CellContentStructureResolver | null = null;
 		private cellClassesResolver: CellClassesResolver | null = null;
 		private inputFormat = 'j. n. Y';
 		private daysOutOfMonthVisible = false;
@@ -87,6 +99,7 @@ namespace TheDatepicker {
 
 		public constructor(translator: Translator | null = null) {
 			this.translator = translator !== null ? translator : new Translator();
+			this.document = document;
 		}
 
 		public clone(): Options {
@@ -103,6 +116,7 @@ namespace TheDatepicker {
 			options.firstDayOfWeek = this.firstDayOfWeek;
 			options.dateAvailabilityResolver = this.dateAvailabilityResolver;
 			options.cellContentResolver = this.cellContentResolver;
+			options.cellContentStructureResolver = this.cellContentStructureResolver;
 			options.cellClassesResolver = this.cellClassesResolver;
 			options.inputFormat = this.inputFormat;
 			options.daysOutOfMonthVisible = this.daysOutOfMonthVisible;
@@ -230,6 +244,21 @@ namespace TheDatepicker {
 		// Default callback returns day number.
 		public setCellContentResolver(resolver: CellContentResolver | null): void {
 			this.cellContentResolver = Helper.checkFunction('Resolver', resolver) as (CellContentResolver | null);
+		}
+
+		// Accepts two callbacks,
+		// or null for default behavior.
+		// First callback (init) has no arguments and returns HTMLElement instance representing empty html structure of day cell.
+		// Second callback (update) gets an instance of HTMLElement created by first callback, and an instance of Day. It should update html structure by given day. Returns void.
+		// Default init creates span element and default update fills it with day number.
+		public setCellContentStructureResolver(init: CellContentStructureResolverInit | null, update: CellContentStructureResolverUpdate | null = null): void {
+			init = Helper.checkFunction('Resolver (init)', init) as (CellContentStructureResolverInit | null);
+			update = Helper.checkFunction('Resolver (update)', update) as (CellContentStructureResolverUpdate | null);
+
+			this.cellContentStructureResolver = init === null ? null : {
+				init,
+				update,
+			};
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
@@ -625,6 +654,22 @@ namespace TheDatepicker {
 			}
 
 			return day.dayNumber + '';
+		}
+
+		public getCellStructure(): HTMLElement {
+			if (this.cellContentStructureResolver !== null) {
+				return this.cellContentStructureResolver.init();
+			}
+
+			return this.document.createElement('span');
+		}
+
+		public updateCellStructure(element: HTMLElement, day: Day): void {
+			if (this.cellContentStructureResolver !== null) {
+				this.cellContentStructureResolver.update(element, day);
+			} else {
+				element.innerText = this.getCellContent(day);
+			}
 		}
 
 		public getCellClasses(day: Day): string[] {

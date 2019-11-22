@@ -132,47 +132,54 @@
 				</li>
 				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="dateAvailabilityResolver">return true;</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">return true;</textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.setCellContentStructureResolver(() => {<br>
+						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverInit">return document.createElement('span');</textarea><br>
+						}, (element, day) => {<br>
+						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverUpdate">element.innerText = day.dayNumber;</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.setCellContentResolver((day) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="cellContentResolver">return day.dayNumber;</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="cellContentResolver">return day.dayNumber;</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.setCellClassesResolver((day) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="cellClassesResolver">return [];</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="cellClassesResolver">return [];</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onBeforeSelect"></textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect"></textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onSelect((event, day, previousDay) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onSelect"></textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onSelect"></textarea><br>
 					});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeOpenAndClose((event, isOpening) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onBeforeOpenAndClose"></textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onBeforeOpenAndClose"></textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onOpenAndClose((event, isOpening) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onOpenAndClose"></textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onOpenAndClose"></textarea><br>
 					});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeMonthChange((event, month, previousMonth) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onBeforeMonthChange"></textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onBeforeMonthChange"></textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onMonthChange((event, month, previousMonth) => {<br>
-						&nbsp;<textarea rows="3" cols="40" id="onMonthChange"></textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onMonthChange"></textarea><br>
 					});</label>
 				</li>
 				<li>
@@ -281,10 +288,7 @@
 			};
 
 			var createCallback = function (argumentsString, body) {
-				var wrap = function () {
-					return '{ return function( ' + argumentsString + ' ){ ' + body + ' } };'
-				};
-				return (new Function(wrap()))();
+				return (new Function('{ return function( ' + argumentsString + ' ){ ' + body + ' } };'))();
 			};
 
 			var updateListener = function(eventName, body, argumentsString) {
@@ -480,6 +484,22 @@
 				}
 				datepicker.render();
 			};
+
+			var cellContentStructureResolverInitInput = document.getElementById('cellContentStructureResolverInit');
+			var cellContentStructureResolverUpdateInput = document.getElementById('cellContentStructureResolverUpdate');
+			var cellContentStructureResolverUpdateListener = function () {
+				if (cellContentStructureResolverInitInput.value === '' || cellContentStructureResolverUpdateInput.value === '') {
+					datepicker.options.setCellContentStructureResolver(null);
+				} else {
+					datepicker.options.setCellContentStructureResolver(
+						createCallback('', cellContentStructureResolverInitInput.value),
+						createCallback('element, day', cellContentStructureResolverUpdateInput.value)
+					);
+				}
+				datepicker.render();
+			};
+			cellContentStructureResolverInitInput.onchange = cellContentStructureResolverUpdateListener;
+			cellContentStructureResolverUpdateInput.onchange = cellContentStructureResolverUpdateListener;
 
 			var cellClassesResolverInput = document.getElementById('cellClassesResolver');
 			cellClassesResolverInput.onchange = function () {

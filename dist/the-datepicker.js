@@ -1104,6 +1104,7 @@ var TheDatepicker;
             this.firstDayOfWeek = TheDatepicker.DayOfWeek.Monday;
             this.dateAvailabilityResolver = null;
             this.cellContentResolver = null;
+            this.cellContentStructureResolver = null;
             this.cellClassesResolver = null;
             this.inputFormat = 'j. n. Y';
             this.daysOutOfMonthVisible = false;
@@ -1135,6 +1136,7 @@ var TheDatepicker;
                 beforeMonthChange: []
             };
             this.translator = translator !== null ? translator : new TheDatepicker.Translator();
+            this.document = document;
         }
         Options.prototype.clone = function () {
             var options = new Options(this.translator);
@@ -1149,6 +1151,7 @@ var TheDatepicker;
             options.firstDayOfWeek = this.firstDayOfWeek;
             options.dateAvailabilityResolver = this.dateAvailabilityResolver;
             options.cellContentResolver = this.cellContentResolver;
+            options.cellContentStructureResolver = this.cellContentStructureResolver;
             options.cellClassesResolver = this.cellClassesResolver;
             options.inputFormat = this.inputFormat;
             options.daysOutOfMonthVisible = this.daysOutOfMonthVisible;
@@ -1210,6 +1213,15 @@ var TheDatepicker;
         };
         Options.prototype.setCellContentResolver = function (resolver) {
             this.cellContentResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
+        };
+        Options.prototype.setCellContentStructureResolver = function (init, update) {
+            if (update === void 0) { update = null; }
+            init = TheDatepicker.Helper.checkFunction('Resolver (init)', init);
+            update = TheDatepicker.Helper.checkFunction('Resolver (update)', update);
+            this.cellContentStructureResolver = init === null ? null : {
+                init: init,
+                update: update
+            };
         };
         Options.prototype.setCellClassesResolver = function (resolver) {
             this.cellClassesResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
@@ -1454,6 +1466,20 @@ var TheDatepicker;
                 return this.cellContentResolver(day);
             }
             return day.dayNumber + '';
+        };
+        Options.prototype.getCellStructure = function () {
+            if (this.cellContentStructureResolver !== null) {
+                return this.cellContentStructureResolver.init();
+            }
+            return this.document.createElement('span');
+        };
+        Options.prototype.updateCellStructure = function (element, day) {
+            if (this.cellContentStructureResolver !== null) {
+                this.cellContentStructureResolver.update(element, day);
+            }
+            else {
+                element.innerText = this.getCellContent(day);
+            }
         };
         Options.prototype.getCellClasses = function (day) {
             if (this.cellClassesResolver !== null) {
@@ -2406,7 +2432,6 @@ var TheDatepicker;
             dayElement.className = '';
             this.htmlHelper.addClass(dayElement, 'cell');
             if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
-                dayContentElement.innerHTML = '&nbsp;';
                 dayButtonElement.removeAttribute('href');
                 dayButtonElement.style.visibility = 'hidden';
                 return;
@@ -2438,7 +2463,7 @@ var TheDatepicker;
                 dayElement.className += ' ' + customClasses[index];
             }
             dayButtonElement.style.visibility = 'visible';
-            dayContentElement.innerText = this.options.getCellContent(day);
+            this.options.updateCellStructure(dayContentElement, day);
             if (day.isAvailable) {
                 dayButtonElement.href = '#';
             }
@@ -2470,7 +2495,7 @@ var TheDatepicker;
             return cellButton;
         };
         Template.prototype.createTableCellContentElement = function (viewModel) {
-            var cellContent = this.htmlHelper.createSpan();
+            var cellContent = this.options.getCellStructure();
             this.htmlHelper.addClass(cellContent, 'day-content');
             return cellContent;
         };

@@ -630,7 +630,6 @@ namespace TheDatepicker {
 			this.htmlHelper.addClass(dayElement, 'cell');
 
 			if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
-				dayContentElement.innerHTML = '&nbsp;';
 				dayButtonElement.removeAttribute('href');
 				dayButtonElement.style.visibility = 'hidden';
 				return;
@@ -664,7 +663,7 @@ namespace TheDatepicker {
 			}
 
 			dayButtonElement.style.visibility = 'visible';
-			dayContentElement.innerText = this.options.getCellContent(day);
+			this.options.updateCellStructure(dayContentElement, day);
 
 			if (day.isAvailable) {
 				dayButtonElement.href = '#';
@@ -702,7 +701,7 @@ namespace TheDatepicker {
 		}
 
 		protected createTableCellContentElement(viewModel: ViewModel): HTMLElement {
-			const cellContent = this.htmlHelper.createSpan();
+			const cellContent = this.options.getCellStructure();
 			this.htmlHelper.addClass(cellContent, 'day-content');
 
 			return cellContent;
