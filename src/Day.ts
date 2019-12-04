@@ -12,6 +12,7 @@ namespace TheDatepicker {
 		public isPast = false;
 		public isAvailable = true;
 		public isInValidity = true;
+		public isVisible = true;
 		public isInCurrentMonth = true;
 		public isSelected = false;
 		public isHighlighted = false;

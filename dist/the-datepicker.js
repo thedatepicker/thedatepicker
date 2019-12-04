@@ -733,6 +733,7 @@ var TheDatepicker;
             this.isPast = false;
             this.isAvailable = true;
             this.isInValidity = true;
+            this.isVisible = true;
             this.isInCurrentMonth = true;
             this.isSelected = false;
             this.isHighlighted = false;
@@ -1833,6 +1834,7 @@ var TheDatepicker;
             var prependDaysCount = (firstDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7;
             for (date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
                 var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
+                day.isVisible = this.options.areDaysOutOfMonthVisible();
                 day.isInCurrentMonth = false;
                 days.push(day);
             }
@@ -1844,6 +1846,7 @@ var TheDatepicker;
             var appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7);
             for (date = 1; date <= appendDaysCount; date++) {
                 var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+                day.isVisible = this.options.areDaysOutOfMonthVisible();
                 day.isInCurrentMonth = false;
                 days.push(day);
             }
@@ -2434,7 +2437,8 @@ var TheDatepicker;
             dayElement.setAttribute('data-date', day.getFormatted());
             dayElement.className = '';
             this.htmlHelper.addClass(dayElement, 'cell');
-            if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
+            this.options.updateCellStructure(dayContentElement, day);
+            if (!day.isVisible) {
                 dayButtonElement.removeAttribute('href');
                 dayButtonElement.style.visibility = 'hidden';
                 return;
@@ -2466,7 +2470,6 @@ var TheDatepicker;
                 dayElement.className += ' ' + customClasses[index];
             }
             dayButtonElement.style.visibility = 'visible';
-            this.options.updateCellStructure(dayContentElement, day);
             if (day.isAvailable) {
                 dayButtonElement.href = '#';
             }

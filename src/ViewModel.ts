@@ -318,6 +318,7 @@ namespace TheDatepicker {
 			const prependDaysCount = (firstDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7;
 			for (date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
 				const day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
+				day.isVisible = this.options.areDaysOutOfMonthVisible();
 				day.isInCurrentMonth = false;
 				days.push(day);
 			}
@@ -331,6 +332,7 @@ namespace TheDatepicker {
 			const appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7);
 			for (date = 1; date <= appendDaysCount; date++) {
 				const day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+				day.isVisible = this.options.areDaysOutOfMonthVisible();
 				day.isInCurrentMonth = false;
 				days.push(day);
 			}

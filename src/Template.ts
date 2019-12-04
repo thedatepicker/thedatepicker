@@ -628,8 +628,9 @@ namespace TheDatepicker {
 			dayElement.setAttribute('data-date', day.getFormatted());
 			dayElement.className = '';
 			this.htmlHelper.addClass(dayElement, 'cell');
+			this.options.updateCellStructure(dayContentElement, day);
 
-			if (!day.isInCurrentMonth && !this.options.areDaysOutOfMonthVisible()) {
+			if (!day.isVisible) {
 				dayButtonElement.removeAttribute('href');
 				dayButtonElement.style.visibility = 'hidden';
 				return;
@@ -663,7 +664,6 @@ namespace TheDatepicker {
 			}
 
 			dayButtonElement.style.visibility = 'visible';
-			this.options.updateCellStructure(dayContentElement, day);
 
 			if (day.isAvailable) {
 				dayButtonElement.href = '#';
