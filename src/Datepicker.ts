@@ -270,6 +270,10 @@ namespace TheDatepicker {
 			return this.viewModel.selectedDate !== null ? new Date(this.viewModel.selectedDate.getTime()) : null;
 		}
 
+		public getCurrentMonth(): Date {
+			return this.viewModel.getCurrentMonth();
+		}
+
 		public goToMonth(month: Date | string, event: Event | null = null): boolean {
 			return this.viewModel.goToMonth(event, Helper.normalizeDate('Month', month, this.options));
 		}

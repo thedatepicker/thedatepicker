@@ -494,6 +494,9 @@ var TheDatepicker;
         Datepicker.prototype.getSelectedDate = function () {
             return this.viewModel.selectedDate !== null ? new Date(this.viewModel.selectedDate.getTime()) : null;
         };
+        Datepicker.prototype.getCurrentMonth = function () {
+            return this.viewModel.getCurrentMonth();
+        };
         Datepicker.prototype.goToMonth = function (month, event) {
             if (event === void 0) { event = null; }
             return this.viewModel.goToMonth(event, TheDatepicker.Helper.normalizeDate('Month', month, this.options));
