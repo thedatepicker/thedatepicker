@@ -340,6 +340,7 @@ namespace TheDatepicker {
 			if (this.options.hasFixedRowsCount()) {
 				for (let date = appendDaysCount + 1; days.length < 6 * 7; date++) {
 					const day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+					day.isVisible = this.options.areDaysOutOfMonthVisible();
 					day.isInCurrentMonth = false;
 					days.push(day);
 				}
