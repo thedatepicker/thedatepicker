@@ -1853,6 +1853,7 @@ var TheDatepicker;
             if (this.options.hasFixedRowsCount()) {
                 for (var date_4 = appendDaysCount + 1; days.length < 6 * 7; date_4++) {
                     var day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date_4));
+                    day.isVisible = this.options.areDaysOutOfMonthVisible();
                     day.isInCurrentMonth = false;
                     days.push(day);
                 }
