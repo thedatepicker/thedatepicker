@@ -1105,6 +1105,7 @@ var TheDatepicker;
             this.maxMonth = null;
             this.initialDate = null;
             this.initialMonth = null;
+            this.initialDatePriority = true;
             this.firstDayOfWeek = TheDatepicker.DayOfWeek.Monday;
             this.dateAvailabilityResolver = null;
             this.cellContentResolver = null;
@@ -1152,6 +1153,7 @@ var TheDatepicker;
             options.maxMonth = this.maxMonth;
             options.initialDate = this.initialDate;
             options.initialMonth = this.initialMonth;
+            options.initialDatePriority = this.initialDatePriority;
             options.firstDayOfWeek = this.firstDayOfWeek;
             options.dateAvailabilityResolver = this.dateAvailabilityResolver;
             options.cellContentResolver = this.cellContentResolver;
@@ -1208,6 +1210,9 @@ var TheDatepicker;
         };
         Options.prototype.setInitialDate = function (value) {
             this.initialDate = TheDatepicker.Helper.normalizeDate('Initial date', value, this);
+        };
+        Options.prototype.setInitialDatePriority = function (value) {
+            this.initialDatePriority = !!value;
         };
         Options.prototype.setFirstDayOfWeek = function (dayOfWeek) {
             this.firstDayOfWeek = TheDatepicker.Helper.checkNumber('First day of week', dayOfWeek, 0, 6);
@@ -1336,10 +1341,12 @@ var TheDatepicker;
             this.offEventListener(EventType.MonthChange, listener);
         };
         Options.prototype.getInitialMonth = function () {
-            var initialMonth = this.initialDate !== null
-                ? new Date(this.initialDate.getTime())
-                : (this.initialMonth !== null
-                    ? new Date(this.initialMonth.getTime())
+            var primarySource = this.initialDatePriority ? this.initialDate : this.initialMonth;
+            var secondarySource = this.initialDatePriority ? this.initialMonth : this.initialDate;
+            var initialMonth = primarySource !== null
+                ? new Date(primarySource.getTime())
+                : (secondarySource !== null
+                    ? new Date(secondarySource.getTime())
                     : this.getToday());
             initialMonth.setDate(1);
             return this.correctMonth(initialMonth);

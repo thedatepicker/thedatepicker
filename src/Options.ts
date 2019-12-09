@@ -62,6 +62,7 @@ namespace TheDatepicker {
 		private maxMonth: Date | null = null;
 		private initialDate: Date | null = null;
 		private initialMonth: Date | null = null;
+		private initialDatePriority = true;
 		private firstDayOfWeek = DayOfWeek.Monday;
 		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
 		private cellContentResolver: CellContentResolver | null = null;
@@ -113,6 +114,7 @@ namespace TheDatepicker {
 			options.maxMonth = this.maxMonth;
 			options.initialDate = this.initialDate;
 			options.initialMonth = this.initialMonth;
+			options.initialDatePriority = this.initialDatePriority;
 			options.firstDayOfWeek = this.firstDayOfWeek;
 			options.dateAvailabilityResolver = this.dateAvailabilityResolver;
 			options.cellContentResolver = this.cellContentResolver;
@@ -200,9 +202,6 @@ namespace TheDatepicker {
 		// string in format YYYY-MM; e.g.: "2019-02" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "September 2021"
 		// or instance of Date
-		// string in format YYYY-MM; e.g.: "2019-02" (months 1-based)
-		// or any string which is accepted by Date constructor, e.g.: "September 2021"
-		// or instance of Date
 		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign> <number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "month" or "year" or plural version
 		// or null for current month
@@ -223,6 +222,12 @@ namespace TheDatepicker {
 		// defaults to null
 		public setInitialDate(value: Day | Date | string | null): void {
 			this.initialDate = Helper.normalizeDate('Initial date', value, this);
+		}
+
+		// Setting to true will make initial month ignored when there is any date preselected.
+		// defaults to true
+		public setInitialDatePriority(value: boolean): void {
+			this.initialDatePriority = !!value;
 		}
 
 		// Day of week when weeks start.
@@ -483,11 +488,14 @@ namespace TheDatepicker {
 		}
 
 		public getInitialMonth(): Date {
-			const initialMonth = this.initialDate !== null
-				? new Date(this.initialDate.getTime())
+			const primarySource = this.initialDatePriority ? this.initialDate : this.initialMonth;
+			const secondarySource = this.initialDatePriority ? this.initialMonth : this.initialDate;
+
+			const initialMonth = primarySource !== null
+				? new Date(primarySource.getTime())
 				: (
-					this.initialMonth !== null
-						? new Date(this.initialMonth.getTime())
+					secondarySource !== null
+						? new Date(secondarySource.getTime())
 						: this.getToday()
 				);
 			initialMonth.setDate(1);

@@ -57,6 +57,9 @@
 					<label>datepicker.options.setInitialMonth(<input type="text" size="15" id="initialMonth">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setInitialDatePriority(<input type="checkbox" id="initialDatePriority" checked="checked">);</label>
+				</li>
+				<li>
 					datepicker.<input type="button" id="open" value="open()">;
 				</li>
 				<li>
@@ -314,6 +317,13 @@
 			initialMonthInput.onchange = function () {
 				updateSetting(initialMonthInput, function () {
 					datepicker.options.setInitialMonth(initialMonthInput.value !== '' ? initialMonthInput.value : null);
+				});
+			};
+
+			var initialDatePriorityInput = document.getElementById('initialDatePriority');
+			initialDatePriorityInput.onchange = function () {
+				updateSetting(initialDatePriorityInput, function () {
+					datepicker.options.setInitialDatePriority(initialDatePriorityInput.checked);
 				});
 			};
 
