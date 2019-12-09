@@ -278,13 +278,17 @@ namespace TheDatepicker {
 			return this.viewModel.goToMonth(event, Helper.normalizeDate('Month', month, this.options));
 		}
 
+		public parseRawInput(): Date | null {
+			return this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
+		}
+
 		public readInput(event: Event | null = null): boolean {
 			if (this.input === null) {
 				return false;
 			}
 
 			try {
-				const date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
+				const date = this.parseRawInput();
 				if (date !== null) {
 					return this.viewModel.selectNearestDate(event, date);
 				}
@@ -367,7 +371,7 @@ namespace TheDatepicker {
 		private preselectFromInput(): void {
 			if (this.input !== null) {
 				try {
-					const date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
+					const date = this.parseRawInput();
 					if (date !== null) {
 						this.options.setInitialDate(date);
 					}

@@ -501,13 +501,16 @@ var TheDatepicker;
             if (event === void 0) { event = null; }
             return this.viewModel.goToMonth(event, TheDatepicker.Helper.normalizeDate('Month', month, this.options));
         };
+        Datepicker.prototype.parseRawInput = function () {
+            return this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
+        };
         Datepicker.prototype.readInput = function (event) {
             if (event === void 0) { event = null; }
             if (this.input === null) {
                 return false;
             }
             try {
-                var date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
+                var date = this.parseRawInput();
                 if (date !== null) {
                     return this.viewModel.selectNearestDate(event, date);
                 }
@@ -579,7 +582,7 @@ var TheDatepicker;
         Datepicker.prototype.preselectFromInput = function () {
             if (this.input !== null) {
                 try {
-                    var date = this.dateConverter.parseDate(this.options.getInputFormat(), this.input.value);
+                    var date = this.parseRawInput();
                     if (date !== null) {
                         this.options.setInitialDate(date);
                     }
