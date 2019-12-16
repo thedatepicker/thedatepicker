@@ -1,3 +1,9 @@
+TheDatepicker 
+=============
+
+Pure JavaScript Datepicker by [Slevomat.cz](https://www.slevomat.cz).
+
+
 Install:
 --------
 
