@@ -533,14 +533,28 @@ var TheDatepicker;
             this.updateDeselectButton();
         };
         Datepicker.onDatepickerReady = function (element, callback) {
+            if (callback === void 0) { callback = null; }
+            var promise = null;
+            var promiseResolve = null;
+            if (typeof Promise !== 'undefined') {
+                promise = new Promise(function (resolve) {
+                    promiseResolve = resolve;
+                });
+            }
             if (typeof element.datepicker !== 'undefined' && element.datepicker instanceof Datepicker) {
                 element.datepicker.triggerReadyListener(callback, element);
-                return;
+                if (promiseResolve !== null) {
+                    promiseResolve(element.datepicker);
+                }
             }
-            Datepicker.readyListeners.push({
-                element: element,
-                callback: callback
-            });
+            else {
+                Datepicker.readyListeners.push({
+                    promiseResolve: promiseResolve,
+                    element: element,
+                    callback: callback
+                });
+            }
+            return promise;
         };
         ;
         Datepicker.prototype.createContainer = function () {
@@ -651,12 +665,17 @@ var TheDatepicker;
                 var listener = Datepicker.readyListeners[index];
                 if (listener.element === element) {
                     this.triggerReadyListener(listener.callback, element);
+                    if (listener.promiseResolve !== null) {
+                        listener.promiseResolve(this);
+                    }
                     Datepicker.readyListeners.splice(index, 1);
                 }
             }
         };
         Datepicker.prototype.triggerReadyListener = function (callback, element) {
-            callback.call(element, this, element);
+            if (callback !== null) {
+                callback.call(element, this, element);
+            }
         };
         Datepicker.prototype.fixPosition = function () {
             if (this.isContainerExternal || !this.options.isPositionFixingEnabled()) {

@@ -9,14 +9,13 @@ namespace TheDatepicker {
 	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
 	// todo proč výběr data volá Template.render() tolikrát?
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
-	// todo custom html pro jednotlivé dny bude složitější
 	// todo např třída CannotParseDateException se neminifikuje
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
 	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
 	// todo v IE 9 se spontáně blurne input
 	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
 	// todo createDay zviditelnit z venku aby si případně mohl zjistit jaké vlastnosti den má
-	// todo onOen a onClose přecejen? (společně vedle onOpenAndClose)
+	// todo onOpen a onClose přecejen? (společně vedle onOpenAndClose)
 	// todo používat a || b místo a !== null ? a : b
 	//      !a místo a === null    ??
 	// todo lepší parser datumu ("1. January -30 years")
@@ -45,10 +44,13 @@ namespace TheDatepicker {
 
 	type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
 
+	type ReadyPromiseResolve = (datepicker: TheDatepicker.Datepicker) => void;
+
 	interface DatepickerReadyListener {
 
+		promiseResolve: ReadyPromiseResolve | null;
 		element: HTMLDatepickerElement;
-		callback: ReadyListener;
+		callback: ReadyListener | null;
 
 	}
 
@@ -315,16 +317,32 @@ namespace TheDatepicker {
 			this.updateDeselectButton();
 		}
 
-		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener): void {
-			if (typeof element.datepicker !== 'undefined' && element.datepicker instanceof Datepicker) {
-				element.datepicker.triggerReadyListener(callback, element);
-				return;
+		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<TheDatepicker.Datepicker> | null {
+			let promise = null;
+			let promiseResolve: ReadyPromiseResolve | null = null;
+			// @ts-ignore
+			if (typeof Promise !== 'undefined') {
+				// @ts-ignore
+				promise = new Promise<TheDatepicker.Datepicker>((resolve: ReadyPromiseResolve) => {
+					promiseResolve = resolve;
+				});
 			}
 
-			Datepicker.readyListeners.push({
-				element,
-				callback
-			});
+			if (typeof element.datepicker !== 'undefined' && element.datepicker instanceof Datepicker) {
+				element.datepicker.triggerReadyListener(callback, element);
+				if (promiseResolve !== null) {
+					promiseResolve(element.datepicker);
+				}
+
+			} else {
+				Datepicker.readyListeners.push({
+					promiseResolve,
+					element,
+					callback
+				});
+			}
+
+			return promise;
 		};
 
 		private createContainer(): HTMLElement {
@@ -448,13 +466,18 @@ namespace TheDatepicker {
 				const listener = Datepicker.readyListeners[index];
 				if (listener.element === element) {
 					this.triggerReadyListener(listener.callback, element);
+					if (listener.promiseResolve !== null) {
+						listener.promiseResolve(this);
+					}
 					Datepicker.readyListeners.splice(index, 1);
 				}
 			}
 		}
 
-		private triggerReadyListener(callback: ReadyListener, element: HTMLDatepickerElement): void {
-			callback.call(element, this, element);
+		private triggerReadyListener(callback: ReadyListener | null, element: HTMLDatepickerElement): void {
+			if (callback !== null) {
+				callback.call(element, this, element);
+			}
 		}
 
 		private fixPosition(): void {
