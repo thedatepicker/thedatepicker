@@ -5,6 +5,15 @@
   border-top-left-radius: 0.3em;
   border-bottom-left-radius: 0;
 }
+.the-datepicker__container.the-datepicker__container--left .the-datepicker__main {
+  border-top-left-radius: 0.3em;
+  border-top-right-radius: 0;
+}
+.the-datepicker__container.the-datepicker__container--over.the-datepicker__container--left .the-datepicker__main {
+  border-bottom-left-radius: 0.3em;
+  border-top-right-radius: 0.3em;
+  border-bottom-right-radius: 0;
+}
 .the-datepicker__main {
   background-color: #fff;
   border: 1px solid #ccc;

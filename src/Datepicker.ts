@@ -485,13 +485,18 @@ namespace TheDatepicker {
 			}
 
 			const windowTop = window.pageYOffset || this.document.documentElement.scrollTop;
+			const windowLeft = window.pageXOffset || this.document.documentElement.scrollLeft;
 			const windowHeight = window.innerHeight || Math.max(this.document.documentElement.clientHeight, this.document.body.clientHeight);
+			const windowWidth = window.innerWidth || Math.max(this.document.documentElement.clientWidth, this.document.body.clientWidth);
 			const windowBottom = windowTop + windowHeight;
+			const windowRight = windowLeft + windowWidth;
 
 			let inputTop = 0;
+			let inputLeft = 0;
 			let parentElement: HTMLElement = this.input;
 			while(parentElement !== null && !isNaN(parentElement.offsetLeft) && !isNaN(parentElement.offsetTop)) {
-				inputTop += parentElement.offsetTop - parentElement.scrollTop;
+				inputTop += parentElement.offsetTop - (parentElement.scrollTop || 0);
+				inputLeft += parentElement.offsetLeft - (parentElement.scrollLeft || 0);
 				parentElement = parentElement.offsetParent as HTMLElement;
 			}
 
@@ -500,23 +505,38 @@ namespace TheDatepicker {
 				mainElement = this.container.childNodes[0] as HTMLElement;
 				mainElement.style.position = '';
 				mainElement.style.top = '';
+				mainElement.style.left = '';
 			}
 
-			const inputBottom = inputTop + this.input.offsetHeight;
+			const inputWidth = this.input.offsetWidth;
+			const inputHeight = this.input.offsetHeight;
+			const inputBottom = inputTop + inputHeight;
+			const inputRight = inputLeft + inputWidth;
 			const containerHeight = this.container.offsetHeight;
+			const containerWidth = this.container.offsetWidth;
 
 			let locationClass = '';
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
+			const locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
 			if (locateOver) {
-				locationClass = ' ' + this.options.getClassesPrefix() + 'container--over';
+				locationClass += ' ' + this.options.getClassesPrefix() + 'container--over';
+			}
+			if (locateLeft) {
+				locationClass += ' ' + this.options.getClassesPrefix() + 'container--left';
 			}
 
 			this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
 
-			if (mainElement !== null && locateOver) {
-				const move = this.input.offsetHeight + this.container.offsetHeight;
+			if (mainElement !== null && (locateOver || locateLeft)) {
+				if (locateOver) {
+					const moveTop = inputHeight + containerHeight;
+					mainElement.style.top = '-' + moveTop + 'px';
+				}
+				if (locateLeft) {
+					const moveLeft = containerWidth - inputWidth;
+					mainElement.style.left = '-' + moveLeft + 'px';
+				}
 				mainElement.style.position = 'absolute';
-				mainElement.style.top = '-' + move + 'px';
 			}
 		}
 

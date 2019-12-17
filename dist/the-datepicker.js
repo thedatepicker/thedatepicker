@@ -682,12 +682,17 @@ var TheDatepicker;
                 return;
             }
             var windowTop = window.pageYOffset || this.document.documentElement.scrollTop;
+            var windowLeft = window.pageXOffset || this.document.documentElement.scrollLeft;
             var windowHeight = window.innerHeight || Math.max(this.document.documentElement.clientHeight, this.document.body.clientHeight);
+            var windowWidth = window.innerWidth || Math.max(this.document.documentElement.clientWidth, this.document.body.clientWidth);
             var windowBottom = windowTop + windowHeight;
+            var windowRight = windowLeft + windowWidth;
             var inputTop = 0;
+            var inputLeft = 0;
             var parentElement = this.input;
             while (parentElement !== null && !isNaN(parentElement.offsetLeft) && !isNaN(parentElement.offsetTop)) {
-                inputTop += parentElement.offsetTop - parentElement.scrollTop;
+                inputTop += parentElement.offsetTop - (parentElement.scrollTop || 0);
+                inputLeft += parentElement.offsetLeft - (parentElement.scrollLeft || 0);
                 parentElement = parentElement.offsetParent;
             }
             var mainElement = null;
@@ -695,20 +700,34 @@ var TheDatepicker;
                 mainElement = this.container.childNodes[0];
                 mainElement.style.position = '';
                 mainElement.style.top = '';
-                mainElement.style.bottom = '';
+                mainElement.style.left = '';
             }
-            var inputBottom = inputTop + this.input.offsetHeight;
+            var inputWidth = this.input.offsetWidth;
+            var inputHeight = this.input.offsetHeight;
+            var inputBottom = inputTop + inputHeight;
+            var inputRight = inputLeft + inputWidth;
             var containerHeight = this.container.offsetHeight;
+            var containerWidth = this.container.offsetWidth;
             var locationClass = '';
             var locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
+            var locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
             if (locateOver) {
-                locationClass = ' ' + this.options.getClassesPrefix() + 'container--over';
+                locationClass += ' ' + this.options.getClassesPrefix() + 'container--over';
+            }
+            if (locateLeft) {
+                locationClass += ' ' + this.options.getClassesPrefix() + 'container--left';
             }
             this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
-            if (mainElement !== null && locateOver) {
-                var move = this.input.offsetHeight + this.container.offsetHeight;
+            if (mainElement !== null && (locateOver || locateLeft)) {
+                if (locateOver) {
+                    var moveTop = inputHeight + containerHeight;
+                    mainElement.style.top = '-' + moveTop + 'px';
+                }
+                if (locateLeft) {
+                    var moveLeft = containerWidth - inputWidth;
+                    mainElement.style.left = '-' + moveLeft + 'px';
+                }
                 mainElement.style.position = 'absolute';
-                mainElement.style.top = '-' + move + 'px';
             }
         };
         Datepicker.activateViewModel = function (event, datepicker) {
