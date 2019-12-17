@@ -11,7 +11,6 @@ namespace TheDatepicker {
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo např třída CannotParseDateException se neminifikuje
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
-	// todo positionFixing - relativní pozice způsobí že při kliku na místo kde se měl datepicker nacházet se veme jako active klik
 	// todo v IE 9 se spontáně blurne input
 	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
 	// todo createDay zviditelnit z venku aby si případně mohl zjistit jaké vlastnosti den má
@@ -481,7 +480,7 @@ namespace TheDatepicker {
 		}
 
 		private fixPosition(): void {
-			if (this.isContainerExternal || !this.options.isPositionFixingEnabled()) {
+			if (this.isContainerExternal) {
 				return;
 			}
 
@@ -495,6 +494,14 @@ namespace TheDatepicker {
 				inputTop += parentElement.offsetTop - parentElement.scrollTop;
 				parentElement = parentElement.offsetParent as HTMLElement;
 			}
+
+			let mainElement: HTMLElement | null = null;
+			if (this.options.isPositionFixingEnabled() && this.container.childNodes.length > 0) {
+				mainElement = this.container.childNodes[0] as HTMLElement;
+				mainElement.style.position = '';
+				mainElement.style.top = '';
+			}
+
 			const inputBottom = inputTop + this.input.offsetHeight;
 			const containerHeight = this.container.offsetHeight;
 
@@ -506,17 +513,10 @@ namespace TheDatepicker {
 
 			this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
 
-			const childNodes = this.container.childNodes;
-			if (childNodes.length > 0) {
-				const child = childNodes[0] as HTMLElement;
-				if (locateOver) {
-					const move = this.input.offsetHeight + this.container.offsetHeight;
-					child.style.position = 'relative';
-					child.style.top = '-' + move + 'px';
-				} else {
-					child.style.position = '';
-					child.style.top = '';
-				}
+			if (mainElement !== null && locateOver) {
+				const move = this.input.offsetHeight + this.container.offsetHeight;
+				mainElement.style.position = 'absolute';
+				mainElement.style.top = '-' + move + 'px';
 			}
 		}
 

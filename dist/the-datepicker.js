@@ -678,7 +678,7 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.fixPosition = function () {
-            if (this.isContainerExternal || !this.options.isPositionFixingEnabled()) {
+            if (this.isContainerExternal) {
                 return;
             }
             var windowTop = window.pageYOffset || this.document.documentElement.scrollTop;
@@ -690,6 +690,13 @@ var TheDatepicker;
                 inputTop += parentElement.offsetTop - parentElement.scrollTop;
                 parentElement = parentElement.offsetParent;
             }
+            var mainElement = null;
+            if (this.options.isPositionFixingEnabled() && this.container.childNodes.length > 0) {
+                mainElement = this.container.childNodes[0];
+                mainElement.style.position = '';
+                mainElement.style.top = '';
+                mainElement.style.bottom = '';
+            }
             var inputBottom = inputTop + this.input.offsetHeight;
             var containerHeight = this.container.offsetHeight;
             var locationClass = '';
@@ -698,18 +705,10 @@ var TheDatepicker;
                 locationClass = ' ' + this.options.getClassesPrefix() + 'container--over';
             }
             this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
-            var childNodes = this.container.childNodes;
-            if (childNodes.length > 0) {
-                var child = childNodes[0];
-                if (locateOver) {
-                    var move = this.input.offsetHeight + this.container.offsetHeight;
-                    child.style.position = 'relative';
-                    child.style.top = '-' + move + 'px';
-                }
-                else {
-                    child.style.position = '';
-                    child.style.top = '';
-                }
+            if (mainElement !== null && locateOver) {
+                var move = this.input.offsetHeight + this.container.offsetHeight;
+                mainElement.style.position = 'absolute';
+                mainElement.style.top = '-' + move + 'px';
             }
         };
         Datepicker.activateViewModel = function (event, datepicker) {
