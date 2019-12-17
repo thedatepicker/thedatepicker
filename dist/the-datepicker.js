@@ -678,7 +678,7 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.fixPosition = function () {
-            if (this.isContainerExternal) {
+            if (this.isContainerExternal || this.initializationPhase === InitializationPhase.Destroyed) {
                 return;
             }
             var windowTop = window.pageYOffset || this.document.documentElement.scrollTop;

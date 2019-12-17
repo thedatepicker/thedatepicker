@@ -480,7 +480,7 @@ namespace TheDatepicker {
 		}
 
 		private fixPosition(): void {
-			if (this.isContainerExternal) {
+			if (this.isContainerExternal || this.initializationPhase === InitializationPhase.Destroyed) {
 				return;
 			}
 
