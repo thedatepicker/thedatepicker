@@ -37,6 +37,9 @@
 			.invalid {
 				background: #fdd;
 			}
+			.error {
+				color: red;
+			}
 		</style>
 </head>
 <body>
@@ -56,10 +59,10 @@
 					var datepicker = new TheDatepicker.Datepicker(document.getElementById('my-input'));
 				</li>
 				<li>
-					<label>datepicker.options.setInitialDate("<input type="text" size="15" id="initialDate">");</label>
+					<label>datepicker.options.setInitialDate("<input type="text" size="15" id="initialDate">");</label> <span class="error" id="initialDateError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setInitialMonth("<input type="text" size="15" id="initialMonth">");</label>
+					<label>datepicker.options.setInitialMonth("<input type="text" size="15" id="initialMonth">");</label> <span class="error" id="initialMonthError"></span>
 				</li>
 				<li>
 					<label>datepicker.options.setInitialDatePriority(<input type="checkbox" id="initialDatePriority" checked="checked">);</label>
@@ -77,10 +80,10 @@
 					datepicker.<input type="button" id="destroy" value="destroy()">;
 				</li>
 				<li>
-					<label>datepicker.selectDate("<input type="text" size="15" id="selectDate">");</label>
+					<label>datepicker.selectDate("<input type="text" size="15" id="selectDate">");</label> <span class="error" id="selectDateError"></span>
 				</li>
 				<li>
-					<label>datepicker.goToMonth("<input type="text" size="15" id="goToMonth">");</label>
+					<label>datepicker.goToMonth("<input type="text" size="15" id="goToMonth">");</label> <span class="error" id="goToMonthError"></span>
 				</li>
 				<li>
 					<label>datepicker.getSelectedDate()<span id="selectedDate"></span>;</label>
@@ -95,7 +98,7 @@
 					<label>datepicker.options.setHideOnSelect(<input type="checkbox" id="hideOnSelect" checked="checked">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setInputFormat("<input type="text" size="15" id="inputFormat" value="j. n. Y">");</label>
+					<label>datepicker.options.setInputFormat("<input type="text" size="15" id="inputFormat" value="j. n. Y">");</label> <span class="error" id="inputFormatError"></span>
 				</li>
 				<li>
 					<label>datepicker.options.setFirstDayOfWeek(<select id="firstDayOfWeek">
@@ -109,13 +112,13 @@
 						</select>);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setMinDate("<input type="text" size="15" id="minDate">");</label>
+					<label>datepicker.options.setMinDate("<input type="text" size="15" id="minDate">");</label> <span class="error" id="minDateError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setMaxDate("<input type="text" size="15" id="maxDate">");</label>
+					<label>datepicker.options.setMaxDate("<input type="text" size="15" id="maxDate">");</label> <span class="error" id="maxDateError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setDropdownItemsLimit("<input type="text" size="15" id="dropdownItemsLimit" value="200">");</label>
+					<label>datepicker.options.setDropdownItemsLimit("<input type="text" size="15" id="dropdownItemsLimit" value="200">");</label> <span class="error" id="dropdownItemsLimitError"></span>
 				</li>
 				<li>
 					<label>datepicker.options.setDaysOutOfMonthVisible(<input type="checkbox" id="daysOutOfMonthVisible">);</label>
@@ -136,7 +139,7 @@
 					<label>datepicker.options.setShowCloseButton(<input type="checkbox" id="showCloseButton" checked="checked">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setTitle("<input type="text" size="15" id="title">");</label>
+					<label>datepicker.options.setTitle("<input type="text" size="15" id="title">");</label> <span class="error" id="titleError"></span>
 				</li>
 				<li>
 					<label>datepicker.options.setShowResetButton(<input type="checkbox" id="showResetButton">);</label>
@@ -206,84 +209,84 @@
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.setClassesPrefix("<input type="text" size="15" id="classesPrefix" value="the-datepicker__">");</label>
+					<label>datepicker.options.setClassesPrefix("<input type="text" size="15" id="classesPrefix" value="the-datepicker__">");</label> <span class="error" id="classesPrefixError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setToday("<input type="text" size="15" id="today">");</label>
+					<label>datepicker.options.setToday("<input type="text" size="15" id="today">");</label> <span class="error" id="todayError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setGoBackHtml("<input type="text" size="15" id="goBackHtml" value="&amp;lt;">");</label>
+					<label>datepicker.options.setGoBackHtml("<input type="text" size="15" id="goBackHtml" value="&amp;lt;">");</label> <span class="error" id="goBackHtmlError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setGoForwardHtml("<input type="text" size="15" id="goForwardHtml" value="&amp;gt;">");</label>
+					<label>datepicker.options.setGoForwardHtml("<input type="text" size="15" id="goForwardHtml" value="&amp;gt;">");</label> <span class="error" id="goForwardHtmlError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setCloseHtml("<input type="text" size="15" id="closeHtml" value="&amp;times;">");</label>
+					<label>datepicker.options.setCloseHtml("<input type="text" size="15" id="closeHtml" value="&amp;times;">");</label> <span class="error" id="closeHtmlError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setResetHtml("<input type="text" size="15" id="resetHtml" value="&amp;olarr;">");</label>
+					<label>datepicker.options.setResetHtml("<input type="text" size="15" id="resetHtml" value="&amp;olarr;">");</label> <span class="error" id="resetHtmlError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setDeselectHtml("<input type="text" size="15" id="deselectHtml" value="&amp;times;">");</label>
-				</li>
-
-				<li>
-					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Monday, "<input type="text" size="15" id="dayOfWeekTranslation1" value="Mo">");</label>
-				</li>
-				<li>
-					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Tuesday, "<input type="text" size="15" id="dayOfWeekTranslation2" value="Tu">");</label>
-				</li>
-				<li>
-					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Wednesday, "<input type="text" size="15" id="dayOfWeekTranslation3" value="We">");</label>
-				</li>
-				<li>
-					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Thursday, "<input type="text" size="15" id="dayOfWeekTranslation4" value="Th">");</label>
-				</li>
-				<li>
-					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Friday, "<input type="text" size="15" id="dayOfWeekTranslation5" value="Fr">");</label>
-				</li>
-				<li>
-					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Saturday, "<input type="text" size="15" id="dayOfWeekTranslation6" value="Sa">");</label>
-				</li>
-				<li>
-					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Sunday, "<input type="text" size="15" id="dayOfWeekTranslation0" value="Su">");</label>
+					<label>datepicker.options.setDeselectHtml("<input type="text" size="15" id="deselectHtml" value="&amp;times;">");</label> <span class="error" id="deselectHtmlError"></span>
 				</li>
 
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.January, "<input type="text" size="15" id="monthTranslation0" value="January">");</label>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Monday, "<input type="text" size="15" id="dayOfWeekTranslation1" value="Mo">");</label> <span class="error" id="dayOfWeekTranslation1Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.February, "<input type="text" size="15" id="monthTranslation1" value="February">");</label>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Tuesday, "<input type="text" size="15" id="dayOfWeekTranslation2" value="Tu">");</label> <span class="error" id="dayOfWeekTranslation2Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.March, "<input type="text" size="15" id="monthTranslation2" value="March">");</label>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Wednesday, "<input type="text" size="15" id="dayOfWeekTranslation3" value="We">");</label> <span class="error" id="dayOfWeekTranslation3Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.April, "<input type="text" size="15" id="monthTranslation3" value="April">");</label>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Thursday, "<input type="text" size="15" id="dayOfWeekTranslation4" value="Th">");</label> <span class="error" id="dayOfWeekTranslation4Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.May, "<input type="text" size="15" id="monthTranslation4" value="May">");</label>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Friday, "<input type="text" size="15" id="dayOfWeekTranslation5" value="Fr">");</label> <span class="error" id="dayOfWeekTranslation5Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.June, "<input type="text" size="15" id="monthTranslation5" value="June">");</label>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Saturday, "<input type="text" size="15" id="dayOfWeekTranslation6" value="Sa">");</label> <span class="error" id="dayOfWeekTranslation6Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.July, "<input type="text" size="15" id="monthTranslation6" value="July">");</label>
+					<label>datepicker.options.translator.setDayOfWeekTranslation(TheDatepicker.DayOfWeek.Sunday, "<input type="text" size="15" id="dayOfWeekTranslation0" value="Su">");</label> <span class="error" id="dayOfWeekTranslation0Error"></span>
+				</li>
+
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.January, "<input type="text" size="15" id="monthTranslation0" value="January">");</label> <span class="error" id="monthTranslation0Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.August, "<input type="text" size="15" id="monthTranslation7" value="August">");</label>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.February, "<input type="text" size="15" id="monthTranslation1" value="February">");</label> <span class="error" id="monthTranslation1Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.September, "<input type="text" size="15" id="monthTranslation8" value="September">");</label>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.March, "<input type="text" size="15" id="monthTranslation2" value="March">");</label> <span class="error" id="monthTranslation2Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.October, "<input type="text" size="15" id="monthTranslation9" value="October">");</label>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.April, "<input type="text" size="15" id="monthTranslation3" value="April">");</label> <span class="error" id="monthTranslation3Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.November, "<input type="text" size="15" id="monthTranslation10" value="November">");</label>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.May, "<input type="text" size="15" id="monthTranslation4" value="May">");</label> <span class="error" id="monthTranslation4Error"></span>
 				</li>
 				<li>
-					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.December, "<input type="text" size="15" id="monthTranslation11" value="December">");</label>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.June, "<input type="text" size="15" id="monthTranslation5" value="June">");</label> <span class="error" id="monthTranslation5Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.July, "<input type="text" size="15" id="monthTranslation6" value="July">");</label> <span class="error" id="monthTranslation6Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.August, "<input type="text" size="15" id="monthTranslation7" value="August">");</label> <span class="error" id="monthTranslation7Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.September, "<input type="text" size="15" id="monthTranslation8" value="September">");</label> <span class="error" id="monthTranslation8Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.October, "<input type="text" size="15" id="monthTranslation9" value="October">");</label> <span class="error" id="monthTranslation9Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.November, "<input type="text" size="15" id="monthTranslation10" value="November">");</label> <span class="error" id="monthTranslation10Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.December, "<input type="text" size="15" id="monthTranslation11" value="December">");</label> <span class="error" id="monthTranslation11Error"></span>
 				</li>
 				<li>
 					datepicker.render();
@@ -322,14 +325,24 @@
 
 			datepicker.render();
 
-			var updateSetting = function (settingInput, callback) {
+			var updateSetting = function (settingInput, callback, doNotCallRender) {
 				settingInput.className = '';
+				var errorOutput = document.getElementById(settingInput.id + 'Error');
+				if (errorOutput !== null) {
+					errorOutput.innerText = '';
+				}
+
 				try {
 					callback();
-					datepicker.render();
+					if (!doNotCallRender) {
+						datepicker.render();
+					}
 				} catch (error) {
 					console.error(error);
 					settingInput.className = 'invalid';
+					if (errorOutput !== null) {
+						errorOutput.innerText = error.toString();
+					}
 				}
 			};
 
@@ -392,26 +405,18 @@
 
 			var selectDateInput = document.getElementById('selectDate');
 			selectDateInput.onchange = function () {
-				selectDateInput.className = '';
-				try {
+				updateSetting(selectDateInput, function () {
 					datepicker.selectDate(selectDateInput.value);
 					selectDateInput.value = '';
-				} catch (error) {
-					console.error(error);
-					selectDateInput.className = 'invalid';
-				}
+				}, true);
 			};
 
 			var goToMonthInput = document.getElementById('goToMonth');
 			goToMonthInput.onchange = function () {
-				goToMonthInput.className = '';
-				try {
+				updateSetting(goToMonthInput, function () {
 					datepicker.goToMonth(goToMonthInput.value);
 					goToMonthInput.value = '';
-				} catch (error) {
-					console.error(error);
-					goToMonthInput.className = 'invalid';
-				}
+				}, true);
 			};
 
 			var hideOnBlurInput = document.getElementById('hideOnBlur');
