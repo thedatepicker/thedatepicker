@@ -71,7 +71,22 @@
 					datepicker.<input type="button" id="close" value="close()">;
 				</li>
 				<li>
+					datepicker.<input type="button" id="reset" value="reset()">;
+				</li>
+				<li>
 					datepicker.<input type="button" id="destroy" value="destroy()">;
+				</li>
+				<li>
+					<label>datepicker.selectDate(<input type="text" size="15" id="selectDate">);</label>
+				</li>
+				<li>
+					<label>datepicker.goToMonth(<input type="text" size="15" id="goToMonth">);</label>
+				</li>
+				<li>
+					<label>datepicker.getSelectedDate()<span id="selectedDate"></span>;</label>
+				</li>
+				<li>
+					<label>datepicker.getCurrentMonth()<span id="currentMonth"></span>;</label>
 				</li>
 				<li>
 					<label>datepicker.options.setHideOnBlur(<input type="checkbox" id="hideOnBlur" checked="checked">);</label>
@@ -288,6 +303,23 @@
 			var input = document.getElementById('my-input');
 
 			var datepicker = new TheDatepicker.Datepicker(input);
+
+			var selectedDateOutput = document.getElementById('selectedDate');
+			var updateSelectedDate = function () {
+				var selectedDate = datepicker.getSelectedDate();
+				selectedDateOutput.innerText = selectedDate !== null ? '.toString() === "' + selectedDate.toString() + '"' : ' === null';
+			};
+			datepicker.options.onSelect(updateSelectedDate);
+			updateSelectedDate();
+
+			var currentMonthOutput = document.getElementById('currentMonth');
+			var updateCurrentMonth = function () {
+				var currentMonth = datepicker.getCurrentMonth();
+				currentMonthOutput.innerText = currentMonth !== null ? '.toString() === "' + currentMonth.toString() + '"' : ' === null';
+			};
+			datepicker.options.onMonthChange(updateCurrentMonth);
+			updateCurrentMonth();
+
 			datepicker.render();
 
 			var updateSetting = function (settingInput, callback) {
@@ -348,9 +380,38 @@
 				datepicker.close();
 			};
 
+			var resetInput = document.getElementById('reset');
+			resetInput.onclick = function () {
+				datepicker.reset();
+			};
+
 			var destroyInput = document.getElementById('destroy');
 			destroyInput.onclick = function () {
 				datepicker.destroy();
+			};
+
+			var selectDateInput = document.getElementById('selectDate');
+			selectDateInput.onchange = function () {
+				selectDateInput.className = '';
+				try {
+					datepicker.selectDate(selectDateInput.value);
+					selectDateInput.value = '';
+				} catch (error) {
+					console.error(error);
+					selectDateInput.className = 'invalid';
+				}
+			};
+
+			var goToMonthInput = document.getElementById('goToMonth');
+			goToMonthInput.onchange = function () {
+				goToMonthInput.className = '';
+				try {
+					datepicker.goToMonth(goToMonthInput.value);
+					goToMonthInput.value = '';
+				} catch (error) {
+					console.error(error);
+					goToMonthInput.className = 'invalid';
+				}
 			};
 
 			var hideOnBlurInput = document.getElementById('hideOnBlur');
