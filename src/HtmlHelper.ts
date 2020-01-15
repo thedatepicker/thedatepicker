@@ -77,6 +77,56 @@ namespace TheDatepicker {
 
 	}
 
+	class SimulatedSelectInput implements SelectInput {
+
+		constructor(
+			private readonly element: HTMLSelectElement
+		) {
+		}
+
+		setValue(value: string): void {
+			this.element.value = value;
+		}
+
+		getElement(): HTMLElement {
+			return this.element;
+		}
+
+		getOptionsElement(): HTMLElement {
+			return this.element;
+		}
+
+		forEachOption(callback: (option: SelectOption) => void): void {
+			const options = this.element.getElementsByTagName('option');
+			for (let i = 0; i < options.length; i++) {
+				callback(new SimulatedSelectOption(options[i]));
+			}
+		}
+
+	}
+
+	class SimulatedSelectOption implements SelectOption {
+
+		constructor(
+			private readonly element: HTMLOptionElement
+		) {
+		}
+
+		setEnabled(value: boolean): void {
+			this.element.disabled = !value;
+			this.element.style.display = value ? '' : 'none';
+		}
+
+		getValue(): string {
+			return this.element.value;
+		}
+
+		getElement(): HTMLElement {
+			return this.element;
+		}
+
+	}
+
 	export class HtmlHelper {
 
 		private readonly document: Document;
