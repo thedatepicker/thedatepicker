@@ -19,6 +19,9 @@ namespace TheDatepicker {
 	//      !a místo a === null    ??
 	// todo lepší parser datumu ("1. January -30 years")
 	// todo multiselect, rangeselect, multirangeselect
+	// todo lépe minifikovat
+	// todo favicona
+	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
