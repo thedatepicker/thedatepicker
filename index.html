@@ -118,7 +118,10 @@
 					<label>datepicker.options.setMaxDate("<input type="text" size="15" id="maxDate">");</label> <span class="error" id="maxDateError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setDropdownItemsLimit("<input type="text" size="15" id="dropdownItemsLimit" value="200">");</label> <span class="error" id="dropdownItemsLimitError"></span>
+					<label>datepicker.options.setDropdownItemsLimit(<input type="text" size="15" id="dropdownItemsLimit" value="200">);</label> <span class="error" id="dropdownItemsLimitError"></span>
+				</li>
+				<li>
+					<label>datepicker.options.setHideDropdownWithOneItem(<input type="checkbox" id="hideDropdownWithOneItem" checked="checked">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setDaysOutOfMonthVisible(<input type="checkbox" id="daysOutOfMonthVisible">);</label>
@@ -466,6 +469,13 @@
 			dropdownItemsLimitInput.onchange = function () {
 				updateSetting(dropdownItemsLimitInput, function () {
 					datepicker.options.setDropdownItemsLimit(dropdownItemsLimitInput.value !== '' ? dropdownItemsLimitInput.value : null);
+				});
+			};
+
+			var hideDropdownWithOneItemInput = document.getElementById('hideDropdownWithOneItem');
+			hideDropdownWithOneItemInput.onchange = function () {
+				updateSetting(hideDropdownWithOneItemInput, function () {
+					datepicker.options.setHideDropdownWithOneItem(hideDropdownWithOneItemInput.checked);
 				});
 			};
 

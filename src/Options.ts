@@ -82,6 +82,7 @@ namespace TheDatepicker {
 		private showCloseButton = true;
 		private title = '';
 		private dropdownItemsLimit = 200;
+		private hideDropdownWithOneItem = true;
 		private goBackHtml = '&lt;';
 		private goForwardHtml = '&gt;';
 		private closeHtml = '&times;';
@@ -134,6 +135,7 @@ namespace TheDatepicker {
 			options.showCloseButton = this.showCloseButton;
 			options.title = this.title;
 			options.dropdownItemsLimit = this.dropdownItemsLimit;
+			options.hideDropdownWithOneItem = this.hideDropdownWithOneItem;
 			options.goBackHtml = this.goBackHtml;
 			options.goForwardHtml = this.goForwardHtml;
 			options.closeHtml = this.closeHtml;
@@ -372,6 +374,12 @@ namespace TheDatepicker {
 		// Default is 200.
 		public setDropdownItemsLimit(limit: number): void {
 			this.dropdownItemsLimit = Helper.checkNumber('Items limit', limit, 1);
+		}
+
+		// Setting to true will show month and/or year dropdown only when there are two or more options.
+		// defaults to true
+		public setHideDropdownWithOneItem(value: boolean): void {
+			this.hideDropdownWithOneItem = !!value;
 		}
 
 		// Sets html for go back button.
@@ -642,6 +650,10 @@ namespace TheDatepicker {
 
 		public getMaxMonth(): Date | null {
 			return this.maxMonth;
+		}
+
+		public isDropdownWithOneItemHidden(): boolean {
+			return this.hideDropdownWithOneItem;
 		}
 
 		public getDropdownItemsLimit(): number {

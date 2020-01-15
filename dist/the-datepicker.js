@@ -1165,6 +1165,7 @@ var TheDatepicker;
             this.showCloseButton = true;
             this.title = '';
             this.dropdownItemsLimit = 200;
+            this.hideDropdownWithOneItem = true;
             this.goBackHtml = '&lt;';
             this.goForwardHtml = '&gt;';
             this.closeHtml = '&times;';
@@ -1213,6 +1214,7 @@ var TheDatepicker;
             options.showCloseButton = this.showCloseButton;
             options.title = this.title;
             options.dropdownItemsLimit = this.dropdownItemsLimit;
+            options.hideDropdownWithOneItem = this.hideDropdownWithOneItem;
             options.goBackHtml = this.goBackHtml;
             options.goForwardHtml = this.goForwardHtml;
             options.closeHtml = this.closeHtml;
@@ -1316,6 +1318,9 @@ var TheDatepicker;
         };
         Options.prototype.setDropdownItemsLimit = function (limit) {
             this.dropdownItemsLimit = TheDatepicker.Helper.checkNumber('Items limit', limit, 1);
+        };
+        Options.prototype.setHideDropdownWithOneItem = function (value) {
+            this.hideDropdownWithOneItem = !!value;
         };
         Options.prototype.setGoBackHtml = function (html) {
             this.goBackHtml = TheDatepicker.Helper.checkString('Html', html);
@@ -1502,6 +1507,9 @@ var TheDatepicker;
         };
         Options.prototype.getMaxMonth = function () {
             return this.maxMonth;
+        };
+        Options.prototype.isDropdownWithOneItemHidden = function () {
+            return this.hideDropdownWithOneItem;
         };
         Options.prototype.getDropdownItemsLimit = function () {
             return this.dropdownItemsLimit;
@@ -2217,8 +2225,9 @@ var TheDatepicker;
                 valuesCount += canGoToMonth ? 1 : 0;
             }
             this.monthSelect.value = currentMonth + '';
-            this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
-            this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
+            var showSelect = !this.options.isDropdownWithOneItemHidden() || valuesCount > 1;
+            this.monthSelect.style.display = showSelect ? '' : 'none';
+            this.monthElement.style.display = showSelect ? 'none' : '';
         };
         Template.prototype.createYearElement = function (viewModel) {
             var _this = this;
@@ -2276,8 +2285,9 @@ var TheDatepicker;
                 this.yearSelect.appendChild(this.htmlHelper.createSelectOption(diff.append[index] + '', diff.append[index] + ''));
             }
             this.yearSelect.value = currentYear + '';
-            this.yearSelect.style.display = range.from < range.to ? '' : 'none';
-            this.yearElement.style.display = range.from < range.to ? 'none' : '';
+            var showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
+            this.yearSelect.style.display = showSelect ? '' : 'none';
+            this.yearElement.style.display = showSelect ? 'none' : '';
         };
         Template.prototype.createMonthAndYearElement = function (viewModel) {
             var _this = this;
@@ -2340,8 +2350,9 @@ var TheDatepicker;
                 this.monthAndYearSelect.appendChild(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)));
             }
             this.monthAndYearSelect.value = this.getMonthAndYearOptionValue(currentData);
-            this.monthAndYearSelect.style.display = range.from < range.to ? '' : 'none';
-            this.monthAndYearElement.style.display = range.from < range.to ? 'none' : '';
+            var showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
+            this.monthAndYearSelect.style.display = showSelect ? '' : 'none';
+            this.monthAndYearElement.style.display = showSelect ? 'none' : '';
         };
         Template.prototype.translateMonthAndYear = function (data) {
             return this.options.translator.translateMonth(data.month) + ' ' + data.year;

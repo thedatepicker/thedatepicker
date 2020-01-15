@@ -298,8 +298,9 @@ namespace TheDatepicker {
 
 			this.monthSelect.value = currentMonth + '';
 
-			this.monthSelect.style.display = valuesCount > 1 ? '' : 'none';
-			this.monthElement.style.display = valuesCount > 1 ? 'none' : '';
+			const showSelect = !this.options.isDropdownWithOneItemHidden() || valuesCount > 1;
+			this.monthSelect.style.display = showSelect ? '' : 'none';
+			this.monthElement.style.display = showSelect ? 'none' : '';
 		}
 
 		protected createYearElement(viewModel: ViewModel): HTMLElement {
@@ -369,8 +370,10 @@ namespace TheDatepicker {
 			}
 
 			this.yearSelect.value = currentYear + '';
-			this.yearSelect.style.display = range.from < range.to ? '' : 'none';
-			this.yearElement.style.display = range.from < range.to ? 'none' : '';
+
+			const showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
+			this.yearSelect.style.display = showSelect ? '' : 'none';
+			this.yearElement.style.display = showSelect ? 'none' : '';
 		}
 
 		protected createMonthAndYearElement(viewModel: ViewModel): HTMLElement {
@@ -443,8 +446,10 @@ namespace TheDatepicker {
 			}
 
 			this.monthAndYearSelect.value = this.getMonthAndYearOptionValue(currentData);
-			this.monthAndYearSelect.style.display = range.from < range.to ? '' : 'none';
-			this.monthAndYearElement.style.display = range.from < range.to ? 'none' : '';
+
+			const showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
+			this.monthAndYearSelect.style.display = showSelect ? '' : 'none';
+			this.monthAndYearElement.style.display = showSelect ? 'none' : '';
 		}
 
 		private translateMonthAndYear(data: MonthAndYear): string {
