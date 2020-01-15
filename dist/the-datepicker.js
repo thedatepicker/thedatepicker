@@ -1013,6 +1013,43 @@ var TheDatepicker;
 })(TheDatepicker || (TheDatepicker = {}));
 var TheDatepicker;
 (function (TheDatepicker) {
+    var NativeSelectInput = (function () {
+        function NativeSelectInput(element) {
+            this.element = element;
+        }
+        NativeSelectInput.prototype.setValue = function (value) {
+            this.element.value = value;
+        };
+        NativeSelectInput.prototype.getElement = function () {
+            return this.element;
+        };
+        NativeSelectInput.prototype.getOptionsElement = function () {
+            return this.element;
+        };
+        NativeSelectInput.prototype.forEachOption = function (callback) {
+            var options = this.element.getElementsByTagName('option');
+            for (var i = 0; i < options.length; i++) {
+                callback(new NativeSelectOption(options[i]));
+            }
+        };
+        return NativeSelectInput;
+    }());
+    var NativeSelectOption = (function () {
+        function NativeSelectOption(element) {
+            this.element = element;
+        }
+        NativeSelectOption.prototype.setEnabled = function (value) {
+            this.element.disabled = !value;
+            this.element.style.display = value ? '' : 'none';
+        };
+        NativeSelectOption.prototype.getValue = function () {
+            return this.element.value;
+        };
+        NativeSelectOption.prototype.getElement = function () {
+            return this.element;
+        };
+        return NativeSelectOption;
+    }());
     var HtmlHelper = (function () {
         function HtmlHelper(options) {
             this.options = options;
@@ -1098,7 +1135,7 @@ var TheDatepicker;
                 event = event || window.event;
                 TheDatepicker.Helper.stopPropagation(event);
             };
-            return input;
+            return new NativeSelectInput(input);
         };
         HtmlHelper.prototype.createSelectOption = function (value, label) {
             var option = this.document.createElement('option');
@@ -2210,12 +2247,12 @@ var TheDatepicker;
                 var newMonth = new Date(currentMonth.getTime());
                 newMonth.setMonth(parseInt(monthNumber, 10));
                 if (!viewModel.goToMonth(event, newMonth)) {
-                    _this.monthSelect.value = currentMonth.getMonth() + '';
+                    _this.monthSelect.setValue(currentMonth.getMonth() + '');
                 }
             });
             var monthElement = this.htmlHelper.createDiv('month');
             var monthContent = this.htmlHelper.createSpan();
-            monthElement.appendChild(selectElement);
+            monthElement.appendChild(selectElement.getElement());
             monthElement.appendChild(monthContent);
             this.monthElement = monthContent;
             this.monthSelect = selectElement;
@@ -2228,23 +2265,23 @@ var TheDatepicker;
             var currentMonth = viewModel.getCurrentMonth().getMonth();
             this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
             if (!this.options.isMonthAsDropdown()) {
-                this.monthSelect.style.display = 'none';
+                this.monthSelect.getElement().style.display = 'none';
                 this.monthElement.style.display = '';
                 return;
             }
             var valuesCount = 0;
-            for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
+            var monthNumber = 0;
+            this.monthSelect.forEachOption(function (option) {
                 var newMonth = new Date(viewModel.getCurrentMonth().getTime());
                 newMonth.setMonth(monthNumber);
-                var option = this.monthSelect.getElementsByTagName('option')[monthNumber];
                 var canGoToMonth = viewModel.canGoToMonth(newMonth);
-                option.disabled = !canGoToMonth;
-                option.style.display = canGoToMonth ? '' : 'none';
+                option.setEnabled(canGoToMonth);
                 valuesCount += canGoToMonth ? 1 : 0;
-            }
-            this.monthSelect.value = currentMonth + '';
+                monthNumber++;
+            });
+            this.monthSelect.setValue(currentMonth + '');
             var showSelect = !this.options.isDropdownWithOneItemHidden() || valuesCount > 1;
-            this.monthSelect.style.display = showSelect ? '' : 'none';
+            this.monthSelect.getElement().style.display = showSelect ? '' : 'none';
             this.monthElement.style.display = showSelect ? 'none' : '';
         };
         Template.prototype.createYearElement = function (viewModel) {
@@ -2262,12 +2299,12 @@ var TheDatepicker;
                     newMonth = maxMonth;
                 }
                 if (!viewModel.goToMonth(event, newMonth)) {
-                    _this.yearSelect.value = currentMonth.getFullYear() + '';
+                    _this.yearSelect.setValue(currentMonth.getFullYear() + '');
                 }
             });
             var yearElement = this.htmlHelper.createDiv('year');
             var yearContent = this.htmlHelper.createSpan();
-            yearElement.appendChild(selectElement);
+            yearElement.appendChild(selectElement.getElement());
             yearElement.appendChild(yearContent);
             this.yearElement = yearContent;
             this.yearSelect = selectElement;
@@ -2280,7 +2317,7 @@ var TheDatepicker;
             var currentYear = viewModel.getCurrentMonth().getFullYear();
             this.yearElement.innerText = currentYear + '';
             if (!this.options.isYearAsDropdown()) {
-                this.yearSelect.style.display = 'none';
+                this.yearSelect.getElement().style.display = 'none';
                 this.yearElement.style.display = '';
                 return;
             }
@@ -2289,22 +2326,22 @@ var TheDatepicker;
             var minYear = minDate !== null ? minDate.getFullYear() : null;
             var maxYear = maxDate !== null ? maxDate.getFullYear() : null;
             var range = this.calculateDropdownRange(currentYear, minYear, maxYear);
-            var options = this.yearSelect.getElementsByTagName('option');
-            var diff = this.calculateDropdownDiff(options, range, function (value) {
+            var diff = this.calculateDropdownDiff(this.yearSelect, range, function (value) {
                 return parseInt(value, 10);
             });
+            var yearSelectElement = this.yearSelect.getOptionsElement();
             for (var index = 0; index < diff.remove.length; index++) {
-                this.yearSelect.removeChild(diff.remove[index]);
+                yearSelectElement.removeChild(diff.remove[index].getElement());
             }
             for (var index = diff.prepend.length - 1; index >= 0; index--) {
-                this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(diff.prepend[index] + '', diff.prepend[index] + ''), this.yearSelect.firstChild);
+                yearSelectElement.insertBefore(this.htmlHelper.createSelectOption(diff.prepend[index] + '', diff.prepend[index] + ''), yearSelectElement.firstChild);
             }
             for (var index = 0; index < diff.append.length; index++) {
-                this.yearSelect.appendChild(this.htmlHelper.createSelectOption(diff.append[index] + '', diff.append[index] + ''));
+                yearSelectElement.appendChild(this.htmlHelper.createSelectOption(diff.append[index] + '', diff.append[index] + ''));
             }
-            this.yearSelect.value = currentYear + '';
+            this.yearSelect.setValue(currentYear + '');
             var showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
-            this.yearSelect.style.display = showSelect ? '' : 'none';
+            this.yearSelect.getElement().style.display = showSelect ? '' : 'none';
             this.yearElement.style.display = showSelect ? 'none' : '';
         };
         Template.prototype.createMonthAndYearElement = function (viewModel) {
@@ -2317,17 +2354,17 @@ var TheDatepicker;
                 newMonth.setFullYear(data.year);
                 newMonth.setMonth(data.month);
                 if (!viewModel.goToMonth(event, newMonth)) {
-                    _this.monthAndYearSelect.value = _this.getMonthAndYearOptionValue({
+                    _this.monthAndYearSelect.setValue(_this.getMonthAndYearOptionValue({
                         month: currentMonth.getMonth(),
                         year: currentMonth.getFullYear()
-                    });
+                    }));
                 }
             });
             var monthAndYearContent = this.htmlHelper.createSpan();
             this.monthAndYearElement = monthAndYearContent;
             this.monthAndYearSelect = selectElement;
             monthAndYear.appendChild(monthAndYearContent);
-            monthAndYear.appendChild(selectElement);
+            monthAndYear.appendChild(selectElement.getElement());
             return monthAndYear;
         };
         Template.prototype.updateMonthAndYearElement = function (viewModel) {
@@ -2343,7 +2380,7 @@ var TheDatepicker;
             var currentIndex = this.calculateMonthAndYearIndex(currentData);
             this.monthAndYearElement.innerText = this.translateMonthAndYear(currentData);
             if (!this.options.isYearAsDropdown() || !this.options.isMonthAsDropdown()) {
-                this.monthAndYearSelect.style.display = 'none';
+                this.monthAndYearSelect.getElement().style.display = 'none';
                 this.monthAndYearElement.style.display = '';
                 return;
             }
@@ -2352,24 +2389,24 @@ var TheDatepicker;
             var minIndex = minDate !== null ? minDate.getFullYear() * 12 + minDate.getMonth() : null;
             var maxIndex = maxDate !== null ? maxDate.getFullYear() * 12 + maxDate.getMonth() : null;
             var range = this.calculateDropdownRange(currentIndex, minIndex, maxIndex);
-            var options = this.monthAndYearSelect.getElementsByTagName('option');
-            var diff = this.calculateDropdownDiff(options, range, function (value) {
+            var diff = this.calculateDropdownDiff(this.monthAndYearSelect, range, function (value) {
                 return _this.calculateMonthAndYearIndex(_this.parseMonthAndYearOptionValue(value));
             });
+            var monthAndYearSelect = this.monthAndYearSelect.getOptionsElement();
             for (var index = 0; index < diff.remove.length; index++) {
-                this.monthAndYearSelect.removeChild(diff.remove[index]);
+                monthAndYearSelect.removeChild(diff.remove[index].getElement());
             }
             for (var index = diff.prepend.length - 1; index >= 0; index--) {
                 var data = this.getMonthAndYearByIndex(diff.prepend[index]);
-                this.monthAndYearSelect.insertBefore(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)), this.monthAndYearSelect.firstChild);
+                monthAndYearSelect.insertBefore(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)), monthAndYearSelect.firstChild);
             }
             for (var index = 0; index < diff.append.length; index++) {
                 var data = this.getMonthAndYearByIndex(diff.append[index]);
-                this.monthAndYearSelect.appendChild(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)));
+                monthAndYearSelect.appendChild(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)));
             }
-            this.monthAndYearSelect.value = this.getMonthAndYearOptionValue(currentData);
+            this.monthAndYearSelect.setValue(this.getMonthAndYearOptionValue(currentData));
             var showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
-            this.monthAndYearSelect.style.display = showSelect ? '' : 'none';
+            this.monthAndYearSelect.getElement().style.display = showSelect ? '' : 'none';
             this.monthAndYearElement.style.display = showSelect ? 'none' : '';
         };
         Template.prototype.translateMonthAndYear = function (data) {
@@ -2418,24 +2455,28 @@ var TheDatepicker;
                 to: to
             };
         };
-        Template.prototype.calculateDropdownDiff = function (options, newRange, getNumerical) {
-            var firstOption = options.length > 0 ? getNumerical(options[0].value) : null;
-            var lastOption = options.length > 0 ? getNumerical(options[options.length - 1].value) : null;
+        Template.prototype.calculateDropdownDiff = function (input, newRange, getNumerical) {
             var prepend = [];
             var append = [];
             var remove = [];
+            var firstOption = null;
+            var lastOption = null;
+            input.forEachOption(function (option) {
+                var value = getNumerical(option.getValue());
+                if (firstOption === null) {
+                    firstOption = value;
+                }
+                lastOption = value;
+                if (value < newRange.from || value > newRange.to) {
+                    remove.push(option);
+                }
+            });
             for (var value = newRange.from; value <= newRange.to; value++) {
                 if (firstOption === null || value < firstOption) {
                     prepend.push(value);
                 }
                 else if (value > lastOption) {
                     append.push(value);
-                }
-            }
-            for (var index = 0; index < options.length; index++) {
-                var value = getNumerical(options[index].value);
-                if (value < newRange.from || value > newRange.to) {
-                    remove.push(options[index]);
                 }
             }
             return {

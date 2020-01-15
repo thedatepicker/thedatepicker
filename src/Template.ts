@@ -21,7 +21,7 @@ namespace TheDatepicker {
 
 		prepend: number[];
 		append: number[];
-		remove: HTMLOptionElement[];
+		remove: SelectOption[];
 
 	}
 
@@ -44,11 +44,11 @@ namespace TheDatepicker {
 		private titleContentElement: HTMLElement | null = null;
 		private resetElement: HTMLElement | null = null;
 		private closeElement: HTMLElement | null = null;
-		private monthSelect: HTMLSelectElement | null = null;
+		private monthSelect: SelectInput | null = null;
 		private monthElement: HTMLElement | null = null;
-		private yearSelect: HTMLSelectElement | null = null;
+		private yearSelect: SelectInput | null = null;
 		private yearElement: HTMLElement | null = null;
-		private monthAndYearSelect: HTMLSelectElement | null = null;
+		private monthAndYearSelect: SelectInput | null = null;
 		private monthAndYearElement: HTMLElement | null = null;
 		private weeksElements: HTMLElement[] = [];
 		private daysElements: HTMLElement[][] = [];
@@ -256,13 +256,13 @@ namespace TheDatepicker {
 				const newMonth = new Date(currentMonth.getTime());
 				newMonth.setMonth(parseInt(monthNumber, 10));
 				if (!viewModel.goToMonth(event, newMonth)) {
-					this.monthSelect.value = currentMonth.getMonth() + '';
+					this.monthSelect.setValue(currentMonth.getMonth() + '');
 				}
 			});
 
 			const monthElement = this.htmlHelper.createDiv('month');
 			const monthContent = this.htmlHelper.createSpan();
-			monthElement.appendChild(selectElement);
+			monthElement.appendChild(selectElement.getElement());
 			monthElement.appendChild(monthContent);
 
 			this.monthElement = monthContent;
@@ -280,26 +280,26 @@ namespace TheDatepicker {
 			this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
 
 			if (!this.options.isMonthAsDropdown()) {
-				this.monthSelect.style.display = 'none';
+				this.monthSelect.getElement().style.display = 'none';
 				this.monthElement.style.display = '';
 				return;
 			}
 
 			let valuesCount = 0;
-			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
+			let monthNumber = 0;
+			this.monthSelect.forEachOption((option: SelectOption) => {
 				const newMonth = new Date(viewModel.getCurrentMonth().getTime());
 				newMonth.setMonth(monthNumber);
-				const option = this.monthSelect.getElementsByTagName('option')[monthNumber];
 				const canGoToMonth = viewModel.canGoToMonth(newMonth);
-				option.disabled = !canGoToMonth;
-				option.style.display = canGoToMonth ? '' : 'none';
+				option.setEnabled(canGoToMonth);
 				valuesCount += canGoToMonth ? 1 : 0;
-			}
+				monthNumber++;
+			});
 
-			this.monthSelect.value = currentMonth + '';
+			this.monthSelect.setValue(currentMonth + '');
 
 			const showSelect = !this.options.isDropdownWithOneItemHidden() || valuesCount > 1;
-			this.monthSelect.style.display = showSelect ? '' : 'none';
+			this.monthSelect.getElement().style.display = showSelect ? '' : 'none';
 			this.monthElement.style.display = showSelect ? 'none' : '';
 		}
 
@@ -319,13 +319,13 @@ namespace TheDatepicker {
 				}
 
 				if (!viewModel.goToMonth(event, newMonth)) {
-					this.yearSelect.value = currentMonth.getFullYear() + '';
+					this.yearSelect.setValue(currentMonth.getFullYear() + '');
 				}
 			});
 
 			const yearElement = this.htmlHelper.createDiv('year');
 			const yearContent = this.htmlHelper.createSpan();
-			yearElement.appendChild(selectElement);
+			yearElement.appendChild(selectElement.getElement());
 			yearElement.appendChild(yearContent);
 
 			this.yearElement = yearContent;
@@ -343,7 +343,7 @@ namespace TheDatepicker {
 			this.yearElement.innerText = currentYear + '';
 
 			if (!this.options.isYearAsDropdown()) {
-				this.yearSelect.style.display = 'none';
+				this.yearSelect.getElement().style.display = 'none';
 				this.yearElement.style.display = '';
 				return;
 			}
@@ -354,25 +354,25 @@ namespace TheDatepicker {
 			const maxYear = maxDate !== null ? maxDate.getFullYear() : null;
 			const range = this.calculateDropdownRange(currentYear, minYear, maxYear);
 
-			const options = this.yearSelect.getElementsByTagName('option');
-			const diff = this.calculateDropdownDiff(options, range, (value: string): number => {
+			const diff = this.calculateDropdownDiff(this.yearSelect, range, (value: string): number => {
 				return parseInt(value, 10);
 			});
 
+			const yearSelectElement = this.yearSelect.getOptionsElement();
 			for (let index = 0; index < diff.remove.length; index++) {
-				this.yearSelect.removeChild(diff.remove[index]);
+				yearSelectElement.removeChild(diff.remove[index].getElement());
 			}
 			for (let index = diff.prepend.length - 1; index >= 0; index--) {
-				this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(diff.prepend[index] + '', diff.prepend[index] + ''), this.yearSelect.firstChild);
+				yearSelectElement.insertBefore(this.htmlHelper.createSelectOption(diff.prepend[index] + '', diff.prepend[index] + ''), yearSelectElement.firstChild);
 			}
 			for (let index = 0; index < diff.append.length; index++) {
-				this.yearSelect.appendChild(this.htmlHelper.createSelectOption(diff.append[index] + '', diff.append[index] + ''));
+				yearSelectElement.appendChild(this.htmlHelper.createSelectOption(diff.append[index] + '', diff.append[index] + ''));
 			}
 
-			this.yearSelect.value = currentYear + '';
+			this.yearSelect.setValue(currentYear + '');
 
 			const showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
-			this.yearSelect.style.display = showSelect ? '' : 'none';
+			this.yearSelect.getElement().style.display = showSelect ? '' : 'none';
 			this.yearElement.style.display = showSelect ? 'none' : '';
 		}
 
@@ -387,10 +387,10 @@ namespace TheDatepicker {
 				newMonth.setMonth(data.month);
 
 				if (!viewModel.goToMonth(event, newMonth)) {
-					this.monthAndYearSelect.value = this.getMonthAndYearOptionValue({
+					this.monthAndYearSelect.setValue(this.getMonthAndYearOptionValue({
 						month: currentMonth.getMonth(),
 						year: currentMonth.getFullYear(),
-					});
+					}));
 				}
 			});
 
@@ -398,7 +398,7 @@ namespace TheDatepicker {
 			this.monthAndYearElement = monthAndYearContent;
 			this.monthAndYearSelect = selectElement;
 			monthAndYear.appendChild(monthAndYearContent);
-			monthAndYear.appendChild(selectElement);
+			monthAndYear.appendChild(selectElement.getElement());
 
 			return monthAndYear;
 		}
@@ -417,7 +417,7 @@ namespace TheDatepicker {
 			this.monthAndYearElement.innerText = this.translateMonthAndYear(currentData);
 
 			if (!this.options.isYearAsDropdown() || !this.options.isMonthAsDropdown()) {
-				this.monthAndYearSelect.style.display = 'none';
+				this.monthAndYearSelect.getElement().style.display = 'none';
 				this.monthAndYearElement.style.display = '';
 				return;
 			}
@@ -428,27 +428,27 @@ namespace TheDatepicker {
 			const maxIndex = maxDate !== null ? maxDate.getFullYear() * 12 + maxDate.getMonth() : null;
 			const range = this.calculateDropdownRange(currentIndex, minIndex, maxIndex);
 
-			const options = this.monthAndYearSelect.getElementsByTagName('option');
-			const diff = this.calculateDropdownDiff(options, range, (value: string): number => {
+			const diff = this.calculateDropdownDiff(this.monthAndYearSelect, range, (value: string): number => {
 				return this.calculateMonthAndYearIndex(this.parseMonthAndYearOptionValue(value));
 			});
 
+			const monthAndYearSelect = this.monthAndYearSelect.getOptionsElement();
 			for (let index = 0; index < diff.remove.length; index++) {
-				this.monthAndYearSelect.removeChild(diff.remove[index]);
+				monthAndYearSelect.removeChild(diff.remove[index].getElement());
 			}
 			for (let index = diff.prepend.length - 1; index >= 0; index--) {
 				const data = this.getMonthAndYearByIndex(diff.prepend[index]);
-				this.monthAndYearSelect.insertBefore(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)), this.monthAndYearSelect.firstChild);
+				monthAndYearSelect.insertBefore(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)), monthAndYearSelect.firstChild);
 			}
 			for (let index = 0; index < diff.append.length; index++) {
 				const data = this.getMonthAndYearByIndex(diff.append[index]);
-				this.monthAndYearSelect.appendChild(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)));
+				monthAndYearSelect.appendChild(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)));
 			}
 
-			this.monthAndYearSelect.value = this.getMonthAndYearOptionValue(currentData);
+			this.monthAndYearSelect.setValue(this.getMonthAndYearOptionValue(currentData));
 
 			const showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
-			this.monthAndYearSelect.style.display = showSelect ? '' : 'none';
+			this.monthAndYearSelect.getElement().style.display = showSelect ? '' : 'none';
 			this.monthAndYearElement.style.display = showSelect ? 'none' : '';
 		}
 
@@ -504,23 +504,31 @@ namespace TheDatepicker {
 			};
 		}
 
-		private calculateDropdownDiff(options: HTMLCollectionOf<HTMLOptionElement>, newRange: Range, getNumerical: (value: string) => number): DropdownDiff {
-			const firstOption = options.length > 0 ? getNumerical(options[0].value) : null;
-			const lastOption = options.length > 0 ? getNumerical(options[options.length - 1].value) : null;
-			const prepend = [];
-			const append = [];
-			const remove = [];
+		private calculateDropdownDiff(input: SelectInput, newRange: Range, getNumerical: (value: string) => number): DropdownDiff {
+			const prepend: number[] = [];
+			const append: number[] = [];
+			const remove: SelectOption[] = [];
+			let firstOption: number | null = null;
+			let lastOption: number | null = null;
+
+			input.forEachOption((option: SelectOption) => {
+				const value = getNumerical(option.getValue());
+
+				if (firstOption === null) {
+					firstOption = value;
+				}
+				lastOption = value;
+
+				if (value < newRange.from || value > newRange.to) {
+					remove.push(option);
+				}
+			});
+
 			for (let value = newRange.from; value <= newRange.to; value++) {
 				if (firstOption === null || value < firstOption) {
 					prepend.push(value);
 				} else if (value > lastOption) {
 					append.push(value);
-				}
-			}
-			for (let index = 0; index < options.length; index++) {
-				const value = getNumerical(options[index].value);
-				if (value < newRange.from || value > newRange.to) {
-					remove.push(options[index]);
 				}
 			}
 

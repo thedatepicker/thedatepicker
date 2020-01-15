@@ -5,6 +5,78 @@ namespace TheDatepicker {
 		label: string;
 	}
 
+	export interface SelectInput {
+
+		setValue(value: string): void;
+
+		getElement(): HTMLElement;
+
+		getOptionsElement(): HTMLElement;
+
+		forEachOption(callback: (option: SelectOption) => void): void;
+
+	}
+
+	export interface SelectOption {
+
+		setEnabled(value: boolean): void;
+
+		getValue(): string;
+
+		getElement(): HTMLElement;
+
+	}
+
+	class NativeSelectInput implements SelectInput {
+
+		constructor(
+			private readonly element: HTMLSelectElement
+		) {
+		}
+
+		setValue(value: string): void {
+			this.element.value = value;
+		}
+
+		getElement(): HTMLElement {
+			return this.element;
+		}
+
+		getOptionsElement(): HTMLElement {
+			return this.element;
+		}
+
+		forEachOption(callback: (option: SelectOption) => void): void {
+			const options = this.element.getElementsByTagName('option');
+			for (let i = 0; i < options.length; i++) {
+				callback(new NativeSelectOption(options[i]));
+			}
+		}
+
+	}
+
+	class NativeSelectOption implements SelectOption {
+
+		constructor(
+			private readonly element: HTMLOptionElement
+		) {
+		}
+
+		setEnabled(value: boolean): void {
+			this.element.disabled = !value;
+			this.element.style.display = value ? '' : 'none';
+		}
+
+		getValue(): string {
+			return this.element.value;
+		}
+
+		getElement(): HTMLElement {
+			return this.element;
+		}
+
+	}
+
 	export class HtmlHelper {
 
 		private readonly document: Document;
@@ -101,7 +173,7 @@ namespace TheDatepicker {
 			return this.document.createElement('td');
 		}
 
-		public createSelectInput(options: Option[], onChange: (event: Event, value: string) => void): HTMLSelectElement {
+		public createSelectInput(options: Option[], onChange: (event: Event, value: string) => void): SelectInput {
 			const input = this.document.createElement('select');
 			this.addClass(input, 'select');
 
@@ -118,7 +190,7 @@ namespace TheDatepicker {
 				Helper.stopPropagation(event);
 			};
 
-			return input;
+			return new NativeSelectInput(input);
 		}
 
 		public createSelectOption(value: string, label: string): HTMLOptionElement {
