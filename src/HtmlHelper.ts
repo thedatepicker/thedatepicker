@@ -173,7 +173,14 @@ namespace TheDatepicker {
 			return this.document.createElement('td');
 		}
 
-		public createSelectInput(options: Option[], onChange: (event: Event, value: string) => void): SelectInput {
+		public createSelectInput(options: Option[], onChange: (event: Event, value: string) => void): SelectInput
+		{
+			return this.options.isDropdownAsNative()
+				? this.createNativeSelectInput(options, onChange)
+				: this.createSimulatedSelectInput(options, onChange);
+		}
+
+		private createNativeSelectInput(options: Option[], onChange: (event: Event, value: string) => void): NativeSelectInput {
 			const input = this.document.createElement('select');
 			this.addClass(input, 'select');
 
@@ -191,6 +198,11 @@ namespace TheDatepicker {
 			};
 
 			return new NativeSelectInput(input);
+		}
+
+		private createSimulatedSelectInput(options: Option[], onChange: (event: Event, value: string) => void): SelectInput
+		{
+			throw new Error('Not implemented');
 		}
 
 		public createSelectOption(value: string, label: string): HTMLOptionElement {

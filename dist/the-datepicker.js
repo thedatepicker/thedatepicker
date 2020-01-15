@@ -1123,6 +1123,11 @@ var TheDatepicker;
             return this.document.createElement('td');
         };
         HtmlHelper.prototype.createSelectInput = function (options, onChange) {
+            return this.options.isDropdownAsNative()
+                ? this.createNativeSelectInput(options, onChange)
+                : this.createSimulatedSelectInput(options, onChange);
+        };
+        HtmlHelper.prototype.createNativeSelectInput = function (options, onChange) {
             var input = this.document.createElement('select');
             this.addClass(input, 'select');
             for (var index = 0; index < options.length; index++) {
@@ -1136,6 +1141,9 @@ var TheDatepicker;
                 TheDatepicker.Helper.stopPropagation(event);
             };
             return new NativeSelectInput(input);
+        };
+        HtmlHelper.prototype.createSimulatedSelectInput = function (options, onChange) {
+            throw new Error('Not implemented');
         };
         HtmlHelper.prototype.createSelectOption = function (value, label) {
             var option = this.document.createElement('option');
@@ -1203,6 +1211,7 @@ var TheDatepicker;
             this.title = '';
             this.dropdownItemsLimit = 200;
             this.hideDropdownWithOneItem = true;
+            this.dropdownAsNative = true;
             this.goBackHtml = '&lt;';
             this.goForwardHtml = '&gt;';
             this.closeHtml = '&times;';
@@ -1252,6 +1261,7 @@ var TheDatepicker;
             options.title = this.title;
             options.dropdownItemsLimit = this.dropdownItemsLimit;
             options.hideDropdownWithOneItem = this.hideDropdownWithOneItem;
+            options.dropdownAsNative = this.dropdownAsNative;
             options.goBackHtml = this.goBackHtml;
             options.goForwardHtml = this.goForwardHtml;
             options.closeHtml = this.closeHtml;
@@ -1358,6 +1368,9 @@ var TheDatepicker;
         };
         Options.prototype.setHideDropdownWithOneItem = function (value) {
             this.hideDropdownWithOneItem = !!value;
+        };
+        Options.prototype.setDropdownAsNative = function (value) {
+            this.dropdownAsNative = !!value;
         };
         Options.prototype.setGoBackHtml = function (html) {
             this.goBackHtml = TheDatepicker.Helper.checkString('Html', html);
@@ -1550,6 +1563,9 @@ var TheDatepicker;
         };
         Options.prototype.getDropdownItemsLimit = function () {
             return this.dropdownItemsLimit;
+        };
+        Options.prototype.isDropdownAsNative = function () {
+            return this.dropdownAsNative;
         };
         Options.prototype.isDateAvailable = function (date) {
             if (this.dateAvailabilityResolver !== null) {

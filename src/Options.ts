@@ -83,6 +83,7 @@ namespace TheDatepicker {
 		private title = '';
 		private dropdownItemsLimit = 200;
 		private hideDropdownWithOneItem = true;
+		private dropdownAsNative = true;
 		private goBackHtml = '&lt;';
 		private goForwardHtml = '&gt;';
 		private closeHtml = '&times;';
@@ -136,6 +137,7 @@ namespace TheDatepicker {
 			options.title = this.title;
 			options.dropdownItemsLimit = this.dropdownItemsLimit;
 			options.hideDropdownWithOneItem = this.hideDropdownWithOneItem;
+			options.dropdownAsNative = this.dropdownAsNative;
 			options.goBackHtml = this.goBackHtml;
 			options.goForwardHtml = this.goForwardHtml;
 			options.closeHtml = this.closeHtml;
@@ -380,6 +382,12 @@ namespace TheDatepicker {
 		// defaults to true
 		public setHideDropdownWithOneItem(value: boolean): void {
 			this.hideDropdownWithOneItem = !!value;
+		}
+
+		// Setting to true will render dropdown as native select element.
+		// defaults to true
+		public setDropdownAsNative(value: boolean): void {
+			this.dropdownAsNative = !!value;
 		}
 
 		// Sets html for go back button.
@@ -658,6 +666,10 @@ namespace TheDatepicker {
 
 		public getDropdownItemsLimit(): number {
 			return this.dropdownItemsLimit;
+		}
+
+		public isDropdownAsNative(): boolean {
+			return this.dropdownAsNative;
 		}
 
 		public isDateAvailable(date: Date): boolean {
