@@ -22,6 +22,7 @@ namespace TheDatepicker {
 	// todo lépe minifikovat
 	// todo favicona
 	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
+	// todo všechny definice anonymních fcí můřou mít return typehint
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

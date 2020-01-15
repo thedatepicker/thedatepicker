@@ -344,7 +344,7 @@ namespace TheDatepicker {
 		}
 
 		// Setting to true will render month and year in header each in separate element.
-		// It will be rendered as a dropdown only when both settings MonthAsDropdown and YearAsDropdown are set to true.
+		// If set to false it will be rendered as a dropdown only when both settings MonthAsDropdown and YearAsDropdown are set to true.
 		// defaults to true
 		public setMonthAndYearSeparated(value: boolean): void {
 			this.monthAndYearSeparated = !!value;
@@ -371,7 +371,7 @@ namespace TheDatepicker {
 		}
 
 		// Limit of number of items in dropdown list.
-		// Default is 200.
+		// default is 200
 		public setDropdownItemsLimit(limit: number): void {
 			this.dropdownItemsLimit = Helper.checkNumber('Items limit', limit, 1);
 		}
@@ -383,31 +383,31 @@ namespace TheDatepicker {
 		}
 
 		// Sets html for go back button.
-		// Defaults to "&lt;"
+		// defaults to "&lt;"
 		public setGoBackHtml(html: string): void {
 			this.goBackHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for go forward button.
-		// Defaults to "&gt;"
+		// defaults to "&gt;"
 		public setGoForwardHtml(html: string): void {
 			this.goForwardHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for close button.
-		// Defaults to "&times;"
+		// defaults to "&times;"
 		public setCloseHtml(html: string): void {
 			this.closeHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for reset button.
-		// Defaults to "&olarr;"
+		// defaults to "&olarr;"
 		public setResetHtml(html: string): void {
 			this.resetHtml = Helper.checkString('Html', html);
 		}
 
 		// Sets html for deselect button.
-		// Defaults to "&times;"
+		// defaults to "&times;"
 		public setDeselectHtml(html: string): void {
 			this.deselectHtml = Helper.checkString('Html', html);
 		}

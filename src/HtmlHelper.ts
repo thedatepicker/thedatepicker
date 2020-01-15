@@ -1,6 +1,6 @@
 namespace TheDatepicker {
 
-	export interface SelectOption {
+	export interface Option {
 		value: string;
 		label: string;
 	}
@@ -101,7 +101,7 @@ namespace TheDatepicker {
 			return this.document.createElement('td');
 		}
 
-		public createSelectInput(options: SelectOption[], onChange: (event: Event, value: string) => void): HTMLSelectElement {
+		public createSelectInput(options: Option[], onChange: (event: Event, value: string) => void): HTMLSelectElement {
 			const input = this.document.createElement('select');
 			this.addClass(input, 'select');
 

@@ -243,7 +243,7 @@ namespace TheDatepicker {
 		}
 
 		protected createMonthElement(viewModel: ViewModel): HTMLElement {
-			const options: SelectOption[] = [];
+			const options: Option[] = [];
 			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
 				options.push({
 					value: monthNumber + '',
