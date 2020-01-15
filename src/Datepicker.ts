@@ -23,6 +23,7 @@ namespace TheDatepicker {
 	// todo favicona
 	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
 	// todo všechny definice anonymních fcí můřou mít return typehint
+	// todo září 275760 se nezobrazí a dál vyvolá Maximum call stack size exceeded (najít i záporný minimum)
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
