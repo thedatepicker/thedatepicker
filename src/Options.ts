@@ -29,8 +29,8 @@ namespace TheDatepicker {
 		select: SelectEvent[];
 		beforeOpenAndClose: OpenAndCloseEvent[];
 		openAndClose: OpenAndCloseEvent[];
-		monthChange: MonthChangeEvent[];
 		beforeMonthChange: MonthChangeEvent[];
+		monthChange: MonthChangeEvent[];
 	}
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
@@ -95,8 +95,8 @@ namespace TheDatepicker {
 			select: [],
 			beforeOpenAndClose: [],
 			openAndClose: [],
-			monthChange: [],
 			beforeMonthChange: [],
+			monthChange: [],
 		};
 
 		public constructor(translator: Translator | null = null) {
@@ -146,8 +146,8 @@ namespace TheDatepicker {
 			options.listeners.select = this.listeners.select.slice(0);
 			options.listeners.beforeOpenAndClose = this.listeners.beforeOpenAndClose.slice(0);
 			options.listeners.openAndClose = this.listeners.openAndClose.slice(0);
-			options.listeners.monthChange = this.listeners.monthChange.slice(0);
 			options.listeners.beforeMonthChange = this.listeners.beforeMonthChange.slice(0);
+			options.listeners.monthChange = this.listeners.monthChange.slice(0);
 
 			return options
 		}
@@ -741,6 +741,30 @@ namespace TheDatepicker {
 
 		public getToday(): Date {
 			return this.today !== null ? new Date(this.today.getTime()) : Helper.resetTime(new Date());
+		}
+
+		public getBeforeSelectListeners(): SelectEvent[] {
+			return this.listeners.beforeSelect;
+		}
+
+		public getSelectListeners(): SelectEvent[] {
+			return this.listeners.select;
+		}
+
+		public getBeforeOpenAndCloseListeners(): OpenAndCloseEvent[] {
+			return this.listeners.beforeOpenAndClose;
+		}
+
+		public getOpenAndCloseListeners(): OpenAndCloseEvent[] {
+			return this.listeners.openAndClose;
+		}
+
+		public getBeforeMonthChangeListeners(): MonthChangeEvent[] {
+			return this.listeners.beforeMonthChange;
+		}
+
+		public getMonthChangeListeners(): MonthChangeEvent[] {
+			return this.listeners.monthChange;
 		}
 
 		private checkConstraints(minDate: Date | null, maxDate: Date | null): void {

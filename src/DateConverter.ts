@@ -20,7 +20,7 @@ namespace TheDatepicker {
 		public month: number | null = null;
 		public year: number | null = null;
 
-		createDate(): Date {
+		public createDate(): Date {
 			if (this.day === null || this.month === null || this.year === null) {
 				throw new CannotParseDateException();
 			}

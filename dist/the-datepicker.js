@@ -1178,8 +1178,8 @@ var TheDatepicker;
                 select: [],
                 beforeOpenAndClose: [],
                 openAndClose: [],
-                monthChange: [],
-                beforeMonthChange: []
+                beforeMonthChange: [],
+                monthChange: []
             };
             this.translator = translator !== null ? translator : new TheDatepicker.Translator();
             this.document = document;
@@ -1225,8 +1225,8 @@ var TheDatepicker;
             options.listeners.select = this.listeners.select.slice(0);
             options.listeners.beforeOpenAndClose = this.listeners.beforeOpenAndClose.slice(0);
             options.listeners.openAndClose = this.listeners.openAndClose.slice(0);
-            options.listeners.monthChange = this.listeners.monthChange.slice(0);
             options.listeners.beforeMonthChange = this.listeners.beforeMonthChange.slice(0);
+            options.listeners.monthChange = this.listeners.monthChange.slice(0);
             return options;
         };
         Options.prototype.setHideOnBlur = function (value) {
@@ -1578,6 +1578,24 @@ var TheDatepicker;
         };
         Options.prototype.getToday = function () {
             return this.today !== null ? new Date(this.today.getTime()) : TheDatepicker.Helper.resetTime(new Date());
+        };
+        Options.prototype.getBeforeSelectListeners = function () {
+            return this.listeners.beforeSelect;
+        };
+        Options.prototype.getSelectListeners = function () {
+            return this.listeners.select;
+        };
+        Options.prototype.getBeforeOpenAndCloseListeners = function () {
+            return this.listeners.beforeOpenAndClose;
+        };
+        Options.prototype.getOpenAndCloseListeners = function () {
+            return this.listeners.openAndClose;
+        };
+        Options.prototype.getBeforeMonthChangeListeners = function () {
+            return this.listeners.beforeMonthChange;
+        };
+        Options.prototype.getMonthChangeListeners = function () {
+            return this.listeners.monthChange;
         };
         Options.prototype.checkConstraints = function (minDate, maxDate) {
             if (minDate !== null
