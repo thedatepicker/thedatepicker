@@ -273,6 +273,7 @@ namespace TheDatepicker {
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
 		// deprecated, use addCellClassesResolver()
 		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
+			Helper.warnDeprecatedUsage('setCellClassesResolver', 'addCellClassesResolver');
 			this.cellClassesResolver = Helper.checkFunction('Resolver', resolver) as (CellClassesResolver | null);
 		}
 

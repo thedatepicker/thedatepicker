@@ -1007,6 +1007,19 @@ var TheDatepicker;
             }
             return value;
         };
+        Helper.warnDeprecatedUsage = function (deprecatedMethod, alternateMethod) {
+            if (!window.console) {
+                return;
+            }
+            for (var index = 0; index < Helper.deprecatedMethods.length; index++) {
+                if (deprecatedMethod === Helper.deprecatedMethods[0]) {
+                    return;
+                }
+            }
+            window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethod + '()');
+            Helper.deprecatedMethods.push(deprecatedMethod);
+        };
+        Helper.deprecatedMethods = [];
         return Helper;
     }());
     TheDatepicker.Helper = Helper;
@@ -1277,6 +1290,7 @@ var TheDatepicker;
             };
         };
         Options.prototype.setCellClassesResolver = function (resolver) {
+            TheDatepicker.Helper.warnDeprecatedUsage('setCellClassesResolver', 'addCellClassesResolver');
             this.cellClassesResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
         };
         Options.prototype.addCellClassesResolver = function (resolver) {

@@ -45,6 +45,8 @@ namespace TheDatepicker {
 
 	export class Helper {
 
+		private static deprecatedMethods: string[] = [];
+
 		public static resetTime(date: Date | null): Date | null {
 			if (date === null) {
 				return null;
@@ -222,6 +224,21 @@ namespace TheDatepicker {
 				throw new Error(parameterName + ' was expected to be a function' + (isNullable ? ' or null' : '') + '.');
 			}
 			return value;
+		}
+
+		public static warnDeprecatedUsage(deprecatedMethod: string, alternateMethod: string): void {
+			if (!window.console) {
+				return;
+			}
+
+			for (let index = 0; index < Helper.deprecatedMethods.length; index++) {
+				if (deprecatedMethod === Helper.deprecatedMethods[0]) {
+					return;
+				}
+			}
+
+			window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethod + '()');
+			Helper.deprecatedMethods.push(deprecatedMethod);
 		}
 
 	}
