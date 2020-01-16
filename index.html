@@ -177,7 +177,7 @@
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.setCellClassesResolver((day) => {<br>
+					<label>datepicker.options.addCellClassesResolver((day) => {<br>
 						&nbsp;<textarea rows="3" cols="70" id="cellClassesResolver">return [];</textarea><br>
 						});</label>
 				</li>
@@ -601,10 +601,9 @@
 
 			var cellClassesResolverInput = document.getElementById('cellClassesResolver');
 			cellClassesResolverInput.onchange = function () {
-				if (cellClassesResolverInput.value === '') {
-					datepicker.options.setCellClassesResolver(null);
-				} else {
-					datepicker.options.setCellClassesResolver(createCallback('day', cellClassesResolverInput.value));
+				datepicker.options.removeCellClassesResolver();
+				if (cellClassesResolverInput.value !== '') {
+					datepicker.options.addCellClassesResolver(createCallback('day', cellClassesResolverInput.value));
 				}
 				datepicker.render();
 			};

@@ -68,6 +68,7 @@ namespace TheDatepicker {
 		private cellContentResolver: CellContentResolver | null = null;
 		private cellContentStructureResolver: CellContentStructureResolver | null = null;
 		private cellClassesResolver: CellClassesResolver | null = null;
+		private cellClassesResolvers: CellClassesResolver[] = [];
 		private inputFormat = 'j. n. Y';
 		private daysOutOfMonthVisible = false;
 		private fixedRowsCount = false;
@@ -121,6 +122,7 @@ namespace TheDatepicker {
 			options.cellContentResolver = this.cellContentResolver;
 			options.cellContentStructureResolver = this.cellContentStructureResolver;
 			options.cellClassesResolver = this.cellClassesResolver;
+			options.cellClassesResolvers = this.cellClassesResolvers.slice(0);
 			options.inputFormat = this.inputFormat;
 			options.daysOutOfMonthVisible = this.daysOutOfMonthVisible;
 			options.fixedRowsCount = this.fixedRowsCount;
@@ -269,8 +271,31 @@ namespace TheDatepicker {
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
+		// deprecated, use addCellClassesResolver()
 		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
 			this.cellClassesResolver = Helper.checkFunction('Resolver', resolver) as (CellClassesResolver | null);
+		}
+
+		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
+		public addCellClassesResolver(resolver: CellClassesResolver): void {
+			this.cellClassesResolvers.push(Helper.checkFunction('Resolver', resolver, false) as CellClassesResolver);
+		}
+
+
+		public removeCellClassesResolver(resolver: CellClassesResolver | null = null): void {
+			resolver = Helper.checkFunction('Resolver', resolver) as (CellClassesResolver | null);
+
+			if (resolver === null) {
+				this.cellClassesResolvers = [];
+			} else {
+				const newResolvers: CellClassesResolver[] = [];
+				for (let index = 0; index < this.cellClassesResolvers.length; index++) {
+					if (this.cellClassesResolvers[index] !== resolver) {
+						newResolvers.push(this.cellClassesResolvers[index]);
+					}
+				}
+				this.cellClassesResolvers = newResolvers;
+			}
 		}
 
 		// Format in which date is printed as an input value.
@@ -693,14 +718,23 @@ namespace TheDatepicker {
 		}
 
 		public getCellClasses(day: Day): string[] {
+			let result: string[] = [];
+
 			if (this.cellClassesResolver !== null) {
 				const classes = this.cellClassesResolver(day);
 				if (typeof classes === 'object' && classes.constructor === Array) {
-					return classes;
+					result = result.concat(classes)
 				}
 			}
 
-			return [];
+			for (let index = 0; index < this.cellClassesResolvers.length; index++) {
+				const classes = this.cellClassesResolvers[index](day);
+				if (typeof classes === 'object' && classes.constructor === Array) {
+					result = result.concat(classes)
+				}
+			}
+
+			return result;
 		}
 
 		public getGoBackHtml(): string {

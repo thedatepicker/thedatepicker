@@ -1151,6 +1151,7 @@ var TheDatepicker;
             this.cellContentResolver = null;
             this.cellContentStructureResolver = null;
             this.cellClassesResolver = null;
+            this.cellClassesResolvers = [];
             this.inputFormat = 'j. n. Y';
             this.daysOutOfMonthVisible = false;
             this.fixedRowsCount = false;
@@ -1200,6 +1201,7 @@ var TheDatepicker;
             options.cellContentResolver = this.cellContentResolver;
             options.cellContentStructureResolver = this.cellContentStructureResolver;
             options.cellClassesResolver = this.cellClassesResolver;
+            options.cellClassesResolvers = this.cellClassesResolvers.slice(0);
             options.inputFormat = this.inputFormat;
             options.daysOutOfMonthVisible = this.daysOutOfMonthVisible;
             options.fixedRowsCount = this.fixedRowsCount;
@@ -1276,6 +1278,25 @@ var TheDatepicker;
         };
         Options.prototype.setCellClassesResolver = function (resolver) {
             this.cellClassesResolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
+        };
+        Options.prototype.addCellClassesResolver = function (resolver) {
+            this.cellClassesResolvers.push(TheDatepicker.Helper.checkFunction('Resolver', resolver, false));
+        };
+        Options.prototype.removeCellClassesResolver = function (resolver) {
+            if (resolver === void 0) { resolver = null; }
+            resolver = TheDatepicker.Helper.checkFunction('Resolver', resolver);
+            if (resolver === null) {
+                this.cellClassesResolvers = [];
+            }
+            else {
+                var newResolvers = [];
+                for (var index = 0; index < this.cellClassesResolvers.length; index++) {
+                    if (this.cellClassesResolvers[index] !== resolver) {
+                        newResolvers.push(this.cellClassesResolvers[index]);
+                    }
+                }
+                this.cellClassesResolvers = newResolvers;
+            }
         };
         Options.prototype.setInputFormat = function (format) {
             this.inputFormat = TheDatepicker.Helper.checkString('Input format', format, true);
@@ -1541,13 +1562,20 @@ var TheDatepicker;
             }
         };
         Options.prototype.getCellClasses = function (day) {
+            var result = [];
             if (this.cellClassesResolver !== null) {
                 var classes = this.cellClassesResolver(day);
                 if (typeof classes === 'object' && classes.constructor === Array) {
-                    return classes;
+                    result = result.concat(classes);
                 }
             }
-            return [];
+            for (var index = 0; index < this.cellClassesResolvers.length; index++) {
+                var classes = this.cellClassesResolvers[index](day);
+                if (typeof classes === 'object' && classes.constructor === Array) {
+                    result = result.concat(classes);
+                }
+            }
+            return result;
         };
         Options.prototype.getGoBackHtml = function () {
             return this.goBackHtml;
