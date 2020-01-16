@@ -17,20 +17,20 @@ namespace TheDatepicker {
 
 	}
 
-	export type SelectEvent = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
-	export type OpenAndCloseEvent = (event: Event | null, isOpening: boolean) => boolean;
-	export type MonthChangeEvent = (event: Event | null, month: Date, previousMonth: Date) => boolean;
-	type OneOfEvent = SelectEvent | OpenAndCloseEvent | MonthChangeEvent;
-	type AnyEvent = SelectEvent & OpenAndCloseEvent & MonthChangeEvent;
-	type EventCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
+	export type SelectListener = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
+	export type OpenAndCloseListener = (event: Event | null, isOpening: boolean) => boolean;
+	export type MonthChangeListener = (event: Event | null, month: Date, previousMonth: Date) => boolean;
+	type OneOfListener = SelectListener | OpenAndCloseListener | MonthChangeListener;
+	type AnyListener = SelectListener & OpenAndCloseListener & MonthChangeListener;
+	type ListenerCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
-		beforeSelect: SelectEvent[];
-		select: SelectEvent[];
-		beforeOpenAndClose: OpenAndCloseEvent[];
-		openAndClose: OpenAndCloseEvent[];
-		beforeMonthChange: MonthChangeEvent[];
-		monthChange: MonthChangeEvent[];
+		beforeSelect: SelectListener[];
+		select: SelectListener[];
+		beforeOpenAndClose: OpenAndCloseListener[];
+		openAndClose: OpenAndCloseListener[];
+		beforeMonthChange: MonthChangeListener[];
+		monthChange: MonthChangeListener[];
 	}
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
@@ -461,64 +461,64 @@ namespace TheDatepicker {
 		// Callback to be called just before the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
-		public onBeforeSelect(listener: SelectEvent): void {
-			this.onEventListener(EventType.BeforeSelect, listener as AnyEvent);
+		public onBeforeSelect(listener: SelectListener): void {
+			this.onEvent(EventType.BeforeSelect, listener as AnyListener);
 		}
 
-		public offBeforeSelect(listener: SelectEvent | null = null): void {
-			this.offEventListener(EventType.BeforeSelect, listener);
+		public offBeforeSelect(listener: SelectListener | null = null): void {
+			this.offEvent(EventType.BeforeSelect, listener);
 		}
 
 		// Callback to be called immediately after the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
-		public onSelect(listener: SelectEvent): void {
-			this.onEventListener(EventType.Select, listener as AnyEvent);
+		public onSelect(listener: SelectListener): void {
+			this.onEvent(EventType.Select, listener as AnyListener);
 		}
 
-		public offSelect(listener: SelectEvent | null = null): void {
-			this.offEventListener(EventType.Select, listener);
+		public offSelect(listener: SelectListener | null = null): void {
+			this.offEvent(EventType.Select, listener);
 		}
 
 		// Callback to be called just before the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		// If callback returns false, action stops and datepicker will not be opened / closed.
-		public onBeforeOpenAndClose(listener: OpenAndCloseEvent): void {
-			this.onEventListener(EventType.BeforeOpenAndClose, listener as AnyEvent);
+		public onBeforeOpenAndClose(listener: OpenAndCloseListener): void {
+			this.onEvent(EventType.BeforeOpenAndClose, listener as AnyListener);
 		}
 
-		public offBeforeOpenAndClose(listener: OpenAndCloseEvent | null = null): void {
-			this.offEventListener(EventType.BeforeOpenAndClose, listener);
+		public offBeforeOpenAndClose(listener: OpenAndCloseListener | null = null): void {
+			this.offEvent(EventType.BeforeOpenAndClose, listener);
 		}
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
-		public onOpenAndClose(listener: OpenAndCloseEvent): void {
-			this.onEventListener(EventType.OpenAndClose, listener as AnyEvent);
+		public onOpenAndClose(listener: OpenAndCloseListener): void {
+			this.onEvent(EventType.OpenAndClose, listener as AnyListener);
 		}
 
-		public offOpenAndClose(listener: OpenAndCloseEvent | null = null): void {
-			this.offEventListener(EventType.OpenAndClose, listener);
+		public offOpenAndClose(listener: OpenAndCloseListener | null = null): void {
+			this.offEvent(EventType.OpenAndClose, listener);
 		}
 
 		// Callback to be called just before displayed month is changed.
 		// An Event instance, month (Date instance set to first day of month) which is going to be displayed and month (Date instance) which was displayed before are given on input.
 		// If callback returns false, month will not be changed.
-		public onBeforeMonthChange(listener: MonthChangeEvent): void {
-			this.onEventListener(EventType.BeforeMonthChange, listener as AnyEvent);
+		public onBeforeMonthChange(listener: MonthChangeListener): void {
+			this.onEvent(EventType.BeforeMonthChange, listener as AnyListener);
 		}
 
-		public offBeforeMonthChange(listener: MonthChangeEvent | null = null): void {
-			this.offEventListener(EventType.BeforeMonthChange, listener);
+		public offBeforeMonthChange(listener: MonthChangeListener | null = null): void {
+			this.offEvent(EventType.BeforeMonthChange, listener);
 		}
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
-		public onMonthChange(listener: MonthChangeEvent): void {
-			this.onEventListener(EventType.MonthChange, listener as AnyEvent);
+		public onMonthChange(listener: MonthChangeListener): void {
+			this.onEvent(EventType.MonthChange, listener as AnyListener);
 		}
 
-		public offMonthChange(listener: MonthChangeEvent | null = null): void {
-			this.offEventListener(EventType.MonthChange, listener);
+		public offMonthChange(listener: MonthChangeListener | null = null): void {
+			this.offEvent(EventType.MonthChange, listener);
 		}
 
 		public getInitialMonth(): Date {
@@ -794,27 +794,27 @@ namespace TheDatepicker {
 			return this.cellClassesResolvers;
 		}
 
-		public getBeforeSelectListeners(): SelectEvent[] {
+		public getBeforeSelectListeners(): SelectListener[] {
 			return this.listeners.beforeSelect;
 		}
 
-		public getSelectListeners(): SelectEvent[] {
+		public getSelectListeners(): SelectListener[] {
 			return this.listeners.select;
 		}
 
-		public getBeforeOpenAndCloseListeners(): OpenAndCloseEvent[] {
+		public getBeforeOpenAndCloseListeners(): OpenAndCloseListener[] {
 			return this.listeners.beforeOpenAndClose;
 		}
 
-		public getOpenAndCloseListeners(): OpenAndCloseEvent[] {
+		public getOpenAndCloseListeners(): OpenAndCloseListener[] {
 			return this.listeners.openAndClose;
 		}
 
-		public getBeforeMonthChangeListeners(): MonthChangeEvent[] {
+		public getBeforeMonthChangeListeners(): MonthChangeListener[] {
 			return this.listeners.beforeMonthChange;
 		}
 
-		public getMonthChangeListeners(): MonthChangeEvent[] {
+		public getMonthChangeListeners(): MonthChangeListener[] {
 			return this.listeners.monthChange;
 		}
 
@@ -854,12 +854,12 @@ namespace TheDatepicker {
 			return null;
 		}
 
-		private onEventListener(eventType: EventType, listener: AnyEvent) {
-			this.listeners[eventType].push(Helper.checkFunction('Event listener', listener, false) as AnyEvent);
+		private onEvent(eventType: EventType, listener: AnyListener) {
+			this.listeners[eventType].push(Helper.checkFunction('Event listener', listener, false) as AnyListener);
 		}
 
-		private offEventListener(eventType: EventType, listener: OneOfEvent | null): void {
-			listener = Helper.checkFunction('Event listener', listener) as (OneOfEvent | null);
+		private offEvent(eventType: EventType, listener: OneOfListener | null): void {
+			listener = Helper.checkFunction('Event listener', listener) as (OneOfListener | null);
 
 			if (listener === null) {
 				this.listeners[eventType] = [];
@@ -870,11 +870,11 @@ namespace TheDatepicker {
 						newListeners.push(this.listeners[eventType][index]);
 					}
 				}
-				this.listeners[eventType] = newListeners as AnyEvent[];
+				this.listeners[eventType] = newListeners as AnyListener[];
 			}
 		}
 
-		public triggerEvent(eventType: EventType, caller: EventCaller): boolean {
+		public triggerEvent(eventType: EventType, caller: ListenerCaller): boolean {
 			for (let index = 0; index < this.listeners[eventType].length; index++) {
 				if (caller(this.listeners[eventType][index]) === false) {
 					return false;

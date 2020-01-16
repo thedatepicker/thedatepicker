@@ -373,37 +373,37 @@ namespace TheDatepicker {
 		}
 
 		private triggerOnBeforeSelect(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
-			return this.options.triggerEvent(EventType.BeforeSelect, (listener: SelectEvent) => {
+			return this.options.triggerEvent(EventType.BeforeSelect, (listener: SelectListener) => {
 				return listener.call(this.datepicker, event, day, previousDay);
 			});
 		}
 
 		private triggerOnSelect(event: Event | null, day: Day | null, previousDay: Day | null): void {
-			this.options.triggerEvent(EventType.Select, (listener: SelectEvent) => {
+			this.options.triggerEvent(EventType.Select, (listener: SelectListener) => {
 				return listener.call(this.datepicker, event, day, previousDay);
 			});
 		}
 
 		private triggerOnBeforeOpenAndClose(event: Event | null, isOpening: boolean): boolean {
-			return this.options.triggerEvent(EventType.BeforeOpenAndClose, (listener: OpenAndCloseEvent) => {
+			return this.options.triggerEvent(EventType.BeforeOpenAndClose, (listener: OpenAndCloseListener) => {
 				return listener.call(this.datepicker, event, isOpening);
 			});
 		}
 
 		private triggerOnOpenAndClose(event: Event | null, isOpening: boolean): void {
-			this.options.triggerEvent(EventType.OpenAndClose, (listener: OpenAndCloseEvent) => {
+			this.options.triggerEvent(EventType.OpenAndClose, (listener: OpenAndCloseListener) => {
 				return listener.call(this.datepicker, event, isOpening);
 			});
 		}
 
 		private triggerOnBeforeMonthChange(event: Event | null, month: Date, previousMonth: Date): boolean {
-			return this.options.triggerEvent(EventType.BeforeMonthChange, (listener: MonthChangeEvent) => {
+			return this.options.triggerEvent(EventType.BeforeMonthChange, (listener: MonthChangeListener) => {
 				return listener.call(this.datepicker, event, month, previousMonth);
 			});
 		}
 
 		private triggerOnMonthChange(event: Event | null, month: Date, previousMonth: Date): void {
-			this.options.triggerEvent(EventType.MonthChange, (listener: MonthChangeEvent) => {
+			this.options.triggerEvent(EventType.MonthChange, (listener: MonthChangeListener) => {
 				return listener.call(this.datepicker, event, month, previousMonth);
 			});
 		}

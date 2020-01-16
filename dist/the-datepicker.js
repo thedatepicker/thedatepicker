@@ -1379,46 +1379,46 @@ var TheDatepicker;
             this.today = TheDatepicker.Helper.normalizeDate('Today', date, this);
         };
         Options.prototype.onBeforeSelect = function (listener) {
-            this.onEventListener(EventType.BeforeSelect, listener);
+            this.onEvent(EventType.BeforeSelect, listener);
         };
         Options.prototype.offBeforeSelect = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.BeforeSelect, listener);
+            this.offEvent(EventType.BeforeSelect, listener);
         };
         Options.prototype.onSelect = function (listener) {
-            this.onEventListener(EventType.Select, listener);
+            this.onEvent(EventType.Select, listener);
         };
         Options.prototype.offSelect = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.Select, listener);
+            this.offEvent(EventType.Select, listener);
         };
         Options.prototype.onBeforeOpenAndClose = function (listener) {
-            this.onEventListener(EventType.BeforeOpenAndClose, listener);
+            this.onEvent(EventType.BeforeOpenAndClose, listener);
         };
         Options.prototype.offBeforeOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.BeforeOpenAndClose, listener);
+            this.offEvent(EventType.BeforeOpenAndClose, listener);
         };
         Options.prototype.onOpenAndClose = function (listener) {
-            this.onEventListener(EventType.OpenAndClose, listener);
+            this.onEvent(EventType.OpenAndClose, listener);
         };
         Options.prototype.offOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.OpenAndClose, listener);
+            this.offEvent(EventType.OpenAndClose, listener);
         };
         Options.prototype.onBeforeMonthChange = function (listener) {
-            this.onEventListener(EventType.BeforeMonthChange, listener);
+            this.onEvent(EventType.BeforeMonthChange, listener);
         };
         Options.prototype.offBeforeMonthChange = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.BeforeMonthChange, listener);
+            this.offEvent(EventType.BeforeMonthChange, listener);
         };
         Options.prototype.onMonthChange = function (listener) {
-            this.onEventListener(EventType.MonthChange, listener);
+            this.onEvent(EventType.MonthChange, listener);
         };
         Options.prototype.offMonthChange = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEventListener(EventType.MonthChange, listener);
+            this.offEvent(EventType.MonthChange, listener);
         };
         Options.prototype.getInitialMonth = function () {
             var primarySource = this.initialDatePriority ? this.initialDate : this.initialMonth;
@@ -1678,10 +1678,10 @@ var TheDatepicker;
             }
             return null;
         };
-        Options.prototype.onEventListener = function (eventType, listener) {
+        Options.prototype.onEvent = function (eventType, listener) {
             this.listeners[eventType].push(TheDatepicker.Helper.checkFunction('Event listener', listener, false));
         };
-        Options.prototype.offEventListener = function (eventType, listener) {
+        Options.prototype.offEvent = function (eventType, listener) {
             listener = TheDatepicker.Helper.checkFunction('Event listener', listener);
             if (listener === null) {
                 this.listeners[eventType] = [];
