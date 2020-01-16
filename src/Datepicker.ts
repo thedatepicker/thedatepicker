@@ -24,6 +24,16 @@ namespace TheDatepicker {
 	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
 	// todo všechny definice anonymních fcí můřou mít return typehint
 	// todo září 275760 se nezobrazí a dál vyvolá Maximum call stack size exceeded (najít i záporný minimum)
+	// todo v optionech kterým se předává callback by bylo fajn dostat se nějak k datepickeru
+	// todo proč styly containeru a deselectu nemám v css?
+	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
+	// todo onFocus event
+	// todo v demu přidání onSelect zruší funkčnost vypsání getSelectedDate(), to samý onMonthChange
+	// todo měly by další callbacky smysl vrstvit podobně jako addCellClassesResolver ?
+	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
+	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
+	// todo classResolver by mohl akceptovat i string místo array
+	// todo gettery na callbacky
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 
