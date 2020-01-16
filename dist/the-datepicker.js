@@ -1621,6 +1621,18 @@ var TheDatepicker;
         Options.prototype.getToday = function () {
             return this.today !== null ? new Date(this.today.getTime()) : TheDatepicker.Helper.resetTime(new Date());
         };
+        Options.prototype.getDateAvailabilityResolver = function () {
+            return this.dateAvailabilityResolver;
+        };
+        Options.prototype.getCellContentResolver = function () {
+            return this.cellContentResolver;
+        };
+        Options.prototype.getCellContentStructureResolver = function () {
+            return this.cellContentStructureResolver;
+        };
+        Options.prototype.getCellClassesResolvers = function () {
+            return this.cellClassesResolvers;
+        };
         Options.prototype.getBeforeSelectListeners = function () {
             return this.listeners.beforeSelect;
         };

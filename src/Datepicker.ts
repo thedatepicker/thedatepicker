@@ -33,7 +33,6 @@ namespace TheDatepicker {
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
 	// todo classResolver by mohl akceptovat i string místo array
-	// todo gettery na callbacky
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

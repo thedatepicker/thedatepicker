@@ -778,6 +778,22 @@ namespace TheDatepicker {
 			return this.today !== null ? new Date(this.today.getTime()) : Helper.resetTime(new Date());
 		}
 
+		public getDateAvailabilityResolver(): DateAvailabilityResolver | null {
+			return this.dateAvailabilityResolver;
+		}
+
+		public getCellContentResolver(): CellContentResolver | null {
+			return this.cellContentResolver;
+		}
+
+		public getCellContentStructureResolver(): CellContentStructureResolver | null {
+			return this.cellContentStructureResolver;
+		}
+
+		public getCellClassesResolvers(): CellClassesResolver[] {
+			return this.cellClassesResolvers;
+		}
+
 		public getBeforeSelectListeners(): SelectEvent[] {
 			return this.listeners.beforeSelect;
 		}
