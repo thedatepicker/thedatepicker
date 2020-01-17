@@ -40,6 +40,12 @@
 			.error {
 				color: red;
 			}
+			.red .the-datepicker__button {
+				background-color: red;
+			}
+			.green .the-datepicker__button {
+				background-color: green;
+			}
 		</style>
 </head>
 <body>
@@ -161,7 +167,8 @@
 				</li>
 				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">return true;</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">// if (date.getDate() === 5) return false;
+return true;</textarea><br>
 						});</label>
 				</li>
 				<li>
@@ -178,7 +185,10 @@
 				</li>
 				<li>
 					<label>datepicker.options.addCellClassesResolver((day) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="cellClassesResolver">return [];</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="cellClassesResolver">
+// if (day.dayNumber === 20) return ['red'];
+// if (day.dayNumber === 10) return ['green'];
+return [];</textarea><br>
 						});</label>
 				</li>
 				<li>
