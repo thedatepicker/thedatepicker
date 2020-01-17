@@ -15,7 +15,7 @@
   "scripts": {
     "js": "tsc",
     "css": "stylus src/assets -o dist",
-    "minify": "uglifyjs -c -m -o dist/the-datepicker.min.js dist/the-datepicker.js"
+    "minify": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js"
   },
   "bugs": {
     "url": "https://github.com/thedatepicker/thedatepicker/issues"

@@ -1,10 +1,6 @@
-/// <reference path="Translator.ts" />
-/// <reference path="Day.ts" />
-/// <reference path="Helper.ts" />
-
 namespace TheDatepicker {
 
-	export enum EventType {
+	export enum EventType_ {
 		BeforeSelect = 'beforeSelect',
 		Select = 'select',
 		BeforeOpenAndClose = 'beforeOpenAndClose',
@@ -52,46 +48,46 @@ namespace TheDatepicker {
 
 		public readonly translator: Translator;
 
-		private readonly document: Document;
+		private readonly document_: Document;
 
-		private hideOnBlur = true;
-		private hideOnSelect = true;
-		private minDate: Date | null = null;
-		private maxDate: Date | null = null;
-		private minMonth: Date | null = null;
-		private maxMonth: Date | null = null;
-		private initialDate: Date | null = null;
-		private initialMonth: Date | null = null;
-		private initialDatePriority = true;
-		private firstDayOfWeek = DayOfWeek.Monday;
-		private dateAvailabilityResolver: DateAvailabilityResolver | null = null;
-		private cellContentResolver: CellContentResolver | null = null;
-		private cellContentStructureResolver: CellContentStructureResolver | null = null;
-		private cellClassesResolver: CellClassesResolver | null = null;
-		private cellClassesResolvers: CellClassesResolver[] = [];
-		private inputFormat = 'j. n. Y';
-		private daysOutOfMonthVisible = false;
-		private fixedRowsCount = false;
-		private toggleSelection = false;
-		private allowEmpty = true;
-		private showDeselectButton = true;
-		private showResetButton = false;
-		private monthAsDropdown = true;
-		private yearAsDropdown = true;
-		private monthAndYearSeparated = true;
-		private classesPrefix = 'the-datepicker__';
-		private showCloseButton = true;
-		private title = '';
-		private dropdownItemsLimit = 200;
-		private hideDropdownWithOneItem = true;
-		private goBackHtml = '&lt;';
-		private goForwardHtml = '&gt;';
-		private closeHtml = '&times;';
-		private resetHtml = '&olarr;';
-		private deselectHtml = '&times;';
-		private positionFixing = true;
-		private today: Date | null = null;
-		private listeners: Listeners = {
+		private hideOnBlur_ = true;
+		private hideOnSelect_ = true;
+		private minDate_: Date | null = null;
+		private maxDate_: Date | null = null;
+		private minMonth_: Date | null = null;
+		private maxMonth_: Date | null = null;
+		private initialDate_: Date | null = null;
+		private initialMonth_: Date | null = null;
+		private initialDatePriority_ = true;
+		private firstDayOfWeek_ = DayOfWeek.Monday;
+		private dateAvailabilityResolver_: DateAvailabilityResolver | null = null;
+		private cellContentResolver_: CellContentResolver | null = null;
+		private cellContentStructureResolver_: CellContentStructureResolver | null = null;
+		private cellClassesResolver_: CellClassesResolver | null = null;
+		private cellClassesResolvers_: CellClassesResolver[] = [];
+		private inputFormat_ = 'j. n. Y';
+		private daysOutOfMonthVisible_ = false;
+		private fixedRowsCount_ = false;
+		private toggleSelection_ = false;
+		private allowEmpty_ = true;
+		private showDeselectButton_ = true;
+		private showResetButton_ = false;
+		private monthAsDropdown_ = true;
+		private yearAsDropdown_ = true;
+		private monthAndYearSeparated_ = true;
+		private classesPrefix_ = 'the-datepicker__';
+		private showCloseButton_ = true;
+		private title_ = '';
+		private dropdownItemsLimit_ = 200;
+		private hideDropdownWithOneItem_ = true;
+		private goBackHtml_ = '&lt;';
+		private goForwardHtml_ = '&gt;';
+		private closeHtml_ = '&times;';
+		private resetHtml_ = '&olarr;';
+		private deselectHtml_ = '&times;';
+		private positionFixing_ = true;
+		private today_: Date | null = null;
+		private listeners_: Listeners = {
 			beforeSelect: [],
 			select: [],
 			beforeOpenAndClose: [],
@@ -102,54 +98,54 @@ namespace TheDatepicker {
 
 		public constructor(translator: Translator | null = null) {
 			this.translator = translator !== null ? translator : new Translator();
-			this.document = document;
+			this.document_ = document;
 		}
 
 		public clone(): Options {
 			const options = new Options(this.translator);
 
-			options.hideOnBlur = this.hideOnBlur;
-			options.hideOnSelect = this.hideOnSelect;
-			options.minDate = this.minDate;
-			options.maxDate = this.maxDate;
-			options.minMonth = this.minMonth;
-			options.maxMonth = this.maxMonth;
-			options.initialDate = this.initialDate;
-			options.initialMonth = this.initialMonth;
-			options.initialDatePriority = this.initialDatePriority;
-			options.firstDayOfWeek = this.firstDayOfWeek;
-			options.dateAvailabilityResolver = this.dateAvailabilityResolver;
-			options.cellContentResolver = this.cellContentResolver;
-			options.cellContentStructureResolver = this.cellContentStructureResolver;
-			options.cellClassesResolver = this.cellClassesResolver;
-			options.cellClassesResolvers = this.cellClassesResolvers.slice(0);
-			options.inputFormat = this.inputFormat;
-			options.daysOutOfMonthVisible = this.daysOutOfMonthVisible;
-			options.fixedRowsCount = this.fixedRowsCount;
-			options.toggleSelection = this.toggleSelection;
-			options.allowEmpty = this.allowEmpty;
-			options.showDeselectButton = this.showDeselectButton;
-			options.showResetButton = this.showResetButton;
-			options.monthAsDropdown = this.monthAsDropdown;
-			options.yearAsDropdown = this.yearAsDropdown;
-			options.monthAndYearSeparated = this.monthAndYearSeparated;
-			options.classesPrefix = this.classesPrefix;
-			options.showCloseButton = this.showCloseButton;
-			options.title = this.title;
-			options.dropdownItemsLimit = this.dropdownItemsLimit;
-			options.hideDropdownWithOneItem = this.hideDropdownWithOneItem;
-			options.goBackHtml = this.goBackHtml;
-			options.goForwardHtml = this.goForwardHtml;
-			options.closeHtml = this.closeHtml;
-			options.resetHtml = this.resetHtml;
-			options.deselectHtml = this.deselectHtml;
-			options.positionFixing = this.positionFixing;
-			options.listeners.beforeSelect = this.listeners.beforeSelect.slice(0);
-			options.listeners.select = this.listeners.select.slice(0);
-			options.listeners.beforeOpenAndClose = this.listeners.beforeOpenAndClose.slice(0);
-			options.listeners.openAndClose = this.listeners.openAndClose.slice(0);
-			options.listeners.beforeMonthChange = this.listeners.beforeMonthChange.slice(0);
-			options.listeners.monthChange = this.listeners.monthChange.slice(0);
+			options.hideOnBlur_ = this.hideOnBlur_;
+			options.hideOnSelect_ = this.hideOnSelect_;
+			options.minDate_ = this.minDate_;
+			options.maxDate_ = this.maxDate_;
+			options.minMonth_ = this.minMonth_;
+			options.maxMonth_ = this.maxMonth_;
+			options.initialDate_ = this.initialDate_;
+			options.initialMonth_ = this.initialMonth_;
+			options.initialDatePriority_ = this.initialDatePriority_;
+			options.firstDayOfWeek_ = this.firstDayOfWeek_;
+			options.dateAvailabilityResolver_ = this.dateAvailabilityResolver_;
+			options.cellContentResolver_ = this.cellContentResolver_;
+			options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
+			options.cellClassesResolver_ = this.cellClassesResolver_;
+			options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
+			options.inputFormat_ = this.inputFormat_;
+			options.daysOutOfMonthVisible_ = this.daysOutOfMonthVisible_;
+			options.fixedRowsCount_ = this.fixedRowsCount_;
+			options.toggleSelection_ = this.toggleSelection_;
+			options.allowEmpty_ = this.allowEmpty_;
+			options.showDeselectButton_ = this.showDeselectButton_;
+			options.showResetButton_ = this.showResetButton_;
+			options.monthAsDropdown_ = this.monthAsDropdown_;
+			options.yearAsDropdown_ = this.yearAsDropdown_;
+			options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
+			options.classesPrefix_ = this.classesPrefix_;
+			options.showCloseButton_ = this.showCloseButton_;
+			options.title_ = this.title_;
+			options.dropdownItemsLimit_ = this.dropdownItemsLimit_;
+			options.hideDropdownWithOneItem_ = this.hideDropdownWithOneItem_;
+			options.goBackHtml_ = this.goBackHtml_;
+			options.goForwardHtml_ = this.goForwardHtml_;
+			options.closeHtml_ = this.closeHtml_;
+			options.resetHtml_ = this.resetHtml_;
+			options.deselectHtml_ = this.deselectHtml_;
+			options.positionFixing_ = this.positionFixing_;
+			options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
+			options.listeners_.select = this.listeners_.select.slice(0);
+			options.listeners_.beforeOpenAndClose = this.listeners_.beforeOpenAndClose.slice(0);
+			options.listeners_.openAndClose = this.listeners_.openAndClose.slice(0);
+			options.listeners_.beforeMonthChange = this.listeners_.beforeMonthChange.slice(0);
+			options.listeners_.monthChange = this.listeners_.monthChange.slice(0);
 
 			return options
 		}
@@ -159,7 +155,7 @@ namespace TheDatepicker {
 		// Works only when there an input exists.
 		// defaults to true
 		public setHideOnBlur(value: boolean): void {
-			this.hideOnBlur = !!value;
+			this.hideOnBlur_ = !!value;
 		}
 
 		// Setting to true will hide datepicker immediately after selecting a valid date.
@@ -167,7 +163,7 @@ namespace TheDatepicker {
 		// Works only when there an input exists.
 		// defaults to true
 		public setHideOnSelect(value: boolean): void {
-			this.hideOnSelect = !!value;
+			this.hideOnSelect_ = !!value;
 		}
 
 		// Minimal date which can be selected (inclusive).
@@ -180,10 +176,10 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMinDate(date: Day | Date | string | null): void {
-			const normalizedDate = Helper.normalizeDate('Min date', date, this);
-			this.checkConstraints(normalizedDate, this.maxDate);
-			this.minDate = normalizedDate;
-			this.minMonth = Helper.normalizeMonth(normalizedDate);
+			const normalizedDate = Helper_.normalizeDate_('Min date', date, this);
+			this.checkConstraints_(normalizedDate, this.maxDate_);
+			this.minDate_ = normalizedDate;
+			this.minMonth_ = Helper_.normalizeMonth_(normalizedDate);
 		}
 
 		// Maximal date which can be selected (inclusive).
@@ -196,10 +192,10 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMaxDate(date: Day | Date | string | null): void {
-			const normalizedDate = Helper.normalizeDate('Max date', date, this);
-			this.checkConstraints(this.minDate, normalizedDate);
-			this.maxDate = normalizedDate;
-			this.maxMonth = Helper.normalizeMonth(normalizedDate);
+			const normalizedDate = Helper_.normalizeDate_('Max date', date, this);
+			this.checkConstraints_(this.minDate_, normalizedDate);
+			this.maxDate_ = normalizedDate;
+			this.maxMonth_ = Helper_.normalizeMonth_(normalizedDate);
 		}
 
 		// Month to be rendered when datepicker opened first time.
@@ -211,7 +207,7 @@ namespace TheDatepicker {
 		// or null for current month
 		// defaults to current month
 		public setInitialMonth(month: Date | string | null): void {
-			this.initialMonth = Helper.normalizeDate('Initial month', month, this);
+			this.initialMonth_ = Helper_.normalizeDate_('Initial month', month, this);
 		}
 
 		// Preselected date.
@@ -225,13 +221,13 @@ namespace TheDatepicker {
 		// It's overloaded by direct input value, if any.
 		// defaults to null
 		public setInitialDate(value: Day | Date | string | null): void {
-			this.initialDate = Helper.normalizeDate('Initial date', value, this);
+			this.initialDate_ = Helper_.normalizeDate_('Initial date', value, this);
 		}
 
 		// Setting to true will make initial month ignored when there is any date preselected.
 		// defaults to true
 		public setInitialDatePriority(value: boolean): void {
-			this.initialDatePriority = !!value;
+			this.initialDatePriority_ = !!value;
 		}
 
 		// Day of week when weeks start.
@@ -239,20 +235,20 @@ namespace TheDatepicker {
 		// or integer from 0 to 6; 0 = Sunday, 1 = Monday, ... 6 = Saturday
 		// defaults to Monday
 		public setFirstDayOfWeek(dayOfWeek: DayOfWeek): void {
-			this.firstDayOfWeek = Helper.checkNumber('First day of week', dayOfWeek, 0, 6);
+			this.firstDayOfWeek_ = Helper_.checkNumber_('First day of week', dayOfWeek, 0, 6);
 		}
 
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not,
 		// or null to make available all days.
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
-			this.dateAvailabilityResolver = Helper.checkFunction('Resolver', resolver) as DateAvailabilityResolver;
+			this.dateAvailabilityResolver_ = Helper_.checkFunction_('Resolver', resolver) as DateAvailabilityResolver;
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns string representing content of day cell,
 		// or null for default behavior.
 		// Default callback returns day number.
 		public setCellContentResolver(resolver: CellContentResolver | null): void {
-			this.cellContentResolver = Helper.checkFunction('Resolver', resolver) as (CellContentResolver | null);
+			this.cellContentResolver_ = Helper_.checkFunction_('Resolver', resolver) as (CellContentResolver | null);
 		}
 
 		// Accepts two callbacks,
@@ -261,10 +257,10 @@ namespace TheDatepicker {
 		// Second callback (update) gets an instance of HTMLElement created by first callback, and an instance of Day. It should update html structure by given day. Returns void.
 		// Default init creates span element and default update fills it with day number.
 		public setCellContentStructureResolver(init: CellContentStructureResolverInit | null, update: CellContentStructureResolverUpdate | null = null): void {
-			init = Helper.checkFunction('Resolver (init)', init) as (CellContentStructureResolverInit | null);
-			update = Helper.checkFunction('Resolver (update)', update) as (CellContentStructureResolverUpdate | null);
+			init = Helper_.checkFunction_('Resolver (init)', init) as (CellContentStructureResolverInit | null);
+			update = Helper_.checkFunction_('Resolver (update)', update) as (CellContentStructureResolverUpdate | null);
 
-			this.cellContentStructureResolver = init === null ? null : {
+			this.cellContentStructureResolver_ = init === null ? null : {
 				init,
 				update,
 			};
@@ -273,29 +269,29 @@ namespace TheDatepicker {
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
 		// deprecated, use addCellClassesResolver()
 		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
-			Helper.warnDeprecatedUsage('setCellClassesResolver', 'addCellClassesResolver');
-			this.cellClassesResolver = Helper.checkFunction('Resolver', resolver) as (CellClassesResolver | null);
+			Helper_.warnDeprecatedUsage_('setCellClassesResolver', 'addCellClassesResolver');
+			this.cellClassesResolver_ = Helper_.checkFunction_('Resolver', resolver) as (CellClassesResolver | null);
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
 		public addCellClassesResolver(resolver: CellClassesResolver): void {
-			this.cellClassesResolvers.push(Helper.checkFunction('Resolver', resolver, false) as CellClassesResolver);
+			this.cellClassesResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false) as CellClassesResolver);
 		}
 
 
 		public removeCellClassesResolver(resolver: CellClassesResolver | null = null): void {
-			resolver = Helper.checkFunction('Resolver', resolver) as (CellClassesResolver | null);
+			resolver = Helper_.checkFunction_('Resolver', resolver) as (CellClassesResolver | null);
 
 			if (resolver === null) {
-				this.cellClassesResolvers = [];
+				this.cellClassesResolvers_ = [];
 			} else {
 				const newResolvers: CellClassesResolver[] = [];
-				for (let index = 0; index < this.cellClassesResolvers.length; index++) {
-					if (this.cellClassesResolvers[index] !== resolver) {
-						newResolvers.push(this.cellClassesResolvers[index]);
+				for (let index = 0; index < this.cellClassesResolvers_.length; index++) {
+					if (this.cellClassesResolvers_[index] !== resolver) {
+						newResolvers.push(this.cellClassesResolvers_[index]);
 					}
 				}
-				this.cellClassesResolvers = newResolvers;
+				this.cellClassesResolvers_ = newResolvers;
 			}
 		}
 
@@ -314,26 +310,26 @@ namespace TheDatepicker {
 		// Works only when there an input exists.
 		// defaults to "j. n. Y"
 		public setInputFormat(format: string): void {
-			this.inputFormat = Helper.checkString('Input format', format, true);
+			this.inputFormat_ = Helper_.checkString_('Input format', format, true);
 		}
 
 		// Setting to false will hide days which belongs to other months.
 		// defaults to false
 		public setDaysOutOfMonthVisible(value: boolean): void {
-			this.daysOutOfMonthVisible = !!value;
+			this.daysOutOfMonthVisible_ = !!value;
 		}
 
 		// Setting to true will always render six rows despite of current month weeks count.
 		// defaults to false
 		public setFixedRowsCount(value: boolean): void {
-			this.fixedRowsCount = !!value;
+			this.fixedRowsCount_ = !!value;
 		}
 
 		// Setting to true will make selection toggle, so click on selected day will deselects it.
 		// Works only when the setting AllowEmpty is set to true.
 		// defaults to false
 		public setToggleSelection(value: boolean): void {
-			this.toggleSelection = !!value;
+			this.toggleSelection_ = !!value;
 		}
 
 		// Setting to true will render a button inside an input, which deselects selected date.
@@ -341,108 +337,108 @@ namespace TheDatepicker {
 		// Works only when the setting AllowEmpty is set to true.
 		// defaults to true
 		public setShowDeselectButton(value: boolean): void {
-			this.showDeselectButton = !!value;
+			this.showDeselectButton_ = !!value;
 		}
 
 		// Setting to false will disallow to deselect, in other words it always must be any day selected.
 		// When there is no initial date, current date (or nearest available one) will be preselected.
 		// defaults to true
 		public setAllowEmpty(value: boolean): void {
-			this.allowEmpty = !!value;
+			this.allowEmpty_ = !!value;
 		}
 
 		// Setting to true will show button for reseting datepicker to initial state.
 		// defaults to false
 		public setShowResetButton(value: boolean): void {
-			this.showResetButton = !!value;
+			this.showResetButton_ = !!value;
 		}
 
 		// Setting to true will render month as dropdown list (html select).
 		// defaults to true
 		public setMonthAsDropdown(value: boolean): void {
-			this.monthAsDropdown = !!value;
+			this.monthAsDropdown_ = !!value;
 		}
 
 		// Setting to true will render year as dropdown list (html select).
 		// defaults to true
 		public setYearAsDropdown(value: boolean): void {
-			this.yearAsDropdown = !!value;
+			this.yearAsDropdown_ = !!value;
 		}
 
 		// Setting to true will render month and year in header each in separate element.
 		// If set to false it will be rendered as a dropdown only when both settings MonthAsDropdown and YearAsDropdown are set to true.
 		// defaults to true
 		public setMonthAndYearSeparated(value: boolean): void {
-			this.monthAndYearSeparated = !!value;
+			this.monthAndYearSeparated_ = !!value;
 		}
 
 		// CSS classes of datepicker elements will be prefixed with given string.
 		// defaults to "the-datepicker__"
 		public setClassesPrefix(prefix: string): void {
-			this.classesPrefix = Helper.checkString('Prefix', prefix);
+			this.classesPrefix_ = Helper_.checkString_('Prefix', prefix);
 		}
 
 		// Setting to true will show button for closing datepicker.
 		// Works only when the setting HideOnBlur is set to true.
 		// defaults to true
 		public setShowCloseButton(value: boolean): void {
-			this.showCloseButton = !!value;
+			this.showCloseButton_ = !!value;
 		}
 
 		// Sets title which is displayed in the datepicker header.
 		// null for no title
 		// defaults to no title
 		public setTitle(title: string | null): void {
-			this.title = Helper.checkString('Title', title);
+			this.title_ = Helper_.checkString_('Title', title);
 		}
 
 		// Limit of number of items in dropdown list.
 		// default is 200
 		public setDropdownItemsLimit(limit: number): void {
-			this.dropdownItemsLimit = Helper.checkNumber('Items limit', limit, 1);
+			this.dropdownItemsLimit_ = Helper_.checkNumber_('Items limit', limit, 1);
 		}
 
 		// Setting to true will show month and/or year dropdown only when there are two or more options.
 		// defaults to true
 		public setHideDropdownWithOneItem(value: boolean): void {
-			this.hideDropdownWithOneItem = !!value;
+			this.hideDropdownWithOneItem_ = !!value;
 		}
 
 		// Sets html for go back button.
 		// defaults to "&lt;"
 		public setGoBackHtml(html: string): void {
-			this.goBackHtml = Helper.checkString('Html', html);
+			this.goBackHtml_ = Helper_.checkString_('Html', html);
 		}
 
 		// Sets html for go forward button.
 		// defaults to "&gt;"
 		public setGoForwardHtml(html: string): void {
-			this.goForwardHtml = Helper.checkString('Html', html);
+			this.goForwardHtml_ = Helper_.checkString_('Html', html);
 		}
 
 		// Sets html for close button.
 		// defaults to "&times;"
 		public setCloseHtml(html: string): void {
-			this.closeHtml = Helper.checkString('Html', html);
+			this.closeHtml_ = Helper_.checkString_('Html', html);
 		}
 
 		// Sets html for reset button.
 		// defaults to "&olarr;"
 		public setResetHtml(html: string): void {
-			this.resetHtml = Helper.checkString('Html', html);
+			this.resetHtml_ = Helper_.checkString_('Html', html);
 		}
 
 		// Sets html for deselect button.
 		// defaults to "&times;"
 		public setDeselectHtml(html: string): void {
-			this.deselectHtml = Helper.checkString('Html', html);
+			this.deselectHtml_ = Helper_.checkString_('Html', html);
 		}
 
 		// Setting to true will render datepicker over the input when there's no enough space to fit it under.
 		// Works only when there is no custom container and setting HideOnBlur is set to true.
 		// defaults to true
 		public setPositionFixing(value: boolean): void {
-			this.positionFixing = !!value;
+			this.positionFixing_ = !!value;
 		}
 
 		// Sets mock/fake today.
@@ -455,75 +451,75 @@ namespace TheDatepicker {
 		// null for real today
 		// defaults to null
 		public setToday(date: Day | Date | string | null): void {
-			this.today = Helper.normalizeDate('Today', date, this);
+			this.today_ = Helper_.normalizeDate_('Today', date, this);
 		}
 
 		// Callback to be called just before the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
 		public onBeforeSelect(listener: SelectListener): void {
-			this.onEvent(EventType.BeforeSelect, listener as AnyListener);
+			this.onEvent_(EventType_.BeforeSelect, listener as AnyListener);
 		}
 
 		public offBeforeSelect(listener: SelectListener | null = null): void {
-			this.offEvent(EventType.BeforeSelect, listener);
+			this.offEvent_(EventType_.BeforeSelect, listener);
 		}
 
 		// Callback to be called immediately after the day is selected or deselected.
 		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
 		public onSelect(listener: SelectListener): void {
-			this.onEvent(EventType.Select, listener as AnyListener);
+			this.onEvent_(EventType_.Select, listener as AnyListener);
 		}
 
 		public offSelect(listener: SelectListener | null = null): void {
-			this.offEvent(EventType.Select, listener);
+			this.offEvent_(EventType_.Select, listener);
 		}
 
 		// Callback to be called just before the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		// If callback returns false, action stops and datepicker will not be opened / closed.
 		public onBeforeOpenAndClose(listener: OpenAndCloseListener): void {
-			this.onEvent(EventType.BeforeOpenAndClose, listener as AnyListener);
+			this.onEvent_(EventType_.BeforeOpenAndClose, listener as AnyListener);
 		}
 
 		public offBeforeOpenAndClose(listener: OpenAndCloseListener | null = null): void {
-			this.offEvent(EventType.BeforeOpenAndClose, listener);
+			this.offEvent_(EventType_.BeforeOpenAndClose, listener);
 		}
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		public onOpenAndClose(listener: OpenAndCloseListener): void {
-			this.onEvent(EventType.OpenAndClose, listener as AnyListener);
+			this.onEvent_(EventType_.OpenAndClose, listener as AnyListener);
 		}
 
 		public offOpenAndClose(listener: OpenAndCloseListener | null = null): void {
-			this.offEvent(EventType.OpenAndClose, listener);
+			this.offEvent_(EventType_.OpenAndClose, listener);
 		}
 
 		// Callback to be called just before displayed month is changed.
 		// An Event instance, month (Date instance set to first day of month) which is going to be displayed and month (Date instance) which was displayed before are given on input.
 		// If callback returns false, month will not be changed.
 		public onBeforeMonthChange(listener: MonthChangeListener): void {
-			this.onEvent(EventType.BeforeMonthChange, listener as AnyListener);
+			this.onEvent_(EventType_.BeforeMonthChange, listener as AnyListener);
 		}
 
 		public offBeforeMonthChange(listener: MonthChangeListener | null = null): void {
-			this.offEvent(EventType.BeforeMonthChange, listener);
+			this.offEvent_(EventType_.BeforeMonthChange, listener);
 		}
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		public onMonthChange(listener: MonthChangeListener): void {
-			this.onEvent(EventType.MonthChange, listener as AnyListener);
+			this.onEvent_(EventType_.MonthChange, listener as AnyListener);
 		}
 
 		public offMonthChange(listener: MonthChangeListener | null = null): void {
-			this.offEvent(EventType.MonthChange, listener);
+			this.offEvent_(EventType_.MonthChange, listener);
 		}
 
 		public getInitialMonth(): Date {
-			const primarySource = this.initialDatePriority ? this.initialDate : this.initialMonth;
-			const secondarySource = this.initialDatePriority ? this.initialMonth : this.initialDate;
+			const primarySource = this.initialDatePriority_ ? this.initialDate_ : this.initialMonth_;
+			const secondarySource = this.initialDatePriority_ ? this.initialMonth_ : this.initialDate_;
 
 			const initialMonth = primarySource !== null
 				? new Date(primarySource.getTime())
@@ -538,16 +534,16 @@ namespace TheDatepicker {
 		}
 
 		public isMonthInValidity(month: Date): boolean {
-			return this.calculateMonthCorrection(month) === null;
+			return this.calculateMonthCorrection_(month) === null;
 		}
 
 		public correctMonth(month: Date): Date {
-			const correctMonth = this.calculateMonthCorrection(month);
+			const correctMonth = this.calculateMonthCorrection_(month);
 			return correctMonth !== null ? correctMonth : month;
 		}
 
 		public getInitialDate(): Date | null {
-			return this.findPossibleAvailableDate(this.initialDate);
+			return this.findPossibleAvailableDate(this.initialDate_);
 		}
 
 		public findPossibleAvailableDate(date: Date | null): Date | null {
@@ -567,7 +563,7 @@ namespace TheDatepicker {
 		}
 
 		public findNearestAvailableDate(date: Date): Date {
-			date = this.correctDate(date);
+			date = this.correctDate_(date);
 
 			if (this.isDateAvailable(date)) {
 				return date;
@@ -579,7 +575,7 @@ namespace TheDatepicker {
 			do {
 				if (increasedDate !== null) {
 					increasedDate.setDate(increasedDate.getDate() + 1);
-					if (this.maxDate !== null && increasedDate.getTime() > this.maxDate.getTime()) {
+					if (this.maxDate_ !== null && increasedDate.getTime() > this.maxDate_.getTime()) {
 						increasedDate = null;
 					} else if (this.isDateAvailable(increasedDate)) {
 						return increasedDate;
@@ -588,7 +584,7 @@ namespace TheDatepicker {
 
 				if (decreasedDate !== null) {
 					decreasedDate.setDate(decreasedDate.getDate() - 1);
-					if (this.minDate !== null && decreasedDate.getTime() < this.minDate.getTime()) {
+					if (this.minDate_ !== null && decreasedDate.getTime() < this.minDate_.getTime()) {
 						decreasedDate = null;
 					} else if (this.isDateAvailable(decreasedDate)) {
 						return decreasedDate;
@@ -602,117 +598,117 @@ namespace TheDatepicker {
 		}
 
 		public isDateInValidity(date: Date): boolean {
-			return this.calculateDateCorrection(date) === null;
+			return this.calculateDateCorrection_(date) === null;
 		}
 
-		private correctDate(date: Date): Date {
-			const correctDate = this.calculateDateCorrection(date);
+		private correctDate_(date: Date): Date {
+			const correctDate = this.calculateDateCorrection_(date);
 			return correctDate !== null ? correctDate : date;
 		}
 
 		public getFirstDayOfWeek(): DayOfWeek {
-			return this.firstDayOfWeek;
+			return this.firstDayOfWeek_;
 		}
 
 		public areDaysOutOfMonthVisible(): boolean {
-			return this.daysOutOfMonthVisible;
+			return this.daysOutOfMonthVisible_;
 		}
 
 		public hasFixedRowsCount(): boolean {
-			return this.fixedRowsCount;
+			return this.fixedRowsCount_;
 		}
 
 		public hasToggleSelection(): boolean {
-			return this.allowEmpty && this.toggleSelection;
+			return this.allowEmpty_ && this.toggleSelection_;
 		}
 
 		public isAllowedEmpty(): boolean {
-			return this.allowEmpty;
+			return this.allowEmpty_;
 		}
 
 		public isDeselectButtonShown(): boolean {
-			return this.allowEmpty && this.showDeselectButton;
+			return this.allowEmpty_ && this.showDeselectButton_;
 		}
 
 		public isResetButtonShown(): boolean {
-			return this.showResetButton;
+			return this.showResetButton_;
 		}
 
 		public isMonthAsDropdown(): boolean {
-			return this.monthAsDropdown;
+			return this.monthAsDropdown_;
 		}
 
 		public isYearAsDropdown(): boolean {
-			return this.yearAsDropdown;
+			return this.yearAsDropdown_;
 		}
 
 		public isMonthAndYearSeparated(): boolean {
-			return this.monthAndYearSeparated;
+			return this.monthAndYearSeparated_;
 		}
 
 		public getClassesPrefix(): string {
-			return this.classesPrefix;
+			return this.classesPrefix_;
 		}
 
 		public isCloseButtonShown(): boolean {
-			return this.hideOnBlur && this.showCloseButton;
+			return this.hideOnBlur_ && this.showCloseButton_;
 		}
 
 		public getTitle(): string {
-			return this.title;
+			return this.title_;
 		}
 
 		public getMinDate(): Date | null {
-			return this.minDate;
+			return this.minDate_;
 		}
 
 		public getMaxDate(): Date | null {
-			return this.maxDate;
+			return this.maxDate_;
 		}
 
 		public getMinMonth(): Date | null {
-			return this.minMonth;
+			return this.minMonth_;
 		}
 
 		public getMaxMonth(): Date | null {
-			return this.maxMonth;
+			return this.maxMonth_;
 		}
 
 		public isDropdownWithOneItemHidden(): boolean {
-			return this.hideDropdownWithOneItem;
+			return this.hideDropdownWithOneItem_;
 		}
 
 		public getDropdownItemsLimit(): number {
-			return this.dropdownItemsLimit;
+			return this.dropdownItemsLimit_;
 		}
 
 		public isDateAvailable(date: Date): boolean {
-			if (this.dateAvailabilityResolver !== null) {
-				return !!this.dateAvailabilityResolver(new Date(date.getTime()));
+			if (this.dateAvailabilityResolver_ !== null) {
+				return !!this.dateAvailabilityResolver_(new Date(date.getTime()));
 			}
 
 			return true;
 		}
 
 		public getCellContent(day: Day): string {
-			if (this.cellContentResolver !== null) {
-				return this.cellContentResolver(day);
+			if (this.cellContentResolver_ !== null) {
+				return this.cellContentResolver_(day);
 			}
 
 			return day.dayNumber + '';
 		}
 
 		public getCellStructure(): HTMLElement {
-			if (this.cellContentStructureResolver !== null) {
-				return this.cellContentStructureResolver.init();
+			if (this.cellContentStructureResolver_ !== null) {
+				return this.cellContentStructureResolver_.init();
 			}
 
-			return this.document.createElement('span');
+			return this.document_.createElement('span');
 		}
 
 		public updateCellStructure(element: HTMLElement, day: Day): void {
-			if (this.cellContentStructureResolver !== null) {
-				this.cellContentStructureResolver.update(element, day);
+			if (this.cellContentStructureResolver_ !== null) {
+				this.cellContentStructureResolver_.update(element, day);
 			} else {
 				element.innerText = this.getCellContent(day);
 			}
@@ -721,15 +717,15 @@ namespace TheDatepicker {
 		public getCellClasses(day: Day): string[] {
 			let result: string[] = [];
 
-			if (this.cellClassesResolver !== null) {
-				const classes = this.cellClassesResolver(day);
+			if (this.cellClassesResolver_ !== null) {
+				const classes = this.cellClassesResolver_(day);
 				if (typeof classes === 'object' && classes.constructor === Array) {
 					result = result.concat(classes)
 				}
 			}
 
-			for (let index = 0; index < this.cellClassesResolvers.length; index++) {
-				const classes = this.cellClassesResolvers[index](day);
+			for (let index = 0; index < this.cellClassesResolvers_.length; index++) {
+				const classes = this.cellClassesResolvers_[index](day);
 				if (typeof classes === 'object' && classes.constructor === Array) {
 					result = result.concat(classes)
 				}
@@ -739,86 +735,86 @@ namespace TheDatepicker {
 		}
 
 		public getGoBackHtml(): string {
-			return this.goBackHtml;
+			return this.goBackHtml_;
 		}
 
 		public getGoForwardHtml(): string {
-			return this.goForwardHtml;
+			return this.goForwardHtml_;
 		}
 
 		public getCloseHtml(): string {
-			return this.closeHtml;
+			return this.closeHtml_;
 		}
 
 		public getResetHtml(): string {
-			return this.resetHtml;
+			return this.resetHtml_;
 		}
 
 		public getDeselectHtml(): string {
-			return this.deselectHtml;
+			return this.deselectHtml_;
 		}
 
 		public isHiddenOnBlur(): boolean {
-			return this.hideOnBlur;
+			return this.hideOnBlur_;
 		}
 
 		public isHiddenOnSelect(): boolean {
-			return this.hideOnBlur && this.hideOnSelect;
+			return this.hideOnBlur_ && this.hideOnSelect_;
 		}
 
 		public getInputFormat(): string {
-			return this.inputFormat;
+			return this.inputFormat_;
 		}
 
 		public isPositionFixingEnabled(): boolean {
-			return this.hideOnBlur && this.positionFixing;
+			return this.hideOnBlur_ && this.positionFixing_;
 		}
 
 		public getToday(): Date {
-			return this.today !== null ? new Date(this.today.getTime()) : Helper.resetTime(new Date());
+			return this.today_ !== null ? new Date(this.today_.getTime()) : Helper_.resetTime_(new Date());
 		}
 
 		public getDateAvailabilityResolver(): DateAvailabilityResolver | null {
-			return this.dateAvailabilityResolver;
+			return this.dateAvailabilityResolver_;
 		}
 
 		public getCellContentResolver(): CellContentResolver | null {
-			return this.cellContentResolver;
+			return this.cellContentResolver_;
 		}
 
 		public getCellContentStructureResolver(): CellContentStructureResolver | null {
-			return this.cellContentStructureResolver;
+			return this.cellContentStructureResolver_;
 		}
 
 		public getCellClassesResolvers(): CellClassesResolver[] {
-			return this.cellClassesResolvers;
+			return this.cellClassesResolvers_;
 		}
 
 		public getBeforeSelectListeners(): SelectListener[] {
-			return this.listeners.beforeSelect;
+			return this.listeners_.beforeSelect;
 		}
 
 		public getSelectListeners(): SelectListener[] {
-			return this.listeners.select;
+			return this.listeners_.select;
 		}
 
 		public getBeforeOpenAndCloseListeners(): OpenAndCloseListener[] {
-			return this.listeners.beforeOpenAndClose;
+			return this.listeners_.beforeOpenAndClose;
 		}
 
 		public getOpenAndCloseListeners(): OpenAndCloseListener[] {
-			return this.listeners.openAndClose;
+			return this.listeners_.openAndClose;
 		}
 
 		public getBeforeMonthChangeListeners(): MonthChangeListener[] {
-			return this.listeners.beforeMonthChange;
+			return this.listeners_.beforeMonthChange;
 		}
 
 		public getMonthChangeListeners(): MonthChangeListener[] {
-			return this.listeners.monthChange;
+			return this.listeners_.monthChange;
 		}
 
-		private checkConstraints(minDate: Date | null, maxDate: Date | null): void {
+		private checkConstraints_(minDate: Date | null, maxDate: Date | null): void {
 			if (
 				minDate !== null
 				&& maxDate !== null
@@ -828,7 +824,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		private calculateMonthCorrection(month: Date): Date | null {
+		private calculateMonthCorrection_(month: Date): Date | null {
 			const minMonth = this.getMinMonth();
 			if (minMonth !== null && month.getTime() < minMonth.getTime()) {
 				return minMonth;
@@ -842,41 +838,41 @@ namespace TheDatepicker {
 			return null;
 		}
 
-		private calculateDateCorrection(date: Date): Date | null {
-			if (this.minDate !== null && date.getTime() < this.minDate.getTime()) {
-				return new Date(this.minDate.getTime());
+		private calculateDateCorrection_(date: Date): Date | null {
+			if (this.minDate_ !== null && date.getTime() < this.minDate_.getTime()) {
+				return new Date(this.minDate_.getTime());
 			}
 
-			if (this.maxDate !== null && date.getTime() > this.maxDate.getTime()) {
-				return new Date(this.maxDate.getTime());
+			if (this.maxDate_ !== null && date.getTime() > this.maxDate_.getTime()) {
+				return new Date(this.maxDate_.getTime());
 			}
 
 			return null;
 		}
 
-		private onEvent(eventType: EventType, listener: AnyListener) {
-			this.listeners[eventType].push(Helper.checkFunction('Event listener', listener, false) as AnyListener);
+		private onEvent_(eventType: EventType_, listener: AnyListener) {
+			this.listeners_[eventType].push(Helper_.checkFunction_('Event listener', listener, false) as AnyListener);
 		}
 
-		private offEvent(eventType: EventType, listener: OneOfListener | null): void {
-			listener = Helper.checkFunction('Event listener', listener) as (OneOfListener | null);
+		private offEvent_(eventType: EventType_, listener: OneOfListener | null): void {
+			listener = Helper_.checkFunction_('Event listener', listener) as (OneOfListener | null);
 
 			if (listener === null) {
-				this.listeners[eventType] = [];
+				this.listeners_[eventType] = [];
 			} else {
 				const newListeners = [];
-				for (let index = 0; index < this.listeners[eventType].length; index++) {
-					if (this.listeners[eventType][index] !== listener) {
-						newListeners.push(this.listeners[eventType][index]);
+				for (let index = 0; index < this.listeners_[eventType].length; index++) {
+					if (this.listeners_[eventType][index] !== listener) {
+						newListeners.push(this.listeners_[eventType][index]);
 					}
 				}
-				this.listeners[eventType] = newListeners as AnyListener[];
+				this.listeners_[eventType] = newListeners as AnyListener[];
 			}
 		}
 
-		public triggerEvent(eventType: EventType, caller: ListenerCaller): boolean {
-			for (let index = 0; index < this.listeners[eventType].length; index++) {
-				if (caller(this.listeners[eventType][index]) === false) {
+		public triggerEvent_(eventType: EventType_, caller: ListenerCaller): boolean {
+			for (let index = 0; index < this.listeners_[eventType].length; index++) {
+				if (caller(this.listeners_[eventType][index]) === false) {
 					return false;
 				}
 			}

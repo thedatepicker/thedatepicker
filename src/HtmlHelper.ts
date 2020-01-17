@@ -5,36 +5,36 @@ namespace TheDatepicker {
 		label: string;
 	}
 
-	export class HtmlHelper {
+	export class HtmlHelper_ {
 
-		private readonly document: Document;
+		private readonly document_: Document;
 
-		public constructor(private readonly options: Options) {
-			this.document = document;
+		public constructor(private readonly options_: Options) {
+			this.document_ = document;
 		}
 
-		public createDiv(className: string): HTMLDivElement {
-			const div = this.document.createElement('div');
-			this.addClass(div, className);
+		public createDiv_(className: string): HTMLDivElement {
+			const div = this.document_.createElement('div');
+			this.addClass_(div, className);
 
 			return div;
 		}
 
-		public createAnchor(onClick: (event: Event) => void): HTMLAnchorElement {
-			const anchor = this.document.createElement('a');
-			this.addClass(anchor, 'button');
+		public createAnchor_(onClick: (event: Event) => void): HTMLAnchorElement {
+			const anchor = this.document_.createElement('a');
+			this.addClass_(anchor, 'button');
 			anchor.href = '#';
 
 			anchor.onclick = (event: MouseEvent) => {
 				event = event || window.event as MouseEvent;
-				Helper.preventDefault(event);
+				Helper_.preventDefault_(event);
 				onClick(event);
 			};
 
 			anchor.onkeydown = (event: KeyboardEvent) => {
 				event = event || window.event as KeyboardEvent;
-				if (Helper.inArray([KeyCode.Enter, KeyCode.Space], event.keyCode)) {
-					Helper.preventDefault(event);
+				if (Helper_.inArray_([KeyCode_.Enter, KeyCode_.Space], event.keyCode)) {
+					Helper_.preventDefault_(event);
 					onClick(event);
 				}
 			};
@@ -42,24 +42,24 @@ namespace TheDatepicker {
 			return anchor;
 		}
 
-		public createSpan(): HTMLSpanElement {
-			return this.document.createElement('span');
+		public createSpan_(): HTMLSpanElement {
+			return this.document_.createElement('span');
 		}
 
-		public createTable(className: string, header: HTMLTableSectionElement, body: HTMLTableSectionElement): HTMLTableElement {
-			const table = this.document.createElement('table');
-			this.addClass(table, className);
+		public createTable_(className: string, header: HTMLTableSectionElement, body: HTMLTableSectionElement): HTMLTableElement {
+			const table = this.document_.createElement('table');
+			this.addClass_(table, className);
 			table.appendChild(header);
 			table.appendChild(body);
 
 			return table;
 		}
 
-		public createTableHeader(className: string, cells: HTMLTableHeaderCellElement[]): HTMLTableSectionElement {
-			const tableHeader = this.document.createElement('thead');
-			this.addClass(tableHeader, className);
+		public createTableHeader_(className: string, cells: HTMLTableHeaderCellElement[]): HTMLTableSectionElement {
+			const tableHeader = this.document_.createElement('thead');
+			this.addClass_(tableHeader, className);
 
-			const row = this.document.createElement('tr');
+			const row = this.document_.createElement('tr');
 			for (let index = 0; index < cells.length; index++) {
 				row.appendChild(cells[index]);
 			}
@@ -68,17 +68,17 @@ namespace TheDatepicker {
 			return tableHeader;
 		}
 
-		public createTableHeaderCell(className: string): HTMLTableHeaderCellElement {
-			const cell = this.document.createElement('th');
+		public createTableHeaderCell_(className: string): HTMLTableHeaderCellElement {
+			const cell = this.document_.createElement('th');
 			cell.scope = 'col';
-			this.addClass(cell, className);
+			this.addClass_(cell, className);
 
 			return cell;
 		}
 
-		public createTableBody(className: string, rows: HTMLTableRowElement[]): HTMLTableSectionElement {
-			const tableBody = this.document.createElement('tbody');
-			this.addClass(tableBody, className);
+		public createTableBody_(className: string, rows: HTMLTableRowElement[]): HTMLTableSectionElement {
+			const tableBody = this.document_.createElement('tbody');
+			this.addClass_(tableBody, className);
 
 			for (let index = 0; index < rows.length; index++) {
 				tableBody.appendChild(rows[index]);
@@ -87,8 +87,8 @@ namespace TheDatepicker {
 			return tableBody;
 		}
 
-		public createTableRow(className: string, cells: HTMLTableCellElement[]): HTMLTableRowElement {
-			const row = this.document.createElement('tr');
+		public createTableRow_(className: string, cells: HTMLTableCellElement[]): HTMLTableRowElement {
+			const row = this.document_.createElement('tr');
 
 			for (let index = 0; index < cells.length; index++) {
 				row.appendChild(cells[index]);
@@ -97,16 +97,16 @@ namespace TheDatepicker {
 			return row;
 		}
 
-		public createTableCell(): HTMLTableCellElement {
-			return this.document.createElement('td');
+		public createTableCell_(): HTMLTableCellElement {
+			return this.document_.createElement('td');
 		}
 
-		public createSelectInput(options: Option[], onChange: (event: Event, value: string) => void): HTMLSelectElement {
-			const input = this.document.createElement('select');
-			this.addClass(input, 'select');
+		public createSelectInput_(options: Option[], onChange: (event: Event, value: string) => void): HTMLSelectElement {
+			const input = this.document_.createElement('select');
+			this.addClass_(input, 'select');
 
 			for (let index = 0; index < options.length; index++) {
-				input.appendChild(this.createSelectOption(options[index].value, options[index].label));
+				input.appendChild(this.createSelectOption_(options[index].value, options[index].label));
 			}
 
 			input.onchange = (event: Event) => {
@@ -115,22 +115,22 @@ namespace TheDatepicker {
 
 			input.onkeydown = (event: KeyboardEvent) => {
 				event = event || window.event as KeyboardEvent;
-				Helper.stopPropagation(event);
+				Helper_.stopPropagation_(event);
 			};
 
 			return input;
 		}
 
-		public createSelectOption(value: string, label: string): HTMLOptionElement {
-			const option = this.document.createElement('option');
+		public createSelectOption_(value: string, label: string): HTMLOptionElement {
+			const option = this.document_.createElement('option');
 			option.value = value;
 			option.innerText = label;
 
 			return option;
 		}
 
-		public addClass(element: HTMLElement, className: string): void {
-			className = this.options.getClassesPrefix() + className;
+		public addClass_(element: HTMLElement, className: string): void {
+			className = this.options_.getClassesPrefix() + className;
 			if (element.className !== '') {
 				className = ' ' + className;
 			}

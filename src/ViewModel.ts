@@ -1,142 +1,140 @@
-/// <reference path="Datepicker.ts" />
-
 namespace TheDatepicker {
 
-	export enum MoveDirection {
+	export enum MoveDirection_ {
 		Left = -1,
 		Up = -7,
 		Right = 1,
 		Down = 7,
 	}
 
-	export class ViewModel {
+	export class ViewModel_ {
 
-		public selectedDate: Date | null = null;
+		public selectedDate_: Date | null = null;
 
-		private readonly template: Template;
+		private readonly template_: Template_;
 
-		private currentMonth: Date | null = null;
-		private highlightedDay: Day | null = null;
-		private isHighlightedDayFocused = false;
-		private active = false;
+		private currentMonth_: Date | null = null;
+		private highlightedDay_: Day | null = null;
+		private isHighlightedDayFocused_ = false;
+		private active_ = false;
 
 		constructor(
-			private readonly options: Options,
-			private readonly datepicker: Datepicker
+			private readonly options_: Options,
+			private readonly datepicker_: Datepicker
 		) {
-			this.template = new Template(this.options, new HtmlHelper(this.options), datepicker.container, datepicker.input !== null)
+			this.template_ = new Template_(this.options_, new HtmlHelper_(this.options_), datepicker_.container, datepicker_.input !== null)
 		}
 
-		public render(): void {
-			if (this.selectPossibleDate()) {
+		public render_(): void {
+			if (this.selectPossibleDate_()) {
 				return;
 			}
 
-			const correctMonth = this.options.correctMonth(this.getCurrentMonth());
-			if (this.goToMonth(null, correctMonth)) {
+			const correctMonth = this.options_.correctMonth(this.getCurrentMonth_());
+			if (this.goToMonth_(null, correctMonth)) {
 				return;
 			}
 
-			this.template.render(this);
-			this.datepicker.updateInput();
+			this.template_.render_(this);
+			this.datepicker_.updateInput_();
 		}
 
-		public setActive(event: Event | null, value: boolean): boolean {
-			if (this.active === value) {
+		public setActive_(event: Event | null, value: boolean): boolean {
+			if (this.active_ === value) {
 				return true;
 			}
 
-			if (!this.triggerOnBeforeOpenAndClose(event, value)) {
+			if (!this.triggerOnBeforeOpenAndClose_(event, value)) {
 				return false;
 			}
 
-			this.active = value;
+			this.active_ = value;
 
-			if (this.options.isHiddenOnBlur()) {
-				this.render();
+			if (this.options_.isHiddenOnBlur()) {
+				this.render_();
 			}
 
-			this.triggerOnOpenAndClose(event, value);
+			this.triggerOnOpenAndClose_(event, value);
 
 			return true;
 		}
 
-		public isActive(): boolean {
-			return this.active;
+		public isActive_(): boolean {
+			return this.active_;
 		}
 
-		public close(event: Event): boolean {
-			return this.datepicker.close(event);
+		public close_(event: Event): boolean {
+			return this.datepicker_.close(event);
 		}
 
-		public getCurrentMonth(): Date {
-			if (this.currentMonth === null) {
-				this.currentMonth = this.options.getInitialMonth();
+		public getCurrentMonth_(): Date {
+			if (this.currentMonth_ === null) {
+				this.currentMonth_ = this.options_.getInitialMonth();
 			}
 
-			return this.currentMonth;
+			return this.currentMonth_;
 		}
 
-		public canGoBack(): boolean {
-			const newMonth = new Date(this.getCurrentMonth().getTime());
+		public canGoBack_(): boolean {
+			const newMonth = new Date(this.getCurrentMonth_().getTime());
 			newMonth.setMonth(newMonth.getMonth() - 1);
-			return this.canGoToMonth(newMonth);
+			return this.canGoToMonth_(newMonth);
 		}
 
-		public canGoForward(): boolean {
-			const newMonth = new Date(this.getCurrentMonth().getTime());
+		public canGoForward_(): boolean {
+			const newMonth = new Date(this.getCurrentMonth_().getTime());
 			newMonth.setMonth(newMonth.getMonth() + 1);
-			return this.canGoToMonth(newMonth);
+			return this.canGoToMonth_(newMonth);
 		}
 
-		public canGoToMonth(month: Date): boolean {
-			return this.options.isMonthInValidity(month);
+		public canGoToMonth_(month: Date): boolean {
+			return this.options_.isMonthInValidity(month);
 		}
 
-		public goBack(event: Event): boolean {
-			const newMonth = new Date(this.getCurrentMonth().getTime());
+		public goBack_(event: Event): boolean {
+			const newMonth = new Date(this.getCurrentMonth_().getTime());
 			newMonth.setMonth(newMonth.getMonth() - 1);
-			return this.goToMonth(event, newMonth);
+			return this.goToMonth_(event, newMonth);
 		}
 
-		public goForward(event: Event): boolean {
-			const newMonth = new Date(this.getCurrentMonth().getTime());
+		public goForward_(event: Event): boolean {
+			const newMonth = new Date(this.getCurrentMonth_().getTime());
 			newMonth.setMonth(newMonth.getMonth() + 1);
-			return this.goToMonth(event, newMonth);
+			return this.goToMonth_(event, newMonth);
 		}
 
-		public goToMonth(event: Event | null, month: Date, doCancelHighlight = true): boolean {
-			month = Helper.resetTime(new Date(month.getTime()));
+		public goToMonth_(event: Event | null, month: Date, doCancelHighlight = true): boolean {
+			month = Helper_.resetTime_(new Date(month.getTime()));
 			month.setDate(1);
 
-			if (month.getTime() === this.getCurrentMonth().getTime() || !this.canGoToMonth(month)) {
+			if (month.getTime() === this.getCurrentMonth_().getTime() || !this.canGoToMonth_(month)) {
 				return false;
 			}
 
-			if (!this.triggerOnBeforeMonthChange(event, month, this.currentMonth)) {
+			if (!this.triggerOnBeforeMonthChange_(event, month, this.currentMonth_)) {
 				return false;
 			}
 
-			this.currentMonth = month;
-			if (!doCancelHighlight || !this.cancelHighlight()) {
-				this.render();
+			this.currentMonth_ = month;
+			if (!doCancelHighlight || !this.cancelHighlight_()) {
+				this.render_();
 			}
 
-			this.triggerOnMonthChange(event, month, this.currentMonth);
+			this.triggerOnMonthChange_(event, month, this.currentMonth_);
 
 			return true;
 		}
 
-		public reset(event: Event | null): boolean {
-			const isMonthChanged = this.goToMonth(event, this.options.getInitialMonth());
-			const isDaySelected = this.selectInitialDate(event);
+		public reset_(event: Event | null): boolean {
+			const isMonthChanged = this.goToMonth_(event, this.options_.getInitialMonth());
+			const isDaySelected = this.selectInitialDate_(event);
 
 			return isMonthChanged || isDaySelected;
 		}
 
-		public selectDay(event: Event | null, date: Day | Date | null, doUpdateMonth = true, doHighlight = false, canToggle = false): boolean {
+		public selectDay_(event: Event | null, date: Day | Date | null, doUpdateMonth = true, doHighlight = false, canToggle = false): boolean {
 			if (date === null) {
-				return this.cancelSelection(event);
+				return this.cancelSelection_(event);
 			}
 
 			let day: Day;
@@ -144,94 +142,94 @@ namespace TheDatepicker {
 				day = date;
 				date = day.getDate();
 			} else {
-				day = this.createDay(date);
+				day = this.createDay_(date);
 			}
 
 			if (!day.isAvailable) {
 				return false;
 			}
 
-			if (day.isEqualToDate(this.selectedDate)) {
-				if (canToggle && this.options.hasToggleSelection()) {
-					return this.cancelSelection(event);
+			if (day.isEqualToDate(this.selectedDate_)) {
+				if (canToggle && this.options_.hasToggleSelection()) {
+					return this.cancelSelection_(event);
 				}
 
 				return false;
 			}
 
-			const previousDay = this.selectedDate !== null ? this.createDay(this.selectedDate) : null;
+			const previousDay = this.selectedDate_ !== null ? this.createDay_(this.selectedDate_) : null;
 
-			if (!this.triggerOnBeforeSelect(event, day, previousDay)) {
+			if (!this.triggerOnBeforeSelect_(event, day, previousDay)) {
 				return false;
 			}
 
-			this.selectedDate = day.getDate();
+			this.selectedDate_ = day.getDate();
 
 			if (doHighlight) {
-				this.highlightedDay = day;
-				this.isHighlightedDayFocused = true;
+				this.highlightedDay_ = day;
+				this.isHighlightedDayFocused_ = true;
 			}
 
-			if (!doUpdateMonth || !this.goToMonth(event, date)) {
-				this.render();
+			if (!doUpdateMonth || !this.goToMonth_(event, date)) {
+				this.render_();
 			}
 
-			this.triggerOnSelect(event, day, previousDay);
+			this.triggerOnSelect_(event, day, previousDay);
 
 			return true;
 		}
 
-		public selectNearestDate(event: Event | null, date: Date): boolean {
-			return this.selectDay(event, this.options.findNearestAvailableDate(date));
+		public selectNearestDate_(event: Event | null, date: Date): boolean {
+			return this.selectDay_(event, this.options_.findNearestAvailableDate(date));
 		}
 
-		public selectPossibleDate(): boolean {
+		public selectPossibleDate_(): boolean {
 			try {
-				return this.selectDay(null, this.options.findPossibleAvailableDate(this.selectedDate), false);
+				return this.selectDay_(null, this.options_.findPossibleAvailableDate(this.selectedDate_), false);
 			} catch (error) {
 				if (!(error instanceof AvailableDateNotFoundException)) {
 					throw error;
 				}
-				return this.cancelSelection(null, true);
+				return this.cancelSelection_(null, true);
 			}
 		}
 
-		public selectInitialDate(event: Event | null): boolean {
+		public selectInitialDate_(event: Event | null): boolean {
 			try {
-				return this.selectDay(event, this.options.getInitialDate(), false);
+				return this.selectDay_(event, this.options_.getInitialDate(), false);
 			} catch (error) {
 				if (!(error instanceof AvailableDateNotFoundException)) {
 					throw error;
 				}
-				return this.cancelSelection(null, true);
+				return this.cancelSelection_(null, true);
 			}
 		}
 
-		public highlightDay(event: Event, day: Day, doUpdateMonth = false): boolean {
+		public highlightDay_(event: Event, day: Day, doUpdateMonth = false): boolean {
 			if (!day.isAvailable) {
 				return false;
 			}
 
-			if (day.isEqualToDay(this.highlightedDay)) {
+			if (day.isEqualToDay(this.highlightedDay_)) {
 				return false;
 			}
 
-			this.highlightedDay = day;
-			this.isHighlightedDayFocused = true;
+			this.highlightedDay_ = day;
+			this.isHighlightedDayFocused_ = true;
 
 			const date = day.getDate();
-			if (!doUpdateMonth || !this.goToMonth(event, date, false)) {
-				this.render();
+			if (!doUpdateMonth || !this.goToMonth_(event, date, false)) {
+				this.render_();
 			}
 
 			return true;
 		}
 
-		public highlightFirstAvailableDay(event: Event): boolean {
-			let date = new Date(this.getCurrentMonth().getTime());
-			const maxDate = this.options.getMaxDate();
+		public highlightFirstAvailableDay_(event: Event): boolean {
+			let date = new Date(this.getCurrentMonth_().getTime());
+			const maxDate = this.options_.getMaxDate();
 
-			let day = this.createDay(date);
+			let day = this.createDay_(date);
 			while (!day.isAvailable) {
 				date.setDate(day.dayNumber + 1);
 				if (date.getDate() === 1) {
@@ -241,20 +239,20 @@ namespace TheDatepicker {
 					break;
 				}
 
-				day = this.createDay(date);
+				day = this.createDay_(date);
 			}
 
-			return this.highlightDay(event, day);
+			return this.highlightDay_(event, day);
 		}
 
-		public highlightSiblingDay(event: Event, day: Day, direction: MoveDirection): boolean {
+		public highlightSiblingDay_(event: Event, day: Day, direction: MoveDirection_): boolean {
 			let newDay = day;
 			let date = newDay.getDate();
 			let maxLoops = 1000; // infinite loop prevention
 
 			do {
 				date.setDate(newDay.dayNumber + direction);
-				newDay = this.createDay(date);
+				newDay = this.createDay_(date);
 				if (!newDay.isInValidity) {
 					break;
 				}
@@ -262,63 +260,63 @@ namespace TheDatepicker {
 				maxLoops--;
 			} while (!newDay.isAvailable && maxLoops > 0);
 
-			return this.highlightDay(event, newDay, true);
+			return this.highlightDay_(event, newDay, true);
 		}
 
-		public cancelSelection(event: Event | null, force = false): boolean {
-			if (!this.options.isAllowedEmpty() && !force) {
+		public cancelSelection_(event: Event | null, force = false): boolean {
+			if (!this.options_.isAllowedEmpty() && !force) {
 				return false;
 			}
 
-			if (this.selectedDate === null) {
+			if (this.selectedDate_ === null) {
 				return false;
 			}
 
-			const previousDay = this.createDay(this.selectedDate);
+			const previousDay = this.createDay_(this.selectedDate_);
 
-			if (!this.triggerOnBeforeSelect(event, null, previousDay)) {
+			if (!this.triggerOnBeforeSelect_(event, null, previousDay)) {
 				return false;
 			}
 
-			this.selectedDate = null;
-			this.render();
+			this.selectedDate_ = null;
+			this.render_();
 
-			this.triggerOnSelect(event, null, previousDay);
+			this.triggerOnSelect_(event, null, previousDay);
 
 			return true;
 		}
 
-		public cancelHighlight(): boolean {
-			if (this.highlightedDay === null) {
+		public cancelHighlight_(): boolean {
+			if (this.highlightedDay_ === null) {
 				return false;
 			}
 
-			this.highlightedDay = null;
+			this.highlightedDay_ = null;
 
-			this.render();
+			this.render_();
 
 			return true;
 		}
 
-		public getWeekDays(): DayOfWeek[] {
+		public getWeekDays_(): DayOfWeek[] {
 			const weekDays = [];
 			for (let day = 0; day < 7; day++) {
-				weekDays.push((this.options.getFirstDayOfWeek() + day) % 7);
+				weekDays.push((this.options_.getFirstDayOfWeek() + day) % 7);
 			}
 
 			return weekDays;
 		}
 
-		public getWeeks(): Day[][] {
+		public getWeeks_(): Day[][] {
 			let date;
 			const days = [];
-			const currentMonth = this.getCurrentMonth();
+			const currentMonth = this.getCurrentMonth_();
 			const firstDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
 			const lastMonthDaysCount = (new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0)).getDate();
-			const prependDaysCount = (firstDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7;
+			const prependDaysCount = (firstDateOfMonth.getDay() - this.options_.getFirstDayOfWeek() + 7) % 7;
 			for (date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
-				const day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
-				day.isVisible = this.options.areDaysOutOfMonthVisible();
+				const day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
+				day.isVisible = this.options_.areDaysOutOfMonthVisible();
 				day.isInCurrentMonth = false;
 				days.push(day);
 			}
@@ -326,21 +324,21 @@ namespace TheDatepicker {
 			const lastDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 			const monthDaysCount = lastDateOfMonth.getDate();
 			for (date = 1; date <= monthDaysCount; date++) {
-				days.push(this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), date)));
+				days.push(this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), date)));
 			}
 
-			const appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options.getFirstDayOfWeek() + 7) % 7);
+			const appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options_.getFirstDayOfWeek() + 7) % 7);
 			for (date = 1; date <= appendDaysCount; date++) {
-				const day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
-				day.isVisible = this.options.areDaysOutOfMonthVisible();
+				const day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+				day.isVisible = this.options_.areDaysOutOfMonthVisible();
 				day.isInCurrentMonth = false;
 				days.push(day);
 			}
 
-			if (this.options.hasFixedRowsCount()) {
+			if (this.options_.hasFixedRowsCount()) {
 				for (let date = appendDaysCount + 1; days.length < 6 * 7; date++) {
-					const day = this.createDay(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
-					day.isVisible = this.options.areDaysOutOfMonthVisible();
+					const day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+					day.isVisible = this.options_.areDaysOutOfMonthVisible();
 					day.isInCurrentMonth = false;
 					days.push(day);
 				}
@@ -354,79 +352,79 @@ namespace TheDatepicker {
 			return weeks;
 		}
 
-		public triggerKeyPress(event: KeyboardEvent): void {
-			if (Helper.inArray([KeyCode.Left, KeyCode.Up, KeyCode.Right, KeyCode.Down], event.keyCode)) {
-				Helper.preventDefault(event);
+		public triggerKeyPress_(event: KeyboardEvent): void {
+			if (Helper_.inArray_([KeyCode_.Left, KeyCode_.Up, KeyCode_.Right, KeyCode_.Down], event.keyCode)) {
+				Helper_.preventDefault_(event);
 
-				if (this.highlightedDay !== null) {
-					this.highlightSiblingDay(event, this.highlightedDay, this.translateKeyCodeToMoveDirection(event.keyCode));
+				if (this.highlightedDay_ !== null) {
+					this.highlightSiblingDay_(event, this.highlightedDay_, this.translateKeyCodeToMoveDirection_(event.keyCode));
 				} else if (
-					this.selectedDate !== null
-					&& this.selectedDate.getFullYear() === this.getCurrentMonth().getFullYear()
-					&& this.selectedDate.getMonth() === this.getCurrentMonth().getMonth()
+					this.selectedDate_ !== null
+					&& this.selectedDate_.getFullYear() === this.getCurrentMonth_().getFullYear()
+					&& this.selectedDate_.getMonth() === this.getCurrentMonth_().getMonth()
 				) {
-					this.highlightSiblingDay(event, this.createDay(this.selectedDate), this.translateKeyCodeToMoveDirection(event.keyCode));
+					this.highlightSiblingDay_(event, this.createDay_(this.selectedDate_), this.translateKeyCodeToMoveDirection_(event.keyCode));
 				} else {
-					this.highlightFirstAvailableDay(event);
+					this.highlightFirstAvailableDay_(event);
 				}
 			}
 		}
 
-		private triggerOnBeforeSelect(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
-			return this.options.triggerEvent(EventType.BeforeSelect, (listener: SelectListener) => {
-				return listener.call(this.datepicker, event, day, previousDay);
+		private triggerOnBeforeSelect_(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
+			return this.options_.triggerEvent_(EventType_.BeforeSelect, (listener: SelectListener) => {
+				return listener.call(this.datepicker_, event, day, previousDay);
 			});
 		}
 
-		private triggerOnSelect(event: Event | null, day: Day | null, previousDay: Day | null): void {
-			this.options.triggerEvent(EventType.Select, (listener: SelectListener) => {
-				return listener.call(this.datepicker, event, day, previousDay);
+		private triggerOnSelect_(event: Event | null, day: Day | null, previousDay: Day | null): void {
+			this.options_.triggerEvent_(EventType_.Select, (listener: SelectListener) => {
+				return listener.call(this.datepicker_, event, day, previousDay);
 			});
 		}
 
-		private triggerOnBeforeOpenAndClose(event: Event | null, isOpening: boolean): boolean {
-			return this.options.triggerEvent(EventType.BeforeOpenAndClose, (listener: OpenAndCloseListener) => {
-				return listener.call(this.datepicker, event, isOpening);
+		private triggerOnBeforeOpenAndClose_(event: Event | null, isOpening: boolean): boolean {
+			return this.options_.triggerEvent_(EventType_.BeforeOpenAndClose, (listener: OpenAndCloseListener) => {
+				return listener.call(this.datepicker_, event, isOpening);
 			});
 		}
 
-		private triggerOnOpenAndClose(event: Event | null, isOpening: boolean): void {
-			this.options.triggerEvent(EventType.OpenAndClose, (listener: OpenAndCloseListener) => {
-				return listener.call(this.datepicker, event, isOpening);
+		private triggerOnOpenAndClose_(event: Event | null, isOpening: boolean): void {
+			this.options_.triggerEvent_(EventType_.OpenAndClose, (listener: OpenAndCloseListener) => {
+				return listener.call(this.datepicker_, event, isOpening);
 			});
 		}
 
-		private triggerOnBeforeMonthChange(event: Event | null, month: Date, previousMonth: Date): boolean {
-			return this.options.triggerEvent(EventType.BeforeMonthChange, (listener: MonthChangeListener) => {
-				return listener.call(this.datepicker, event, month, previousMonth);
+		private triggerOnBeforeMonthChange_(event: Event | null, month: Date, previousMonth: Date): boolean {
+			return this.options_.triggerEvent_(EventType_.BeforeMonthChange, (listener: MonthChangeListener) => {
+				return listener.call(this.datepicker_, event, month, previousMonth);
 			});
 		}
 
-		private triggerOnMonthChange(event: Event | null, month: Date, previousMonth: Date): void {
-			this.options.triggerEvent(EventType.MonthChange, (listener: MonthChangeListener) => {
-				return listener.call(this.datepicker, event, month, previousMonth);
+		private triggerOnMonthChange_(event: Event | null, month: Date, previousMonth: Date): void {
+			this.options_.triggerEvent_(EventType_.MonthChange, (listener: MonthChangeListener) => {
+				return listener.call(this.datepicker_, event, month, previousMonth);
 			});
 		}
 
-		private createDay(date: Date): Day {
-			date = Helper.resetTime(new Date(date.getTime()));
-			const today = this.options.getToday();
+		private createDay_(date: Date): Day {
+			date = Helper_.resetTime_(new Date(date.getTime()));
+			const today = this.options_.getToday();
 
 			const day = new Day(date);
 			day.isToday = date.getTime() === today.getTime();
 			day.isPast = date.getTime() < today.getTime();
-			day.isInValidity = this.options.isDateInValidity(date);
-			day.isAvailable = day.isInValidity && this.options.isDateAvailable(date);
+			day.isInValidity = this.options_.isDateInValidity(date);
+			day.isAvailable = day.isInValidity && this.options_.isDateAvailable(date);
 
 			if (day.isAvailable) {
-				if (day.isEqualToDate(this.selectedDate)) {
+				if (day.isEqualToDate(this.selectedDate_)) {
 					day.isSelected = true;
 				}
-				if (day.isEqualToDay(this.highlightedDay)) {
+				if (day.isEqualToDay(this.highlightedDay_)) {
 					day.isHighlighted = true;
-					if (this.isHighlightedDayFocused) {
+					if (this.isHighlightedDayFocused_) {
 						day.isFocused = true;
-						this.isHighlightedDayFocused = false;
+						this.isHighlightedDayFocused_ = false;
 					}
 				}
 			}
@@ -434,16 +432,16 @@ namespace TheDatepicker {
 			return day;
 		}
 
-		private translateKeyCodeToMoveDirection(key: KeyCode): MoveDirection {
+		private translateKeyCodeToMoveDirection_(key: KeyCode_): MoveDirection_ {
 			switch (key) {
-				case KeyCode.Left:
-					return MoveDirection.Left;
-				case KeyCode.Up:
-					return MoveDirection.Up;
-				case KeyCode.Right:
-					return MoveDirection.Right;
-				case KeyCode.Down:
-					return MoveDirection.Down;
+				case KeyCode_.Left:
+					return MoveDirection_.Left;
+				case KeyCode_.Up:
+					return MoveDirection_.Up;
+				case KeyCode_.Right:
+					return MoveDirection_.Right;
+				case KeyCode_.Down:
+					return MoveDirection_.Down;
 				default:
 					throw new Error('Invalid key code: ' + key);
 			}

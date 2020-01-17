@@ -1,7 +1,3 @@
-/// <reference path="Options.ts" />
-/// <reference path="HtmlHelper.ts" />
-/// <reference path="ViewModel.ts" />
-
 namespace TheDatepicker {
 
 	interface HTMLDayButtonElement extends HTMLAnchorElement {
@@ -32,285 +28,285 @@ namespace TheDatepicker {
 
 	}
 
-	export class Template {
+	export class Template_ {
 
 		// todo nějak hezky aby šlo snadno customizovat uspořádání prvků
 
-		private mainElement: HTMLElement | null = null;
-		private controlElement: HTMLElement | null = null;
-		private goBackElement: HTMLElement | null = null;
-		private goForwardElement: HTMLElement | null = null;
-		private titleElement: HTMLElement | null = null;
-		private titleContentElement: HTMLElement | null = null;
-		private resetElement: HTMLElement | null = null;
-		private closeElement: HTMLElement | null = null;
-		private monthSelect: HTMLSelectElement | null = null;
-		private monthElement: HTMLElement | null = null;
-		private yearSelect: HTMLSelectElement | null = null;
-		private yearElement: HTMLElement | null = null;
-		private monthAndYearSelect: HTMLSelectElement | null = null;
-		private monthAndYearElement: HTMLElement | null = null;
-		private weeksElements: HTMLElement[] = [];
-		private daysElements: HTMLElement[][] = [];
-		private daysButtonsElements: HTMLDayButtonElement[][] = [];
-		private daysContentsElements: HTMLElement[][] = [];
+		private mainElement_: HTMLElement | null = null;
+		private controlElement_: HTMLElement | null = null;
+		private goBackElement_: HTMLElement | null = null;
+		private goForwardElement_: HTMLElement | null = null;
+		private titleElement_: HTMLElement | null = null;
+		private titleContentElement_: HTMLElement | null = null;
+		private resetElement_: HTMLElement | null = null;
+		private closeElement_: HTMLElement | null = null;
+		private monthSelect_: HTMLSelectElement | null = null;
+		private monthElement_: HTMLElement | null = null;
+		private yearSelect_: HTMLSelectElement | null = null;
+		private yearElement_: HTMLElement | null = null;
+		private monthAndYearSelect_: HTMLSelectElement | null = null;
+		private monthAndYearElement_: HTMLElement | null = null;
+		private weeksElements_: HTMLElement[] = [];
+		private daysElements_: HTMLElement[][] = [];
+		private daysButtonsElements_: HTMLDayButtonElement[][] = [];
+		private daysContentsElements_: HTMLElement[][] = [];
 
 		public constructor(
-			private readonly options: Options,
-			private readonly htmlHelper: HtmlHelper,
-			private readonly container: HTMLElement,
-			private readonly hasInput: boolean
+			private readonly options_: Options,
+			private readonly htmlHelper_: HtmlHelper_,
+			private readonly container_: HTMLElement,
+			private readonly hasInput_: boolean
 		) {
 		}
 
-		public render(viewModel: ViewModel): void {
-			if (this.mainElement === null) {
-				if (this.hasInput && this.options.isHiddenOnBlur() && !viewModel.isActive()) {
+		public render_(viewModel: ViewModel_): void {
+			if (this.mainElement_ === null) {
+				if (this.hasInput_ && this.options_.isHiddenOnBlur() && !viewModel.isActive_()) {
 					return;
 				}
 
-				this.container.innerHTML = '';
-				this.container.appendChild(this.createSkeleton(viewModel));
+				this.container_.innerHTML = '';
+				this.container_.appendChild(this.createSkeleton_(viewModel));
 			}
 
-			this.updateMainElement(viewModel);
-			this.updateTopElement(viewModel);
-			this.updateTitleElement(viewModel);
-			this.updateCloseElement(viewModel);
-			this.updateResetElement(viewModel);
-			this.updateGoBackElement(viewModel);
-			this.updateGoForwardElement(viewModel);
-			this.updateMonthElement(viewModel);
-			this.updateYearElement(viewModel);
-			this.updateMonthAndYearElement(viewModel);
-			this.updateWeeksElements(viewModel);
+			this.updateMainElement_(viewModel);
+			this.updateTopElement_(viewModel);
+			this.updateTitleElement_(viewModel);
+			this.updateCloseElement_(viewModel);
+			this.updateResetElement_(viewModel);
+			this.updateGoBackElement_(viewModel);
+			this.updateGoForwardElement_(viewModel);
+			this.updateMonthElement_(viewModel);
+			this.updateYearElement_(viewModel);
+			this.updateMonthAndYearElement_(viewModel);
+			this.updateWeeksElements_(viewModel);
 		}
 
-		protected createSkeleton(viewModel: ViewModel): HTMLElement {
-			const main = this.htmlHelper.createDiv('main');
-			main.appendChild(this.createHeaderElement(viewModel));
-			main.appendChild(this.createBodyElement(viewModel));
+		protected createSkeleton_(viewModel: ViewModel_): HTMLElement {
+			const main = this.htmlHelper_.createDiv_('main');
+			main.appendChild(this.createHeaderElement_(viewModel));
+			main.appendChild(this.createBodyElement_(viewModel));
 
-			this.mainElement = main;
+			this.mainElement_ = main;
 
 			return main;
 		}
 
-		protected updateMainElement(viewModel: ViewModel): void {
-			this.mainElement.style.display = !this.hasInput || viewModel.isActive() || !this.options.isHiddenOnBlur() ? '' : 'none';
+		protected updateMainElement_(viewModel: ViewModel_): void {
+			this.mainElement_.style.display = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur() ? '' : 'none';
 		}
 
-		protected createBodyElement(viewModel: ViewModel): HTMLElement {
-			const body = this.htmlHelper.createDiv('body');
-			body.appendChild(this.createTableElement(viewModel));
+		protected createBodyElement_(viewModel: ViewModel_): HTMLElement {
+			const body = this.htmlHelper_.createDiv_('body');
+			body.appendChild(this.createTableElement_(viewModel));
 
 			return body;
 		}
 
-		protected createHeaderElement(viewModel: ViewModel): HTMLElement {
-			const header = this.htmlHelper.createDiv('header');
+		protected createHeaderElement_(viewModel: ViewModel_): HTMLElement {
+			const header = this.htmlHelper_.createDiv_('header');
 
-			const top = this.htmlHelper.createDiv('top');
+			const top = this.htmlHelper_.createDiv_('top');
 			header.appendChild(top);
 
-			top.appendChild(this.createTitleElement(viewModel));
+			top.appendChild(this.createTitleElement_(viewModel));
 
-			const control = this.htmlHelper.createDiv('control');
+			const control = this.htmlHelper_.createDiv_('control');
 			top.appendChild(control);
 
-			control.appendChild(this.createResetElement(viewModel));
-			control.appendChild(this.createCloseElement(viewModel));
+			control.appendChild(this.createResetElement_(viewModel));
+			control.appendChild(this.createCloseElement_(viewModel));
 
-			const navigation = this.htmlHelper.createDiv('navigation');
+			const navigation = this.htmlHelper_.createDiv_('navigation');
 			header.appendChild(navigation);
 
-			navigation.appendChild(this.createGoBackElement(viewModel));
+			navigation.appendChild(this.createGoBackElement_(viewModel));
 
-			const state = this.htmlHelper.createDiv('state');
+			const state = this.htmlHelper_.createDiv_('state');
 			navigation.appendChild(state);
 
-			if (this.options.isMonthAndYearSeparated()) {
-				state.appendChild(this.createMonthElement(viewModel));
-				state.appendChild(this.createYearElement(viewModel));
+			if (this.options_.isMonthAndYearSeparated()) {
+				state.appendChild(this.createMonthElement_(viewModel));
+				state.appendChild(this.createYearElement_(viewModel));
 			} else {
-				state.appendChild(this.createMonthAndYearElement(viewModel));
+				state.appendChild(this.createMonthAndYearElement_(viewModel));
 			}
 
-			navigation.appendChild(this.createGoForwardElement(viewModel));
+			navigation.appendChild(this.createGoForwardElement_(viewModel));
 
-			this.controlElement = control;
+			this.controlElement_ = control;
 
 			return header;
 		}
 
-		protected updateTopElement(viewModel: ViewModel): void {
-			const isVisible = this.options.getTitle() !== ''
-				|| this.options.isResetButtonShown()
-				|| (this.hasInput && this.options.isCloseButtonShown());
-			this.controlElement.style.display = isVisible ? '' : 'none';
-			this.titleElement.style.display = isVisible ? '' : 'none';
+		protected updateTopElement_(viewModel: ViewModel_): void {
+			const isVisible = this.options_.getTitle() !== ''
+				|| this.options_.isResetButtonShown()
+				|| (this.hasInput_ && this.options_.isCloseButtonShown());
+			this.controlElement_.style.display = isVisible ? '' : 'none';
+			this.titleElement_.style.display = isVisible ? '' : 'none';
 		}
 
-		protected createTitleElement(viewModel: ViewModel): HTMLElement {
-			const titleElement = this.htmlHelper.createDiv('title');
-			const titleContent = this.htmlHelper.createSpan();
+		protected createTitleElement_(viewModel: ViewModel_): HTMLElement {
+			const titleElement = this.htmlHelper_.createDiv_('title');
+			const titleContent = this.htmlHelper_.createSpan_();
 			titleElement.appendChild(titleContent);
-			this.htmlHelper.addClass(titleContent, 'title-content');
-			this.titleElement = titleElement;
-			this.titleContentElement = titleContent;
+			this.htmlHelper_.addClass_(titleContent, 'title-content');
+			this.titleElement_ = titleElement;
+			this.titleContentElement_ = titleContent;
 
 			return titleElement;
 		}
 
-		protected updateTitleElement(viewModel: ViewModel): void {
-			const title = this.options.getTitle();
-			this.titleContentElement.style.display = title !== '' ? '' : 'none';
-			this.titleContentElement.innerText = title;
+		protected updateTitleElement_(viewModel: ViewModel_): void {
+			const title = this.options_.getTitle();
+			this.titleContentElement_.style.display = title !== '' ? '' : 'none';
+			this.titleContentElement_.innerText = title;
 		}
 
-		protected createResetElement(viewModel: ViewModel): HTMLElement {
-			const resetElement = this.htmlHelper.createDiv('reset');
-			const resetButton = this.htmlHelper.createAnchor((event: Event) => {
-				viewModel.reset(event);
+		protected createResetElement_(viewModel: ViewModel_): HTMLElement {
+			const resetElement = this.htmlHelper_.createDiv_('reset');
+			const resetButton = this.htmlHelper_.createAnchor_((event: Event) => {
+				viewModel.reset_(event);
 			});
 
-			resetButton.innerHTML = this.options.getResetHtml();
+			resetButton.innerHTML = this.options_.getResetHtml();
 			resetElement.appendChild(resetButton);
-			this.resetElement = resetElement;
+			this.resetElement_ = resetElement;
 
 			return resetElement;
 		}
 
-		protected updateResetElement(viewModel: ViewModel): void {
-			this.resetElement.style.display = this.options.isResetButtonShown() ? '' : 'none';
+		protected updateResetElement_(viewModel: ViewModel_): void {
+			this.resetElement_.style.display = this.options_.isResetButtonShown() ? '' : 'none';
 		}
 
-		protected createCloseElement(viewModel: ViewModel): HTMLElement {
-			const closeElement = this.htmlHelper.createDiv('close');
-			const closeButton = this.htmlHelper.createAnchor((event: Event) => {
-				viewModel.close(event);
+		protected createCloseElement_(viewModel: ViewModel_): HTMLElement {
+			const closeElement = this.htmlHelper_.createDiv_('close');
+			const closeButton = this.htmlHelper_.createAnchor_((event: Event) => {
+				viewModel.close_(event);
 			});
 
-			closeButton.innerHTML = this.options.getCloseHtml();
+			closeButton.innerHTML = this.options_.getCloseHtml();
 			closeElement.appendChild(closeButton);
-			this.closeElement = closeElement;
+			this.closeElement_ = closeElement;
 
 			return closeElement;
 		}
 
-		protected updateCloseElement(viewModel: ViewModel): void {
-			this.closeElement.style.display = this.hasInput && this.options.isCloseButtonShown() ? '' : 'none';
+		protected updateCloseElement_(viewModel: ViewModel_): void {
+			this.closeElement_.style.display = this.hasInput_ && this.options_.isCloseButtonShown() ? '' : 'none';
 		}
 
-		protected createGoBackElement(viewModel: ViewModel): HTMLElement {
-			return this.createGoElement(viewModel, false);
+		protected createGoBackElement_(viewModel: ViewModel_): HTMLElement {
+			return this.createGoElement_(viewModel, false);
 		}
 
-		protected createGoForwardElement(viewModel: ViewModel): HTMLElement {
-			return this.createGoElement(viewModel, true);
+		protected createGoForwardElement_(viewModel: ViewModel_): HTMLElement {
+			return this.createGoElement_(viewModel, true);
 		}
 
-		protected createGoElement(viewModel: ViewModel, directionForward: boolean): HTMLElement {
-			const goElement = this.htmlHelper.createDiv('go');
-			this.htmlHelper.addClass(goElement, directionForward ? 'go-next' : 'go-previous');
-			const goButton = this.htmlHelper.createAnchor((event: Event) => {
+		protected createGoElement_(viewModel: ViewModel_, directionForward: boolean): HTMLElement {
+			const goElement = this.htmlHelper_.createDiv_('go');
+			this.htmlHelper_.addClass_(goElement, directionForward ? 'go-next' : 'go-previous');
+			const goButton = this.htmlHelper_.createAnchor_((event: Event) => {
 				if (directionForward) {
-					viewModel.goForward(event);
+					viewModel.goForward_(event);
 				} else {
-					viewModel.goBack(event);
+					viewModel.goBack_(event);
 				}
 			});
 
-			goButton.innerHTML = directionForward ? this.options.getGoForwardHtml() : this.options.getGoBackHtml();
+			goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
 			goElement.appendChild(goButton);
 
 			// todo možná tohle ukládání udělat nějak v createSkeleton
 			if (directionForward) {
-				this.goForwardElement = goButton;
+				this.goForwardElement_ = goButton;
 			} else {
-				this.goBackElement = goButton;
+				this.goBackElement_ = goButton;
 			}
 
 			return goElement;
 		}
 
-		protected updateGoBackElement(viewModel: ViewModel): void {
-			this.goBackElement.style.visibility = viewModel.canGoBack() ? 'visible' : 'hidden';
+		protected updateGoBackElement_(viewModel: ViewModel_): void {
+			this.goBackElement_.style.visibility = viewModel.canGoBack_() ? 'visible' : 'hidden';
 		}
 
-		protected updateGoForwardElement(viewModel: ViewModel): void {
-			this.goForwardElement.style.visibility = viewModel.canGoForward() ? 'visible' : 'hidden';
+		protected updateGoForwardElement_(viewModel: ViewModel_): void {
+			this.goForwardElement_.style.visibility = viewModel.canGoForward_() ? 'visible' : 'hidden';
 		}
 
-		protected createMonthElement(viewModel: ViewModel): HTMLElement {
+		protected createMonthElement_(viewModel: ViewModel_): HTMLElement {
 			const options: Option[] = [];
 			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
 				options.push({
 					value: monthNumber + '',
-					label: this.options.translator.translateMonth(monthNumber),
+					label: this.options_.translator.translateMonth(monthNumber),
 				});
 			}
 
-			const selectElement = this.htmlHelper.createSelectInput(options, (event: Event, monthNumber: string) => {
-				const currentMonth = viewModel.getCurrentMonth();
+			const selectElement = this.htmlHelper_.createSelectInput_(options, (event: Event, monthNumber: string) => {
+				const currentMonth = viewModel.getCurrentMonth_();
 				const newMonth = new Date(currentMonth.getTime());
 				newMonth.setMonth(parseInt(monthNumber, 10));
-				if (!viewModel.goToMonth(event, newMonth)) {
-					this.monthSelect.value = currentMonth.getMonth() + '';
+				if (!viewModel.goToMonth_(event, newMonth)) {
+					this.monthSelect_.value = currentMonth.getMonth() + '';
 				}
 			});
 
-			const monthElement = this.htmlHelper.createDiv('month');
-			const monthContent = this.htmlHelper.createSpan();
+			const monthElement = this.htmlHelper_.createDiv_('month');
+			const monthContent = this.htmlHelper_.createSpan_();
 			monthElement.appendChild(selectElement);
 			monthElement.appendChild(monthContent);
 
-			this.monthElement = monthContent;
-			this.monthSelect = selectElement;
+			this.monthElement_ = monthContent;
+			this.monthSelect_ = selectElement;
 
 			return monthElement;
 		}
 
-		protected updateMonthElement(viewModel: ViewModel): void {
-			if (this.monthElement === null) {
+		protected updateMonthElement_(viewModel: ViewModel_): void {
+			if (this.monthElement_ === null) {
 				return;
 			}
 
-			const currentMonth = viewModel.getCurrentMonth().getMonth();
-			this.monthElement.innerText = this.options.translator.translateMonth(currentMonth);
+			const currentMonth = viewModel.getCurrentMonth_().getMonth();
+			this.monthElement_.innerText = this.options_.translator.translateMonth(currentMonth);
 
-			if (!this.options.isMonthAsDropdown()) {
-				this.monthSelect.style.display = 'none';
-				this.monthElement.style.display = '';
+			if (!this.options_.isMonthAsDropdown()) {
+				this.monthSelect_.style.display = 'none';
+				this.monthElement_.style.display = '';
 				return;
 			}
 
 			let valuesCount = 0;
 			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
-				const newMonth = new Date(viewModel.getCurrentMonth().getTime());
+				const newMonth = new Date(viewModel.getCurrentMonth_().getTime());
 				newMonth.setMonth(monthNumber);
-				const option = this.monthSelect.getElementsByTagName('option')[monthNumber];
-				const canGoToMonth = viewModel.canGoToMonth(newMonth);
+				const option = this.monthSelect_.getElementsByTagName('option')[monthNumber];
+				const canGoToMonth = viewModel.canGoToMonth_(newMonth);
 				option.disabled = !canGoToMonth;
 				option.style.display = canGoToMonth ? '' : 'none';
 				valuesCount += canGoToMonth ? 1 : 0;
 			}
 
-			this.monthSelect.value = currentMonth + '';
+			this.monthSelect_.value = currentMonth + '';
 
-			const showSelect = !this.options.isDropdownWithOneItemHidden() || valuesCount > 1;
-			this.monthSelect.style.display = showSelect ? '' : 'none';
-			this.monthElement.style.display = showSelect ? 'none' : '';
+			const showSelect = !this.options_.isDropdownWithOneItemHidden() || valuesCount > 1;
+			this.monthSelect_.style.display = showSelect ? '' : 'none';
+			this.monthElement_.style.display = showSelect ? 'none' : '';
 		}
 
-		protected createYearElement(viewModel: ViewModel): HTMLElement {
-			const selectElement = this.htmlHelper.createSelectInput([], (event: Event, year: string) => {
-				const currentMonth = viewModel.getCurrentMonth();
+		protected createYearElement_(viewModel: ViewModel_): HTMLElement {
+			const selectElement = this.htmlHelper_.createSelectInput_([], (event: Event, year: string) => {
+				const currentMonth = viewModel.getCurrentMonth_();
 				let newMonth = new Date(currentMonth.getTime());
 				newMonth.setFullYear(parseInt(year, 10));
 
-				const minMonth = this.options.getMinMonth();
-				const maxMonth = this.options.getMaxMonth();
+				const minMonth = this.options_.getMinMonth();
+				const maxMonth = this.options_.getMaxMonth();
 				if (minMonth !== null && newMonth.getTime() < minMonth.getTime()) {
 					newMonth = minMonth;
 				}
@@ -318,160 +314,160 @@ namespace TheDatepicker {
 					newMonth = maxMonth;
 				}
 
-				if (!viewModel.goToMonth(event, newMonth)) {
-					this.yearSelect.value = currentMonth.getFullYear() + '';
+				if (!viewModel.goToMonth_(event, newMonth)) {
+					this.yearSelect_.value = currentMonth.getFullYear() + '';
 				}
 			});
 
-			const yearElement = this.htmlHelper.createDiv('year');
-			const yearContent = this.htmlHelper.createSpan();
+			const yearElement = this.htmlHelper_.createDiv_('year');
+			const yearContent = this.htmlHelper_.createSpan_();
 			yearElement.appendChild(selectElement);
 			yearElement.appendChild(yearContent);
 
-			this.yearElement = yearContent;
-			this.yearSelect = selectElement;
+			this.yearElement_ = yearContent;
+			this.yearSelect_ = selectElement;
 
 			return yearElement;
 		}
 
-		protected updateYearElement(viewModel: ViewModel): void {
-			if (this.yearElement === null) {
+		protected updateYearElement_(viewModel: ViewModel_): void {
+			if (this.yearElement_ === null) {
 				return;
 			}
 
-			const currentYear = viewModel.getCurrentMonth().getFullYear();
-			this.yearElement.innerText = currentYear + '';
+			const currentYear = viewModel.getCurrentMonth_().getFullYear();
+			this.yearElement_.innerText = currentYear + '';
 
-			if (!this.options.isYearAsDropdown()) {
-				this.yearSelect.style.display = 'none';
-				this.yearElement.style.display = '';
+			if (!this.options_.isYearAsDropdown()) {
+				this.yearSelect_.style.display = 'none';
+				this.yearElement_.style.display = '';
 				return;
 			}
 
-			const minDate = this.options.getMinDate();
-			const maxDate = this.options.getMaxDate();
+			const minDate = this.options_.getMinDate();
+			const maxDate = this.options_.getMaxDate();
 			const minYear = minDate !== null ? minDate.getFullYear() : null;
 			const maxYear = maxDate !== null ? maxDate.getFullYear() : null;
-			const range = this.calculateDropdownRange(currentYear, minYear, maxYear);
+			const range = this.calculateDropdownRange_(currentYear, minYear, maxYear);
 
-			const options = this.yearSelect.getElementsByTagName('option');
-			const diff = this.calculateDropdownDiff(options, range, (value: string): number => {
+			const options = this.yearSelect_.getElementsByTagName('option');
+			const diff = this.calculateDropdownDiff_(options, range, (value: string): number => {
 				return parseInt(value, 10);
 			});
 
 			for (let index = 0; index < diff.remove.length; index++) {
-				this.yearSelect.removeChild(diff.remove[index]);
+				this.yearSelect_.removeChild(diff.remove[index]);
 			}
 			for (let index = diff.prepend.length - 1; index >= 0; index--) {
-				this.yearSelect.insertBefore(this.htmlHelper.createSelectOption(diff.prepend[index] + '', diff.prepend[index] + ''), this.yearSelect.firstChild);
+				this.yearSelect_.insertBefore(this.htmlHelper_.createSelectOption_(diff.prepend[index] + '', diff.prepend[index] + ''), this.yearSelect_.firstChild);
 			}
 			for (let index = 0; index < diff.append.length; index++) {
-				this.yearSelect.appendChild(this.htmlHelper.createSelectOption(diff.append[index] + '', diff.append[index] + ''));
+				this.yearSelect_.appendChild(this.htmlHelper_.createSelectOption_(diff.append[index] + '', diff.append[index] + ''));
 			}
 
-			this.yearSelect.value = currentYear + '';
+			this.yearSelect_.value = currentYear + '';
 
-			const showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
-			this.yearSelect.style.display = showSelect ? '' : 'none';
-			this.yearElement.style.display = showSelect ? 'none' : '';
+			const showSelect = !this.options_.isDropdownWithOneItemHidden() || range.from < range.to;
+			this.yearSelect_.style.display = showSelect ? '' : 'none';
+			this.yearElement_.style.display = showSelect ? 'none' : '';
 		}
 
-		protected createMonthAndYearElement(viewModel: ViewModel): HTMLElement {
-			const monthAndYear = this.htmlHelper.createDiv('month-year');
+		protected createMonthAndYearElement_(viewModel: ViewModel_): HTMLElement {
+			const monthAndYear = this.htmlHelper_.createDiv_('month-year');
 
-			const selectElement = this.htmlHelper.createSelectInput([], (event: Event, value: string) => {
-				const currentMonth = viewModel.getCurrentMonth();
+			const selectElement = this.htmlHelper_.createSelectInput_([], (event: Event, value: string) => {
+				const currentMonth = viewModel.getCurrentMonth_();
 				let newMonth = new Date(currentMonth.getTime());
-				const data = this.parseMonthAndYearOptionValue(value);
+				const data = this.parseMonthAndYearOptionValue_(value);
 				newMonth.setFullYear(data.year);
 				newMonth.setMonth(data.month);
 
-				if (!viewModel.goToMonth(event, newMonth)) {
-					this.monthAndYearSelect.value = this.getMonthAndYearOptionValue({
+				if (!viewModel.goToMonth_(event, newMonth)) {
+					this.monthAndYearSelect_.value = this.getMonthAndYearOptionValue_({
 						month: currentMonth.getMonth(),
 						year: currentMonth.getFullYear(),
 					});
 				}
 			});
 
-			const monthAndYearContent = this.htmlHelper.createSpan();
-			this.monthAndYearElement = monthAndYearContent;
-			this.monthAndYearSelect = selectElement;
+			const monthAndYearContent = this.htmlHelper_.createSpan_();
+			this.monthAndYearElement_ = monthAndYearContent;
+			this.monthAndYearSelect_ = selectElement;
 			monthAndYear.appendChild(monthAndYearContent);
 			monthAndYear.appendChild(selectElement);
 
 			return monthAndYear;
 		}
 
-		protected updateMonthAndYearElement(viewModel: ViewModel): void {
-			if (this.monthAndYearElement === null) {
+		protected updateMonthAndYearElement_(viewModel: ViewModel_): void {
+			if (this.monthAndYearElement_ === null) {
 				return;
 			}
 
-			const currentMonth = viewModel.getCurrentMonth();
+			const currentMonth = viewModel.getCurrentMonth_();
 			const currentData: MonthAndYear = {
 				month: currentMonth.getMonth(),
 				year: currentMonth.getFullYear(),
 			};
-			const currentIndex = this.calculateMonthAndYearIndex(currentData);
-			this.monthAndYearElement.innerText = this.translateMonthAndYear(currentData);
+			const currentIndex = this.calculateMonthAndYearIndex_(currentData);
+			this.monthAndYearElement_.innerText = this.translateMonthAndYear_(currentData);
 
-			if (!this.options.isYearAsDropdown() || !this.options.isMonthAsDropdown()) {
-				this.monthAndYearSelect.style.display = 'none';
-				this.monthAndYearElement.style.display = '';
+			if (!this.options_.isYearAsDropdown() || !this.options_.isMonthAsDropdown()) {
+				this.monthAndYearSelect_.style.display = 'none';
+				this.monthAndYearElement_.style.display = '';
 				return;
 			}
 
-			const minDate = this.options.getMinDate();
-			const maxDate = this.options.getMaxDate();
+			const minDate = this.options_.getMinDate();
+			const maxDate = this.options_.getMaxDate();
 			const minIndex = minDate !== null ? minDate.getFullYear() * 12 + minDate.getMonth() : null;
 			const maxIndex = maxDate !== null ? maxDate.getFullYear() * 12 + maxDate.getMonth() : null;
-			const range = this.calculateDropdownRange(currentIndex, minIndex, maxIndex);
+			const range = this.calculateDropdownRange_(currentIndex, minIndex, maxIndex);
 
-			const options = this.monthAndYearSelect.getElementsByTagName('option');
-			const diff = this.calculateDropdownDiff(options, range, (value: string): number => {
-				return this.calculateMonthAndYearIndex(this.parseMonthAndYearOptionValue(value));
+			const options = this.monthAndYearSelect_.getElementsByTagName('option');
+			const diff = this.calculateDropdownDiff_(options, range, (value: string): number => {
+				return this.calculateMonthAndYearIndex_(this.parseMonthAndYearOptionValue_(value));
 			});
 
 			for (let index = 0; index < diff.remove.length; index++) {
-				this.monthAndYearSelect.removeChild(diff.remove[index]);
+				this.monthAndYearSelect_.removeChild(diff.remove[index]);
 			}
 			for (let index = diff.prepend.length - 1; index >= 0; index--) {
-				const data = this.getMonthAndYearByIndex(diff.prepend[index]);
-				this.monthAndYearSelect.insertBefore(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)), this.monthAndYearSelect.firstChild);
+				const data = this.getMonthAndYearByIndex_(diff.prepend[index]);
+				this.monthAndYearSelect_.insertBefore(this.htmlHelper_.createSelectOption_(this.getMonthAndYearOptionValue_(data), this.translateMonthAndYear_(data)), this.monthAndYearSelect_.firstChild);
 			}
 			for (let index = 0; index < diff.append.length; index++) {
-				const data = this.getMonthAndYearByIndex(diff.append[index]);
-				this.monthAndYearSelect.appendChild(this.htmlHelper.createSelectOption(this.getMonthAndYearOptionValue(data), this.translateMonthAndYear(data)));
+				const data = this.getMonthAndYearByIndex_(diff.append[index]);
+				this.monthAndYearSelect_.appendChild(this.htmlHelper_.createSelectOption_(this.getMonthAndYearOptionValue_(data), this.translateMonthAndYear_(data)));
 			}
 
-			this.monthAndYearSelect.value = this.getMonthAndYearOptionValue(currentData);
+			this.monthAndYearSelect_.value = this.getMonthAndYearOptionValue_(currentData);
 
-			const showSelect = !this.options.isDropdownWithOneItemHidden() || range.from < range.to;
-			this.monthAndYearSelect.style.display = showSelect ? '' : 'none';
-			this.monthAndYearElement.style.display = showSelect ? 'none' : '';
+			const showSelect = !this.options_.isDropdownWithOneItemHidden() || range.from < range.to;
+			this.monthAndYearSelect_.style.display = showSelect ? '' : 'none';
+			this.monthAndYearElement_.style.display = showSelect ? 'none' : '';
 		}
 
-		private translateMonthAndYear(data: MonthAndYear): string {
-			return this.options.translator.translateMonth(data.month) + ' ' + data.year;
+		private translateMonthAndYear_(data: MonthAndYear): string {
+			return this.options_.translator.translateMonth(data.month) + ' ' + data.year;
 		}
 
-		private calculateMonthAndYearIndex(data: MonthAndYear): number {
+		private calculateMonthAndYearIndex_(data: MonthAndYear): number {
 			return data.year * 12 + data.month;
 		}
 
-		private getMonthAndYearByIndex(index: number): MonthAndYear {
+		private getMonthAndYearByIndex_(index: number): MonthAndYear {
 			return {
 				year: Math.floor(index / 12),
 				month: index % 12,
 			}
 		}
 
-		private getMonthAndYearOptionValue(data: MonthAndYear): string {
+		private getMonthAndYearOptionValue_(data: MonthAndYear): string {
 			return data.year + '-' + data.month;
 		}
 
-		private parseMonthAndYearOptionValue(value: string): MonthAndYear {
+		private parseMonthAndYearOptionValue_(value: string): MonthAndYear {
 			const parts = value.split('-');
 			return {
 				month: parseInt(parts[1], 10),
@@ -479,8 +475,8 @@ namespace TheDatepicker {
 			}
 		}
 
-		private calculateDropdownRange(current: number, min: number | null, max: number | null): Range {
-			const limit = this.options.getDropdownItemsLimit() - 1;
+		private calculateDropdownRange_(current: number, min: number | null, max: number | null): Range {
+			const limit = this.options_.getDropdownItemsLimit() - 1;
 			const maxAppend = Math.ceil(limit / 2);
 			let from = current - (limit - maxAppend);
 			let to = current + maxAppend;
@@ -504,7 +500,7 @@ namespace TheDatepicker {
 			};
 		}
 
-		private calculateDropdownDiff(options: HTMLCollectionOf<HTMLOptionElement>, newRange: Range, getNumerical: (value: string) => number): DropdownDiff {
+		private calculateDropdownDiff_(options: HTMLCollectionOf<HTMLOptionElement>, newRange: Range, getNumerical: (value: string) => number): DropdownDiff {
 			const firstOption = options.length > 0 ? getNumerical(options[0].value) : null;
 			const lastOption = options.length > 0 ? getNumerical(options[options.length - 1].value) : null;
 			const prepend = [];
@@ -531,67 +527,67 @@ namespace TheDatepicker {
 			};
 		}
 
-		protected createTableElement(viewModel: ViewModel): HTMLElement {
-			const tableHeader = this.createTableHeaderElement(viewModel) as HTMLTableSectionElement;
-			const tableBody = this.createTableBodyElement(viewModel) as HTMLTableSectionElement;
+		protected createTableElement_(viewModel: ViewModel_): HTMLElement {
+			const tableHeader = this.createTableHeaderElement_(viewModel) as HTMLTableSectionElement;
+			const tableBody = this.createTableBodyElement_(viewModel) as HTMLTableSectionElement;
 
-			return this.htmlHelper.createTable('calendar', tableHeader, tableBody);
+			return this.htmlHelper_.createTable_('calendar', tableHeader, tableBody);
 		}
 
-		protected createTableHeaderElement(viewModel: ViewModel): HTMLElement {
-			const weekDays = viewModel.getWeekDays();
+		protected createTableHeaderElement_(viewModel: ViewModel_): HTMLElement {
+			const weekDays = viewModel.getWeekDays_();
 
 			const cells = [];
 			for (let index = 0; index < weekDays.length; index++) {
 				const dayOfWeek = weekDays[index];
-				cells.push(this.createTableHeaderCellElement(viewModel, dayOfWeek));
+				cells.push(this.createTableHeaderCellElement_(viewModel, dayOfWeek));
 			}
 
-			return this.htmlHelper.createTableHeader('calendar-header', cells as HTMLTableHeaderCellElement[]);
+			return this.htmlHelper_.createTableHeader_('calendar-header', cells as HTMLTableHeaderCellElement[]);
 		}
 
-		protected createTableHeaderCellElement(viewModel: ViewModel, dayOfWeek: DayOfWeek): HTMLElement {
-			const headerCell = this.htmlHelper.createTableHeaderCell('week-day');
+		protected createTableHeaderCellElement_(viewModel: ViewModel_, dayOfWeek: DayOfWeek): HTMLElement {
+			const headerCell = this.htmlHelper_.createTableHeaderCell_('week-day');
 
 			if (dayOfWeek === DayOfWeek.Saturday || dayOfWeek === DayOfWeek.Sunday) {
-				this.htmlHelper.addClass(headerCell, 'week-day--weekend');
+				this.htmlHelper_.addClass_(headerCell, 'week-day--weekend');
 			}
 
-			headerCell.innerText = this.options.translator.translateDayOfWeek(dayOfWeek);
+			headerCell.innerText = this.options_.translator.translateDayOfWeek(dayOfWeek);
 
 			return headerCell;
 		}
 
-		protected createTableBodyElement(viewModel: ViewModel): HTMLElement {
-			this.daysElements = [];
-			this.daysButtonsElements = [];
-			this.daysContentsElements = [];
+		protected createTableBodyElement_(viewModel: ViewModel_): HTMLElement {
+			this.daysElements_ = [];
+			this.daysButtonsElements_ = [];
+			this.daysContentsElements_ = [];
 
 			const rows = [];
 			for (let index = 0; index < 6; index++) {
-				rows.push(this.createTableRowElement(viewModel));
+				rows.push(this.createTableRowElement_(viewModel));
 			}
-			this.weeksElements = rows;
+			this.weeksElements_ = rows;
 
-			return this.htmlHelper.createTableBody('calendar-body', rows as HTMLTableRowElement[]);
+			return this.htmlHelper_.createTableBody_('calendar-body', rows as HTMLTableRowElement[]);
 		}
 
-		protected updateWeeksElements(viewModel: ViewModel): void {
-			const weeks = viewModel.getWeeks();
+		protected updateWeeksElements_(viewModel: ViewModel_): void {
+			const weeks = viewModel.getWeeks_();
 
-			for (let weekIndex = 0; weekIndex < this.weeksElements.length; weekIndex++) {
-				const weekElement = this.weeksElements[weekIndex];
+			for (let weekIndex = 0; weekIndex < this.weeksElements_.length; weekIndex++) {
+				const weekElement = this.weeksElements_[weekIndex];
 				const week = weeks.length > weekIndex ? weeks[weekIndex] : null;
 
 				weekElement.style.display = week !== null ? '' : 'none';
 
 				if (week !== null) {
-					for (let dayIndex = 0; dayIndex < this.daysElements[weekIndex].length; dayIndex++) {
-						this.updateDayElement(
+					for (let dayIndex = 0; dayIndex < this.daysElements_[weekIndex].length; dayIndex++) {
+						this.updateDayElement_(
 							viewModel,
-							this.daysElements[weekIndex][dayIndex],
-							this.daysButtonsElements[weekIndex][dayIndex],
-							this.daysContentsElements[weekIndex][dayIndex],
+							this.daysElements_[weekIndex][dayIndex],
+							this.daysButtonsElements_[weekIndex][dayIndex],
+							this.daysContentsElements_[weekIndex][dayIndex],
 							week[dayIndex]
 						);
 					}
@@ -599,14 +595,14 @@ namespace TheDatepicker {
 			}
 		}
 
-		protected createTableRowElement(viewModel: ViewModel): HTMLElement {
+		protected createTableRowElement_(viewModel: ViewModel_): HTMLElement {
 			const cells = [];
 			const cellsButtons = [];
 			const cellsContents = [];
 			for (let index = 0; index < 7; index++) {
-				const cell = this.htmlHelper.createTableCell();
-				const cellButton = this.createTableCellButtonElement(viewModel);
-				const cellContent = this.createTableCellContentElement(viewModel);
+				const cell = this.htmlHelper_.createTableCell_();
+				const cellButton = this.createTableCellButtonElement_(viewModel);
+				const cellContent = this.createTableCellContentElement_(viewModel);
 
 				cells.push(cell);
 				cellsButtons.push(cellButton);
@@ -615,15 +611,15 @@ namespace TheDatepicker {
 				cell.appendChild(cellButton);
 				cellButton.appendChild(cellContent);
 			}
-			this.daysElements.push(cells);
-			this.daysButtonsElements.push(cellsButtons);
-			this.daysContentsElements.push(cellsContents);
+			this.daysElements_.push(cells);
+			this.daysButtonsElements_.push(cellsButtons);
+			this.daysContentsElements_.push(cellsContents);
 
-			return this.htmlHelper.createTableRow('week', cells as HTMLTableCellElement[]);
+			return this.htmlHelper_.createTableRow_('week', cells as HTMLTableCellElement[]);
 		}
 
-		protected updateDayElement(
-			viewModel: ViewModel,
+		protected updateDayElement_(
+			viewModel: ViewModel_,
 			dayElement: HTMLElement,
 			dayButtonElement: HTMLDayButtonElement,
 			dayContentElement: HTMLElement,
@@ -632,8 +628,8 @@ namespace TheDatepicker {
 			dayButtonElement.day = day;
 			dayElement.setAttribute('data-date', day.getFormatted());
 			dayElement.className = '';
-			this.htmlHelper.addClass(dayElement, 'cell');
-			this.options.updateCellStructure(dayContentElement, day);
+			this.htmlHelper_.addClass_(dayElement, 'cell');
+			this.options_.updateCellStructure(dayContentElement, day);
 
 			if (!day.isVisible) {
 				dayButtonElement.removeAttribute('href');
@@ -641,29 +637,29 @@ namespace TheDatepicker {
 				return;
 			}
 
-			this.htmlHelper.addClass(dayElement, 'day');
+			this.htmlHelper_.addClass_(dayElement, 'day');
 			if (day.isToday) {
-				this.htmlHelper.addClass(dayElement, 'day--today');
+				this.htmlHelper_.addClass_(dayElement, 'day--today');
 			}
 			if (day.isPast) {
-				this.htmlHelper.addClass(dayElement, 'day--past');
+				this.htmlHelper_.addClass_(dayElement, 'day--past');
 			}
 			if (day.isWeekend) {
-				this.htmlHelper.addClass(dayElement, 'day--weekend');
+				this.htmlHelper_.addClass_(dayElement, 'day--weekend');
 			}
 			if (!day.isAvailable) {
-				this.htmlHelper.addClass(dayElement, 'day--unavailable');
+				this.htmlHelper_.addClass_(dayElement, 'day--unavailable');
 			}
 			if (!day.isInCurrentMonth) {
-				this.htmlHelper.addClass(dayElement, 'day--outside');
+				this.htmlHelper_.addClass_(dayElement, 'day--outside');
 			}
 			if (day.isHighlighted) {
-				this.htmlHelper.addClass(dayElement, 'day--highlighted');
+				this.htmlHelper_.addClass_(dayElement, 'day--highlighted');
 			}
 			if (day.isSelected) {
-				this.htmlHelper.addClass(dayElement, 'day--selected');
+				this.htmlHelper_.addClass_(dayElement, 'day--selected');
 			}
-			const customClasses = this.options.getCellClasses(day);
+			const customClasses = this.options_.getCellClasses(day);
 			for (let index = 0; index < customClasses.length; index++) {
 				dayElement.className += ' ' + customClasses[index];
 			}
@@ -681,33 +677,33 @@ namespace TheDatepicker {
 			}
 		}
 
-		protected createTableCellButtonElement(viewModel: ViewModel): HTMLDayButtonElement {
-			const cellButton = this.htmlHelper.createAnchor((event: Event) => {
-				const previous = viewModel.selectedDate;
-				const isSelected = viewModel.selectDay(event, cellButton.day, false, true, true);
-				if (this.options.isHiddenOnSelect() && (isSelected || (previous !== null && cellButton.day.isEqualToDate(previous)))) {
-					viewModel.close(event);
+		protected createTableCellButtonElement_(viewModel: ViewModel_): HTMLDayButtonElement {
+			const cellButton = this.htmlHelper_.createAnchor_((event: Event) => {
+				const previous = viewModel.selectedDate_;
+				const isSelected = viewModel.selectDay_(event, cellButton.day, false, true, true);
+				if (this.options_.isHiddenOnSelect() && (isSelected || (previous !== null && cellButton.day.isEqualToDate(previous)))) {
+					viewModel.close_(event);
 				}
 			}) as HTMLDayButtonElement;
 
 			cellButton.onfocus = (event: FocusEvent) => {
-				viewModel.highlightDay(event || window.event, cellButton.day);
+				viewModel.highlightDay_(event || window.event, cellButton.day);
 			};
 
 			cellButton.onmouseenter = () => {
-				viewModel.cancelHighlight();
+				viewModel.cancelHighlight_();
 			};
 
 			cellButton.onmouseleave = () => {
-				viewModel.cancelHighlight();
+				viewModel.cancelHighlight_();
 			};
 
 			return cellButton;
 		}
 
-		protected createTableCellContentElement(viewModel: ViewModel): HTMLElement {
-			const cellContent = this.options.getCellStructure();
-			this.htmlHelper.addClass(cellContent, 'day-content');
+		protected createTableCellContentElement_(viewModel: ViewModel_): HTMLElement {
+			const cellContent = this.options_.getCellStructure();
+			this.htmlHelper_.addClass_(cellContent, 'day-content');
 
 			return cellContent;
 		}

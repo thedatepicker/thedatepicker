@@ -2,7 +2,7 @@ namespace TheDatepicker {
 
 	export class Translator {
 
-		private dayOfWeekTranslations = [
+		private dayOfWeekTranslations_ = [
 			'Su',
 			'Mo',
 			'Tu',
@@ -12,7 +12,7 @@ namespace TheDatepicker {
 			'Sa',
 		];
 
-		private monthTranslations = [
+		private monthTranslations_ = [
 			'January',
 			'February',
 			'March',
@@ -28,19 +28,19 @@ namespace TheDatepicker {
 		];
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
-			this.dayOfWeekTranslations[Helper.checkNumber('First day of week', dayOfWeek, 0, 6)] = Helper.checkString('Translation', translation);
+			this.dayOfWeekTranslations_[Helper_.checkNumber_('First day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation);
 		}
 
 		public setMonthTranslation(month: Month, translation: string): void {
-			this.monthTranslations[Helper.checkNumber('Month', month, 0, 11)] = Helper.checkString('Translation', translation);
+			this.monthTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation);
 		}
 
 		public translateDayOfWeek(dayOfWeek: DayOfWeek): string {
-			return this.dayOfWeekTranslations[dayOfWeek];
+			return this.dayOfWeekTranslations_[dayOfWeek];
 		}
 
 		public translateMonth(month: Month): string {
-			return this.monthTranslations[month];
+			return this.monthTranslations_[month];
 		}
 
 	}

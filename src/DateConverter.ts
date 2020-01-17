@@ -1,16 +1,6 @@
-/// <reference path="Translator.ts" />
-
 namespace TheDatepicker {
 
 	export class CannotParseDateException {
-
-	}
-
-	export interface DateConverterInterface {
-
-		formatDate(format: string, date: Date): string;
-
-		parseDate(format: string, text: string): Date | null;
 
 	}
 
@@ -44,14 +34,14 @@ namespace TheDatepicker {
 
 	}
 
-	export class DateConverter implements DateConverterInterface {
+	export class DateConverter_ {
 
-		private readonly escapeChar = '\\';
+		private readonly escapeChar_ = '\\';
 
-		public constructor(private readonly options: Options) {
+		public constructor(private readonly options_: Options) {
 		}
 
-		public formatDate(format: string, date: Date): string {
+		public formatDate_(format: string, date: Date): string {
 			let escapeNext = false;
 			let result = '';
 			for (let position = 0; position < format.length; position++) {
@@ -63,12 +53,12 @@ namespace TheDatepicker {
 					continue;
 				}
 
-				if (char === this.escapeChar) {
+				if (char === this.escapeChar_) {
 					escapeNext = true;
 					continue;
 				}
 
-				const formatter = this.getFormatter(char);
+				const formatter = this.getFormatter_(char);
 				if (formatter !== null) {
 					result += formatter.call(this, date);
 					continue;
@@ -80,7 +70,7 @@ namespace TheDatepicker {
 			return result;
 		}
 
-		public parseDate(format: string, text: string): Date | null {
+		public parseDate_(format: string, text: string): Date | null {
 			if (text === '') {
 				return null;
 			}
@@ -94,12 +84,12 @@ namespace TheDatepicker {
 				if (escapeNext) {
 					escapeNext = false;
 
-				} else if (char === this.escapeChar) {
+				} else if (char === this.escapeChar_) {
 					escapeNext = true;
 					continue;
 
 				} else {
-					const parser = this.getParser(char);
+					const parser = this.getParser_(char);
 					if (parser !== null) {
 						try {
 							textPosition += parser.call(this, text.substring(textPosition), dateData);
@@ -140,106 +130,106 @@ namespace TheDatepicker {
 			return dateData.createDate();
 		}
 
-		private getFormatter(type: string): ((date: Date) => string) | null {
+		private getFormatter_(type: string): ((date: Date) => string) | null {
 			switch (type) {
 				// Day of the month; 1 to 31
 				case 'j':
-					return this.formatDay;
+					return this.formatDay_;
 
 				// Day of the month with leading zero; 01 to 31
 				case 'd':
-					return this.formatDayWithLeadingZero;
+					return this.formatDayWithLeadingZero_;
 
 				// Textual representation of a day of the week; Mo through Su
 				case 'D':
-					return this.formatDayOfWeekTextual;
+					return this.formatDayOfWeekTextual_;
 
 				// Numeric representation of a month; 1 through 12
 				case 'n':
-					return this.formatMonth;
+					return this.formatMonth_;
 
 				// Numeric representation of a month with leading zero; 01 through 12
 				case 'm':
-					return this.formatMonthWithLeadingZero;
+					return this.formatMonthWithLeadingZero_;
 
 				// Textual representation of a month; January through December
 				case 'F':
-					return this.formatMonthTextual;
+					return this.formatMonthTextual_;
 
 				// Full year; 1999 or 2003
 				case 'Y':
-					return this.formatYear;
+					return this.formatYear_;
 
 				// Year, 2 digits; 99 or 03
 				case 'y':
-					return this.formatYearTwoDigits;
+					return this.formatYearTwoDigits_;
 
 				default:
 					return null;
 			}
 		}
 
-		private formatDay(date: Date): string {
+		private formatDay_(date: Date): string {
 			return date.getDate() + '';
 		}
 
-		private formatDayWithLeadingZero(date: Date): string {
+		private formatDayWithLeadingZero_(date: Date): string {
 			return ('0' + date.getDate()).slice(-2);
 		}
 
-		private formatDayOfWeekTextual(date: Date): string {
-			return this.options.translator.translateDayOfWeek(date.getDay());
+		private formatDayOfWeekTextual_(date: Date): string {
+			return this.options_.translator.translateDayOfWeek(date.getDay());
 		}
 
-		private formatMonth(date: Date): string {
+		private formatMonth_(date: Date): string {
 			return (date.getMonth() + 1) + '';
 		}
 
-		private formatMonthWithLeadingZero(date: Date): string {
+		private formatMonthWithLeadingZero_(date: Date): string {
 			return ('0' + (date.getMonth() + 1)).slice(-2);
 		}
 
-		private formatMonthTextual(date: Date): string {
-			return this.options.translator.translateMonth(date.getMonth());
+		private formatMonthTextual_(date: Date): string {
+			return this.options_.translator.translateMonth(date.getMonth());
 		}
 
-		private formatYear(date: Date): string {
+		private formatYear_(date: Date): string {
 			return date.getFullYear() + '';
 		}
 
-		private formatYearTwoDigits(date: Date): string {
+		private formatYearTwoDigits_(date: Date): string {
 			const year = date.getFullYear() + '';
 			return year.substring(year.length - 2);
 		}
 
-		private getParser(type: string): ((text: string, dateData: ParsedDateData) => number) | null {
+		private getParser_(type: string): ((text: string, dateData: ParsedDateData) => number) | null {
 			switch (type) {
 				case 'j':
 				case 'd':
-					return this.parseDay;
+					return this.parseDay_;
 
 				case 'D':
-					return this.parseDayOfWeekTextual;
+					return this.parseDayOfWeekTextual_;
 
 				case 'n':
 				case 'm':
-					return this.parseMonth;
+					return this.parseMonth_;
 
 				case 'F':
-					return this.parseMonthTextual;
+					return this.parseMonthTextual_;
 
 				case 'Y':
-					return this.parseYear;
+					return this.parseYear_;
 
 				case 'y':
-					return this.parseYearTwoDigits;
+					return this.parseYearTwoDigits_;
 
 				default:
 					return null;
 			}
 		}
 
-		private parseDay(text: string, dateData: ParsedDateData): number {
+		private parseDay_(text: string, dateData: ParsedDateData): number {
 			let took = 0;
 			while (text.substring(0, 1) === '0') {
 				text = text.substring(1);
@@ -259,10 +249,10 @@ namespace TheDatepicker {
 			return took + day.length;
 		}
 
-		private parseDayOfWeekTextual(text: string): number {
+		private parseDayOfWeekTextual_(text: string): number {
 			let maxLength = 0;
 			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-				const translation = this.options.translator.translateDayOfWeek(dayOfWeek);
+				const translation = this.options_.translator.translateDayOfWeek(dayOfWeek);
 				maxLength = Math.max(maxLength, translation.length);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
@@ -282,7 +272,7 @@ namespace TheDatepicker {
 			return took;
 		}
 
-		private parseMonth(text: string, dateData: ParsedDateData): number {
+		private parseMonth_(text: string, dateData: ParsedDateData): number {
 			let took = 0;
 			while (text.substring(0, 1) === '0') {
 				text = text.substring(1);
@@ -302,9 +292,9 @@ namespace TheDatepicker {
 			return took + month.length;
 		}
 
-		private parseMonthTextual(text: string, dateData: ParsedDateData): number {
+		private parseMonthTextual_(text: string, dateData: ParsedDateData): number {
 			for (let month = 1; month <= 12; month++) {
-				const translation = this.options.translator.translateMonth(month - 1);
+				const translation = this.options_.translator.translateMonth(month - 1);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
 					dateData.month = month;
@@ -315,7 +305,7 @@ namespace TheDatepicker {
 			throw new CannotParseDateException();
 		}
 
-		private parseYear(text: string, dateData: ParsedDateData): number {
+		private parseYear_(text: string, dateData: ParsedDateData): number {
 			let isNegative = false;
 			if (text.substring(0, 1) === '-') {
 				isNegative = true;
@@ -340,13 +330,13 @@ namespace TheDatepicker {
 			return yearLength + (isNegative ? 1 : 0);
 		}
 
-		private parseYearTwoDigits(text: string, dateData: ParsedDateData): number {
+		private parseYearTwoDigits_(text: string, dateData: ParsedDateData): number {
 			const yearEnd = text.substring(0, 2);
 			if (!/[0-9]{2}/.test(yearEnd)) {
 				throw new CannotParseDateException();
 			}
 
-			const currentYear = (this.options.getToday()).getFullYear() + '';
+			const currentYear = (this.options_.getToday()).getFullYear() + '';
 			const yearBeginning = currentYear.substring(0, currentYear.length - 2);
 
 			dateData.year = parseInt(yearBeginning + yearEnd, 10);

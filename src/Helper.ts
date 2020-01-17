@@ -25,7 +25,7 @@ namespace TheDatepicker {
 		December = 11,
 	}
 
-	export enum KeyCode {
+	export enum KeyCode_ {
 		Enter = 13,
 		Space = 32,
 		Left = 37,
@@ -34,7 +34,7 @@ namespace TheDatepicker {
 		Down = 40,
 	}
 
-	export enum ListenerType {
+	export enum ListenerType_ {
 		MouseDown = 'mousedown',
 		Focus = 'focus',
 		FocusIn = 'focusin',
@@ -43,11 +43,11 @@ namespace TheDatepicker {
 		KeyUp = 'keyup',
 	}
 
-	export class Helper {
+	export class Helper_ {
 
-		private static deprecatedMethods: string[] = [];
+		private static deprecatedMethods_: string[] = [];
 
-		public static resetTime(date: Date | null): Date | null {
+		public static resetTime_(date: Date | null): Date | null {
 			if (date === null) {
 				return null;
 			}
@@ -60,7 +60,7 @@ namespace TheDatepicker {
 			return date;
 		}
 
-		public static normalizeDate(parameterName: string, value: Day | Date | string | null, options: Options): Date | null {
+		public static normalizeDate_(parameterName: string, value: Day | Date | string | null, options: Options): Date | null {
 			if (!value) {
 				return null;
 			}
@@ -109,17 +109,17 @@ namespace TheDatepicker {
 
 				const date = new Date(value);
 				if (!isNaN(date.getTime())) {
-					return Helper.resetTime(date);
+					return Helper_.resetTime_(date);
 				}
 
-			} else if (Helper.isValidDate(value)) {
-				return Helper.resetTime(new Date(value.getTime()));
+			} else if (Helper_.isValidDate_(value)) {
+				return Helper_.resetTime_(new Date(value.getTime()));
 			}
 
 			throw new Error(parameterName + ' was expected to be a valid Date string or valid Date or Day or null.');
 		}
 
-		public static normalizeMonth(date: Date | null): Date | null {
+		public static normalizeMonth_(date: Date | null): Date | null {
 			if (date === null) {
 				return null;
 			}
@@ -130,20 +130,20 @@ namespace TheDatepicker {
 			return month;
 		}
 
-		public static isElement(element: HTMLElement): boolean {
+		public static isElement_(element: HTMLElement): boolean {
 			return typeof element === 'object'
 				&& element.nodeType === 1
 				&& typeof element.style === 'object'
 				&& typeof element.ownerDocument === 'object';
 		}
 
-		public static isValidDate(value: any): boolean {
+		public static isValidDate_(value: any): boolean {
 			return typeof value === 'object'
 				&& Object.prototype.toString.call(value) === '[object Date]'
 				&& !isNaN(value.getTime());
 		}
 
-		public static inArray(list: any[], item: any): boolean {
+		public static inArray_(list: any[], item: any): boolean {
 			for (let index = 0; index < list.length; index++) {
 				if (list[index] === item) {
 					return true;
@@ -153,7 +153,7 @@ namespace TheDatepicker {
 			return false;
 		}
 
-		public static addEventListener(element: Node, listenerType: ListenerType, listener: (event: Event) => void): () => void {
+		public static addEventListener_(element: Node, listenerType: ListenerType_, listener: (event: Event) => void): () => void {
 			if (element.addEventListener) {
 				element.addEventListener(listenerType, listener);
 
@@ -182,7 +182,7 @@ namespace TheDatepicker {
 			};
 		}
 
-		public static preventDefault(event: Event): void {
+		public static preventDefault_(event: Event): void {
 			if (event.preventDefault) {
 				event.preventDefault();
 			} else {
@@ -190,7 +190,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		public static stopPropagation(event: Event): void {
+		public static stopPropagation_(event: Event): void {
 			if (event.stopPropagation) {
 				event.stopPropagation();
 			} else {
@@ -198,7 +198,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		public static checkString(parameterName: string, value: string | null, checkNonEmpty = false): string {
+		public static checkString_(parameterName: string, value: string | null, checkNonEmpty = false): string {
 			if (!checkNonEmpty && !value) {
 				return '';
 			}
@@ -208,7 +208,7 @@ namespace TheDatepicker {
 			return value;
 		}
 
-		public static checkNumber(parameterName: string, value: number, min: number | null = null, max: number | null = null): number {
+		public static checkNumber_(parameterName: string, value: number, min: number | null = null, max: number | null = null): number {
 			value = typeof value === 'string' ? parseInt(value) : value;
 			if (typeof value !== 'number' || isNaN(value) || (min !== null && value < min) || (max !== null && value > max)) {
 				throw new Error(parameterName + ' was expected to be a valid number' + (min !== null ? ' from ' + min : '') + (max !== null ? ' to ' + max : '') + '.');
@@ -216,7 +216,7 @@ namespace TheDatepicker {
 			return value;
 		}
 
-		public static checkFunction(parameterName: string, value: Function | null, isNullable = true): Function | null {
+		public static checkFunction_(parameterName: string, value: Function | null, isNullable = true): Function | null {
 			if (isNullable && !value) {
 				return null;
 			}
@@ -226,19 +226,19 @@ namespace TheDatepicker {
 			return value;
 		}
 
-		public static warnDeprecatedUsage(deprecatedMethod: string, alternateMethod: string): void {
+		public static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethod: string): void {
 			if (!window.console) {
 				return;
 			}
 
-			for (let index = 0; index < Helper.deprecatedMethods.length; index++) {
-				if (deprecatedMethod === Helper.deprecatedMethods[0]) {
+			for (let index = 0; index < Helper_.deprecatedMethods_.length; index++) {
+				if (deprecatedMethod === Helper_.deprecatedMethods_[0]) {
 					return;
 				}
 			}
 
 			window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethod + '()');
-			Helper.deprecatedMethods.push(deprecatedMethod);
+			Helper_.deprecatedMethods_.push(deprecatedMethod);
 		}
 
 	}
