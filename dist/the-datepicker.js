@@ -399,6 +399,9 @@ var TheDatepicker;
             }
             return true;
         };
+        Datepicker.prototype.isOpened = function () {
+            return this.viewModel_.isActive_();
+        };
         Datepicker.prototype.close = function (event) {
             if (event === void 0) { event = null; }
             if (!this.viewModel_.isActive_()) {

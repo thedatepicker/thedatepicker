@@ -225,6 +225,10 @@ namespace TheDatepicker {
 			return true;
 		}
 
+		public isOpened(): boolean {
+			return this.viewModel_.isActive_();
+		}
+
 		public close(event: Event | null = null): boolean {
 			if (!this.viewModel_.isActive_()) {
 				return true;
