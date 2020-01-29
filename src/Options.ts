@@ -719,14 +719,18 @@ namespace TheDatepicker {
 
 			if (this.cellClassesResolver_ !== null) {
 				const classes = this.cellClassesResolver_(day);
-				if (typeof classes === 'object' && classes.constructor === Array) {
+				if (typeof classes === 'string') {
+					result.push(classes);
+				} else if (typeof classes === 'object' && classes.constructor === Array) {
 					result = result.concat(classes)
 				}
 			}
 
 			for (let index = 0; index < this.cellClassesResolvers_.length; index++) {
 				const classes = this.cellClassesResolvers_[index](day);
-				if (typeof classes === 'object' && classes.constructor === Array) {
+				if (typeof classes === 'string') {
+					result.push(classes);
+				} else if (typeof classes === 'object' && classes.constructor === Array) {
 					result = result.concat(classes)
 				}
 			}

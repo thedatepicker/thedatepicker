@@ -1538,13 +1538,19 @@ var TheDatepicker;
             var result = [];
             if (this.cellClassesResolver_ !== null) {
                 var classes = this.cellClassesResolver_(day);
-                if (typeof classes === 'object' && classes.constructor === Array) {
+                if (typeof classes === 'string') {
+                    result.push(classes);
+                }
+                else if (typeof classes === 'object' && classes.constructor === Array) {
                     result = result.concat(classes);
                 }
             }
             for (var index = 0; index < this.cellClassesResolvers_.length; index++) {
                 var classes = this.cellClassesResolvers_[index](day);
-                if (typeof classes === 'object' && classes.constructor === Array) {
+                if (typeof classes === 'string') {
+                    result.push(classes);
+                }
+                else if (typeof classes === 'object' && classes.constructor === Array) {
                     result = result.concat(classes);
                 }
             }

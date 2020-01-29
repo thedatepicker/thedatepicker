@@ -28,7 +28,6 @@ namespace TheDatepicker {
 	// todo měly by další callbacky smysl vrstvit podobně jako addCellClassesResolver ?
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
-	// todo classResolver by mohl akceptovat i string místo array
 	// todo input by nutně nemusel být element input ale libovolný (jen inputu se bude natsavovat value)
 	// todo DateConverter apod. by se nemusely instanciovat pro každý dp (musely by se zbavit stavu - options)
 	// todo exceptions by šly minifikovat
