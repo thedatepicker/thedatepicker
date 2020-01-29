@@ -1520,13 +1520,13 @@ var TheDatepicker;
             }
             return day.dayNumber + '';
         };
-        Options.prototype.getCellStructure = function () {
+        Options.prototype.getCellStructure_ = function () {
             if (this.cellContentStructureResolver_ !== null) {
                 return this.cellContentStructureResolver_.init();
             }
             return this.document_.createElement('span');
         };
-        Options.prototype.updateCellStructure = function (element, day) {
+        Options.prototype.updateCellStructure_ = function (element, day) {
             if (this.cellContentStructureResolver_ !== null) {
                 this.cellContentStructureResolver_.update(element, day);
             }
@@ -2158,7 +2158,7 @@ var TheDatepicker;
             dayElement.setAttribute('data-date', day.getFormatted());
             dayElement.className = '';
             this.htmlHelper_.addClass_(dayElement, 'cell');
-            this.options_.updateCellStructure(dayContentElement, day);
+            this.options_.updateCellStructure_(dayContentElement, day);
             if (!day.isVisible) {
                 dayButtonElement.removeAttribute('href');
                 dayButtonElement.style.visibility = 'hidden';
@@ -2222,7 +2222,7 @@ var TheDatepicker;
             return cellButton;
         };
         Template_.prototype.createTableCellContentElement_ = function (viewModel) {
-            var cellContent = this.options_.getCellStructure();
+            var cellContent = this.options_.getCellStructure_();
             this.htmlHelper_.addClass_(cellContent, 'day-content');
             return cellContent;
         };

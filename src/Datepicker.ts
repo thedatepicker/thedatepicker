@@ -20,7 +20,7 @@ namespace TheDatepicker {
 	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
 	// todo všechny definice anonymních fcí můřou mít return typehint
 	// todo září 275760 se nezobrazí a dál vyvolá Maximum call stack size exceeded (najít i záporný minimum)
-	// todo v optionech kterým se předává callback by bylo fajn dostat se nějak k datepickeru
+	// todo v optionech kterým se předává callback by bylo fajn dostat se k datepickeru (on* už se předává v this)
 	// todo proč styly containeru a deselectu nemám v css?
 	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
 	// todo onFocus event
@@ -30,7 +30,6 @@ namespace TheDatepicker {
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
 	// todo input by nutně nemusel být element input ale libovolný (jen inputu se bude natsavovat value)
 	// todo DateConverter apod. by se nemusely instanciovat pro každý dp (musely by se zbavit stavu - options)
-	// todo exceptions by šly minifikovat
 
 	interface HTMLDatepickerInputElement extends HTMLInputElement {
 

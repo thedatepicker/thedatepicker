@@ -629,7 +629,7 @@ namespace TheDatepicker {
 			dayElement.setAttribute('data-date', day.getFormatted());
 			dayElement.className = '';
 			this.htmlHelper_.addClass_(dayElement, 'cell');
-			this.options_.updateCellStructure(dayContentElement, day);
+			this.options_.updateCellStructure_(dayContentElement, day);
 
 			if (!day.isVisible) {
 				dayButtonElement.removeAttribute('href');
@@ -702,7 +702,7 @@ namespace TheDatepicker {
 		}
 
 		protected createTableCellContentElement_(viewModel: ViewModel_): HTMLElement {
-			const cellContent = this.options_.getCellStructure();
+			const cellContent = this.options_.getCellStructure_();
 			this.htmlHelper_.addClass_(cellContent, 'day-content');
 
 			return cellContent;

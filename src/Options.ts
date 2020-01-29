@@ -698,7 +698,7 @@ namespace TheDatepicker {
 			return day.dayNumber + '';
 		}
 
-		public getCellStructure(): HTMLElement {
+		public getCellStructure_(): HTMLElement {
 			if (this.cellContentStructureResolver_ !== null) {
 				return this.cellContentStructureResolver_.init();
 			}
@@ -706,7 +706,7 @@ namespace TheDatepicker {
 			return this.document_.createElement('span');
 		}
 
-		public updateCellStructure(element: HTMLElement, day: Day): void {
+		public updateCellStructure_(element: HTMLElement, day: Day): void {
 			if (this.cellContentStructureResolver_ !== null) {
 				this.cellContentStructureResolver_.update(element, day);
 			} else {
