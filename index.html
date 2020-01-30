@@ -95,6 +95,9 @@
 					<label>datepicker.getSelectedDate()<span id="selectedDate"></span>;</label>
 				</li>
 				<li>
+					<label>datepicker.getSelectedDateFormatted() === <span id="selectedDateFormatted"></span>;</label>
+				</li>
+				<li>
 					<label>datepicker.getCurrentMonth()<span id="currentMonth"></span>;</label>
 				</li>
 				<li>
@@ -322,9 +325,12 @@ return [];</textarea><br>
 			var datepicker = new TheDatepicker.Datepicker(input);
 
 			var selectedDateOutput = document.getElementById('selectedDate');
+			var selectedDateFormattedOutput = document.getElementById('selectedDateFormatted');
 			var updateSelectedDate = function () {
 				var selectedDate = datepicker.getSelectedDate();
 				selectedDateOutput.innerText = selectedDate !== null ? '.toString() === "' + selectedDate.toString() + '"' : ' === null';
+				var selectedDateFormatted = datepicker.getSelectedDateFormatted();
+				selectedDateFormattedOutput.innerText = selectedDateFormatted !== null ? '"' + selectedDateFormatted + '"' : 'null';
 			};
 			datepicker.options.onSelect(updateSelectedDate);
 			updateSelectedDate();

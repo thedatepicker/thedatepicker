@@ -41,7 +41,11 @@ namespace TheDatepicker {
 		public constructor(private readonly options_: Options) {
 		}
 
-		public formatDate_(format: string, date: Date): string {
+		public formatDate_(format: string, date: Date | null): string | null {
+			if (date === null) {
+				return null;
+			}
+
 			let escapeNext = false;
 			let result = '';
 			for (let position = 0; position < format.length; position++) {

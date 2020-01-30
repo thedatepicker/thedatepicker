@@ -39,6 +39,9 @@ var TheDatepicker;
             this.escapeChar_ = '\\';
         }
         DateConverter_.prototype.formatDate_ = function (format, date) {
+            if (date === null) {
+                return null;
+            }
             var escapeNext = false;
             var result = '';
             for (var position = 0; position < format.length; position++) {
@@ -453,6 +456,9 @@ var TheDatepicker;
         Datepicker.prototype.getSelectedDate = function () {
             return this.viewModel_.selectedDate_ !== null ? new Date(this.viewModel_.selectedDate_.getTime()) : null;
         };
+        Datepicker.prototype.getSelectedDateFormatted = function () {
+            return this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_);
+        };
         Datepicker.prototype.getCurrentMonth = function () {
             return this.viewModel_.getCurrentMonth_();
         };
@@ -486,9 +492,7 @@ var TheDatepicker;
             if (this.input === null || this.input === this.document_.activeElement) {
                 return;
             }
-            this.input.value = this.viewModel_.selectedDate_ !== null
-                ? this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_)
-                : '';
+            this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
             this.updateDeselectButton_();
         };
         Datepicker.onDatepickerReady = function (element, callback) {

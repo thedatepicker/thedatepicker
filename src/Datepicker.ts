@@ -286,6 +286,10 @@ namespace TheDatepicker {
 			return this.viewModel_.selectedDate_ !== null ? new Date(this.viewModel_.selectedDate_.getTime()) : null;
 		}
 
+		public getSelectedDateFormatted(): string | null {
+			return this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_);
+		}
+
 		public getCurrentMonth(): Date {
 			return this.viewModel_.getCurrentMonth_();
 		}
@@ -324,9 +328,7 @@ namespace TheDatepicker {
 				return;
 			}
 
-			this.input.value = this.viewModel_.selectedDate_ !== null
-				? this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_)
-				: '';
+			this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
 
 			this.updateDeselectButton_();
 		}
