@@ -359,14 +359,16 @@ var TheDatepicker;
                         this.open();
                         return;
                     }
-                    this.viewModel_.selectPossibleDate_();
-                    this.updateDeselectButton_();
+                    if (!this.viewModel_.selectPossibleDate_()) {
+                        this.updateInput_();
+                    }
                     return;
                 case InitializationPhase.Untouched:
                     this.preselectFromInput_();
                     this.createDeselectElement_();
-                    this.viewModel_.selectInitialDate_(null);
-                    this.updateInput_();
+                    if (!this.viewModel_.selectInitialDate_(null)) {
+                        this.updateInput_();
+                    }
                     if (this.input !== null && this.options.isHiddenOnBlur()) {
                         if (this.input === this.document_.activeElement) {
                             this.initializationPhase_ = InitializationPhase.Ready;
@@ -493,7 +495,10 @@ var TheDatepicker;
                 return;
             }
             this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
-            this.updateDeselectButton_();
+            if (this.deselectElement_ !== null) {
+                var isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
+                this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
+            }
         };
         Datepicker.onDatepickerReady = function (element, callback) {
             if (callback === void 0) { callback = null; }
@@ -549,12 +554,6 @@ var TheDatepicker;
             deselectElement.appendChild(deselectButton);
             this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
             this.deselectElement_ = deselectElement;
-        };
-        Datepicker.prototype.updateDeselectButton_ = function () {
-            if (this.input !== null && this.deselectElement_ !== null) {
-                var isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
-                this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
-            }
         };
         Datepicker.prototype.preselectFromInput_ = function () {
             if (this.input !== null) {

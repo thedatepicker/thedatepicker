@@ -371,15 +371,21 @@ return [];</textarea><br>
 			};
 
 			var updateListener = function(eventName, body, argumentsString) {
-				eventName = eventName.charAt(0).toUpperCase() + eventName.slice(1);
+				var eventNameCapitalized = eventName.charAt(0).toUpperCase() + eventName.slice(1);
 
-				datepicker.options['off' + eventName]();
+				datepicker.options['off' + eventNameCapitalized]();
+
+				if (eventName === 'select') {
+					datepicker.options.onSelect(updateSelectedDate);
+				} else if (eventName === 'monthChange') {
+					datepicker.options.onMonthChange(updateCurrentMonth);
+				}
 
 				if (body === '') {
 					return;
 				}
 
-				datepicker.options['on' + eventName](createCallback(argumentsString, body));
+				datepicker.options['on' + eventNameCapitalized](createCallback(argumentsString, body));
 			};
 
 			var initialDateInput = document.getElementById('initialDate');
@@ -457,6 +463,7 @@ return [];</textarea><br>
 			inputFormatInput.onchange = function () {
 				updateSetting(inputFormatInput, function () {
 					datepicker.options.setInputFormat(inputFormatInput.value);
+					updateSelectedDate();
 				});
 			};
 

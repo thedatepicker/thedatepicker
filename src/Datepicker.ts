@@ -24,7 +24,6 @@ namespace TheDatepicker {
 	// todo proč styly containeru a deselectu nemám v css?
 	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
 	// todo onFocus event
-	// todo v demu přidání onSelect zruší funkčnost vypsání getSelectedDate(), to samý onMonthChange
 	// todo měly by další callbacky smysl vrstvit podobně jako addCellClassesResolver ?
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
@@ -168,8 +167,9 @@ namespace TheDatepicker {
 						return;
 					}
 
-					this.viewModel_.selectPossibleDate_();
-					this.updateDeselectButton_();
+					if (!this.viewModel_.selectPossibleDate_()) {
+						this.updateInput_();
+					}
 
 					return;
 
@@ -177,8 +177,9 @@ namespace TheDatepicker {
 					this.preselectFromInput_();
 					this.createDeselectElement_();
 
-					this.viewModel_.selectInitialDate_(null);
-					this.updateInput_();
+					if (!this.viewModel_.selectInitialDate_(null)) {
+						this.updateInput_();
+					}
 
 					if (this.input !== null && this.options.isHiddenOnBlur()) {
 						if (this.input === this.document_.activeElement) {
@@ -330,7 +331,10 @@ namespace TheDatepicker {
 
 			this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
 
-			this.updateDeselectButton_();
+			if (this.deselectElement_ !== null) {
+				const isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
+				this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
+			}
 		}
 
 		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<TheDatepicker.Datepicker> | null {
@@ -393,13 +397,6 @@ namespace TheDatepicker {
 
 			this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
 			this.deselectElement_ = deselectElement;
-		}
-
-		private updateDeselectButton_(): void {
-			if (this.input !== null && this.deselectElement_ !== null) {
-				const isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
-				this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
-			}
 		}
 
 		private preselectFromInput_(): void {
