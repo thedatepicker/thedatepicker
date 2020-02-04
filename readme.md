@@ -3,6 +3,8 @@ TheDatepicker
 
 Pure JavaScript Datepicker by [Slevomat.cz](https://www.slevomat.cz).
 
+**[Try DEMO](https://thedatepicker.github.io/thedatepicker/)**
+
 
 Install:
 --------
