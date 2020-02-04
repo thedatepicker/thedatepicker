@@ -205,12 +205,12 @@ return [];</textarea><br>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect"></textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onSelect((event, day, previousDay) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onSelect">// this instanceof TheDatepicker.Datepicker</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onSelect"></textarea><br>
 					});</label>
 				</li>
 				<li>
@@ -242,6 +242,30 @@ return [];</textarea><br>
 					<label>datepicker.options.onFocus((event, day, previousDay) => {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onFocus"></textarea><br>
 					});</label>
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offBeforeSelect" value="offBeforeSelect()">; // optional argument: listener
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offSelect" value="offSelect()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offBeforeOpenAndClose" value="offBeforeOpenAndClose()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offOpenAndClose" value="offOpenAndClose()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offBeforeMonthChange" value="offBeforeMonthChange()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offMonthChange" value="offMonthChange()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offBeforeFocus" value="offBeforeFocus()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offFocus" value="offFocus()">;
 				</li>
 				<li>
 					<label>datepicker.options.setClassesPrefix("<input type="text" size="15" id="classesPrefix" value="the-datepicker__">");</label> <span class="error" id="classesPrefixError"></span>
@@ -416,6 +440,12 @@ return [];</textarea><br>
 				}
 
 				datepicker.options['on' + eventNameCapitalized](createCallback(argumentsString, body));
+			};
+
+			var removeListener = function (eventName) {
+				updateListener(eventName, '');
+				var eventNameCapitalized = eventName.charAt(0).toUpperCase() + eventName.slice(1);
+				document.getElementById('on' + eventNameCapitalized).value = '';
 			};
 
 			var initialDateInput = document.getElementById('initialDate');
@@ -699,6 +729,46 @@ return [];</textarea><br>
 			var onFocusInput = document.getElementById('onFocus');
 			onFocusInput.onchange = function () {
 				updateListener('focus', onFocusInput.value, 'event, day, previousDay');
+			};
+
+			var offBeforeSelectInput = document.getElementById('offBeforeSelect');
+			offBeforeSelectInput.onclick = function () {
+				removeListener('beforeSelect');
+			};
+
+			var offSelectInput = document.getElementById('offSelect');
+			offSelectInput.onclick = function () {
+				removeListener('select');
+			};
+
+			var offBeforeOpenAndCloseInput = document.getElementById('offBeforeOpenAndClose');
+			offBeforeOpenAndCloseInput.onclick = function () {
+				removeListener('beforeOpenAndClose');
+			};
+
+			var offOpenAndCloseInput = document.getElementById('offOpenAndClose');
+			offOpenAndCloseInput.onclick = function () {
+				removeListener('openAndClose');
+			};
+
+			var offBeforeMonthChangeInput = document.getElementById('offBeforeMonthChange');
+			offBeforeMonthChangeInput.onclick = function () {
+				removeListener('beforeMonthChange');
+			};
+
+			var offMonthChangeInput = document.getElementById('offMonthChange');
+			offMonthChangeInput.onclick = function () {
+				removeListener('monthChange');
+			};
+
+			var offBeforeFocusInput = document.getElementById('offBeforeFocus');
+			offBeforeFocusInput.onclick = function () {
+				removeListener('beforeFocus');
+			};
+
+			var offFocusInput = document.getElementById('offFocus');
+			offFocusInput.onclick = function () {
+				removeListener('focus');
 			};
 
 			var classesPrefixInput = document.getElementById('classesPrefix');
