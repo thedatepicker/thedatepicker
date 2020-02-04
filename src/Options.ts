@@ -5,8 +5,8 @@ namespace TheDatepicker {
 		Select = 'select',
 		BeforeOpenAndClose = 'beforeOpenAndClose',
 		OpenAndClose = 'openAndClose',
-		MonthChange = 'monthChange',
 		BeforeMonthChange = 'beforeMonthChange',
+		MonthChange = 'monthChange',
 		Focus = 'focus',
 		BeforeFocus = 'beforeFocus',
 	}
