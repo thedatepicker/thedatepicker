@@ -225,6 +225,16 @@ return [];</textarea><br>
 					});</label>
 				</li>
 				<li>
+					<label>datepicker.options.onBeforeFocus((event, day, previousDay) => {<br>
+						&nbsp;<textarea rows="3" cols="70" id="onBeforeFocus"></textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onFocus((event, day, previousDay) => {<br>
+						&nbsp;<textarea rows="3" cols="70" id="onFocus"></textarea><br>
+					});</label>
+				</li>
+				<li>
 					<label>datepicker.options.setClassesPrefix("<input type="text" size="15" id="classesPrefix" value="the-datepicker__">");</label> <span class="error" id="classesPrefixError"></span>
 				</li>
 				<li>
@@ -659,6 +669,16 @@ return [];</textarea><br>
 			var onMonthChangeInput = document.getElementById('onMonthChange');
 			onMonthChangeInput.onchange = function () {
 				updateListener('monthChange', onMonthChangeInput.value, 'event, month, previousMonth');
+			};
+
+			var onBeforeFocusInput = document.getElementById('onBeforeFocus');
+			onBeforeFocusInput.onchange = function () {
+				updateListener('beforeFocus', onBeforeFocusInput.value, 'event, day, previousDay');
+			};
+
+			var onFocusInput = document.getElementById('onFocus');
+			onFocusInput.onchange = function () {
+				updateListener('focus', onFocusInput.value, 'event, day, previousDay');
 			};
 
 			var classesPrefixInput = document.getElementById('classesPrefix');

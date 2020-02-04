@@ -23,7 +23,6 @@ namespace TheDatepicker {
 	// todo v optionech kterým se předává callback by bylo fajn dostat se k datepickeru (on* už se předává v this)
 	// todo proč styly containeru a deselectu nemám v css?
 	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
-	// todo onFocus event
 	// todo měly by další callbacky smysl vrstvit podobně jako addCellClassesResolver ?
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)

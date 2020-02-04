@@ -690,12 +690,17 @@ namespace TheDatepicker {
 				viewModel.highlightDay_(event || window.event, cellButton.day);
 			};
 
-			cellButton.onmouseenter = () => {
-				viewModel.cancelHighlight_();
+			cellButton.onmouseenter = (event: MouseEvent) => {
+				if (this.options_.getBeforeFocusListeners().length > 0 || this.options_.getFocusListeners().length > 0) {
+					viewModel.highlightDay_(event || window.event, cellButton.day, false, false);
+				} else {
+					// optimization
+					viewModel.cancelHighlight_(event || window.event);
+				}
 			};
 
-			cellButton.onmouseleave = () => {
-				viewModel.cancelHighlight_();
+			cellButton.onmouseleave = (event: MouseEvent) => {
+				viewModel.cancelHighlight_(event || window.event);
 			};
 
 			return cellButton;

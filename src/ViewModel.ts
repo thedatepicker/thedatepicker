@@ -116,7 +116,7 @@ namespace TheDatepicker {
 			}
 
 			this.currentMonth_ = month;
-			if (!doCancelHighlight || !this.cancelHighlight_()) {
+			if (!doCancelHighlight || !this.cancelHighlight_(event)) {
 				this.render_();
 			}
 
@@ -166,8 +166,7 @@ namespace TheDatepicker {
 			this.selectedDate_ = day.getDate();
 
 			if (doHighlight) {
-				this.highlightedDay_ = day;
-				this.isHighlightedDayFocused_ = true;
+				this.highlightDay_(event, day);
 			}
 
 			if (!doUpdateMonth || !this.goToMonth_(event, date)) {
@@ -205,7 +204,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		public highlightDay_(event: Event, day: Day, doUpdateMonth = false): boolean {
+		public highlightDay_(event: Event, day: Day, doUpdateMonth = false, doFocus = true): boolean {
 			if (!day.isAvailable) {
 				return false;
 			}
@@ -214,13 +213,23 @@ namespace TheDatepicker {
 				return false;
 			}
 
+			const previousDay = this.highlightedDay_;
+
+			if (!this.triggerOnBeforeFocus_(event, day, previousDay)) {
+				return false;
+			}
+
 			this.highlightedDay_ = day;
-			this.isHighlightedDayFocused_ = true;
+			if (doFocus) {
+				this.isHighlightedDayFocused_ = true;
+			}
 
 			const date = day.getDate();
 			if (!doUpdateMonth || !this.goToMonth_(event, date, false)) {
 				this.render_();
 			}
+
+			this.triggerOnFocus_(event, day, previousDay);
 
 			return true;
 		}
@@ -286,14 +295,21 @@ namespace TheDatepicker {
 			return true;
 		}
 
-		public cancelHighlight_(): boolean {
+		public cancelHighlight_(event: Event | null): boolean {
 			if (this.highlightedDay_ === null) {
 				return false;
 			}
 
-			this.highlightedDay_ = null;
+			const previousDay = this.highlightedDay_;
 
+			if (!this.triggerOnBeforeFocus_(event, null, previousDay)) {
+				return false;
+			}
+
+			this.highlightedDay_ = null;
 			this.render_();
+
+			this.triggerOnFocus_(event, null, previousDay);
 
 			return true;
 		}
@@ -403,6 +419,18 @@ namespace TheDatepicker {
 		private triggerOnMonthChange_(event: Event | null, month: Date, previousMonth: Date): void {
 			this.options_.triggerEvent_(EventType_.MonthChange, (listener: MonthChangeListener) => {
 				return listener.call(this.datepicker_, event, month, previousMonth);
+			});
+		}
+
+		private triggerOnBeforeFocus_(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
+			return this.options_.triggerEvent_(EventType_.BeforeFocus, (listener: FocusListener) => {
+				return listener.call(this.datepicker_, event, day, previousDay);
+			});
+		}
+
+		private triggerOnFocus_(event: Event | null, day: Day | null, previousDay: Day | null): void {
+			this.options_.triggerEvent_(EventType_.Focus, (listener: FocusListener) => {
+				return listener.call(this.datepicker_, event, day, previousDay);
 			});
 		}
 

@@ -7,6 +7,8 @@ namespace TheDatepicker {
 		OpenAndClose = 'openAndClose',
 		MonthChange = 'monthChange',
 		BeforeMonthChange = 'beforeMonthChange',
+		Focus = 'focus',
+		BeforeFocus = 'beforeFocus',
 	}
 
 	export class AvailableDateNotFoundException {
@@ -16,8 +18,9 @@ namespace TheDatepicker {
 	export type SelectListener = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
 	export type OpenAndCloseListener = (event: Event | null, isOpening: boolean) => boolean;
 	export type MonthChangeListener = (event: Event | null, month: Date, previousMonth: Date) => boolean;
-	type OneOfListener = SelectListener | OpenAndCloseListener | MonthChangeListener;
-	type AnyListener = SelectListener & OpenAndCloseListener & MonthChangeListener;
+	export type FocusListener = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
+	type OneOfListener = SelectListener | OpenAndCloseListener | MonthChangeListener | FocusListener;
+	type AnyListener = SelectListener & OpenAndCloseListener & MonthChangeListener & FocusListener;
 	type ListenerCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
@@ -27,6 +30,8 @@ namespace TheDatepicker {
 		openAndClose: OpenAndCloseListener[];
 		beforeMonthChange: MonthChangeListener[];
 		monthChange: MonthChangeListener[];
+		beforeFocus: FocusListener[];
+		focus: FocusListener[];
 	}
 
 	type DateAvailabilityResolver = (date: Date) => boolean;
@@ -94,6 +99,8 @@ namespace TheDatepicker {
 			openAndClose: [],
 			beforeMonthChange: [],
 			monthChange: [],
+			beforeFocus: [],
+			focus: [],
 		};
 
 		public constructor(translator: Translator | null = null) {
@@ -146,6 +153,8 @@ namespace TheDatepicker {
 			options.listeners_.openAndClose = this.listeners_.openAndClose.slice(0);
 			options.listeners_.beforeMonthChange = this.listeners_.beforeMonthChange.slice(0);
 			options.listeners_.monthChange = this.listeners_.monthChange.slice(0);
+			options.listeners_.beforeFocus = this.listeners_.beforeFocus.slice(0);
+			options.listeners_.focus = this.listeners_.focus.slice(0);
 
 			return options
 		}
@@ -517,6 +526,27 @@ namespace TheDatepicker {
 			this.offEvent_(EventType_.MonthChange, listener);
 		}
 
+		// Callback to be called just before the day is focused or blurred.
+		// An Event instance, a Day instance (or null when blurred) and previous focused day Day instance (or null when nothing focused before) are given on input.
+		// If callback returns false, focus stops and nothing will be focused / blurred.
+		public onBeforeFocus(listener: FocusListener): void {
+			this.onEvent_(EventType_.BeforeFocus, listener as AnyListener);
+		}
+
+		public offBeforeFocus(listener: FocusListener | null = null): void {
+			this.offEvent_(EventType_.BeforeFocus, listener);
+		}
+
+		// Callback to be called immediately after the day is selected or deselected.
+		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
+		public onFocus(listener: FocusListener): void {
+			this.onEvent_(EventType_.Focus, listener as AnyListener);
+		}
+
+		public offFocus(listener: FocusListener | null = null): void {
+			this.offEvent_(EventType_.Focus, listener);
+		}
+
 		public getInitialMonth(): Date {
 			const primarySource = this.initialDatePriority_ ? this.initialDate_ : this.initialMonth_;
 			const secondarySource = this.initialDatePriority_ ? this.initialMonth_ : this.initialDate_;
@@ -816,6 +846,14 @@ namespace TheDatepicker {
 
 		public getMonthChangeListeners(): MonthChangeListener[] {
 			return this.listeners_.monthChange;
+		}
+
+		public getBeforeFocusListeners(): FocusListener[] {
+			return this.listeners_.beforeFocus;
+		}
+
+		public getFocusListeners(): FocusListener[] {
+			return this.listeners_.focus;
 		}
 
 		private checkConstraints_(minDate: Date | null, maxDate: Date | null): void {

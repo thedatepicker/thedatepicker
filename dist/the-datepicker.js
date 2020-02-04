@@ -1102,6 +1102,8 @@ var TheDatepicker;
         EventType_["OpenAndClose"] = "openAndClose";
         EventType_["MonthChange"] = "monthChange";
         EventType_["BeforeMonthChange"] = "beforeMonthChange";
+        EventType_["Focus"] = "focus";
+        EventType_["BeforeFocus"] = "beforeFocus";
     })(EventType_ = TheDatepicker.EventType_ || (TheDatepicker.EventType_ = {}));
     var AvailableDateNotFoundException = (function () {
         function AvailableDateNotFoundException() {
@@ -1155,7 +1157,9 @@ var TheDatepicker;
                 beforeOpenAndClose: [],
                 openAndClose: [],
                 beforeMonthChange: [],
-                monthChange: []
+                monthChange: [],
+                beforeFocus: [],
+                focus: []
             };
             this.translator = translator !== null ? translator : new TheDatepicker.Translator();
             this.document_ = document;
@@ -1204,6 +1208,8 @@ var TheDatepicker;
             options.listeners_.openAndClose = this.listeners_.openAndClose.slice(0);
             options.listeners_.beforeMonthChange = this.listeners_.beforeMonthChange.slice(0);
             options.listeners_.monthChange = this.listeners_.monthChange.slice(0);
+            options.listeners_.beforeFocus = this.listeners_.beforeFocus.slice(0);
+            options.listeners_.focus = this.listeners_.focus.slice(0);
             return options;
         };
         Options.prototype.setHideOnBlur = function (value) {
@@ -1381,6 +1387,20 @@ var TheDatepicker;
         Options.prototype.offMonthChange = function (listener) {
             if (listener === void 0) { listener = null; }
             this.offEvent_(EventType_.MonthChange, listener);
+        };
+        Options.prototype.onBeforeFocus = function (listener) {
+            this.onEvent_(EventType_.BeforeFocus, listener);
+        };
+        Options.prototype.offBeforeFocus = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEvent_(EventType_.BeforeFocus, listener);
+        };
+        Options.prototype.onFocus = function (listener) {
+            this.onEvent_(EventType_.Focus, listener);
+        };
+        Options.prototype.offFocus = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEvent_(EventType_.Focus, listener);
         };
         Options.prototype.getInitialMonth = function () {
             var primarySource = this.initialDatePriority_ ? this.initialDate_ : this.initialMonth_;
@@ -1618,6 +1638,12 @@ var TheDatepicker;
         };
         Options.prototype.getMonthChangeListeners = function () {
             return this.listeners_.monthChange;
+        };
+        Options.prototype.getBeforeFocusListeners = function () {
+            return this.listeners_.beforeFocus;
+        };
+        Options.prototype.getFocusListeners = function () {
+            return this.listeners_.focus;
         };
         Options.prototype.checkConstraints_ = function (minDate, maxDate) {
             if (minDate !== null
@@ -2216,11 +2242,16 @@ var TheDatepicker;
             cellButton.onfocus = function (event) {
                 viewModel.highlightDay_(event || window.event, cellButton.day);
             };
-            cellButton.onmouseenter = function () {
-                viewModel.cancelHighlight_();
+            cellButton.onmouseenter = function (event) {
+                if (_this.options_.getBeforeFocusListeners().length > 0 || _this.options_.getFocusListeners().length > 0) {
+                    viewModel.highlightDay_(event || window.event, cellButton.day, false, false);
+                }
+                else {
+                    viewModel.cancelHighlight_(event || window.event);
+                }
             };
-            cellButton.onmouseleave = function () {
-                viewModel.cancelHighlight_();
+            cellButton.onmouseleave = function (event) {
+                viewModel.cancelHighlight_(event || window.event);
             };
             return cellButton;
         };
@@ -2368,7 +2399,7 @@ var TheDatepicker;
                 return false;
             }
             this.currentMonth_ = month;
-            if (!doCancelHighlight || !this.cancelHighlight_()) {
+            if (!doCancelHighlight || !this.cancelHighlight_(event)) {
                 this.render_();
             }
             this.triggerOnMonthChange_(event, month, this.currentMonth_);
@@ -2409,8 +2440,7 @@ var TheDatepicker;
             }
             this.selectedDate_ = day.getDate();
             if (doHighlight) {
-                this.highlightedDay_ = day;
-                this.isHighlightedDayFocused_ = true;
+                this.highlightDay_(event, day);
             }
             if (!doUpdateMonth || !this.goToMonth_(event, date)) {
                 this.render_();
@@ -2443,20 +2473,28 @@ var TheDatepicker;
                 return this.cancelSelection_(null, true);
             }
         };
-        ViewModel_.prototype.highlightDay_ = function (event, day, doUpdateMonth) {
+        ViewModel_.prototype.highlightDay_ = function (event, day, doUpdateMonth, doFocus) {
             if (doUpdateMonth === void 0) { doUpdateMonth = false; }
+            if (doFocus === void 0) { doFocus = true; }
             if (!day.isAvailable) {
                 return false;
             }
             if (day.isEqualToDay(this.highlightedDay_)) {
                 return false;
             }
+            var previousDay = this.highlightedDay_;
+            if (!this.triggerOnBeforeFocus_(event, day, previousDay)) {
+                return false;
+            }
             this.highlightedDay_ = day;
-            this.isHighlightedDayFocused_ = true;
+            if (doFocus) {
+                this.isHighlightedDayFocused_ = true;
+            }
             var date = day.getDate();
             if (!doUpdateMonth || !this.goToMonth_(event, date, false)) {
                 this.render_();
             }
+            this.triggerOnFocus_(event, day, previousDay);
             return true;
         };
         ViewModel_.prototype.highlightFirstAvailableDay_ = function (event) {
@@ -2506,12 +2544,17 @@ var TheDatepicker;
             this.triggerOnSelect_(event, null, previousDay);
             return true;
         };
-        ViewModel_.prototype.cancelHighlight_ = function () {
+        ViewModel_.prototype.cancelHighlight_ = function (event) {
             if (this.highlightedDay_ === null) {
+                return false;
+            }
+            var previousDay = this.highlightedDay_;
+            if (!this.triggerOnBeforeFocus_(event, null, previousDay)) {
                 return false;
             }
             this.highlightedDay_ = null;
             this.render_();
+            this.triggerOnFocus_(event, null, previousDay);
             return true;
         };
         ViewModel_.prototype.getWeekDays_ = function () {
@@ -2610,6 +2653,18 @@ var TheDatepicker;
             var _this = this;
             this.options_.triggerEvent_(TheDatepicker.EventType_.MonthChange, function (listener) {
                 return listener.call(_this.datepicker_, event, month, previousMonth);
+            });
+        };
+        ViewModel_.prototype.triggerOnBeforeFocus_ = function (event, day, previousDay) {
+            var _this = this;
+            return this.options_.triggerEvent_(TheDatepicker.EventType_.BeforeFocus, function (listener) {
+                return listener.call(_this.datepicker_, event, day, previousDay);
+            });
+        };
+        ViewModel_.prototype.triggerOnFocus_ = function (event, day, previousDay) {
+            var _this = this;
+            this.options_.triggerEvent_(TheDatepicker.EventType_.Focus, function (listener) {
+                return listener.call(_this.datepicker_, event, day, previousDay);
             });
         };
         ViewModel_.prototype.createDay_ = function (date) {
