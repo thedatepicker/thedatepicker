@@ -95,7 +95,7 @@
 					datepicker.<input type="button" id="destroy" value="destroy()">;
 				</li>
 				<li>
-					<label>datepicker.selectDate("<input type="text" size="15" id="selectDate">");</label> <span class="error" id="selectDateError"></span>
+					<label>datepicker.selectDate("<input type="text" size="15" id="selectDate">"</label>, <label>/* doUpdateMonth: */ <input type="checkbox" id="selectDateDoUpdateMonth" checked="checked"></label>); <span class="error" id="selectDateError"></span>
 				</li>
 				<li>
 					<label>datepicker.goToMonth("<input type="text" size="15" id="goToMonth">");</label> <span class="error" id="goToMonthError"></span>
@@ -492,7 +492,7 @@ return [];</textarea><br>
 			var selectDateInput = document.getElementById('selectDate');
 			selectDateInput.onchange = function () {
 				updateSetting(selectDateInput, function () {
-					datepicker.selectDate(selectDateInput.value);
+					datepicker.selectDate(selectDateInput.value, document.getElementById('selectDateDoUpdateMonth').checked);
 					selectDateInput.value = '';
 				}, true);
 			};
