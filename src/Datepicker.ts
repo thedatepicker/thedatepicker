@@ -262,10 +262,10 @@ namespace TheDatepicker {
 			} else {
 				this.container.parentNode.removeChild(this.container);
 			}
-			this.container.datepicker = null;
+			delete this.container.datepicker;
 
 			if (this.input !== null) {
-				this.input.datepicker = null;
+				delete this.input.datepicker;
 				this.removeInitialInputListener_();
 				this.input = null;
 			}

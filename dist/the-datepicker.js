@@ -438,9 +438,9 @@ var TheDatepicker;
             else {
                 this.container.parentNode.removeChild(this.container);
             }
-            this.container.datepicker = null;
+            delete this.container.datepicker;
             if (this.input !== null) {
-                this.input.datepicker = null;
+                delete this.input.datepicker;
                 this.removeInitialInputListener_();
                 this.input = null;
             }
@@ -1100,8 +1100,8 @@ var TheDatepicker;
         EventType_["Select"] = "select";
         EventType_["BeforeOpenAndClose"] = "beforeOpenAndClose";
         EventType_["OpenAndClose"] = "openAndClose";
-        EventType_["MonthChange"] = "monthChange";
         EventType_["BeforeMonthChange"] = "beforeMonthChange";
+        EventType_["MonthChange"] = "monthChange";
         EventType_["Focus"] = "focus";
         EventType_["BeforeFocus"] = "beforeFocus";
     })(EventType_ = TheDatepicker.EventType_ || (TheDatepicker.EventType_ = {}));

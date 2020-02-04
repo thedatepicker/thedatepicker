@@ -52,6 +52,9 @@
 			.green .the-datepicker__button {
 				background-color: green;
 			}
+			.hidden {
+				display: none;
+			}
 		</style>
 </head>
 <body>
@@ -66,12 +69,16 @@
 		</article>
 
 		<aside>
+			<div>
+				Some options take effect only if changed before first datepicker open.
+			</div>
+
 			<ul class="settings">
 				<li>
 					var input = document.getElementById('my-input');
 				</li>
 				<li class="space">
-					var datepicker = new TheDatepicker.Datepicker(input);
+					var datepicker = <span id="datepicker1">new TheDatepicker.Datepicker(input);</span><input type="button" id="datepicker2" value="new TheDatepicker.Datepicker(input);" class="hidden">
 				</li>
 				<li>
 					// var container = document.getElementById('my-container');
@@ -86,7 +93,7 @@
 					// var datepicker = new TheDatepicker.Datepicker(input, null, new TheDatepicker.Options());
 				</li>
 				<li>
-					<label>datepicker.options.setInitialDate("<input type="text" size="15" id="initialDate">");</label> <span class="error" id="initialDateError"></span>
+					<label>datepicker.options.setInitialDate("<input type="text" size="15" id="initialDate">");</label> <span class="error" id="initialDateError"></span> // direct html input value has priority over this option
 				</li>
 				<li>
 					<label>datepicker.options.setInitialMonth("<input type="text" size="15" id="initialMonth">");</label> <span class="error" id="initialMonthError"></span>
@@ -377,8 +384,7 @@ return [];</textarea><br>
 
 		<footer>
 			Learn more about options in <a href="https://github.com/thedatepicker/thedatepicker/blob/master/src/Options.ts">source code</a> (setters are commented).<br>
-			Some options take effect only if changed before first datepicker open.<br>
-			Changing options after render takes effect immidiately only if you call <span class="code">datepicker.render()</span> again.<br><br>
+			Changing options after render takes effect immediately only if you call <span class="code">datepicker.render()</span> again.<br><br>
 			Pure JavaScript Datepicker by <a href="https://www.slevomat.cz">Slevomat.cz</a>.<br>
 			<a href="https://github.com/thedatepicker/thedatepicker#thedatepicker">Github</a>
 		</footer>
@@ -460,6 +466,15 @@ return [];</textarea><br>
 				document.getElementById('on' + eventNameCapitalized).value = '';
 			};
 
+			var datepicker1Text = document.getElementById('datepicker1');
+			var datepicker2Input = document.getElementById('datepicker2');
+			datepicker2Input.onclick = function () {
+				datepicker = new TheDatepicker.Datepicker(input, null, datepicker.options);
+				datepicker1Text.className = '';
+				datepicker2Input.className = 'hidden';
+				datepicker.render();
+			};
+
 			var initialDateInput = document.getElementById('initialDate');
 			initialDateInput.onchange = function () {
 				updateSetting(initialDateInput, function () {
@@ -499,6 +514,8 @@ return [];</textarea><br>
 			var destroyInput = document.getElementById('destroy');
 			destroyInput.onclick = function () {
 				datepicker.destroy();
+				datepicker1Text.className = 'hidden';
+				datepicker2Input.className = '';
 			};
 
 			var selectDateInput = document.getElementById('selectDate');
