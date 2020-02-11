@@ -49,6 +49,8 @@ namespace TheDatepicker {
 
 	type CellClassesResolver = (day: Day) => string[];
 
+	type DayModifier = (day: Day) => void;
+
 	export class Options {
 
 		public readonly translator: Translator;
@@ -70,6 +72,7 @@ namespace TheDatepicker {
 		private cellContentStructureResolver_: CellContentStructureResolver | null = null;
 		private cellClassesResolver_: CellClassesResolver | null = null;
 		private cellClassesResolvers_: CellClassesResolver[] = [];
+		private dayModifiers_: DayModifier[] = [];
 		private inputFormat_ = 'j. n. Y';
 		private daysOutOfMonthVisible_ = false;
 		private fixedRowsCount_ = false;
@@ -126,6 +129,7 @@ namespace TheDatepicker {
 			options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
 			options.cellClassesResolver_ = this.cellClassesResolver_;
 			options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
+			options.dayModifiers_ = this.dayModifiers_.slice(0);
 			options.inputFormat_ = this.inputFormat_;
 			options.daysOutOfMonthVisible_ = this.daysOutOfMonthVisible_;
 			options.fixedRowsCount_ = this.fixedRowsCount_;
@@ -287,7 +291,6 @@ namespace TheDatepicker {
 			this.cellClassesResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false) as CellClassesResolver);
 		}
 
-
 		public removeCellClassesResolver(resolver: CellClassesResolver | null = null): void {
 			resolver = Helper_.checkFunction_('Resolver', resolver) as (CellClassesResolver | null);
 
@@ -301,6 +304,27 @@ namespace TheDatepicker {
 					}
 				}
 				this.cellClassesResolvers_ = newResolvers;
+			}
+		}
+
+		// Accepts callback which gets an instance of Day on input. It is designated to add arbitrary properties to the Day instance.
+		public addDayModifier(modifier: DayModifier): void {
+			this.dayModifiers_.push(Helper_.checkFunction_('Modifier', modifier, false) as DayModifier);
+		}
+
+		public removeDayModifier(modifier: DayModifier | null = null): void {
+			modifier = Helper_.checkFunction_('Modifier', modifier) as (DayModifier | null);
+
+			if (modifier === null) {
+				this.dayModifiers_ = [];
+			} else {
+				const newModifiers: DayModifier[] = [];
+				for (let index = 0; index < this.dayModifiers_.length; index++) {
+					if (this.dayModifiers_[index] !== modifier) {
+						newModifiers.push(this.dayModifiers_[index]);
+					}
+				}
+				this.dayModifiers_ = newModifiers;
 			}
 		}
 
@@ -768,6 +792,12 @@ namespace TheDatepicker {
 			return result;
 		}
 
+		public modifyDay(day: Day): void {
+			for (let index = 0; index < this.dayModifiers_.length; index++) {
+				this.dayModifiers_[index](day);
+			}
+		}
+
 		public getGoBackHtml(): string {
 			return this.goBackHtml_;
 		}
@@ -822,6 +852,10 @@ namespace TheDatepicker {
 
 		public getCellClassesResolvers(): CellClassesResolver[] {
 			return this.cellClassesResolvers_;
+		}
+
+		public getDayModifiers(): DayModifier[] {
+			return this.dayModifiers_;
 		}
 
 		public getBeforeSelectListeners(): SelectListener[] {

@@ -1129,6 +1129,7 @@ var TheDatepicker;
             this.cellContentStructureResolver_ = null;
             this.cellClassesResolver_ = null;
             this.cellClassesResolvers_ = [];
+            this.dayModifiers_ = [];
             this.inputFormat_ = 'j. n. Y';
             this.daysOutOfMonthVisible_ = false;
             this.fixedRowsCount_ = false;
@@ -1181,6 +1182,7 @@ var TheDatepicker;
             options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
             options.cellClassesResolver_ = this.cellClassesResolver_;
             options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
+            options.dayModifiers_ = this.dayModifiers_.slice(0);
             options.inputFormat_ = this.inputFormat_;
             options.daysOutOfMonthVisible_ = this.daysOutOfMonthVisible_;
             options.fixedRowsCount_ = this.fixedRowsCount_;
@@ -1278,6 +1280,25 @@ var TheDatepicker;
                     }
                 }
                 this.cellClassesResolvers_ = newResolvers;
+            }
+        };
+        Options.prototype.addDayModifier = function (modifier) {
+            this.dayModifiers_.push(TheDatepicker.Helper_.checkFunction_('Modifier', modifier, false));
+        };
+        Options.prototype.removeDayModifier = function (modifier) {
+            if (modifier === void 0) { modifier = null; }
+            modifier = TheDatepicker.Helper_.checkFunction_('Modifier', modifier);
+            if (modifier === null) {
+                this.dayModifiers_ = [];
+            }
+            else {
+                var newModifiers = [];
+                for (var index = 0; index < this.dayModifiers_.length; index++) {
+                    if (this.dayModifiers_[index] !== modifier) {
+                        newModifiers.push(this.dayModifiers_[index]);
+                    }
+                }
+                this.dayModifiers_ = newModifiers;
             }
         };
         Options.prototype.setInputFormat = function (format) {
@@ -1579,6 +1600,11 @@ var TheDatepicker;
             }
             return result;
         };
+        Options.prototype.modifyDay = function (day) {
+            for (var index = 0; index < this.dayModifiers_.length; index++) {
+                this.dayModifiers_[index](day);
+            }
+        };
         Options.prototype.getGoBackHtml = function () {
             return this.goBackHtml_;
         };
@@ -1620,6 +1646,9 @@ var TheDatepicker;
         };
         Options.prototype.getCellClassesResolvers = function () {
             return this.cellClassesResolvers_;
+        };
+        Options.prototype.getDayModifiers = function () {
+            return this.dayModifiers_;
         };
         Options.prototype.getBeforeSelectListeners = function () {
             return this.listeners_.beforeSelect;
@@ -2687,6 +2716,7 @@ var TheDatepicker;
                     }
                 }
             }
+            this.options_.modifyDay(day);
             return day;
         };
         ViewModel_.prototype.translateKeyCodeToMoveDirection_ = function (key) {

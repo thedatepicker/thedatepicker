@@ -223,6 +223,12 @@ return [];</textarea><br>
 						});</label>
 				</li>
 				<li>
+					<label>datepicker.options.addDayModifier((day) => {<br>
+						&nbsp;<textarea rows="3" cols="70" id="dayModifier">
+// day.isSunday = day.dayOfWeek === TheDatepicker.DayOfWeek.Sunday;</textarea><br>
+						});</label>
+				</li>
+				<li>
 					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker</textarea><br>
 						});</label>
@@ -716,6 +722,15 @@ return [];</textarea><br>
 				datepicker.options.removeCellClassesResolver();
 				if (cellClassesResolverInput.value !== '') {
 					datepicker.options.addCellClassesResolver(createCallback('day', cellClassesResolverInput.value));
+				}
+				datepicker.render();
+			};
+
+			var dayModifierInput = document.getElementById('dayModifier');
+			dayModifierInput.onchange = function () {
+				datepicker.options.removeDayModifier();
+				if (dayModifierInput.value !== '') {
+					datepicker.options.addDayModifier(createCallback('day', dayModifierInput.value));
 				}
 				datepicker.render();
 			};

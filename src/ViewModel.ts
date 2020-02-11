@@ -457,6 +457,8 @@ namespace TheDatepicker {
 				}
 			}
 
+			this.options_.modifyDay(day);
+
 			return day;
 		}
 
