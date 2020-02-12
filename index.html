@@ -230,7 +230,7 @@ return [];</textarea><br>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker // applies to all on*</textarea><br>
 						});</label>
 				</li>
 				<li>
@@ -269,7 +269,13 @@ return [];</textarea><br>
 					});</label>
 				</li>
 				<li>
-					datepicker.options.<input type="button" id="offBeforeSelect" value="offBeforeSelect()">; // optional argument: listener
+					datepicker.options.<input type="button" id="removeCellClassesResolver" value="removeCellClassesResolver()">; // optional argument: resolver
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="removeDayModifier" value="removeDayModifier()">; // optional argument: modifier
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offBeforeSelect" value="offBeforeSelect()">; // optional argument: listener (applies to all off*)
 				</li>
 				<li>
 					datepicker.options.<input type="button" id="offSelect" value="offSelect()">;
@@ -773,6 +779,18 @@ return [];</textarea><br>
 			var onFocusInput = document.getElementById('onFocus');
 			onFocusInput.onchange = function () {
 				updateListener('focus', onFocusInput.value, 'event, day, previousDay');
+			};
+
+			var removeCellClassesResolverInput = document.getElementById('removeCellClassesResolver');
+			removeCellClassesResolverInput.onclick = function () {
+				datepicker.options.removeCellClassesResolver();
+				document.getElementById('cellClassesResolver').value = '';
+			};
+
+			var removeDayModifierInput = document.getElementById('removeDayModifier');
+			removeDayModifierInput.onclick = function () {
+				datepicker.options.removeDayModifier();
+				document.getElementById('dayModifier').value = '';
 			};
 
 			var offBeforeSelectInput = document.getElementById('offBeforeSelect');
