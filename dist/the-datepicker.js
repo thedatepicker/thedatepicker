@@ -355,6 +355,7 @@ var TheDatepicker;
                     this.render();
                     return;
                 case InitializationPhase.Waiting:
+                    this.createDeselectElement_();
                     if (!this.options.isHiddenOnBlur()) {
                         this.open();
                         return;
@@ -534,7 +535,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.createDeselectElement_ = function () {
             var _this = this;
-            if (this.input === null || !this.options.isDeselectButtonShown()) {
+            if (this.input === null || !this.options.isDeselectButtonShown() || this.deselectElement_ !== null) {
                 return null;
             }
             var deselectElement = this.document_.createElement('span');

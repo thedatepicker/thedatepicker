@@ -161,6 +161,8 @@ namespace TheDatepicker {
 					return;
 
 				case InitializationPhase.Waiting:
+					this.createDeselectElement_();
+
 					if (!this.options.isHiddenOnBlur()) {
 						this.open();
 						return;
@@ -374,7 +376,7 @@ namespace TheDatepicker {
 		}
 
 		private createDeselectElement_(): HTMLElement | null {
-			if (this.input === null || !this.options.isDeselectButtonShown()) {
+			if (this.input === null || !this.options.isDeselectButtonShown() || this.deselectElement_ !== null) {
 				return null;
 			}
 
