@@ -1590,8 +1590,9 @@ var TheDatepicker;
                     result = result.concat(classes);
                 }
             }
-            for (var index = 0; index < this.cellClassesResolvers_.length; index++) {
-                var classes = this.cellClassesResolvers_[index](day);
+            var cellClassesResolvers = this.cellClassesResolvers_.slice(0);
+            for (var index = 0; index < cellClassesResolvers.length; index++) {
+                var classes = cellClassesResolvers[index](day);
                 if (typeof classes === 'string') {
                     result.push(classes);
                 }
@@ -1602,8 +1603,9 @@ var TheDatepicker;
             return result;
         };
         Options.prototype.modifyDay = function (day) {
-            for (var index = 0; index < this.dayModifiers_.length; index++) {
-                this.dayModifiers_[index](day);
+            var dayModifiers = this.dayModifiers_.slice(0);
+            for (var index = 0; index < dayModifiers.length; index++) {
+                dayModifiers[index](day);
             }
         };
         Options.prototype.getGoBackHtml = function () {
@@ -1721,8 +1723,9 @@ var TheDatepicker;
             }
         };
         Options.prototype.triggerEvent_ = function (eventType, caller) {
-            for (var index = 0; index < this.listeners_[eventType].length; index++) {
-                if (caller(this.listeners_[eventType][index]) === false) {
+            var listeners = this.listeners_[eventType].slice(0);
+            for (var index = 0; index < listeners.length; index++) {
+                if (caller(listeners[index]) === false) {
                     return false;
                 }
             }

@@ -780,8 +780,9 @@ namespace TheDatepicker {
 				}
 			}
 
-			for (let index = 0; index < this.cellClassesResolvers_.length; index++) {
-				const classes = this.cellClassesResolvers_[index](day);
+			const cellClassesResolvers = this.cellClassesResolvers_.slice(0);
+			for (let index = 0; index < cellClassesResolvers.length; index++) {
+				const classes = cellClassesResolvers[index](day);
 				if (typeof classes === 'string') {
 					result.push(classes);
 				} else if (typeof classes === 'object' && classes.constructor === Array) {
@@ -793,8 +794,9 @@ namespace TheDatepicker {
 		}
 
 		public modifyDay(day: Day): void {
-			for (let index = 0; index < this.dayModifiers_.length; index++) {
-				this.dayModifiers_[index](day);
+			const dayModifiers = this.dayModifiers_.slice(0);
+			for (let index = 0; index < dayModifiers.length; index++) {
+				dayModifiers[index](day);
 			}
 		}
 
@@ -947,8 +949,9 @@ namespace TheDatepicker {
 		}
 
 		public triggerEvent_(eventType: EventType_, caller: ListenerCaller): boolean {
-			for (let index = 0; index < this.listeners_[eventType].length; index++) {
-				if (caller(this.listeners_[eventType][index]) === false) {
+			const listeners = this.listeners_[eventType].slice(0);
+			for (let index = 0; index < listeners.length; index++) {
+				if (caller(listeners[index]) === false) {
 					return false;
 				}
 			}
