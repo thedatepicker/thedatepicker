@@ -331,6 +331,11 @@ var TheDatepicker;
                     throw new Error(duplicateError + 'input.');
                 }
                 input.datepicker = this;
+            }
+            this.isInputTextBox_ = input !== null
+                && (typeof HTMLInputElement !== 'undefined' ? input instanceof HTMLInputElement : true)
+                && input.type === 'text';
+            if (this.isInputTextBox_) {
                 input.autocomplete = 'off';
             }
             container.datepicker = this;
@@ -470,19 +475,20 @@ var TheDatepicker;
             return this.viewModel_.goToMonth_(event, TheDatepicker.Helper_.normalizeDate_('Month', month, this.options));
         };
         Datepicker.prototype.parseRawInput = function () {
-            return this.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value);
+            return this.isInputTextBox_
+                ? this.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value)
+                : null;
         };
         Datepicker.prototype.readInput_ = function (event) {
             if (event === void 0) { event = null; }
-            if (this.input === null) {
+            if (!this.isInputTextBox_) {
                 return false;
             }
             try {
                 var date = this.parseRawInput();
-                if (date !== null) {
-                    return this.viewModel_.selectNearestDate_(event, date);
-                }
-                return this.viewModel_.cancelSelection_(event);
+                return date !== null
+                    ? this.viewModel_.selectNearestDate_(event, date)
+                    : this.viewModel_.cancelSelection_(event);
             }
             catch (error) {
                 if (!(error instanceof TheDatepicker.CannotParseDateException)) {
@@ -492,7 +498,7 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.updateInput_ = function () {
-            if (this.input === null || this.input === this.document_.activeElement) {
+            if (!this.isInputTextBox_ || this.input === this.document_.activeElement) {
                 return;
             }
             this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
@@ -535,7 +541,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.createDeselectElement_ = function () {
             var _this = this;
-            if (this.input === null || !this.options.isDeselectButtonShown() || this.deselectElement_ !== null) {
+            if (!this.isInputTextBox_ || !this.options.isDeselectButtonShown() || this.deselectElement_ !== null) {
                 return null;
             }
             var deselectElement = this.document_.createElement('span');
@@ -557,7 +563,7 @@ var TheDatepicker;
             this.deselectElement_ = deselectElement;
         };
         Datepicker.prototype.preselectFromInput_ = function () {
-            if (this.input !== null) {
+            if (this.isInputTextBox_) {
                 try {
                     var date = this.parseRawInput();
                     if (date !== null) {

@@ -26,10 +26,9 @@ namespace TheDatepicker {
 	// todo měly by další callbacky smysl vrstvit podobně jako addCellClassesResolver ?
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
-	// todo input by nutně nemusel být element input ale libovolný (jen inputu se bude natsavovat value)
 	// todo DateConverter apod. by se nemusely instanciovat pro každý dp (musely by se zbavit stavu - options)
 
-	interface HTMLDatepickerInputElement extends HTMLInputElement {
+	interface HTMLDatepickerInputElement extends HTMLElement {
 
 		datepicker?: Datepicker;
 
@@ -79,6 +78,7 @@ namespace TheDatepicker {
 
 		private readonly document_: DocumentInterface;
 		private readonly isContainerExternal_: boolean;
+		private readonly isInputTextBox_: boolean;
 		private readonly viewModel_: ViewModel_;
 		private readonly dateConverter_: DateConverter_;
 
@@ -131,8 +131,16 @@ namespace TheDatepicker {
 					throw new Error(duplicateError + 'input.');
 				}
 				input.datepicker = this;
-				input.autocomplete = 'off';
 			}
+
+			this.isInputTextBox_ = input !== null
+				&& (typeof HTMLInputElement !== 'undefined' ? input instanceof HTMLInputElement : true)
+				&& (input as HTMLInputElement).type === 'text';
+
+			if (this.isInputTextBox_) {
+				(input as HTMLInputElement).autocomplete = 'off';
+			}
+
 			container.datepicker = this;
 
 			this.input = input;
@@ -301,20 +309,21 @@ namespace TheDatepicker {
 		}
 
 		public parseRawInput(): Date | null {
-			return this.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value);
+			return this.isInputTextBox_
+				? this.dateConverter_.parseDate_(this.options.getInputFormat(), (this.input as HTMLInputElement).value)
+				: null;
 		}
 
 		public readInput_(event: Event | null = null): boolean {
-			if (this.input === null) {
+			if (!this.isInputTextBox_) {
 				return false;
 			}
 
 			try {
 				const date = this.parseRawInput();
-				if (date !== null) {
-					return this.viewModel_.selectNearestDate_(event, date);
-				}
-				return this.viewModel_.cancelSelection_(event);
+				return date !== null
+					? this.viewModel_.selectNearestDate_(event, date)
+					: this.viewModel_.cancelSelection_(event);
 
 			} catch (error) {
 				if (!(error instanceof CannotParseDateException)) {
@@ -326,14 +335,14 @@ namespace TheDatepicker {
 		}
 
 		public updateInput_(): void {
-			if (this.input === null || this.input === this.document_.activeElement) {
+			if (!this.isInputTextBox_ || this.input === this.document_.activeElement) {
 				return;
 			}
 
-			this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
+			(this.input as HTMLInputElement).value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
 
 			if (this.deselectElement_ !== null) {
-				const isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
+				const isVisible = this.options.isDeselectButtonShown() && (this.input as HTMLInputElement).value !== '';
 				this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
 			}
 		}
@@ -376,7 +385,7 @@ namespace TheDatepicker {
 		}
 
 		private createDeselectElement_(): HTMLElement | null {
-			if (this.input === null || !this.options.isDeselectButtonShown() || this.deselectElement_ !== null) {
+			if (!this.isInputTextBox_ || !this.options.isDeselectButtonShown() || this.deselectElement_ !== null) {
 				return null;
 			}
 
@@ -401,7 +410,7 @@ namespace TheDatepicker {
 		}
 
 		private preselectFromInput_(): void {
-			if (this.input !== null) {
+			if (this.isInputTextBox_) {
 				try {
 					const date = this.parseRawInput();
 					if (date !== null) {
