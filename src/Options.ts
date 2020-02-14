@@ -38,12 +38,12 @@ namespace TheDatepicker {
 
 	type CellContentResolver = (day: Day) => string;
 
-	type CellContentStructureResolverInit = () => HTMLElement;
+	type StructureResolverInit = () => HTMLElement;
 
 	type CellContentStructureResolverUpdate = (element: HTMLElement, day: Day) => void;
 
 	interface CellContentStructureResolver {
-		init: CellContentStructureResolverInit;
+		init: StructureResolverInit;
 		update: CellContentStructureResolverUpdate;
 	}
 
@@ -70,6 +70,8 @@ namespace TheDatepicker {
 		private dateAvailabilityResolver_: DateAvailabilityResolver | null = null;
 		private cellContentResolver_: CellContentResolver | null = null;
 		private cellContentStructureResolver_: CellContentStructureResolver | null = null;
+		private headerStructureResolver_: StructureResolverInit | null = null;
+		private footerStructureResolver_: StructureResolverInit | null = null;
 		private cellClassesResolver_: CellClassesResolver | null = null;
 		private cellClassesResolvers_: CellClassesResolver[] = [];
 		private dayModifiers_: DayModifier[] = [];
@@ -127,6 +129,8 @@ namespace TheDatepicker {
 			options.dateAvailabilityResolver_ = this.dateAvailabilityResolver_;
 			options.cellContentResolver_ = this.cellContentResolver_;
 			options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
+			options.headerStructureResolver_ = this.headerStructureResolver_;
+			options.footerStructureResolver_ = this.footerStructureResolver_;
 			options.cellClassesResolver_ = this.cellClassesResolver_;
 			options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
 			options.dayModifiers_ = this.dayModifiers_.slice(0);
@@ -269,14 +273,28 @@ namespace TheDatepicker {
 		// First callback (init) has no arguments and returns HTMLElement instance representing empty html structure of day cell.
 		// Second callback (update) gets an instance of HTMLElement created by first callback, and an instance of Day. It should update html structure by given day. Returns void.
 		// Default init creates span element and default update fills it with day number.
-		public setCellContentStructureResolver(init: CellContentStructureResolverInit | null, update: CellContentStructureResolverUpdate | null = null): void {
-			init = Helper_.checkFunction_('Resolver (init)', init) as (CellContentStructureResolverInit | null);
+		public setCellContentStructureResolver(init: StructureResolverInit | null, update: CellContentStructureResolverUpdate | null = null): void {
+			init = Helper_.checkFunction_('Resolver (init)', init) as (StructureResolverInit | null);
 			update = Helper_.checkFunction_('Resolver (update)', update) as (CellContentStructureResolverUpdate | null);
 
 			this.cellContentStructureResolver_ = init === null ? null : {
 				init,
 				update,
 			};
+		}
+
+		// Accepts callback which has no arguments and returns HTMLElement instance which will be placed as datepicker header,
+		// or null for no header.
+		// defaults to no header
+		public setHeaderStructureResolver(resolver: StructureResolverInit | null): void {
+			this.headerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver) as (StructureResolverInit | null);
+		}
+
+		// Accepts callback which has no arguments and returns HTMLElement instance which will be placed as datepicker footer,
+		// or null for no footer.
+		// defaults to no footer
+		public setFooterStructureResolver(resolver: StructureResolverInit | null): void {
+			this.footerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver) as (StructureResolverInit | null);
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
@@ -768,6 +786,14 @@ namespace TheDatepicker {
 			}
 		}
 
+		public getHeaderStructure_(): HTMLElement | null {
+			return this.headerStructureResolver_ !== null ? this.headerStructureResolver_() : null;
+		}
+
+		public getFooterStructure_(): HTMLElement | null {
+			return this.footerStructureResolver_ !== null ? this.footerStructureResolver_() : null;
+		}
+
 		public getCellClasses(day: Day): string[] {
 			let result: string[] = [];
 
@@ -850,6 +876,14 @@ namespace TheDatepicker {
 
 		public getCellContentStructureResolver(): CellContentStructureResolver | null {
 			return this.cellContentStructureResolver_;
+		}
+
+		public getHeaderStructureResolver(): StructureResolverInit | null {
+			return this.headerStructureResolver_;
+		}
+
+		public getFooterStructureResolver(): StructureResolverInit | null {
+			return this.footerStructureResolver_;
 		}
 
 		public getCellClassesResolvers(): CellClassesResolver[] {

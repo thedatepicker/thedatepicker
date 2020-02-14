@@ -84,8 +84,11 @@ namespace TheDatepicker {
 
 		protected createSkeleton_(viewModel: ViewModel_): HTMLElement {
 			const main = this.htmlHelper_.createDiv_('main');
+
+			this.htmlHelper_.appendChild_(main, this.options_.getHeaderStructure_());
 			main.appendChild(this.createHeaderElement_(viewModel));
 			main.appendChild(this.createBodyElement_(viewModel));
+			this.htmlHelper_.appendChild_(main, this.options_.getFooterStructure_());
 
 			this.mainElement_ = main;
 

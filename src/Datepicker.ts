@@ -27,6 +27,9 @@ namespace TheDatepicker {
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
 	// todo DateConverter apod. by se nemusely instanciovat pro každý dp (musely by se zbavit stavu - options)
+	// todo volání options v kodu dp by mohlo být minifikovaný
+	// todo HtmlHelper jako static třída
+	// todo spoustu opakujících se volání přes helper aby se neminifikovaný volaly jen jednou (stojí to ale za to volání navíc?)
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 

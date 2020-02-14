@@ -1095,6 +1095,11 @@ var TheDatepicker;
             }
             element.className += className;
         };
+        HtmlHelper_.prototype.appendChild_ = function (element, child) {
+            if (child) {
+                element.appendChild(child);
+            }
+        };
         return HtmlHelper_;
     }());
     TheDatepicker.HtmlHelper_ = HtmlHelper_;
@@ -1134,6 +1139,8 @@ var TheDatepicker;
             this.dateAvailabilityResolver_ = null;
             this.cellContentResolver_ = null;
             this.cellContentStructureResolver_ = null;
+            this.headerStructureResolver_ = null;
+            this.footerStructureResolver_ = null;
             this.cellClassesResolver_ = null;
             this.cellClassesResolvers_ = [];
             this.dayModifiers_ = [];
@@ -1187,6 +1194,8 @@ var TheDatepicker;
             options.dateAvailabilityResolver_ = this.dateAvailabilityResolver_;
             options.cellContentResolver_ = this.cellContentResolver_;
             options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
+            options.headerStructureResolver_ = this.headerStructureResolver_;
+            options.footerStructureResolver_ = this.footerStructureResolver_;
             options.cellClassesResolver_ = this.cellClassesResolver_;
             options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
             options.dayModifiers_ = this.dayModifiers_.slice(0);
@@ -1265,6 +1274,12 @@ var TheDatepicker;
                 init: init,
                 update: update
             };
+        };
+        Options.prototype.setHeaderStructureResolver = function (resolver) {
+            this.headerStructureResolver_ = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
+        };
+        Options.prototype.setFooterStructureResolver = function (resolver) {
+            this.footerStructureResolver_ = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
         };
         Options.prototype.setCellClassesResolver = function (resolver) {
             TheDatepicker.Helper_.warnDeprecatedUsage_('setCellClassesResolver', 'addCellClassesResolver');
@@ -1585,6 +1600,12 @@ var TheDatepicker;
                 element.innerText = this.getCellContent(day);
             }
         };
+        Options.prototype.getHeaderStructure_ = function () {
+            return this.headerStructureResolver_ !== null ? this.headerStructureResolver_() : null;
+        };
+        Options.prototype.getFooterStructure_ = function () {
+            return this.footerStructureResolver_ !== null ? this.footerStructureResolver_() : null;
+        };
         Options.prototype.getCellClasses = function (day) {
             var result = [];
             if (this.cellClassesResolver_ !== null) {
@@ -1652,6 +1673,12 @@ var TheDatepicker;
         };
         Options.prototype.getCellContentStructureResolver = function () {
             return this.cellContentStructureResolver_;
+        };
+        Options.prototype.getHeaderStructureResolver = function () {
+            return this.headerStructureResolver_;
+        };
+        Options.prototype.getFooterStructureResolver = function () {
+            return this.footerStructureResolver_;
         };
         Options.prototype.getCellClassesResolvers = function () {
             return this.cellClassesResolvers_;
@@ -1790,8 +1817,10 @@ var TheDatepicker;
         };
         Template_.prototype.createSkeleton_ = function (viewModel) {
             var main = this.htmlHelper_.createDiv_('main');
+            this.htmlHelper_.appendChild_(main, this.options_.getHeaderStructure_());
             main.appendChild(this.createHeaderElement_(viewModel));
             main.appendChild(this.createBodyElement_(viewModel));
+            this.htmlHelper_.appendChild_(main, this.options_.getFooterStructure_());
             this.mainElement_ = main;
             return main;
         };

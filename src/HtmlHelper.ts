@@ -137,6 +137,12 @@ namespace TheDatepicker {
 			element.className += className;
 		}
 
+		public appendChild_(element: HTMLElement, child: HTMLElement | null): void {
+			if (child) {
+				element.appendChild(child);
+			}
+		}
+
 	}
 
 }

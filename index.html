@@ -229,6 +229,20 @@ return [];</textarea><br>
 						});</label>
 				</li>
 				<li>
+					<label>datepicker.options.setHeaderStructureResolver(() => {<br>
+						&nbsp;<textarea rows="3" cols="70" id="headerStructureResolver">/*
+var header = document.createElement('div');
+header.innerText = 'Hello world';
+return header;
+*/</textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.setFooterStructureResolver(() => {<br>
+						&nbsp;<textarea rows="3" cols="70" id="footerStructureResolver"></textarea><br>
+						});</label>
+				</li>
+				<li>
 					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker // applies to all on*</textarea><br>
 						});</label>
@@ -739,6 +753,24 @@ return [];</textarea><br>
 					datepicker.options.addDayModifier(createCallback('day', dayModifierInput.value));
 				}
 				datepicker.render();
+			};
+
+			var headerStructureResolverInput = document.getElementById('headerStructureResolver');
+			headerStructureResolverInput.onchange = function () {
+				if (headerStructureResolverInput.value === '') {
+					datepicker.options.setHeaderStructureResolver(null);
+				} else {
+					datepicker.options.setHeaderStructureResolver(createCallback('', headerStructureResolverInput.value));
+				}
+			};
+
+			var footerStructureResolverInput = document.getElementById('footerStructureResolver');
+			footerStructureResolverInput.onchange = function () {
+				if (footerStructureResolverInput.value === '') {
+					datepicker.options.setFooterStructureResolver(null);
+				} else {
+					datepicker.options.setFooterStructureResolver(createCallback('', footerStructureResolverInput.value));
+				}
 			};
 
 			var onBeforeSelectInput = document.getElementById('onBeforeSelect');
