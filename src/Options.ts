@@ -770,6 +770,10 @@ namespace TheDatepicker {
 			return day.dayNumber + '';
 		}
 
+		public prefixClass_(name: string): string {
+			return this.classesPrefix_ + name;
+		}
+
 		public getCellStructure_(): HTMLElement {
 			if (this.cellContentStructureResolver_ !== null) {
 				return this.cellContentStructureResolver_.init();

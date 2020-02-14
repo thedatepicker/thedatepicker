@@ -30,6 +30,7 @@ namespace TheDatepicker {
 	// todo volání options v kodu dp by mohlo být minifikovaný
 	// todo HtmlHelper jako static třída
 	// todo spoustu opakujících se volání přes helper aby se neminifikovaný volaly jen jednou (stojí to ale za to volání navíc?)
+	// todo fix position by mělo počítat window bez scrollbarů, ale nevim jak to spolehlivě získat
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
@@ -380,7 +381,7 @@ namespace TheDatepicker {
 
 		private createContainer_(): HTMLElement {
 			const container = this.document_.createElement('div');
-			container.className = this.options.getClassesPrefix() + 'container';
+			container.className = this.options.prefixClass_('container');
 			container.style.position = 'absolute';
 			container.style.zIndex = '99';
 
@@ -404,8 +405,8 @@ namespace TheDatepicker {
 				Helper_.preventDefault_(event);
 				this.viewModel_.cancelSelection_(event);
 			};
-			deselectElement.className = this.options.getClassesPrefix() + 'deselect';
-			deselectButton.className = this.options.getClassesPrefix() + 'deselect-button';
+			deselectElement.className = this.options.prefixClass_('deselect');
+			deselectButton.className = this.options.prefixClass_('deselect-button');
 			deselectElement.appendChild(deselectButton);
 
 			this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
@@ -546,13 +547,13 @@ namespace TheDatepicker {
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
 			const locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
 			if (locateOver) {
-				locationClass += ' ' + this.options.getClassesPrefix() + 'container--over';
+				locationClass += ' ' + this.options.prefixClass_('container--over');
 			}
 			if (locateLeft) {
-				locationClass += ' ' + this.options.getClassesPrefix() + 'container--left';
+				locationClass += ' ' + this.options.prefixClass_('container--left');
 			}
 
-			this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
+			this.container.className = this.options.prefixClass_('container') + locationClass;
 
 			if (mainElement !== null && (locateOver || locateLeft)) {
 				if (locateOver) {

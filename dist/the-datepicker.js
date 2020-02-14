@@ -534,7 +534,7 @@ var TheDatepicker;
         ;
         Datepicker.prototype.createContainer_ = function () {
             var container = this.document_.createElement('div');
-            container.className = this.options.getClassesPrefix() + 'container';
+            container.className = this.options.prefixClass_('container');
             container.style.position = 'absolute';
             container.style.zIndex = '99';
             return container;
@@ -556,8 +556,8 @@ var TheDatepicker;
                 TheDatepicker.Helper_.preventDefault_(event);
                 _this.viewModel_.cancelSelection_(event);
             };
-            deselectElement.className = this.options.getClassesPrefix() + 'deselect';
-            deselectButton.className = this.options.getClassesPrefix() + 'deselect-button';
+            deselectElement.className = this.options.prefixClass_('deselect');
+            deselectButton.className = this.options.prefixClass_('deselect-button');
             deselectElement.appendChild(deselectButton);
             this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
             this.deselectElement_ = deselectElement;
@@ -681,12 +681,12 @@ var TheDatepicker;
             var locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
             var locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
             if (locateOver) {
-                locationClass += ' ' + this.options.getClassesPrefix() + 'container--over';
+                locationClass += ' ' + this.options.prefixClass_('container--over');
             }
             if (locateLeft) {
-                locationClass += ' ' + this.options.getClassesPrefix() + 'container--left';
+                locationClass += ' ' + this.options.prefixClass_('container--left');
             }
-            this.container.className = this.options.getClassesPrefix() + 'container' + locationClass;
+            this.container.className = this.options.prefixClass_('container') + locationClass;
             if (mainElement !== null && (locateOver || locateLeft)) {
                 if (locateOver) {
                     var moveTop = inputHeight + containerHeight;
@@ -1089,7 +1089,7 @@ var TheDatepicker;
             return option;
         };
         HtmlHelper_.prototype.addClass_ = function (element, className) {
-            className = this.options_.getClassesPrefix() + className;
+            className = this.options_.prefixClass_(className);
             if (element.className !== '') {
                 className = ' ' + className;
             }
@@ -1585,6 +1585,9 @@ var TheDatepicker;
                 return this.cellContentResolver_(day);
             }
             return day.dayNumber + '';
+        };
+        Options.prototype.prefixClass_ = function (name) {
+            return this.classesPrefix_ + name;
         };
         Options.prototype.getCellStructure_ = function () {
             if (this.cellContentStructureResolver_ !== null) {

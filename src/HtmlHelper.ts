@@ -130,7 +130,7 @@ namespace TheDatepicker {
 		}
 
 		public addClass_(element: HTMLElement, className: string): void {
-			className = this.options_.getClassesPrefix() + className;
+			className = this.options_.prefixClass_(className);
 			if (element.className !== '') {
 				className = ' ' + className;
 			}
