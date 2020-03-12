@@ -31,6 +31,10 @@ namespace TheDatepicker {
 	// todo HtmlHelper jako static třída
 	// todo spoustu opakujících se volání přes helper aby se neminifikovaný volaly jen jednou (stojí to ale za to volání navíc?)
 	// todo fix position by mělo počítat window bez scrollbarů, ale nevim jak to spolehlivě získat
+	// todo setShowWeekDays, setShowNavigation (jde to udělat přes css), setVerticalLayout (tabulka převrácená o 90°)?
+	// todo setWeekDayContentStructureResolver
+	// todo setGoButtonContentStructureResolver ...
+	// todo ARIA ?
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 

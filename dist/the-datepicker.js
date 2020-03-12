@@ -1887,6 +1887,10 @@ var TheDatepicker;
                 viewModel.reset_(event);
             });
             resetButton.innerHTML = this.options_.getResetHtml();
+            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Reset);
+            if (title !== '') {
+                resetButton.title = title;
+            }
             resetElement.appendChild(resetButton);
             this.resetElement_ = resetElement;
             return resetElement;
@@ -1900,6 +1904,10 @@ var TheDatepicker;
                 viewModel.close_(event);
             });
             closeButton.innerHTML = this.options_.getCloseHtml();
+            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Close);
+            if (title !== '') {
+                closeButton.title = title;
+            }
             closeElement.appendChild(closeButton);
             this.closeElement_ = closeElement;
             return closeElement;
@@ -1925,6 +1933,10 @@ var TheDatepicker;
                 }
             });
             goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
+            var title = this.options_.translator.translateTitle(directionForward ? TheDatepicker.TitleName.GoForward : TheDatepicker.TitleName.GoBack);
+            if (title !== '') {
+                goButton.title = title;
+            }
             goElement.appendChild(goButton);
             if (directionForward) {
                 this.goForwardElement_ = goButton;
@@ -2337,8 +2349,16 @@ var TheDatepicker;
 })(TheDatepicker || (TheDatepicker = {}));
 var TheDatepicker;
 (function (TheDatepicker) {
+    var TitleName;
+    (function (TitleName) {
+        TitleName[TitleName["GoBack"] = 0] = "GoBack";
+        TitleName[TitleName["GoForward"] = 1] = "GoForward";
+        TitleName[TitleName["Close"] = 2] = "Close";
+        TitleName[TitleName["Reset"] = 3] = "Reset";
+    })(TitleName = TheDatepicker.TitleName || (TheDatepicker.TitleName = {}));
     var Translator = (function () {
         function Translator() {
+            var _a;
             this.dayOfWeekTranslations_ = [
                 'Su',
                 'Mo',
@@ -2362,6 +2382,12 @@ var TheDatepicker;
                 'November',
                 'December',
             ];
+            this.titles_ = (_a = {},
+                _a[TitleName.GoBack] = 'Previous month',
+                _a[TitleName.GoForward] = 'Next month',
+                _a[TitleName.Close] = 'Close',
+                _a[TitleName.Reset] = 'Reset',
+                _a);
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
             this.dayOfWeekTranslations_[TheDatepicker.Helper_.checkNumber_('First day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation);
@@ -2369,11 +2395,21 @@ var TheDatepicker;
         Translator.prototype.setMonthTranslation = function (month, translation) {
             this.monthTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation);
         };
+        Translator.prototype.setTitleTranslation = function (titleName, translation) {
+            this.titles_[titleName] = TheDatepicker.Helper_.checkString_('Translation', translation);
+        };
         Translator.prototype.translateDayOfWeek = function (dayOfWeek) {
             return this.dayOfWeekTranslations_[dayOfWeek];
         };
         Translator.prototype.translateMonth = function (month) {
             return this.monthTranslations_[month];
+        };
+        Translator.prototype.translateTitle = function (titleName) {
+            var translation = this.titles_[titleName];
+            if (typeof translation !== 'string') {
+                throw new Error('Unknown title ' + titleName);
+            }
+            return translation;
         };
         return Translator;
     }());

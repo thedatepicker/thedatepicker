@@ -389,8 +389,20 @@ return header;
 				<li>
 					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.November, "<input type="text" size="15" id="monthTranslation10" value="November">");</label> <span class="error" id="monthTranslation10Error"></span>
 				</li>
-				<li class="space">
+				<li>
 					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.December, "<input type="text" size="15" id="monthTranslation11" value="December">");</label> <span class="error" id="monthTranslation11Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoBack, "<input type="text" size="15" id="goBackTranslation" value="Previous month">");</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoForward, "<input type="text" size="15" id="goForwardTranslation" value="Next month">");</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Close, "<input type="text" size="15" id="closeTranslation" value="Close">");</label>
+				</li>
+				<li class="space">
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Reset, "<input type="text" size="15" id="resetTranslation" value="Reset">");</label>
 				</li>
 				<li>
 					<label>var datepickerPromise = TheDatepicker.onDatepickerReady(input), (datepicker) => {<br>
@@ -937,6 +949,34 @@ return header;
 					};
 				})();
 			}
+
+			var goBackTranslationInput = document.getElementById('goBackTranslation');
+			goBackTranslationInput.onchange = function () {
+				updateSetting(goBackTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoBack, goBackTranslationInput.value);
+				});
+			};
+
+			var goForwardTranslationInput = document.getElementById('goForwardTranslation');
+			goForwardTranslationInput.onchange = function () {
+				updateSetting(goForwardTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoForward, goForwardTranslationInput.value);
+				});
+			};
+
+			var closeTranslationInput = document.getElementById('closeTranslation');
+			closeTranslationInput.onchange = function () {
+				updateSetting(closeTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Close, closeTranslationInput.value);
+				});
+			};
+
+			var resetTranslationInput = document.getElementById('resetTranslation');
+			resetTranslationInput.onchange = function () {
+				updateSetting(resetTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Reset, resetTranslationInput.value);
+				});
+			};
 
 			var onDatepickerReadyInput = document.getElementById('onDatepickerReady');
 			onDatepickerReadyInput.onchange = function () {

@@ -174,6 +174,10 @@ namespace TheDatepicker {
 			});
 
 			resetButton.innerHTML = this.options_.getResetHtml();
+			const title = this.options_.translator.translateTitle(TitleName.Reset);
+			if (title !== '') {
+				resetButton.title = title;
+			}
 			resetElement.appendChild(resetButton);
 			this.resetElement_ = resetElement;
 
@@ -191,6 +195,10 @@ namespace TheDatepicker {
 			});
 
 			closeButton.innerHTML = this.options_.getCloseHtml();
+			const title = this.options_.translator.translateTitle(TitleName.Close);
+			if (title !== '') {
+				closeButton.title = title;
+			}
 			closeElement.appendChild(closeButton);
 			this.closeElement_ = closeElement;
 
@@ -221,6 +229,10 @@ namespace TheDatepicker {
 			});
 
 			goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
+			const title = this.options_.translator.translateTitle(directionForward ? TitleName.GoForward : TitleName.GoBack);
+			if (title !== '') {
+				goButton.title = title;
+			}
 			goElement.appendChild(goButton);
 
 			// todo možná tohle ukládání udělat nějak v createSkeleton
