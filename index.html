@@ -9,8 +9,25 @@
 		<link rel="stylesheet" href="dist/the-datepicker.css">
 		<script src="dist/the-datepicker.js"></script>
 		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
 			article {
-				float: left;
+				width: 20%;
+				height: 100%;
+				position: fixed;
+				border-right: 1px #aaa solid;
+				background: #fff;
+				padding: 1em;
+			}
+			#datepicker {
+			}
+			#footer {
+				position: absolute;
+				bottom: 0;
+				color: #555;
+				font-size: 0.9em;
 			}
 			#label-wrapper {
 				float: left;
@@ -20,17 +37,14 @@
 				margin-left: 0.8em;
 			}
 			aside {
-				float: left;
-				clear: left;
-				margin-top: 21em;
+				width: 73%;
+				height: 100%;
+				float: right;
+				background: #fff;
+				padding: 1em;
 			}
 			.space {
 				margin-bottom: 0.5em;
-			}
-			footer {
-				float: left;
-				clear: left;
-				margin-bottom: 25px;
 			}
 			.settings {
 				font-family: "Courier New", serif;
@@ -60,11 +74,20 @@
 <body>
 	<main>
 		<article>
-			<div id="label-wrapper">
-				<label for="my-input">Date:</label>
+			<div id="datepicker">
+				<div id="label-wrapper">
+					<label for="my-input">Date:</label>
+				</div>
+				<div id="input-wrapper">
+					<input type="text" id="my-input" size="20">
+				</div>
 			</div>
-			<div id="input-wrapper">
-				<input type="text" id="my-input" size="20">
+
+			<div id="footer">
+				<p>Learn more about options in <a href="https://github.com/thedatepicker/thedatepicker/blob/master/src/Options.ts">source code</a><br> (setters are commented).</p>
+				Changing options after render takes effect immediately only if you call <span class="code">datepicker.render()</span> again.<br><br>
+				Pure JavaScript Datepicker by <a href="https://www.slevomat.cz">Slevomat.cz</a>.<br>
+				<a href="https://github.com/thedatepicker/thedatepicker#thedatepicker">Github</a>
 			</div>
 		</article>
 
@@ -419,13 +442,6 @@ return header;
 				</li>
 			</ul>
 		</aside>
-
-		<footer>
-			Learn more about options in <a href="https://github.com/thedatepicker/thedatepicker/blob/master/src/Options.ts">source code</a> (setters are commented).<br>
-			Changing options after render takes effect immediately only if you call <span class="code">datepicker.render()</span> again.<br><br>
-			Pure JavaScript Datepicker by <a href="https://www.slevomat.cz">Slevomat.cz</a>.<br>
-			<a href="https://github.com/thedatepicker/thedatepicker#thedatepicker">Github</a>
-		</footer>
 	</main>
 
 	<script>
