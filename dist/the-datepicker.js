@@ -819,6 +819,8 @@ var TheDatepicker;
         ListenerType_["Blur"] = "blur";
         ListenerType_["KeyDown"] = "keydown";
         ListenerType_["KeyUp"] = "keyup";
+        ListenerType_["TouchStart"] = "touchstart";
+        ListenerType_["TouchMove"] = "touchmove";
     })(ListenerType_ = TheDatepicker.ListenerType_ || (TheDatepicker.ListenerType_ = {}));
     var Helper_ = (function () {
         function Helper_() {
@@ -988,6 +990,23 @@ var TheDatepicker;
             window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethod + '()');
             Helper_.deprecatedMethods_.push(deprecatedMethod);
         };
+        Helper_.addSwipeListener_ = function (element, listener) {
+            var startPosition = null;
+            Helper_.addEventListener_(element, ListenerType_.TouchStart, function (event) {
+                startPosition = event.touches[0].clientX;
+            });
+            Helper_.addEventListener_(element, ListenerType_.TouchMove, function (event) {
+                if (startPosition === null) {
+                    return;
+                }
+                var diff = event.touches[0].clientX - startPosition;
+                var minDistance = element.offsetWidth / 5;
+                if (Math.abs(diff) > minDistance) {
+                    listener(event, diff > 0);
+                    startPosition = null;
+                }
+            });
+        };
         Helper_.deprecatedMethods_ = [];
         return Helper_;
     }());
@@ -1154,6 +1173,7 @@ var TheDatepicker;
             this.monthAsDropdown_ = true;
             this.yearAsDropdown_ = true;
             this.monthAndYearSeparated_ = true;
+            this.changeMonthOnSwipe_ = true;
             this.classesPrefix_ = 'the-datepicker__';
             this.showCloseButton_ = true;
             this.title_ = '';
@@ -1209,6 +1229,7 @@ var TheDatepicker;
             options.monthAsDropdown_ = this.monthAsDropdown_;
             options.yearAsDropdown_ = this.yearAsDropdown_;
             options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
+            options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
             options.classesPrefix_ = this.classesPrefix_;
             options.showCloseButton_ = this.showCloseButton_;
             options.title_ = this.title_;
@@ -1352,6 +1373,9 @@ var TheDatepicker;
         };
         Options.prototype.setMonthAndYearSeparated = function (value) {
             this.monthAndYearSeparated_ = !!value;
+        };
+        Options.prototype.setChangeMonthOnSwipe = function (value) {
+            this.changeMonthOnSwipe_ = !!value;
         };
         Options.prototype.setClassesPrefix = function (prefix) {
             this.classesPrefix_ = TheDatepicker.Helper_.checkString_('Prefix', prefix);
@@ -1546,6 +1570,9 @@ var TheDatepicker;
         };
         Options.prototype.isMonthAndYearSeparated = function () {
             return this.monthAndYearSeparated_;
+        };
+        Options.prototype.isMonthChangeOnSwipeEnabled_ = function () {
+            return this.changeMonthOnSwipe_;
         };
         Options.prototype.getClassesPrefix = function () {
             return this.classesPrefix_;
@@ -1832,6 +1859,16 @@ var TheDatepicker;
         };
         Template_.prototype.createBodyElement_ = function (viewModel) {
             var body = this.htmlHelper_.createDiv_('body');
+            if (this.options_.isMonthChangeOnSwipeEnabled_()) {
+                TheDatepicker.Helper_.addSwipeListener_(body, function (event, isRightMove) {
+                    if (isRightMove) {
+                        viewModel.goForward_(event);
+                    }
+                    else {
+                        viewModel.goBack_(event);
+                    }
+                });
+            }
             body.appendChild(this.createTableElement_(viewModel));
             return body;
         };

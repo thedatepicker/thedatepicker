@@ -194,6 +194,9 @@
 					<label>datepicker.options.setMonthAndYearSeparated(<input type="checkbox" id="monthAndYearSeparated" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setChangeMonthOnSwipe(<input type="checkbox" id="changeMonthOnSwipe" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
 				</li>
 				<li>
@@ -703,6 +706,13 @@ return header;
 			monthAndYearSeparatedInput.onchange = function () {
 				updateSetting(monthAndYearSeparatedInput, function () {
 					datepicker.options.setMonthAndYearSeparated(monthAndYearSeparatedInput.checked);
+				});
+			};
+
+			var changeMonthOnSwipeInput = document.getElementById('changeMonthOnSwipe');
+			changeMonthOnSwipeInput.onchange = function () {
+				updateSetting(changeMonthOnSwipeInput, function () {
+					datepicker.options.setChangeMonthOnSwipe(changeMonthOnSwipeInput.checked);
 				});
 			};
 

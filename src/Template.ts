@@ -101,6 +101,17 @@ namespace TheDatepicker {
 
 		protected createBodyElement_(viewModel: ViewModel_): HTMLElement {
 			const body = this.htmlHelper_.createDiv_('body');
+
+			if (this.options_.isMonthChangeOnSwipeEnabled_()) {
+				Helper_.addSwipeListener_(body, (event: TouchEvent, isRightMove: boolean) => {
+					if (isRightMove) {
+						viewModel.goForward_(event);
+					} else {
+						viewModel.goBack_(event);
+					}
+				});
+			}
+
 			body.appendChild(this.createTableElement_(viewModel));
 
 			return body;

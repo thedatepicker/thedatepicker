@@ -85,6 +85,7 @@ namespace TheDatepicker {
 		private monthAsDropdown_ = true;
 		private yearAsDropdown_ = true;
 		private monthAndYearSeparated_ = true;
+		private changeMonthOnSwipe_ = true;
 		private classesPrefix_ = 'the-datepicker__';
 		private showCloseButton_ = true;
 		private title_ = '';
@@ -144,6 +145,7 @@ namespace TheDatepicker {
 			options.monthAsDropdown_ = this.monthAsDropdown_;
 			options.yearAsDropdown_ = this.yearAsDropdown_;
 			options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
+			options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
 			options.classesPrefix_ = this.classesPrefix_;
 			options.showCloseButton_ = this.showCloseButton_;
 			options.title_ = this.title_;
@@ -421,6 +423,12 @@ namespace TheDatepicker {
 		// defaults to true
 		public setMonthAndYearSeparated(value: boolean): void {
 			this.monthAndYearSeparated_ = !!value;
+		}
+
+		// Setting to true will enable changing of month on finger left-to-right or right-to-left swipe.
+		// defaults to true
+		public setChangeMonthOnSwipe(value: boolean): void {
+			this.changeMonthOnSwipe_ = !!value;
 		}
 
 		// CSS classes of datepicker elements will be prefixed with given string.
@@ -716,6 +724,10 @@ namespace TheDatepicker {
 
 		public isMonthAndYearSeparated(): boolean {
 			return this.monthAndYearSeparated_;
+		}
+
+		public isMonthChangeOnSwipeEnabled_(): boolean {
+			return this.changeMonthOnSwipe_;
 		}
 
 		public getClassesPrefix(): string {

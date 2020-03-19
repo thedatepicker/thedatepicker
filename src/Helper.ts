@@ -41,6 +41,8 @@ namespace TheDatepicker {
 		Blur = 'blur',
 		KeyDown = 'keydown',
 		KeyUp = 'keyup',
+		TouchStart = 'touchstart',
+		TouchMove = 'touchmove',
 	}
 
 	export class Helper_ {
@@ -239,6 +241,28 @@ namespace TheDatepicker {
 
 			window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethod + '()');
 			Helper_.deprecatedMethods_.push(deprecatedMethod);
+		}
+
+		public static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, isRightMove: boolean) => void) {
+			let startPosition: number | null = null;
+
+			Helper_.addEventListener_(element, ListenerType_.TouchStart, (event: TouchEvent) => {
+				startPosition = event.touches[0].clientX;
+			});
+
+			Helper_.addEventListener_(element, ListenerType_.TouchMove, (event:TouchEvent) => {
+				if (startPosition === null) {
+					return;
+				}
+
+				const diff = event.touches[0].clientX - startPosition;
+				const minDistance = element.offsetWidth / 5;
+
+				if (Math.abs(diff) > minDistance) {
+					listener(event, diff > 0);
+					startPosition = null;
+				}
+			});
 		}
 
 	}
