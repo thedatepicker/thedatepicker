@@ -1,6 +1,6 @@
 {
   "name": "thedatepicker",
-  "version": "0.5.4",
+  "version": "0.5.5-beta",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -9,8 +9,8 @@
   "dependencies": {},
   "devDependencies": {
     "stylus": "*",
-    "typescript": "^3.7.4",
-    "uglify-js": "^3.7.5"
+    "typescript": "^3.8.3",
+    "uglify-js": "^3.8.0"
   },
   "scripts": {
     "js": "tsc",
