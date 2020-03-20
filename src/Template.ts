@@ -105,9 +105,9 @@ namespace TheDatepicker {
 			if (this.options_.isMonthChangeOnSwipeEnabled_()) {
 				Helper_.addSwipeListener_(body, (event: TouchEvent, isRightMove: boolean) => {
 					if (isRightMove) {
-						viewModel.goForward_(event);
-					} else {
 						viewModel.goBack_(event);
+					} else {
+						viewModel.goForward_(event);
 					}
 				});
 			}

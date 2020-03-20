@@ -1862,10 +1862,10 @@ var TheDatepicker;
             if (this.options_.isMonthChangeOnSwipeEnabled_()) {
                 TheDatepicker.Helper_.addSwipeListener_(body, function (event, isRightMove) {
                     if (isRightMove) {
-                        viewModel.goForward_(event);
+                        viewModel.goBack_(event);
                     }
                     else {
-                        viewModel.goBack_(event);
+                        viewModel.goForward_(event);
                     }
                 });
             }
