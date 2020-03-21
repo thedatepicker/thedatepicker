@@ -26,9 +26,7 @@ namespace TheDatepicker {
 	// todo měly by další callbacky smysl vrstvit podobně jako addCellClassesResolver ?
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
-	// todo DateConverter apod. by se nemusely instanciovat pro každý dp (musely by se zbavit stavu - options)
 	// todo volání options v kodu dp by mohlo být minifikovaný
-	// todo HtmlHelper jako static třída
 	// todo spoustu opakujících se volání přes helper aby se neminifikovaný volaly jen jednou (stojí to ale za to volání navíc?)
 	// todo fix position by mělo počítat window bez scrollbarů, ale nevim jak to spolehlivě získat
 	// todo setShowWeekDays, setShowNavigation (jde to udělat přes css), setVerticalLayout (tabulka převrácená o 90°)?
@@ -90,7 +88,8 @@ namespace TheDatepicker {
 		private readonly isContainerExternal_: boolean;
 		private readonly isInputTextBox_: boolean;
 		private readonly viewModel_: ViewModel_;
-		private readonly dateConverter_: DateConverter_;
+
+		private static dateConverter_: DateConverter_;
 
 		private initializationPhase_ = InitializationPhase.Untouched;
 		private inputListenerRemover_: (() => void) | null = null;
@@ -156,7 +155,9 @@ namespace TheDatepicker {
 			this.input = input;
 			this.container = container;
 
-			this.dateConverter_ = new DateConverter_(this.options);
+			if (!Datepicker.dateConverter_) {
+				Datepicker.dateConverter_ = new DateConverter_();
+			}
 			this.viewModel_ = new ViewModel_(this.options, this);
 
 			this.triggerReady_(input);
@@ -307,7 +308,7 @@ namespace TheDatepicker {
 		}
 
 		public getSelectedDateFormatted(): string | null {
-			return this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_);
+			return Datepicker.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_, this.options);
 		}
 
 		public getCurrentMonth(): Date {
@@ -320,7 +321,7 @@ namespace TheDatepicker {
 
 		public parseRawInput(): Date | null {
 			return this.isInputTextBox_
-				? this.dateConverter_.parseDate_(this.options.getInputFormat(), (this.input as HTMLInputElement).value)
+				? Datepicker.dateConverter_.parseDate_(this.options.getInputFormat(), (this.input as HTMLInputElement).value, this.options)
 				: null;
 		}
 
@@ -349,7 +350,7 @@ namespace TheDatepicker {
 				return;
 			}
 
-			(this.input as HTMLInputElement).value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
+			(this.input as HTMLInputElement).value = Datepicker.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_, this.options) || '';
 
 			if (this.deselectElement_ !== null) {
 				const isVisible = this.options.isDeselectButtonShown() && (this.input as HTMLInputElement).value !== '';
