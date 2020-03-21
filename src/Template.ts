@@ -33,6 +33,7 @@ namespace TheDatepicker {
 		// todo nějak hezky aby šlo snadno customizovat uspořádání prvků
 
 		private mainElement_: HTMLElement | null = null;
+		private bodyElement_: HTMLElement | null = null;
 		private controlElement_: HTMLElement | null = null;
 		private goBackElement_: HTMLElement | null = null;
 		private goForwardElement_: HTMLElement | null = null;
@@ -103,16 +104,14 @@ namespace TheDatepicker {
 			const body = this.htmlHelper_.createDiv_('body');
 
 			if (this.options_.isMonthChangeOnSwipeEnabled_()) {
-				Helper_.addSwipeListener_(body, (event: TouchEvent, isRightMove: boolean) => {
-					if (isRightMove) {
-						viewModel.goBack_(event);
-					} else {
-						viewModel.goForward_(event);
-					}
+				Helper_.addSwipeListener_(body, (event: TouchEvent, isRightMove: boolean): void => {
+					this.slideMonth_(viewModel, event, !isRightMove);
 				});
 			}
 
 			body.appendChild(this.createTableElement_(viewModel));
+
+			this.bodyElement_ = body;
 
 			return body;
 		}
@@ -231,12 +230,8 @@ namespace TheDatepicker {
 		protected createGoElement_(viewModel: ViewModel_, directionForward: boolean): HTMLElement {
 			const goElement = this.htmlHelper_.createDiv_('go');
 			this.htmlHelper_.addClass_(goElement, directionForward ? 'go-next' : 'go-previous');
-			const goButton = this.htmlHelper_.createAnchor_((event: Event) => {
-				if (directionForward) {
-					viewModel.goForward_(event);
-				} else {
-					viewModel.goBack_(event);
-				}
+			const goButton = this.htmlHelper_.createAnchor_((event: Event): void => {
+				this.slideMonth_(viewModel, event, directionForward);
 			});
 
 			goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
@@ -737,6 +732,49 @@ namespace TheDatepicker {
 			this.htmlHelper_.addClass_(cellContent, 'day-content');
 
 			return cellContent;
+		}
+
+		private slideMonth_(viewModel: ViewModel_, event: Event, directionForward: boolean): void {
+			const canGo = directionForward ? viewModel.canGoForward_() : viewModel.canGoBack_();
+			if (!canGo) {
+				return;
+			}
+
+			const change = (): void => {
+				if (directionForward) {
+					viewModel.goForward_(event);
+				} else {
+					viewModel.goBack_(event);
+				}
+			};
+
+			if (!this.options_.isMonthChangeAnimated() || !Helper_.isCssAnimationSupported_()) {
+				change();
+				return;
+			}
+
+			const animationOut = directionForward
+				? 'fade-out-left'
+				: 'fade-out-right';
+			const animationIn = directionForward
+				? 'fade-in-right'
+				: 'fade-in-left';
+
+			let listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
+				change();
+				listenerRemover();
+				this.bodyElement_.className = this.options_.prefixClass_('body');
+				this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
+				this.htmlHelper_.addClass_(this.bodyElement_, animationIn);
+				listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
+					listenerRemover();
+					this.bodyElement_.className = this.options_.prefixClass_('body');
+				});
+			});
+
+			this.bodyElement_.className = this.options_.prefixClass_('body');
+			this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
+			this.htmlHelper_.addClass_(this.bodyElement_, animationOut);
 		}
 
 	}

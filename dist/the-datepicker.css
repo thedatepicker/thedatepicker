@@ -22,6 +22,7 @@
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1em;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .the-datepicker__main .the-datepicker__body {
   margin-top: 1em;
@@ -172,6 +173,10 @@
 .the-datepicker__main td.the-datepicker__day--today {
   font-weight: bold;
 }
+.the-datepicker__main .the-datepicker__animated {
+  animation-duration: 0.1s;
+  animation-fill-mode: both;
+}
 .the-datepicker__deselect-button {
   text-decoration: none;
   color: #007eff;
@@ -179,4 +184,144 @@
 }
 .the-datepicker__deselect-button:hover {
   text-decoration: none;
+}
+.the-datepicker__fade-out-left {
+  animation-name: the-datepicker-fade-out-left;
+}
+.the-datepicker__fade-out-right {
+  animation-name: the-datepicker-fade-out-right;
+}
+.the-datepicker__fade-in-left {
+  animation-name: the-datepicker-fade-in-left;
+}
+.the-datepicker__fade-in-right {
+  animation-name: the-datepicker-fade-in-right;
+}
+@-moz-keyframes the-datepicker-fade-out-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+@-webkit-keyframes the-datepicker-fade-out-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+@-o-keyframes the-datepicker-fade-out-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+@keyframes the-datepicker-fade-out-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+@-moz-keyframes the-datepicker-fade-out-right {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@-webkit-keyframes the-datepicker-fade-out-right {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@-o-keyframes the-datepicker-fade-out-right {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@keyframes the-datepicker-fade-out-right {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@-moz-keyframes the-datepicker-fade-in-left {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@-webkit-keyframes the-datepicker-fade-in-left {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@-o-keyframes the-datepicker-fade-in-left {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes the-datepicker-fade-in-left {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@-moz-keyframes the-datepicker-fade-in-right {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@-webkit-keyframes the-datepicker-fade-in-right {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@-o-keyframes the-datepicker-fade-in-right {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes the-datepicker-fade-in-right {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
 }

@@ -821,6 +821,7 @@ var TheDatepicker;
         ListenerType_["KeyUp"] = "keyup";
         ListenerType_["TouchStart"] = "touchstart";
         ListenerType_["TouchMove"] = "touchmove";
+        ListenerType_["AnimationEnd"] = "animationend";
     })(ListenerType_ = TheDatepicker.ListenerType_ || (TheDatepicker.ListenerType_ = {}));
     var Helper_ = (function () {
         function Helper_() {
@@ -992,22 +993,31 @@ var TheDatepicker;
         };
         Helper_.addSwipeListener_ = function (element, listener) {
             var startPosition = null;
+            var minDistance = null;
             Helper_.addEventListener_(element, ListenerType_.TouchStart, function (event) {
                 startPosition = event.touches[0].clientX;
+                minDistance = element.offsetWidth / 5;
             });
             Helper_.addEventListener_(element, ListenerType_.TouchMove, function (event) {
                 if (startPosition === null) {
                     return;
                 }
                 var diff = event.touches[0].clientX - startPosition;
-                var minDistance = element.offsetWidth / 5;
                 if (Math.abs(diff) > minDistance) {
                     listener(event, diff > 0);
                     startPosition = null;
                 }
             });
         };
+        Helper_.isCssAnimationSupported_ = function () {
+            if (Helper_.cssAnimationSupport_ === null) {
+                var fakeElement = document.createElement('div');
+                Helper_.cssAnimationSupport_ = fakeElement.style.animationName === '';
+            }
+            return Helper_.cssAnimationSupport_;
+        };
         Helper_.deprecatedMethods_ = [];
+        Helper_.cssAnimationSupport_ = null;
         return Helper_;
     }());
     TheDatepicker.Helper_ = Helper_;
@@ -1174,6 +1184,7 @@ var TheDatepicker;
             this.yearAsDropdown_ = true;
             this.monthAndYearSeparated_ = true;
             this.changeMonthOnSwipe_ = true;
+            this.animateMonthChange_ = true;
             this.classesPrefix_ = 'the-datepicker__';
             this.showCloseButton_ = true;
             this.title_ = '';
@@ -1230,6 +1241,7 @@ var TheDatepicker;
             options.yearAsDropdown_ = this.yearAsDropdown_;
             options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
             options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
+            options.animateMonthChange_ = this.animateMonthChange_;
             options.classesPrefix_ = this.classesPrefix_;
             options.showCloseButton_ = this.showCloseButton_;
             options.title_ = this.title_;
@@ -1376,6 +1388,9 @@ var TheDatepicker;
         };
         Options.prototype.setChangeMonthOnSwipe = function (value) {
             this.changeMonthOnSwipe_ = !!value;
+        };
+        Options.prototype.setAnimateMonthChange = function (value) {
+            this.animateMonthChange_ = !!value;
         };
         Options.prototype.setClassesPrefix = function (prefix) {
             this.classesPrefix_ = TheDatepicker.Helper_.checkString_('Prefix', prefix);
@@ -1573,6 +1588,9 @@ var TheDatepicker;
         };
         Options.prototype.isMonthChangeOnSwipeEnabled_ = function () {
             return this.changeMonthOnSwipe_;
+        };
+        Options.prototype.isMonthChangeAnimated = function () {
+            return this.animateMonthChange_;
         };
         Options.prototype.getClassesPrefix = function () {
             return this.classesPrefix_;
@@ -1807,6 +1825,7 @@ var TheDatepicker;
             this.container_ = container_;
             this.hasInput_ = hasInput_;
             this.mainElement_ = null;
+            this.bodyElement_ = null;
             this.controlElement_ = null;
             this.goBackElement_ = null;
             this.goForwardElement_ = null;
@@ -1858,18 +1877,15 @@ var TheDatepicker;
             this.mainElement_.style.display = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur() ? '' : 'none';
         };
         Template_.prototype.createBodyElement_ = function (viewModel) {
+            var _this = this;
             var body = this.htmlHelper_.createDiv_('body');
             if (this.options_.isMonthChangeOnSwipeEnabled_()) {
                 TheDatepicker.Helper_.addSwipeListener_(body, function (event, isRightMove) {
-                    if (isRightMove) {
-                        viewModel.goBack_(event);
-                    }
-                    else {
-                        viewModel.goForward_(event);
-                    }
+                    _this.slideMonth_(viewModel, event, !isRightMove);
                 });
             }
             body.appendChild(this.createTableElement_(viewModel));
+            this.bodyElement_ = body;
             return body;
         };
         Template_.prototype.createHeaderElement_ = function (viewModel) {
@@ -1959,15 +1975,11 @@ var TheDatepicker;
             return this.createGoElement_(viewModel, true);
         };
         Template_.prototype.createGoElement_ = function (viewModel, directionForward) {
+            var _this = this;
             var goElement = this.htmlHelper_.createDiv_('go');
             this.htmlHelper_.addClass_(goElement, directionForward ? 'go-next' : 'go-previous');
             var goButton = this.htmlHelper_.createAnchor_(function (event) {
-                if (directionForward) {
-                    viewModel.goForward_(event);
-                }
-                else {
-                    viewModel.goBack_(event);
-                }
+                _this.slideMonth_(viewModel, event, directionForward);
             });
             goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
             var title = this.options_.translator.translateTitle(directionForward ? TheDatepicker.TitleName.GoForward : TheDatepicker.TitleName.GoBack);
@@ -2379,6 +2391,45 @@ var TheDatepicker;
             var cellContent = this.options_.getCellStructure_();
             this.htmlHelper_.addClass_(cellContent, 'day-content');
             return cellContent;
+        };
+        Template_.prototype.slideMonth_ = function (viewModel, event, directionForward) {
+            var _this = this;
+            var canGo = directionForward ? viewModel.canGoForward_() : viewModel.canGoBack_();
+            if (!canGo) {
+                return;
+            }
+            var change = function () {
+                if (directionForward) {
+                    viewModel.goForward_(event);
+                }
+                else {
+                    viewModel.goBack_(event);
+                }
+            };
+            if (!this.options_.isMonthChangeAnimated() || !TheDatepicker.Helper_.isCssAnimationSupported_()) {
+                change();
+                return;
+            }
+            var animationOut = directionForward
+                ? 'fade-out-left'
+                : 'fade-out-right';
+            var animationIn = directionForward
+                ? 'fade-in-right'
+                : 'fade-in-left';
+            var listenerRemover = TheDatepicker.Helper_.addEventListener_(this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function (event) {
+                change();
+                listenerRemover();
+                _this.bodyElement_.className = _this.options_.prefixClass_('body');
+                _this.htmlHelper_.addClass_(_this.bodyElement_, 'animated');
+                _this.htmlHelper_.addClass_(_this.bodyElement_, animationIn);
+                listenerRemover = TheDatepicker.Helper_.addEventListener_(_this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function (event) {
+                    listenerRemover();
+                    _this.bodyElement_.className = _this.options_.prefixClass_('body');
+                });
+            });
+            this.bodyElement_.className = this.options_.prefixClass_('body');
+            this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
+            this.htmlHelper_.addClass_(this.bodyElement_, animationOut);
         };
         return Template_;
     }());

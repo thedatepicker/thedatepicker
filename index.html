@@ -197,6 +197,9 @@
 					<label>datepicker.options.setChangeMonthOnSwipe(<input type="checkbox" id="changeMonthOnSwipe" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setAnimateMonthChange(<input type="checkbox" id="animateMonthChange" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
 				</li>
 				<li>
@@ -713,6 +716,13 @@ return header;
 			changeMonthOnSwipeInput.onchange = function () {
 				updateSetting(changeMonthOnSwipeInput, function () {
 					datepicker.options.setChangeMonthOnSwipe(changeMonthOnSwipeInput.checked);
+				});
+			};
+
+			var animateMonthChangeInput = document.getElementById('animateMonthChange');
+			animateMonthChangeInput.onchange = function () {
+				updateSetting(animateMonthChangeInput, function () {
+					datepicker.options.setAnimateMonthChange(animateMonthChangeInput.checked);
 				});
 			};
 

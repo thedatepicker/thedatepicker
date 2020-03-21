@@ -43,11 +43,14 @@ namespace TheDatepicker {
 		KeyUp = 'keyup',
 		TouchStart = 'touchstart',
 		TouchMove = 'touchmove',
+		AnimationEnd = 'animationend',
 	}
 
 	export class Helper_ {
 
 		private static deprecatedMethods_: string[] = [];
+
+		private static cssAnimationSupport_: boolean | null = null;
 
 		public static resetTime_(date: Date | null): Date | null {
 			if (date === null) {
@@ -245,9 +248,11 @@ namespace TheDatepicker {
 
 		public static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, isRightMove: boolean) => void) {
 			let startPosition: number | null = null;
+			let minDistance: number | null = null;
 
 			Helper_.addEventListener_(element, ListenerType_.TouchStart, (event: TouchEvent) => {
 				startPosition = event.touches[0].clientX;
+				minDistance = element.offsetWidth / 5;
 			});
 
 			Helper_.addEventListener_(element, ListenerType_.TouchMove, (event:TouchEvent) => {
@@ -256,13 +261,20 @@ namespace TheDatepicker {
 				}
 
 				const diff = event.touches[0].clientX - startPosition;
-				const minDistance = element.offsetWidth / 5;
-
 				if (Math.abs(diff) > minDistance) {
 					listener(event, diff > 0);
 					startPosition = null;
 				}
 			});
+		}
+
+		public static isCssAnimationSupported_(): boolean {
+			if (Helper_.cssAnimationSupport_ === null) {
+				const fakeElement = document.createElement('div');
+				Helper_.cssAnimationSupport_ = fakeElement.style.animationName === '';
+			}
+
+			return Helper_.cssAnimationSupport_;
 		}
 
 	}

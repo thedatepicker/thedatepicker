@@ -36,6 +36,7 @@ namespace TheDatepicker {
 	// todo setGoButtonContentStructureResolver ...
 	// todo ARIA ?
 	// todo slide animace změny měsíce
+	// todo zbavit se ts-ignore
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 

@@ -30,6 +30,7 @@ $border = #ccc
 	font-family Arial, Helvetica, sans-serif
 	line-height 1em
 	box-sizing border-box
+	overflow hidden
 
 	.the-datepicker__body
 		margin-top 1em
@@ -169,9 +170,53 @@ $border = #ccc
 	.the-datepicker__day--weekend, .the-datepicker__week-day--weekend, td.the-datepicker__day--today
 		font-weight bold
 
+	.the-datepicker__animated
+		animation-duration 0.1s
+		animation-fill-mode both
+
 .the-datepicker__deselect-button
 	text-decoration none
 	color $base-color
 	font-weight bold
 	&:hover
 		text-decoration none
+
+@keyframes the-datepicker-fade-out-left
+	from
+		transform translate3d(0, 0, 0)
+
+	to
+		transform translate3d(-100%, 0, 0)
+
+.the-datepicker__fade-out-left
+	animation-name the-datepicker-fade-out-left
+
+@keyframes the-datepicker-fade-out-right
+	from
+		transform translate3d(0, 0, 0)
+
+	to
+		transform translate3d(100%, 0, 0)
+
+.the-datepicker__fade-out-right
+	animation-name the-datepicker-fade-out-right
+
+@keyframes the-datepicker-fade-in-left
+	from
+		transform translate3d(-100%, 0, 0)
+
+	to
+		transform translate3d(0, 0, 0)
+
+.the-datepicker__fade-in-left
+	animation-name the-datepicker-fade-in-left
+
+@keyframes the-datepicker-fade-in-right
+	from
+		transform translate3d(100%, 0, 0)
+
+	to
+		transform translate3d(0, 0, 0)
+
+.the-datepicker__fade-in-right
+	animation-name the-datepicker-fade-in-right
