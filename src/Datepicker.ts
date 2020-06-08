@@ -37,6 +37,7 @@ namespace TheDatepicker {
 	// todo ARIA ?
 	// todo slide animace změny měsíce
 	// todo zbavit se ts-ignore
+	// todo tam co mám v demu "this instanceof" tak by neměla být short function
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
