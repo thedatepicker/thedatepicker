@@ -50,7 +50,7 @@ namespace TheDatepicker {
 		}
 
 		public setTitleTranslation(titleName: TitleName, translation: string): void {
-			this.titles_[titleName] = Helper_.checkString_('Translation', translation);
+			this.titles_[Helper_.checkNumber_('Title', titleName, 0) as TitleName] = Helper_.checkString_('Translation', translation);
 		}
 
 		public translateDayOfWeek(dayOfWeek: DayOfWeek): string {
@@ -62,12 +62,7 @@ namespace TheDatepicker {
 		}
 
 		public translateTitle(titleName: TitleName): string {
-			const translation = this.titles_[titleName];
-			if (typeof translation !== 'string') {
-				throw new Error('Unknown title ' + titleName);
-			}
-
-			return translation;
+			return this.titles_[titleName];
 		}
 
 	}

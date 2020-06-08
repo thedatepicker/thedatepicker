@@ -35,6 +35,10 @@ namespace TheDatepicker {
 	// todo ARIA ?
 	// todo slide animace změny měsíce
 	// todo zbavit se ts-ignore
+	// todo volání co nejde minifikovat (např. appendChild) volat přes Helper
+	// todo trailing comma v deklaraci argumentů metod
+	// todo když je initial date tak se hned na začátku zavolá onSelect, je to v pořádku? bacha na BC
+	// todo optiony pro ovládání dvou (a více) datepickerů (maxControl, range)
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
@@ -388,7 +392,7 @@ namespace TheDatepicker {
 
 		private createContainer_(): HTMLElement {
 			const container = this.document_.createElement('div');
-			container.className = this.options.prefixClass_('container');
+			container.className = this.options.prefixClass_(ElementName.Container);
 			container.style.position = 'absolute';
 			container.style.zIndex = '99';
 
@@ -412,8 +416,8 @@ namespace TheDatepicker {
 				Helper_.preventDefault_(event);
 				this.viewModel_.cancelSelection_(event);
 			};
-			deselectElement.className = this.options.prefixClass_('deselect');
-			deselectButton.className = this.options.prefixClass_('deselect-button');
+			deselectElement.className = this.options.prefixClass_(ElementName.Deselect);
+			deselectButton.className = this.options.prefixClass_(ElementName.DeselectButton);
 			deselectElement.appendChild(deselectButton);
 
 			this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
@@ -554,13 +558,13 @@ namespace TheDatepicker {
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
 			const locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
 			if (locateOver) {
-				locationClass += ' ' + this.options.prefixClass_('container--over');
+				locationClass += ' ' + this.options.prefixClass_(ElementName.ContainerOver);
 			}
 			if (locateLeft) {
-				locationClass += ' ' + this.options.prefixClass_('container--left');
+				locationClass += ' ' + this.options.prefixClass_(ElementName.ContainerLeft);
 			}
 
-			this.container.className = this.options.prefixClass_('container') + locationClass;
+			this.container.className = this.options.prefixClass_(ElementName.Container) + locationClass;
 
 			if (mainElement !== null && (locateOver || locateLeft)) {
 				if (locateOver) {

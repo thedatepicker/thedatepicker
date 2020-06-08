@@ -54,6 +54,7 @@ namespace TheDatepicker {
 	export class Options {
 
 		public readonly translator: Translator;
+		public readonly classNames: ClassNames;
 
 		private readonly document_: Document;
 
@@ -87,7 +88,6 @@ namespace TheDatepicker {
 		private monthAndYearSeparated_ = true;
 		private changeMonthOnSwipe_ = true;
 		private animateMonthChange_ = true;
-		private classesPrefix_ = 'the-datepicker__';
 		private showCloseButton_ = true;
 		private title_ = '';
 		private dropdownItemsLimit_ = 200;
@@ -110,13 +110,18 @@ namespace TheDatepicker {
 			focus: [],
 		};
 
-		public constructor(translator: Translator | null = null) {
+		public constructor(
+			translator: Translator | null = null,
+			classNames: ClassNames | null = null
+		) {
 			this.translator = translator !== null ? translator : new Translator();
+			this.classNames = classNames !== null ? classNames : new ClassNames();
 			this.document_ = document;
 		}
 
 		public clone(): Options {
-			const options = new Options(this.translator);
+			// todo taky by se mělo klonovat!
+			const options = new Options(this.translator, this.classNames);
 
 			options.hideOnBlur_ = this.hideOnBlur_;
 			options.hideOnSelect_ = this.hideOnSelect_;
@@ -794,8 +799,14 @@ namespace TheDatepicker {
 			return day.dayNumber + '';
 		}
 
-		public prefixClass_(name: string): string {
-			return this.classesPrefix_ + name;
+		public prefixClass_(elementName: ElementName): string {
+			const result = [];
+			const classNames = this.classNames.getClassNames(elementName);
+			for (let index = 0; index < classNames.length; index++) {
+				result.push(this.classesPrefix_ + classNames[index]);
+			}
+
+			return result.join(' ');
 		}
 
 		public getCellStructure_(): HTMLElement {

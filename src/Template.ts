@@ -86,10 +86,18 @@ namespace TheDatepicker {
 		protected createSkeleton_(viewModel: ViewModel_): HTMLElement {
 			const main = this.htmlHelper_.createDiv_('main');
 
-			this.htmlHelper_.appendChild_(main, this.options_.getHeaderStructure_());
+			const header = this.options_.getHeaderStructure_();
+			if (header) {
+				main.appendChild(header);
+			}
+
 			main.appendChild(this.createHeaderElement_(viewModel));
 			main.appendChild(this.createBodyElement_(viewModel));
-			this.htmlHelper_.appendChild_(main, this.options_.getFooterStructure_());
+
+			const footer = this.options_.getFooterStructure_();
+			if (footer) {
+				main.appendChild(footer);
+			}
 
 			this.mainElement_ = main;
 
@@ -763,16 +771,16 @@ namespace TheDatepicker {
 			let listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
 				change();
 				listenerRemover();
-				this.bodyElement_.className = this.options_.prefixClass_('body');
+				this.bodyElement_.className = this.options_.prefixClass_(ElementName.Body);
 				this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
 				this.htmlHelper_.addClass_(this.bodyElement_, animationIn);
 				listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
 					listenerRemover();
-					this.bodyElement_.className = this.options_.prefixClass_('body');
+					this.bodyElement_.className = this.options_.prefixClass_(ElementName.Body);
 				});
 			});
 
-			this.bodyElement_.className = this.options_.prefixClass_('body');
+			this.bodyElement_.className = this.options_.prefixClass_(ElementName.Body);
 			this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
 			this.htmlHelper_.addClass_(this.bodyElement_, animationOut);
 		}

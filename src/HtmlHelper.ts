@@ -129,17 +129,13 @@ namespace TheDatepicker {
 			return option;
 		}
 
-		public addClass_(element: HTMLElement, className: string): void {
-			className = this.options_.prefixClass_(className);
-			if (element.className !== '') {
-				className = ' ' + className;
-			}
-			element.className += className;
-		}
-
-		public appendChild_(element: HTMLElement, child: HTMLElement | null): void {
-			if (child) {
-				element.appendChild(child);
+		public addClass_(element: HTMLElement, elementName: ElementName): void {
+			let className = this.options_.prefixClass_(elementName);
+			if (className) {
+				if (element.className !== '') {
+					className = ' ' + className;
+				}
+				element.className += className;
 			}
 		}
 

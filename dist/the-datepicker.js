@@ -1,5 +1,58 @@
 var TheDatepicker;
 (function (TheDatepicker) {
+    var ElementName;
+    (function (ElementName) {
+        ElementName[ElementName["Container"] = 0] = "Container";
+        ElementName[ElementName["ContainerOver"] = 1] = "ContainerOver";
+        ElementName[ElementName["ContainerLeft"] = 2] = "ContainerLeft";
+        ElementName[ElementName["Deselect"] = 3] = "Deselect";
+        ElementName[ElementName["DeselectButton"] = 4] = "DeselectButton";
+        ElementName[ElementName["Body"] = 5] = "Body";
+    })(ElementName = TheDatepicker.ElementName || (TheDatepicker.ElementName = {}));
+    var ClassNames = (function () {
+        function ClassNames() {
+            var _a;
+            this.isInitialized_ = false;
+            this.prefix_ = 'the-datepicker__';
+            this.classNames_ = (_a = {},
+                _a[ElementName.Container] = ['container'],
+                _a[ElementName.ContainerOver] = ['container--over'],
+                _a[ElementName.ContainerLeft] = ['container--left'],
+                _a[ElementName.Deselect] = ['deselect'],
+                _a[ElementName.DeselectButton] = ['deselect-button'],
+                _a[ElementName.Body] = ['body'],
+                _a);
+        }
+        ClassNames.prototype.setClassName = function (elementName, className) {
+            this.classNames_[TheDatepicker.Helper_.checkNumber_('Element', elementName, 0)] = this.normalizeClassName_(className);
+        };
+        ClassNames.prototype.addClassName = function (elementName, className) {
+            this.classNames_[TheDatepicker.Helper_.checkNumber_('Element', elementName, 0)].concat(this.normalizeClassName_(className));
+        };
+        ClassNames.prototype.getClassNames = function (elementName) {
+            if (!this.isInitialized_) {
+            }
+            return this.classNames_[elementName];
+        };
+        ClassNames.prototype.normalizeClassName_ = function (className) {
+            if (typeof className !== 'object' || className.constructor !== Array) {
+                className = TheDatepicker.Helper_.checkString_('Class name', className).split(' ');
+            }
+            var result = [];
+            for (var index = 0; index < className.length; index++) {
+                var name_1 = TheDatepicker.Helper_.checkString_('Class name', className[index]);
+                if (name_1) {
+                    result.push(name_1);
+                }
+            }
+            return result;
+        };
+        return ClassNames;
+    }());
+    TheDatepicker.ClassNames = ClassNames;
+})(TheDatepicker || (TheDatepicker = {}));
+var TheDatepicker;
+(function (TheDatepicker) {
     var CannotParseDateException = (function () {
         function CannotParseDateException() {
         }
@@ -34,11 +87,10 @@ var TheDatepicker;
         return ParsedDateData;
     }());
     var DateConverter_ = (function () {
-        function DateConverter_(options_) {
-            this.options_ = options_;
+        function DateConverter_() {
             this.escapeChar_ = '\\';
         }
-        DateConverter_.prototype.formatDate_ = function (format, date) {
+        DateConverter_.prototype.formatDate_ = function (format, date, options) {
             if (date === null) {
                 return null;
             }
@@ -57,14 +109,14 @@ var TheDatepicker;
                 }
                 var formatter = this.getFormatter_(char);
                 if (formatter !== null) {
-                    result += formatter.call(this, date);
+                    result += formatter.call(this, date, options);
                     continue;
                 }
                 result += char;
             }
             return result;
         };
-        DateConverter_.prototype.parseDate_ = function (format, text) {
+        DateConverter_.prototype.parseDate_ = function (format, text, options) {
             if (text === '') {
                 return null;
             }
@@ -84,7 +136,7 @@ var TheDatepicker;
                     var parser = this.getParser_(char);
                     if (parser !== null) {
                         try {
-                            textPosition += parser.call(this, text.substring(textPosition), dateData);
+                            textPosition += parser.call(this, text.substring(textPosition), dateData, options);
                         }
                         catch (error) {
                             if (!(error instanceof CannotParseDateException)) {
@@ -147,8 +199,8 @@ var TheDatepicker;
         DateConverter_.prototype.formatDayWithLeadingZero_ = function (date) {
             return ('0' + date.getDate()).slice(-2);
         };
-        DateConverter_.prototype.formatDayOfWeekTextual_ = function (date) {
-            return this.options_.translator.translateDayOfWeek(date.getDay());
+        DateConverter_.prototype.formatDayOfWeekTextual_ = function (date, options) {
+            return options.translator.translateDayOfWeek(date.getDay());
         };
         DateConverter_.prototype.formatMonth_ = function (date) {
             return (date.getMonth() + 1) + '';
@@ -156,8 +208,8 @@ var TheDatepicker;
         DateConverter_.prototype.formatMonthWithLeadingZero_ = function (date) {
             return ('0' + (date.getMonth() + 1)).slice(-2);
         };
-        DateConverter_.prototype.formatMonthTextual_ = function (date) {
-            return this.options_.translator.translateMonth(date.getMonth());
+        DateConverter_.prototype.formatMonthTextual_ = function (date, options) {
+            return options.translator.translateMonth(date.getMonth());
         };
         DateConverter_.prototype.formatYear_ = function (date) {
             return date.getFullYear() + '';
@@ -202,10 +254,10 @@ var TheDatepicker;
             dateData.day = parseInt(day, 10);
             return took + day.length;
         };
-        DateConverter_.prototype.parseDayOfWeekTextual_ = function (text) {
+        DateConverter_.prototype.parseDayOfWeekTextual_ = function (text, dateData, options) {
             var maxLength = 0;
             for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-                var translation = this.options_.translator.translateDayOfWeek(dayOfWeek);
+                var translation = options.translator.translateDayOfWeek(dayOfWeek);
                 maxLength = Math.max(maxLength, translation.length);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     return translation.length;
@@ -237,9 +289,9 @@ var TheDatepicker;
             dateData.month = parseInt(month, 10);
             return took + month.length;
         };
-        DateConverter_.prototype.parseMonthTextual_ = function (text, dateData) {
+        DateConverter_.prototype.parseMonthTextual_ = function (text, dateData, options) {
             for (var month = 1; month <= 12; month++) {
-                var translation = this.options_.translator.translateMonth(month - 1);
+                var translation = options.translator.translateMonth(month - 1);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     dateData.month = month;
                     return translation.length;
@@ -267,12 +319,12 @@ var TheDatepicker;
             dateData.year = year;
             return yearLength + (isNegative ? 1 : 0);
         };
-        DateConverter_.prototype.parseYearTwoDigits_ = function (text, dateData) {
+        DateConverter_.prototype.parseYearTwoDigits_ = function (text, dateData, options) {
             var yearEnd = text.substring(0, 2);
             if (!/[0-9]{2}/.test(yearEnd)) {
                 throw new CannotParseDateException();
             }
-            var currentYear = (this.options_.getToday()).getFullYear() + '';
+            var currentYear = (options.getToday()).getFullYear() + '';
             var yearBeginning = currentYear.substring(0, currentYear.length - 2);
             dateData.year = parseInt(yearBeginning + yearEnd, 10);
             return 2;
@@ -341,7 +393,9 @@ var TheDatepicker;
             container.datepicker = this;
             this.input = input;
             this.container = container;
-            this.dateConverter_ = new TheDatepicker.DateConverter_(this.options);
+            if (!Datepicker.dateConverter_) {
+                Datepicker.dateConverter_ = new TheDatepicker.DateConverter_();
+            }
             this.viewModel_ = new TheDatepicker.ViewModel_(this.options, this);
             this.triggerReady_(input);
             this.triggerReady_(container);
@@ -465,7 +519,7 @@ var TheDatepicker;
             return this.viewModel_.selectedDate_ !== null ? new Date(this.viewModel_.selectedDate_.getTime()) : null;
         };
         Datepicker.prototype.getSelectedDateFormatted = function () {
-            return this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_);
+            return Datepicker.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_, this.options);
         };
         Datepicker.prototype.getCurrentMonth = function () {
             return this.viewModel_.getCurrentMonth_();
@@ -476,7 +530,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.parseRawInput = function () {
             return this.isInputTextBox_
-                ? this.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value)
+                ? Datepicker.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value, this.options)
                 : null;
         };
         Datepicker.prototype.readInput_ = function (event) {
@@ -501,7 +555,7 @@ var TheDatepicker;
             if (!this.isInputTextBox_ || this.input === this.document_.activeElement) {
                 return;
             }
-            this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
+            this.input.value = Datepicker.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_, this.options) || '';
             if (this.deselectElement_ !== null) {
                 var isVisible = this.options.isDeselectButtonShown() && this.input.value !== '';
                 this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
@@ -534,7 +588,7 @@ var TheDatepicker;
         ;
         Datepicker.prototype.createContainer_ = function () {
             var container = this.document_.createElement('div');
-            container.className = this.options.prefixClass_('container');
+            container.className = this.options.prefixClass_(TheDatepicker.ElementName.Container);
             container.style.position = 'absolute';
             container.style.zIndex = '99';
             return container;
@@ -556,8 +610,8 @@ var TheDatepicker;
                 TheDatepicker.Helper_.preventDefault_(event);
                 _this.viewModel_.cancelSelection_(event);
             };
-            deselectElement.className = this.options.prefixClass_('deselect');
-            deselectButton.className = this.options.prefixClass_('deselect-button');
+            deselectElement.className = this.options.prefixClass_(TheDatepicker.ElementName.Deselect);
+            deselectButton.className = this.options.prefixClass_(TheDatepicker.ElementName.DeselectButton);
             deselectElement.appendChild(deselectButton);
             this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
             this.deselectElement_ = deselectElement;
@@ -681,12 +735,12 @@ var TheDatepicker;
             var locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
             var locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
             if (locateOver) {
-                locationClass += ' ' + this.options.prefixClass_('container--over');
+                locationClass += ' ' + this.options.prefixClass_(TheDatepicker.ElementName.ContainerOver);
             }
             if (locateLeft) {
-                locationClass += ' ' + this.options.prefixClass_('container--left');
+                locationClass += ' ' + this.options.prefixClass_(TheDatepicker.ElementName.ContainerLeft);
             }
-            this.container.className = this.options.prefixClass_('container') + locationClass;
+            this.container.className = this.options.prefixClass_(TheDatepicker.ElementName.Container) + locationClass;
             if (mainElement !== null && (locateOver || locateLeft)) {
                 if (locateOver) {
                     var moveTop = inputHeight + containerHeight;
@@ -1117,16 +1171,13 @@ var TheDatepicker;
             option.innerText = label;
             return option;
         };
-        HtmlHelper_.prototype.addClass_ = function (element, className) {
-            className = this.options_.prefixClass_(className);
-            if (element.className !== '') {
-                className = ' ' + className;
-            }
-            element.className += className;
-        };
-        HtmlHelper_.prototype.appendChild_ = function (element, child) {
-            if (child) {
-                element.appendChild(child);
+        HtmlHelper_.prototype.addClass_ = function (element, elementName) {
+            var className = this.options_.prefixClass_(elementName);
+            if (className) {
+                if (element.className !== '') {
+                    className = ' ' + className;
+                }
+                element.className += className;
             }
         };
         return HtmlHelper_;
@@ -1153,8 +1204,9 @@ var TheDatepicker;
     }());
     TheDatepicker.AvailableDateNotFoundException = AvailableDateNotFoundException;
     var Options = (function () {
-        function Options(translator) {
+        function Options(translator, classNames) {
             if (translator === void 0) { translator = null; }
+            if (classNames === void 0) { classNames = null; }
             this.hideOnBlur_ = true;
             this.hideOnSelect_ = true;
             this.minDate_ = null;
@@ -1185,7 +1237,6 @@ var TheDatepicker;
             this.monthAndYearSeparated_ = true;
             this.changeMonthOnSwipe_ = true;
             this.animateMonthChange_ = true;
-            this.classesPrefix_ = 'the-datepicker__';
             this.showCloseButton_ = true;
             this.title_ = '';
             this.dropdownItemsLimit_ = 200;
@@ -1208,10 +1259,11 @@ var TheDatepicker;
                 focus: []
             };
             this.translator = translator !== null ? translator : new TheDatepicker.Translator();
+            this.classNames = classNames !== null ? classNames : new TheDatepicker.ClassNames();
             this.document_ = document;
         }
         Options.prototype.clone = function () {
-            var options = new Options(this.translator);
+            var options = new Options(this.translator, this.classNames);
             options.hideOnBlur_ = this.hideOnBlur_;
             options.hideOnSelect_ = this.hideOnSelect_;
             options.minDate_ = this.minDate_;
@@ -1631,8 +1683,13 @@ var TheDatepicker;
             }
             return day.dayNumber + '';
         };
-        Options.prototype.prefixClass_ = function (name) {
-            return this.classesPrefix_ + name;
+        Options.prototype.prefixClass_ = function (elementName) {
+            var result = [];
+            var classNames = this.classNames.getClassNames(elementName);
+            for (var index = 0; index < classNames.length; index++) {
+                result.push(this.classesPrefix_ + classNames[index]);
+            }
+            return result.join(' ');
         };
         Options.prototype.getCellStructure_ = function () {
             if (this.cellContentStructureResolver_ !== null) {
@@ -1866,10 +1923,16 @@ var TheDatepicker;
         };
         Template_.prototype.createSkeleton_ = function (viewModel) {
             var main = this.htmlHelper_.createDiv_('main');
-            this.htmlHelper_.appendChild_(main, this.options_.getHeaderStructure_());
+            var header = this.options_.getHeaderStructure_();
+            if (header) {
+                main.appendChild(header);
+            }
             main.appendChild(this.createHeaderElement_(viewModel));
             main.appendChild(this.createBodyElement_(viewModel));
-            this.htmlHelper_.appendChild_(main, this.options_.getFooterStructure_());
+            var footer = this.options_.getFooterStructure_();
+            if (footer) {
+                main.appendChild(footer);
+            }
             this.mainElement_ = main;
             return main;
         };
@@ -2419,15 +2482,15 @@ var TheDatepicker;
             var listenerRemover = TheDatepicker.Helper_.addEventListener_(this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function (event) {
                 change();
                 listenerRemover();
-                _this.bodyElement_.className = _this.options_.prefixClass_('body');
+                _this.bodyElement_.className = _this.options_.prefixClass_(TheDatepicker.ElementName.Body);
                 _this.htmlHelper_.addClass_(_this.bodyElement_, 'animated');
                 _this.htmlHelper_.addClass_(_this.bodyElement_, animationIn);
                 listenerRemover = TheDatepicker.Helper_.addEventListener_(_this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function (event) {
                     listenerRemover();
-                    _this.bodyElement_.className = _this.options_.prefixClass_('body');
+                    _this.bodyElement_.className = _this.options_.prefixClass_(TheDatepicker.ElementName.Body);
                 });
             });
-            this.bodyElement_.className = this.options_.prefixClass_('body');
+            this.bodyElement_.className = this.options_.prefixClass_(TheDatepicker.ElementName.Body);
             this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
             this.htmlHelper_.addClass_(this.bodyElement_, animationOut);
         };
@@ -2484,7 +2547,7 @@ var TheDatepicker;
             this.monthTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation);
         };
         Translator.prototype.setTitleTranslation = function (titleName, translation) {
-            this.titles_[titleName] = TheDatepicker.Helper_.checkString_('Translation', translation);
+            this.titles_[TheDatepicker.Helper_.checkNumber_('Title', titleName, 0)] = TheDatepicker.Helper_.checkString_('Translation', translation);
         };
         Translator.prototype.translateDayOfWeek = function (dayOfWeek) {
             return this.dayOfWeekTranslations_[dayOfWeek];
@@ -2493,11 +2556,7 @@ var TheDatepicker;
             return this.monthTranslations_[month];
         };
         Translator.prototype.translateTitle = function (titleName) {
-            var translation = this.titles_[titleName];
-            if (typeof translation !== 'string') {
-                throw new Error('Unknown title ' + titleName);
-            }
-            return translation;
+            return this.titles_[titleName];
         };
         return Translator;
     }());
