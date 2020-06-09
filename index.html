@@ -204,8 +204,7 @@
 				</li>
 				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">// if (date.getDate() === 5) return false;
-return true;</textarea><br>
+						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">// return date.getDate() !== 5;</textarea><br>
 						});</label>
 				</li>
 				<li>
@@ -249,42 +248,42 @@ return header;
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeSelect((event, day, previousDay) => {<br>
+					<label>datepicker.options.onBeforeSelect(function (event, day, previousDay) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker // applies to all on*</textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onSelect((event, day, previousDay) => {<br>
+					<label>datepicker.options.onSelect(function (event, day, previousDay) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onSelect"></textarea><br>
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeOpenAndClose((event, isOpening) => {<br>
+					<label>datepicker.options.onBeforeOpenAndClose(function (event, isOpening) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onBeforeOpenAndClose"></textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onOpenAndClose((event, isOpening) => {<br>
+					<label>datepicker.options.onOpenAndClose(function (event, isOpening) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onOpenAndClose"></textarea><br>
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeMonthChange((event, month, previousMonth) => {<br>
+					<label>datepicker.options.onBeforeMonthChange(function (event, month, previousMonth) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onBeforeMonthChange"></textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onMonthChange((event, month, previousMonth) => {<br>
+					<label>datepicker.options.onMonthChange(function (event, month, previousMonth) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onMonthChange"></textarea><br>
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeFocus((event, day, previousDay) => {<br>
+					<label>datepicker.options.onBeforeFocus(function (event, day, previousDay) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onBeforeFocus"></textarea><br>
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onFocus((event, day, previousDay) => {<br>
+					<label>datepicker.options.onFocus(function (event, day, previousDay) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onFocus"></textarea><br>
 					});</label>
 				</li>
@@ -411,7 +410,7 @@ return header;
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Reset, "<input type="text" size="15" id="resetTranslation" value="Reset">");</label>
 				</li>
 				<li>
-					<label>var datepickerPromise = TheDatepicker.onDatepickerReady(input), (datepicker) => {<br>
+					<label>var datepickerPromise = TheDatepicker.onDatepickerReady(input, function (datepicker) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="onDatepickerReady">// this instanceof HTMLElement</textarea><br>
 					});</label>
 				</li>
