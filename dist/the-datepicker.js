@@ -349,7 +349,7 @@ var TheDatepicker;
             if (options !== null && !(options instanceof TheDatepicker.Options)) {
                 throw new Error('Options was expected to be an instance of Options');
             }
-            this.document_ = document;
+            Datepicker.document_ = document;
             this.options = options !== null ? options.clone() : new TheDatepicker.Options();
             var duplicateError = 'There is already a datepicker present on ';
             this.isContainerExternal_ = container !== null;
@@ -414,7 +414,7 @@ var TheDatepicker;
                         this.updateInput_();
                     }
                     if (this.input !== null && this.options.isHiddenOnBlur()) {
-                        if (this.input === this.document_.activeElement) {
+                        if (this.input === Datepicker.document_.activeElement) {
                             this.initializationPhase_ = InitializationPhase.Ready;
                             this.render();
                             this.open();
@@ -536,7 +536,7 @@ var TheDatepicker;
             }
         };
         Datepicker.prototype.updateInput_ = function () {
-            if (!this.isInputTextBox_ || this.input === this.document_.activeElement) {
+            if (!this.isInputTextBox_ || this.input === Datepicker.document_.activeElement) {
                 return;
             }
             this.input.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
@@ -571,10 +571,11 @@ var TheDatepicker;
         };
         ;
         Datepicker.prototype.createContainer_ = function () {
-            var container = this.document_.createElement('div');
+            var container = Datepicker.document_.createElement('div');
             container.className = this.options.prefixClass_('container');
-            container.style.position = 'absolute';
-            container.style.zIndex = '99';
+            if (!this.options.isFullScreenOnMobile()) {
+                container.className += ' ' + this.options.prefixClass_('container--no-mobile');
+            }
             return container;
         };
         Datepicker.prototype.createDeselectElement_ = function () {
@@ -582,12 +583,9 @@ var TheDatepicker;
             if (!this.isInputTextBox_ || !this.options.isDeselectButtonShown() || this.deselectElement_ !== null) {
                 return null;
             }
-            var deselectElement = this.document_.createElement('span');
-            deselectElement.style.position = 'absolute';
-            var deselectButton = this.document_.createElement('a');
+            var deselectElement = Datepicker.document_.createElement('span');
+            var deselectButton = Datepicker.document_.createElement('a');
             deselectButton.innerHTML = this.options.getDeselectHtml();
-            deselectButton.style.position = 'relative';
-            deselectButton.style.left = '-0.8em';
             deselectButton.href = '#';
             deselectButton.onclick = function (event) {
                 event = event || window.event;
@@ -627,9 +625,9 @@ var TheDatepicker;
                         Datepicker.activateViewModel_(event, null);
                     }
                 };
-                TheDatepicker.Helper_.addEventListener_(this.document_, TheDatepicker.ListenerType_.MouseDown, checkMiss);
-                TheDatepicker.Helper_.addEventListener_(this.document_, TheDatepicker.ListenerType_.FocusIn, checkMiss);
-                TheDatepicker.Helper_.addEventListener_(this.document_, TheDatepicker.ListenerType_.KeyDown, function (event) {
+                TheDatepicker.Helper_.addEventListener_(Datepicker.document_, TheDatepicker.ListenerType_.MouseDown, checkMiss);
+                TheDatepicker.Helper_.addEventListener_(Datepicker.document_, TheDatepicker.ListenerType_.FocusIn, checkMiss);
+                TheDatepicker.Helper_.addEventListener_(Datepicker.document_, TheDatepicker.ListenerType_.KeyDown, function (event) {
                     if (Datepicker.activeViewModel_ !== null) {
                         Datepicker.activeViewModel_.triggerKeyPress_(event);
                     }
@@ -688,10 +686,10 @@ var TheDatepicker;
             if (this.isContainerExternal_ || this.initializationPhase_ === InitializationPhase.Destroyed) {
                 return;
             }
-            var windowTop = window.pageYOffset || this.document_.documentElement.scrollTop;
-            var windowLeft = window.pageXOffset || this.document_.documentElement.scrollLeft;
-            var windowHeight = window.innerHeight || Math.max(this.document_.documentElement.clientHeight, this.document_.body.clientHeight);
-            var windowWidth = window.innerWidth || Math.max(this.document_.documentElement.clientWidth, this.document_.body.clientWidth);
+            var windowTop = window.pageYOffset || Datepicker.document_.documentElement.scrollTop;
+            var windowLeft = window.pageXOffset || Datepicker.document_.documentElement.scrollLeft;
+            var windowHeight = window.innerHeight || Math.max(Datepicker.document_.documentElement.clientHeight, Datepicker.document_.body.clientHeight);
+            var windowWidth = window.innerWidth || Math.max(Datepicker.document_.documentElement.clientWidth, Datepicker.document_.body.clientWidth);
             var windowBottom = windowTop + windowHeight;
             var windowRight = windowLeft + windowWidth;
             var inputTop = 0;
@@ -724,7 +722,10 @@ var TheDatepicker;
             if (locateLeft) {
                 locationClass += ' ' + this.options.prefixClass_('container--left');
             }
-            this.container.className = this.options.prefixClass_('container') + locationClass;
+            var mobileClass = this.options.isFullScreenOnMobile()
+                ? ''
+                : ' ' + this.options.prefixClass_('container--no-mobile');
+            this.container.className = this.options.prefixClass_('container') + locationClass + mobileClass;
             if (mainElement !== null && (locateOver || locateLeft)) {
                 if (locateOver) {
                     var moveTop = inputHeight + containerHeight;
@@ -735,6 +736,25 @@ var TheDatepicker;
                     mainElement.style.left = '-' + moveLeft + 'px';
                 }
                 mainElement.style.position = 'absolute';
+            }
+        };
+        Datepicker.setBodyClass_ = function (enable) {
+            var pageClass = 'the-datepicker-page';
+            var body = Datepicker.document_.body;
+            var className = body.className;
+            var hasClass = className.indexOf(pageClass) > -1;
+            if (!hasClass && enable) {
+                body.className += (className.length > 0 ? ' ' : '') + pageClass;
+            }
+            else if (hasClass && !enable) {
+                var search = pageClass;
+                if (className.indexOf(' ' + pageClass) > -1) {
+                    search = ' ' + pageClass;
+                }
+                else if (className.indexOf(pageClass + ' ') > -1) {
+                    search = pageClass + ' ';
+                }
+                body.className = className.replace(search, '');
             }
         };
         Datepicker.activateViewModel_ = function (event, datepicker) {
@@ -750,6 +770,7 @@ var TheDatepicker;
                 return true;
             }
             if (viewModel === null) {
+                Datepicker.setBodyClass_(false);
                 Datepicker.activeViewModel_ = null;
                 return true;
             }
@@ -760,6 +781,7 @@ var TheDatepicker;
                 return true;
             }
             datepicker.fixPosition_();
+            Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
             Datepicker.activeViewModel_ = viewModel;
             return true;
         };
@@ -1228,6 +1250,7 @@ var TheDatepicker;
             this.resetHtml_ = '&olarr;';
             this.deselectHtml_ = '&times;';
             this.positionFixing_ = true;
+            this.fullScreenOnMobile_ = true;
             this.today_ = null;
             this.listeners_ = {
                 beforeSelect: [],
@@ -1284,6 +1307,7 @@ var TheDatepicker;
             options.resetHtml_ = this.resetHtml_;
             options.deselectHtml_ = this.deselectHtml_;
             options.positionFixing_ = this.positionFixing_;
+            options.fullScreenOnMobile_ = this.fullScreenOnMobile_;
             options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
             options.listeners_.select = this.listeners_.select.slice(0);
             options.listeners_.beforeOpenAndClose = this.listeners_.beforeOpenAndClose.slice(0);
@@ -1456,6 +1480,9 @@ var TheDatepicker;
         };
         Options.prototype.setPositionFixing = function (value) {
             this.positionFixing_ = !!value;
+        };
+        Options.prototype.setFullScreenOnMobile = function (value) {
+            this.fullScreenOnMobile_ = !!value;
         };
         Options.prototype.setToday = function (date) {
             this.today_ = TheDatepicker.Helper_.normalizeDate_('Today', date, this);
@@ -1785,6 +1812,9 @@ var TheDatepicker;
         };
         Options.prototype.isPositionFixingEnabled = function () {
             return this.hideOnBlur_ && this.positionFixing_;
+        };
+        Options.prototype.isFullScreenOnMobile = function () {
+            return this.hideOnBlur_ && this.fullScreenOnMobile_;
         };
         Options.prototype.getToday = function () {
             return this.today_ !== null ? new Date(this.today_.getTime()) : TheDatepicker.Helper_.resetTime_(new Date());
@@ -2447,6 +2477,7 @@ var TheDatepicker;
                     viewModel.close_(event);
                 }
             });
+            this.htmlHelper_.addClass_(cellButton, 'day-button');
             cellButton.onfocus = function (event) {
                 viewModel.highlightDay_(event || window.event, cellButton.day);
             };
