@@ -144,9 +144,13 @@ namespace TheDatepicker {
 				case 'd':
 					return this.formatDayWithLeadingZero_;
 
-				// Textual representation of a day of the week; Mo through Su
+				// Short textual representation of a day of the week; Mo through Su
 				case 'D':
 					return this.formatDayOfWeekTextual_;
+
+				// Textual representation of a day of the week; Monday through Sunday
+				case 'l':
+					return this.formatDayOfWeekTextualFull_;
 
 				// Numeric representation of a month; 1 through 12
 				case 'n':
@@ -189,6 +193,10 @@ namespace TheDatepicker {
 			return this.options_.translator.translateDayOfWeek(date.getDay());
 		}
 
+		private formatDayOfWeekTextualFull_(date: Date): string {
+			return this.options_.translator.translateDayOfWeekFull(date.getDay());
+		}
+
 		private formatMonth_(date: Date): string {
 			return (date.getMonth() + 1) + '';
 		}
@@ -222,6 +230,9 @@ namespace TheDatepicker {
 
 				case 'D':
 					return this.parseDayOfWeekTextual_;
+
+				case 'l':
+					return this.parseDayOfWeekTextualFull_;
 
 				case 'n':
 				case 'm':
@@ -265,9 +276,21 @@ namespace TheDatepicker {
 		}
 
 		private parseDayOfWeekTextual_(text: string): number {
+			return this.parseDayOfWeekByTranslator_(text, (dayOfWeek: DayOfWeek): string => {
+				return this.options_.translator.translateDayOfWeek(dayOfWeek);
+			});
+		}
+
+		private parseDayOfWeekTextualFull_(text: string): number {
+			return this.parseDayOfWeekByTranslator_(text, (dayOfWeek: DayOfWeek): string => {
+				return this.options_.translator.translateDayOfWeekFull(dayOfWeek);
+			});
+		}
+
+		private parseDayOfWeekByTranslator_(text: string, translate: (dayOfWeek: DayOfWeek) => string): number {
 			let maxLength = 0;
 			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-				const translation = this.options_.translator.translateDayOfWeek(dayOfWeek);
+				const translation = translate(dayOfWeek);
 				maxLength = Math.max(maxLength, translation.length);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
@@ -308,21 +331,20 @@ namespace TheDatepicker {
 		}
 
 		private parseMonthTextual_(text: string, dateData: ParsedDateData): number {
-			for (let month = 1; month <= 12; month++) {
-				const translation = this.options_.translator.translateMonth(month - 1);
-
-				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-					dateData.month = month;
-					return translation.length;
-				}
-			}
-
-			throw new CannotParseDateException();
+			return this.parseMonthByTranslator_(text, dateData, (month: Month): string => {
+				return this.options_.translator.translateMonth(month);
+			});
 		}
 
 		private parseMonthTextualShort_(text: string, dateData: ParsedDateData): number {
+			return this.parseMonthByTranslator_(text, dateData, (month: Month): string => {
+				return this.options_.translator.translateMonthShort(month);
+			});
+		}
+
+		private parseMonthByTranslator_(text: string, dateData: ParsedDateData, translate: (month: Month) => string): number {
 			for (let month = 1; month <= 12; month++) {
-				const translation = this.options_.translator.translateMonthShort(month - 1);
+				const translation = translate(month - 1);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
 					dateData.month = month;

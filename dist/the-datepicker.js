@@ -127,6 +127,8 @@ var TheDatepicker;
                     return this.formatDayWithLeadingZero_;
                 case 'D':
                     return this.formatDayOfWeekTextual_;
+                case 'l':
+                    return this.formatDayOfWeekTextualFull_;
                 case 'n':
                     return this.formatMonth_;
                 case 'm':
@@ -151,6 +153,9 @@ var TheDatepicker;
         };
         DateConverter_.prototype.formatDayOfWeekTextual_ = function (date) {
             return this.options_.translator.translateDayOfWeek(date.getDay());
+        };
+        DateConverter_.prototype.formatDayOfWeekTextualFull_ = function (date) {
+            return this.options_.translator.translateDayOfWeekFull(date.getDay());
         };
         DateConverter_.prototype.formatMonth_ = function (date) {
             return (date.getMonth() + 1) + '';
@@ -178,6 +183,8 @@ var TheDatepicker;
                     return this.parseDay_;
                 case 'D':
                     return this.parseDayOfWeekTextual_;
+                case 'l':
+                    return this.parseDayOfWeekTextualFull_;
                 case 'n':
                 case 'm':
                     return this.parseMonth_;
@@ -210,9 +217,21 @@ var TheDatepicker;
             return took + day.length;
         };
         DateConverter_.prototype.parseDayOfWeekTextual_ = function (text) {
+            var _this = this;
+            return this.parseDayOfWeekByTranslator_(text, function (dayOfWeek) {
+                return _this.options_.translator.translateDayOfWeek(dayOfWeek);
+            });
+        };
+        DateConverter_.prototype.parseDayOfWeekTextualFull_ = function (text) {
+            var _this = this;
+            return this.parseDayOfWeekByTranslator_(text, function (dayOfWeek) {
+                return _this.options_.translator.translateDayOfWeekFull(dayOfWeek);
+            });
+        };
+        DateConverter_.prototype.parseDayOfWeekByTranslator_ = function (text, translate) {
             var maxLength = 0;
             for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-                var translation = this.options_.translator.translateDayOfWeek(dayOfWeek);
+                var translation = translate(dayOfWeek);
                 maxLength = Math.max(maxLength, translation.length);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     return translation.length;
@@ -245,18 +264,20 @@ var TheDatepicker;
             return took + month.length;
         };
         DateConverter_.prototype.parseMonthTextual_ = function (text, dateData) {
-            for (var month = 1; month <= 12; month++) {
-                var translation = this.options_.translator.translateMonth(month - 1);
-                if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-                    dateData.month = month;
-                    return translation.length;
-                }
-            }
-            throw new CannotParseDateException();
+            var _this = this;
+            return this.parseMonthByTranslator_(text, dateData, function (month) {
+                return _this.options_.translator.translateMonth(month);
+            });
         };
         DateConverter_.prototype.parseMonthTextualShort_ = function (text, dateData) {
+            var _this = this;
+            return this.parseMonthByTranslator_(text, dateData, function (month) {
+                return _this.options_.translator.translateMonthShort(month);
+            });
+        };
+        DateConverter_.prototype.parseMonthByTranslator_ = function (text, dateData, translate) {
             for (var month = 1; month <= 12; month++) {
-                var translation = this.options_.translator.translateMonthShort(month - 1);
+                var translation = translate(month - 1);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     dateData.month = month;
                     return translation.length;
@@ -2477,6 +2498,15 @@ var TheDatepicker;
     var Translator = (function () {
         function Translator() {
             var _a;
+            this.dayOfWeekFullTranslations_ = [
+                'Sunday',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+            ];
             this.dayOfWeekTranslations_ = [
                 'Su',
                 'Mo',
@@ -2524,6 +2554,9 @@ var TheDatepicker;
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
             this.dayOfWeekTranslations_[TheDatepicker.Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation);
         };
+        Translator.prototype.setDayOfWeekFullTranslation = function (dayOfWeek, translation) {
+            this.dayOfWeekFullTranslations_[TheDatepicker.Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation);
+        };
         Translator.prototype.setMonthTranslation = function (month, translation) {
             this.monthTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation);
         };
@@ -2535,6 +2568,9 @@ var TheDatepicker;
         };
         Translator.prototype.translateDayOfWeek = function (dayOfWeek) {
             return this.dayOfWeekTranslations_[dayOfWeek];
+        };
+        Translator.prototype.translateDayOfWeekFull = function (dayOfWeek) {
+            return this.dayOfWeekFullTranslations_[dayOfWeek];
         };
         Translator.prototype.translateMonth = function (month) {
             return this.monthTranslations_[month];

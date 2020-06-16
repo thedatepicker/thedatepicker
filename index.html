@@ -365,6 +365,28 @@ return header;
 				</li>
 
 				<li>
+					<label>datepicker.options.translator.setDayOfWeekFullTranslation(TheDatepicker.DayOfWeek.Monday, "<input type="text" size="15" id="dayOfWeekFullTranslation1" value="Monday">");</label> <span class="error" id="dayOfWeekFullTranslation1Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekFullTranslation(TheDatepicker.DayOfWeek.Tuesday, "<input type="text" size="15" id="dayOfWeekFullTranslation2" value="Tuesday">");</label> <span class="error" id="dayOfWeekFullTranslation2Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekFullTranslation(TheDatepicker.DayOfWeek.Wednesday, "<input type="text" size="15" id="dayOfWeekFullTranslation3" value="Wednesday">");</label> <span class="error" id="dayOfWeekFullTranslation3Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekFullTranslation(TheDatepicker.DayOfWeek.Thursday, "<input type="text" size="15" id="dayOfWeekFullTranslation4" value="Thursday">");</label> <span class="error" id="dayOfWeekFullTranslation4Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekFullTranslation(TheDatepicker.DayOfWeek.Friday, "<input type="text" size="15" id="dayOfWeekFullTranslation5" value="Friday">");</label> <span class="error" id="dayOfWeekFullTranslation5Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekFullTranslation(TheDatepicker.DayOfWeek.Saturday, "<input type="text" size="15" id="dayOfWeekFullTranslation6" value="Saturday">");</label> <span class="error" id="dayOfWeekFullTranslation6Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setDayOfWeekFullTranslation(TheDatepicker.DayOfWeek.Sunday, "<input type="text" size="15" id="dayOfWeekFullTranslation0" value="Sunday">");</label> <span class="error" id="dayOfWeekFullTranslation0Error"></span>
+				</li>
+
+				<li>
 					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.January, "<input type="text" size="15" id="monthTranslation0" value="January">");</label> <span class="error" id="monthTranslation0Error"></span>
 				</li>
 				<li>
@@ -1000,6 +1022,18 @@ return header;
 					dayOfWeekTranslationInput.onchange = function () {
 						updateSetting(dayOfWeekTranslationInput, function () {
 							datepicker.options.translator.setDayOfWeekTranslation(dayOfWeek, dayOfWeekTranslationInput.value);
+						});
+					};
+				})();
+			}
+
+			for (var i = 0; i < 7; i++) {
+				(function () {
+					var dayOfWeek = i;
+					var dayOfWeekFullTranslationInput = document.getElementById('dayOfWeekFullTranslation' + dayOfWeek);
+					dayOfWeekFullTranslationInput.onchange = function () {
+						updateSetting(dayOfWeekFullTranslationInput, function () {
+							datepicker.options.translator.setDayOfWeekFullTranslation(dayOfWeek, dayOfWeekFullTranslationInput.value);
 						});
 					};
 				})();

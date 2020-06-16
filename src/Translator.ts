@@ -9,6 +9,16 @@ namespace TheDatepicker {
 
 	export class Translator {
 
+		private dayOfWeekFullTranslations_ = [
+			'Sunday',
+			'Monday',
+			'Tuesday',
+			'Wednesday',
+			'Thursday',
+			'Friday',
+			'Saturday',
+		];
+
 		private dayOfWeekTranslations_ = [
 			'Su',
 			'Mo',
@@ -60,6 +70,10 @@ namespace TheDatepicker {
 			this.dayOfWeekTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation);
 		}
 
+		public setDayOfWeekFullTranslation(dayOfWeek: DayOfWeek, translation: string): void {
+			this.dayOfWeekFullTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation);
+		}
+
 		public setMonthTranslation(month: Month, translation: string): void {
 			this.monthTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation);
 		}
@@ -74,6 +88,10 @@ namespace TheDatepicker {
 
 		public translateDayOfWeek(dayOfWeek: DayOfWeek): string {
 			return this.dayOfWeekTranslations_[dayOfWeek];
+		}
+
+		public translateDayOfWeekFull(dayOfWeek: DayOfWeek): string {
+			return this.dayOfWeekFullTranslations_[dayOfWeek];
 		}
 
 		public translateMonth(month: Month): string {
