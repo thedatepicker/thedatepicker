@@ -61,8 +61,6 @@ namespace TheDatepicker {
 		private hideOnSelect_ = true;
 		private minDate_: Date | null = null;
 		private maxDate_: Date | null = null;
-		private minMonth_: Date | null = null;
-		private maxMonth_: Date | null = null;
 		private initialDate_: Date | null = null;
 		private initialMonth_: Date | null = null;
 		private initialDatePriority_ = true;
@@ -123,8 +121,6 @@ namespace TheDatepicker {
 			options.hideOnSelect_ = this.hideOnSelect_;
 			options.minDate_ = this.minDate_;
 			options.maxDate_ = this.maxDate_;
-			options.minMonth_ = this.minMonth_;
-			options.maxMonth_ = this.maxMonth_;
 			options.initialDate_ = this.initialDate_;
 			options.initialMonth_ = this.initialMonth_;
 			options.initialDatePriority_ = this.initialDatePriority_;
@@ -202,7 +198,6 @@ namespace TheDatepicker {
 			const normalizedDate = Helper_.normalizeDate_('Min date', date, this);
 			this.checkConstraints_(normalizedDate, this.maxDate_);
 			this.minDate_ = normalizedDate;
-			this.minMonth_ = Helper_.normalizeMonth_(normalizedDate);
 		}
 
 		// Maximal date which can be selected (inclusive).
@@ -218,7 +213,6 @@ namespace TheDatepicker {
 			const normalizedDate = Helper_.normalizeDate_('Max date', date, this);
 			this.checkConstraints_(this.minDate_, normalizedDate);
 			this.maxDate_ = normalizedDate;
-			this.maxMonth_ = Helper_.normalizeMonth_(normalizedDate);
 		}
 
 		// Month to be rendered when datepicker opened first time.
@@ -665,13 +659,16 @@ namespace TheDatepicker {
 				return date;
 			}
 
+			const minDate = this.getMinDate_().getTime();
+			const maxDate = this.getMaxDate_().getTime();
+
 			let maxLoops = 1000; // infinite loop prevention
 			let increasedDate: Date | null = date;
 			let decreasedDate: Date | null = new Date(date.getTime());
 			do {
 				if (increasedDate !== null) {
 					increasedDate.setDate(increasedDate.getDate() + 1);
-					if (this.maxDate_ !== null && increasedDate.getTime() > this.maxDate_.getTime()) {
+					if (increasedDate.getTime() > maxDate) {
 						increasedDate = null;
 					} else if (this.isDateAvailable(increasedDate)) {
 						return increasedDate;
@@ -680,7 +677,7 @@ namespace TheDatepicker {
 
 				if (decreasedDate !== null) {
 					decreasedDate.setDate(decreasedDate.getDate() - 1);
-					if (this.minDate_ !== null && decreasedDate.getTime() < this.minDate_.getTime()) {
+					if (decreasedDate.getTime() < minDate) {
 						decreasedDate = null;
 					} else if (this.isDateAvailable(decreasedDate)) {
 						return decreasedDate;
@@ -767,19 +764,72 @@ namespace TheDatepicker {
 		}
 
 		public getMinDate(): Date | null {
-			return this.minDate_;
+			return this.minDate_ !== null ? new Date(this.minDate_.getTime()) : null;
 		}
 
 		public getMaxDate(): Date | null {
-			return this.maxDate_;
+			return this.maxDate_ !== null ? new Date(this.maxDate_.getTime()) : null;
+		}
+
+		public getMinDate_(): Date {
+			const minDate = this.getMinDate();
+			if (minDate === null) {
+				// Previous month is out of range
+				return new Date(-271821, 4, 1);
+			}
+
+			return minDate;
+		}
+
+		public getMaxDate_(): Date {
+			const maxDate = this.getMaxDate();
+			if (maxDate === null) {
+				// Next month is out of range
+				return new Date(275760, 7, 31);
+			}
+
+			return maxDate;
 		}
 
 		public getMinMonth(): Date | null {
-			return this.minMonth_;
+			if (this.minDate_ === null) {
+				return null;
+			}
+
+			const minMonth = new Date(this.minDate_.getTime());
+			minMonth.setDate(1);
+
+			return minMonth;
 		}
 
 		public getMaxMonth(): Date | null {
-			return this.maxMonth_;
+			if (this.maxDate_ === null) {
+				return null;
+			}
+
+			const maxMonth = new Date(this.maxDate_.getTime());
+			maxMonth.setDate(1);
+
+			return maxMonth;
+		}
+
+		public getMinMonth_(): Date {
+			let minMonth = this.getMinMonth();
+			if (minMonth === null) {
+				minMonth = this.getMinDate_();
+			}
+
+			return minMonth;
+		}
+
+		public getMaxMonth_(): Date {
+			let maxMonth = this.getMaxMonth();
+			if (maxMonth === null) {
+				maxMonth = this.getMaxDate_();
+				maxMonth.setDate(1);
+			}
+
+			return maxMonth;
 		}
 
 		public isDropdownWithOneItemHidden(): boolean {
@@ -977,13 +1027,13 @@ namespace TheDatepicker {
 		}
 
 		private calculateMonthCorrection_(month: Date): Date | null {
-			const minMonth = this.getMinMonth();
-			if (minMonth !== null && month.getTime() < minMonth.getTime()) {
+			const minMonth = this.getMinMonth_();
+			if (month.getTime() < minMonth.getTime()) {
 				return minMonth;
 			}
 
-			const maxMonth = this.getMaxMonth();
-			if (maxMonth !== null && month.getTime() > maxMonth.getTime()) {
+			const maxMonth = this.getMaxMonth_();
+			if (month.getTime() > maxMonth.getTime()) {
 				return maxMonth;
 			}
 
@@ -991,12 +1041,14 @@ namespace TheDatepicker {
 		}
 
 		private calculateDateCorrection_(date: Date): Date | null {
-			if (this.minDate_ !== null && date.getTime() < this.minDate_.getTime()) {
-				return new Date(this.minDate_.getTime());
+			const minDate = this.getMinDate_();
+			if (date.getTime() < minDate.getTime()) {
+				return minDate;
 			}
 
-			if (this.maxDate_ !== null && date.getTime() > this.maxDate_.getTime()) {
-				return new Date(this.maxDate_.getTime());
+			const maxDate = this.getMaxDate_();
+			if (date.getTime() > maxDate.getTime()) {
+				return maxDate;
 			}
 
 			return null;

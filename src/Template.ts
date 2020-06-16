@@ -326,12 +326,12 @@ namespace TheDatepicker {
 				let newMonth = new Date(currentMonth.getTime());
 				newMonth.setFullYear(parseInt(year, 10));
 
-				const minMonth = this.options_.getMinMonth();
-				const maxMonth = this.options_.getMaxMonth();
-				if (minMonth !== null && newMonth.getTime() < minMonth.getTime()) {
+				const minMonth = this.options_.getMinMonth_();
+				const maxMonth = this.options_.getMaxMonth_();
+				if (newMonth.getTime() < minMonth.getTime()) {
 					newMonth = minMonth;
 				}
-				if (maxMonth !== null && newMonth.getTime() > maxMonth.getTime()) {
+				if (newMonth.getTime() > maxMonth.getTime()) {
 					newMonth = maxMonth;
 				}
 
@@ -365,10 +365,8 @@ namespace TheDatepicker {
 				return;
 			}
 
-			const minDate = this.options_.getMinDate();
-			const maxDate = this.options_.getMaxDate();
-			const minYear = minDate !== null ? minDate.getFullYear() : null;
-			const maxYear = maxDate !== null ? maxDate.getFullYear() : null;
+			const minYear = this.options_.getMinDate_().getFullYear();
+			const maxYear = this.options_.getMaxDate_().getFullYear();
 			const range = this.calculateDropdownRange_(currentYear, minYear, maxYear);
 
 			const options = this.yearSelect_.getElementsByTagName('option');
@@ -439,10 +437,10 @@ namespace TheDatepicker {
 				return;
 			}
 
-			const minDate = this.options_.getMinDate();
-			const maxDate = this.options_.getMaxDate();
-			const minIndex = minDate !== null ? minDate.getFullYear() * 12 + minDate.getMonth() : null;
-			const maxIndex = maxDate !== null ? maxDate.getFullYear() * 12 + maxDate.getMonth() : null;
+			const minDate = this.options_.getMinDate_();
+			const maxDate = this.options_.getMaxDate_();
+			const minIndex = minDate.getFullYear() * 12 + minDate.getMonth();
+			const maxIndex = maxDate.getFullYear() * 12 + maxDate.getMonth();
 			const range = this.calculateDropdownRange_(currentIndex, minIndex, maxIndex);
 
 			const options = this.monthAndYearSelect_.getElementsByTagName('option');
@@ -496,20 +494,20 @@ namespace TheDatepicker {
 			}
 		}
 
-		private calculateDropdownRange_(current: number, min: number | null, max: number | null): Range {
+		private calculateDropdownRange_(current: number, min: number, max: number): Range {
 			const limit = this.options_.getDropdownItemsLimit() - 1;
 			const maxAppend = Math.ceil(limit / 2);
 			let from = current - (limit - maxAppend);
 			let to = current + maxAppend;
-			if (min !== null && from < min) {
+			if (from < min) {
 				to += min - from;
-				if (max !== null && to > max) {
+				if (to > max) {
 					to = max;
 				}
 				from = min;
-			} else if (max !== null && to > max) {
+			} else if (to > max) {
 				from -= to - max;
-				if (min !== null && from < min) {
+				if (from < min) {
 					from = min;
 				}
 				to = max;

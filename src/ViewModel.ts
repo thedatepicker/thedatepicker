@@ -88,6 +88,10 @@ namespace TheDatepicker {
 		}
 
 		public canGoToMonth_(month: Date): boolean {
+			if (!Helper_.isValidDate_(month)) {
+				return false;
+			}
+
 			return this.options_.isMonthInValidity(month);
 		}
 
@@ -236,7 +240,7 @@ namespace TheDatepicker {
 
 		public highlightFirstAvailableDay_(event: Event): boolean {
 			let date = new Date(this.getCurrentMonth_().getTime());
-			const maxDate = this.options_.getMaxDate();
+			const maxDate = this.options_.getMaxDate_();
 
 			let day = this.createDay_(date);
 			while (!day.isAvailable) {
@@ -244,7 +248,7 @@ namespace TheDatepicker {
 				if (date.getDate() === 1) {
 					break;
 				}
-				if (maxDate !== null && date.getTime() > maxDate.getTime()) {
+				if (date.getTime() > maxDate.getTime()) {
 					break;
 				}
 

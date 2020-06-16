@@ -112,27 +112,19 @@ namespace TheDatepicker {
 					return date;
 				}
 
-				const date = new Date(value);
+				const date = Helper_.resetTime_(new Date(value));
 				if (!isNaN(date.getTime())) {
-					return Helper_.resetTime_(date);
+					return date;
 				}
 
 			} else if (Helper_.isValidDate_(value)) {
-				return Helper_.resetTime_(new Date(value.getTime()));
+				const date = Helper_.resetTime_(new Date(value.getTime()));
+				if (!isNaN(date.getTime())) {
+					return date;
+				}
 			}
 
 			throw new Error(parameterName + ' was expected to be a valid Date string or valid Date or Day or null.');
-		}
-
-		public static normalizeMonth_(date: Date | null): Date | null {
-			if (date === null) {
-				return null;
-			}
-
-			const month = new Date(date.getTime());
-			month.setDate(1);
-
-			return month;
 		}
 
 		public static isElement_(element: HTMLElement): boolean {

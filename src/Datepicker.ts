@@ -19,7 +19,6 @@ namespace TheDatepicker {
 	// todo favicona
 	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
 	// todo všechny definice anonymních fcí můřou mít return typehint
-	// todo 13. 9. 275760 resp. 20. 4. -271821 se nezobrazí a dál vyvolá Maximum call stack size exceeded
 	// todo v optionech kterým se předává callback by bylo fajn dostat se k datepickeru (on* už se předává v this)
 	// todo proč styly containeru a deselectu nemám v css?
 	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
@@ -39,6 +38,7 @@ namespace TheDatepicker {
 	// todo zbavit se ts-ignore
 	// todo LICENSE file (issue)
 	// todo další formátery? https://www.php.net/manual/en/function.date.php
+	// todo testy
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
@@ -313,7 +313,7 @@ namespace TheDatepicker {
 		}
 
 		public getCurrentMonth(): Date {
-			return this.viewModel_.getCurrentMonth_();
+			return new Date(this.viewModel_.getCurrentMonth_().getTime());
 		}
 
 		public goToMonth(month: Date | string, event: Event | null = null): boolean {
