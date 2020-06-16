@@ -85,6 +85,7 @@ namespace TheDatepicker {
 		private monthAsDropdown_ = true;
 		private yearAsDropdown_ = true;
 		private monthAndYearSeparated_ = true;
+		private monthShort_ = false;
 		private changeMonthOnSwipe_ = true;
 		private animateMonthChange_ = true;
 		private classesPrefix_ = 'the-datepicker__';
@@ -146,6 +147,7 @@ namespace TheDatepicker {
 			options.monthAsDropdown_ = this.monthAsDropdown_;
 			options.yearAsDropdown_ = this.yearAsDropdown_;
 			options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
+			options.monthShort_ = this.monthShort_;
 			options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
 			options.animateMonthChange_ = this.animateMonthChange_;
 			options.classesPrefix_ = this.classesPrefix_;
@@ -425,6 +427,12 @@ namespace TheDatepicker {
 		// defaults to true
 		public setMonthAndYearSeparated(value: boolean): void {
 			this.monthAndYearSeparated_ = !!value;
+		}
+
+		// Setting to true will dump month name in short textual representation.
+		// defaults to false
+		public setMonthShort(value: boolean): void {
+			this.monthShort_ = !!value;
 		}
 
 		// Setting to true will enable changing of month on finger left-to-right or right-to-left swipe.
@@ -732,6 +740,10 @@ namespace TheDatepicker {
 
 		public isMonthAndYearSeparated(): boolean {
 			return this.monthAndYearSeparated_;
+		}
+
+		public isMonthShort(): boolean {
+			return this.monthShort_;
 		}
 
 		public isMonthChangeOnSwipeEnabled_(): boolean {

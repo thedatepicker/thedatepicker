@@ -264,7 +264,7 @@ namespace TheDatepicker {
 			for (let monthNumber = 0; monthNumber < 12; monthNumber++) {
 				options.push({
 					value: monthNumber + '',
-					label: this.options_.translator.translateMonth(monthNumber),
+					label: this.translateMonth(monthNumber),
 				});
 			}
 
@@ -294,7 +294,7 @@ namespace TheDatepicker {
 			}
 
 			const currentMonth = viewModel.getCurrentMonth_().getMonth();
-			this.monthElement_.innerText = this.options_.translator.translateMonth(currentMonth);
+			this.monthElement_.innerText = this.translateMonth(currentMonth);
 
 			if (!this.options_.isMonthAsDropdown()) {
 				this.monthSelect_.style.display = 'none';
@@ -470,7 +470,7 @@ namespace TheDatepicker {
 		}
 
 		private translateMonthAndYear_(data: MonthAndYear): string {
-			return this.options_.translator.translateMonth(data.month) + ' ' + data.year;
+			return this.translateMonth(data.month) + ' ' + data.year;
 		}
 
 		private calculateMonthAndYearIndex_(data: MonthAndYear): number {
@@ -775,6 +775,12 @@ namespace TheDatepicker {
 			this.bodyElement_.className = this.options_.prefixClass_('body');
 			this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
 			this.htmlHelper_.addClass_(this.bodyElement_, animationOut);
+		}
+
+		private translateMonth(monthNumber: number): string {
+			return this.options_.isMonthShort()
+				? this.options_.translator.translateMonthShort(monthNumber)
+				: this.options_.translator.translateMonth(monthNumber);
 		}
 
 	}

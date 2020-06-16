@@ -194,6 +194,9 @@
 					<label>datepicker.options.setMonthAndYearSeparated(<input type="checkbox" id="monthAndYearSeparated" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setMonthShort(<input type="checkbox" id="monthShort">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setChangeMonthOnSwipe(<input type="checkbox" id="changeMonthOnSwipe" checked="checked">);</label>
 				</li>
 				<li>
@@ -397,6 +400,44 @@ return header;
 				<li>
 					<label>datepicker.options.translator.setMonthTranslation(TheDatepicker.Month.December, "<input type="text" size="15" id="monthTranslation11" value="December">");</label> <span class="error" id="monthTranslation11Error"></span>
 				</li>
+
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.January, "<input type="text" size="15" id="monthShortTranslation0" value="Jan">");</label> <span class="error" id="monthShortTranslation0Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.February, "<input type="text" size="15" id="monthShortTranslation1" value="Feb">");</label> <span class="error" id="monthShortTranslation1Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.March, "<input type="text" size="15" id="monthShortTranslation2" value="Mar">");</label> <span class="error" id="monthShortTranslation2Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.April, "<input type="text" size="15" id="monthShortTranslation3" value="Apr">");</label> <span class="error" id="monthShortTranslation3Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.May "<input type="text" size="15" id="monthShortTranslation4" value="May">);</label> <span class="error" id="monthShortTranslation4Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.June, "<input type="text" size="15" id="monthShortTranslation5" value="Jun">");</label> <span class="error" id="monthShortTranslation5Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.July, "<input type="text" size="15" id="monthShortTranslation6" value="Jul">");</label> <span class="error" id="monthShortTranslation6Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.August, "<input type="text" size="15" id="monthShortTranslation7" value="Aug">");</label> <span class="error" id="monthShortTranslation7Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.September, "<input type="text" size="15" id="monthShortTranslation8" value="Sep">");</label> <span class="error" id="monthShortTranslation8Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.October, "<input type="text" size="15" id="monthShortTranslation9" value="Oct">");</label> <span class="error" id="monthShortTranslation9Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.November, "<input type="text" size="15" id="monthShortTranslation10" value="Nov">");</label> <span class="error" id="monthShortTranslation10Error"></span>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setMonthShortTranslation(TheDatepicker.Month.December, "<input type="text" size="15" id="monthShortTranslation11" value="Dec">");</label> <span class="error" id="monthShortTranslation11Error"></span>
+				</li>
+
 				<li>
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoBack, "<input type="text" size="15" id="goBackTranslation" value="Previous month">");</label>
 				</li>
@@ -711,6 +752,13 @@ return header;
 				});
 			};
 
+			var monthShortInput = document.getElementById('monthShort');
+			monthShortInput.onchange = function () {
+				updateSetting(monthShortInput, function () {
+					datepicker.options.setMonthShort(monthShortInput.checked);
+				});
+			};
+
 			var changeMonthOnSwipeInput = document.getElementById('changeMonthOnSwipe');
 			changeMonthOnSwipeInput.onchange = function () {
 				updateSetting(changeMonthOnSwipeInput, function () {
@@ -964,6 +1012,18 @@ return header;
 					monthTranslationInput.onchange = function () {
 						updateSetting(monthTranslationInput, function () {
 							datepicker.options.translator.setMonthTranslation(month, monthTranslationInput.value);
+						});
+					};
+				})();
+			}
+
+			for (var j = 0; j < 12; j++) {
+				(function () {
+					var month = j;
+					var monthShortTranslationInput = document.getElementById('monthShortTranslation' + month);
+					monthShortTranslationInput.onchange = function () {
+						updateSetting(monthShortTranslationInput, function () {
+							datepicker.options.translator.setMonthShortTranslation(month, monthShortTranslationInput.value);
 						});
 					};
 				})();

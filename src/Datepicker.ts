@@ -37,7 +37,6 @@ namespace TheDatepicker {
 	// todo ARIA ?
 	// todo slide animace změny měsíce
 	// todo zbavit se ts-ignore
-	// todo tam co mám v demu "this instanceof" tak by neměla být short function
 	// todo krátká forma měsíců v translátoru (případně další - den v týdnu dlouhá forma..)
 	// todo do dema napsat seznam formáterů (setInputFormat)
 	// todo LICENSE file (issue)

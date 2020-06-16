@@ -160,6 +160,10 @@ namespace TheDatepicker {
 				case 'F':
 					return this.formatMonthTextual_;
 
+				// Short textual representation of a month; Jan through Dec
+				case 'M':
+					return this.formatMonthTextualShort_;
+
 				// Full year; 1999 or 2003
 				case 'Y':
 					return this.formatYear_;
@@ -197,6 +201,10 @@ namespace TheDatepicker {
 			return this.options_.translator.translateMonth(date.getMonth());
 		}
 
+		private formatMonthTextualShort_(date: Date): string {
+			return this.options_.translator.translateMonthShort(date.getMonth());
+		}
+
 		private formatYear_(date: Date): string {
 			return date.getFullYear() + '';
 		}
@@ -221,6 +229,9 @@ namespace TheDatepicker {
 
 				case 'F':
 					return this.parseMonthTextual_;
+
+				case 'M':
+					return this.parseMonthTextualShort_;
 
 				case 'Y':
 					return this.parseYear_;
@@ -299,6 +310,19 @@ namespace TheDatepicker {
 		private parseMonthTextual_(text: string, dateData: ParsedDateData): number {
 			for (let month = 1; month <= 12; month++) {
 				const translation = this.options_.translator.translateMonth(month - 1);
+
+				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
+					dateData.month = month;
+					return translation.length;
+				}
+			}
+
+			throw new CannotParseDateException();
+		}
+
+		private parseMonthTextualShort_(text: string, dateData: ParsedDateData): number {
+			for (let month = 1; month <= 12; month++) {
+				const translation = this.options_.translator.translateMonthShort(month - 1);
 
 				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
 					dateData.month = month;

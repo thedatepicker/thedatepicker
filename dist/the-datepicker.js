@@ -133,6 +133,8 @@ var TheDatepicker;
                     return this.formatMonthWithLeadingZero_;
                 case 'F':
                     return this.formatMonthTextual_;
+                case 'M':
+                    return this.formatMonthTextualShort_;
                 case 'Y':
                     return this.formatYear_;
                 case 'y':
@@ -159,6 +161,9 @@ var TheDatepicker;
         DateConverter_.prototype.formatMonthTextual_ = function (date) {
             return this.options_.translator.translateMonth(date.getMonth());
         };
+        DateConverter_.prototype.formatMonthTextualShort_ = function (date) {
+            return this.options_.translator.translateMonthShort(date.getMonth());
+        };
         DateConverter_.prototype.formatYear_ = function (date) {
             return date.getFullYear() + '';
         };
@@ -178,6 +183,8 @@ var TheDatepicker;
                     return this.parseMonth_;
                 case 'F':
                     return this.parseMonthTextual_;
+                case 'M':
+                    return this.parseMonthTextualShort_;
                 case 'Y':
                     return this.parseYear_;
                 case 'y':
@@ -240,6 +247,16 @@ var TheDatepicker;
         DateConverter_.prototype.parseMonthTextual_ = function (text, dateData) {
             for (var month = 1; month <= 12; month++) {
                 var translation = this.options_.translator.translateMonth(month - 1);
+                if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
+                    dateData.month = month;
+                    return translation.length;
+                }
+            }
+            throw new CannotParseDateException();
+        };
+        DateConverter_.prototype.parseMonthTextualShort_ = function (text, dateData) {
+            for (var month = 1; month <= 12; month++) {
+                var translation = this.options_.translator.translateMonthShort(month - 1);
                 if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
                     dateData.month = month;
                     return translation.length;
@@ -1183,6 +1200,7 @@ var TheDatepicker;
             this.monthAsDropdown_ = true;
             this.yearAsDropdown_ = true;
             this.monthAndYearSeparated_ = true;
+            this.monthShort_ = false;
             this.changeMonthOnSwipe_ = true;
             this.animateMonthChange_ = true;
             this.classesPrefix_ = 'the-datepicker__';
@@ -1240,6 +1258,7 @@ var TheDatepicker;
             options.monthAsDropdown_ = this.monthAsDropdown_;
             options.yearAsDropdown_ = this.yearAsDropdown_;
             options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
+            options.monthShort_ = this.monthShort_;
             options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
             options.animateMonthChange_ = this.animateMonthChange_;
             options.classesPrefix_ = this.classesPrefix_;
@@ -1385,6 +1404,9 @@ var TheDatepicker;
         };
         Options.prototype.setMonthAndYearSeparated = function (value) {
             this.monthAndYearSeparated_ = !!value;
+        };
+        Options.prototype.setMonthShort = function (value) {
+            this.monthShort_ = !!value;
         };
         Options.prototype.setChangeMonthOnSwipe = function (value) {
             this.changeMonthOnSwipe_ = !!value;
@@ -1585,6 +1607,9 @@ var TheDatepicker;
         };
         Options.prototype.isMonthAndYearSeparated = function () {
             return this.monthAndYearSeparated_;
+        };
+        Options.prototype.isMonthShort = function () {
+            return this.monthShort_;
         };
         Options.prototype.isMonthChangeOnSwipeEnabled_ = function () {
             return this.changeMonthOnSwipe_;
@@ -2007,7 +2032,7 @@ var TheDatepicker;
             for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
                 options.push({
                     value: monthNumber + '',
-                    label: this.options_.translator.translateMonth(monthNumber)
+                    label: this.translateMonth(monthNumber)
                 });
             }
             var selectElement = this.htmlHelper_.createSelectInput_(options, function (event, monthNumber) {
@@ -2031,7 +2056,7 @@ var TheDatepicker;
                 return;
             }
             var currentMonth = viewModel.getCurrentMonth_().getMonth();
-            this.monthElement_.innerText = this.options_.translator.translateMonth(currentMonth);
+            this.monthElement_.innerText = this.translateMonth(currentMonth);
             if (!this.options_.isMonthAsDropdown()) {
                 this.monthSelect_.style.display = 'none';
                 this.monthElement_.style.display = '';
@@ -2178,7 +2203,7 @@ var TheDatepicker;
             this.monthAndYearElement_.style.display = showSelect ? 'none' : '';
         };
         Template_.prototype.translateMonthAndYear_ = function (data) {
-            return this.options_.translator.translateMonth(data.month) + ' ' + data.year;
+            return this.translateMonth(data.month) + ' ' + data.year;
         };
         Template_.prototype.calculateMonthAndYearIndex_ = function (data) {
             return data.year * 12 + data.month;
@@ -2431,6 +2456,11 @@ var TheDatepicker;
             this.htmlHelper_.addClass_(this.bodyElement_, 'animated');
             this.htmlHelper_.addClass_(this.bodyElement_, animationOut);
         };
+        Template_.prototype.translateMonth = function (monthNumber) {
+            return this.options_.isMonthShort()
+                ? this.options_.translator.translateMonthShort(monthNumber)
+                : this.options_.translator.translateMonth(monthNumber);
+        };
         return Template_;
     }());
     TheDatepicker.Template_ = Template_;
@@ -2470,6 +2500,20 @@ var TheDatepicker;
                 'November',
                 'December',
             ];
+            this.monthShortTranslations_ = [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec',
+            ];
             this.titles_ = (_a = {},
                 _a[TitleName.GoBack] = 'Previous month',
                 _a[TitleName.GoForward] = 'Next month',
@@ -2478,10 +2522,13 @@ var TheDatepicker;
                 _a);
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
-            this.dayOfWeekTranslations_[TheDatepicker.Helper_.checkNumber_('First day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation);
+            this.dayOfWeekTranslations_[TheDatepicker.Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation);
         };
         Translator.prototype.setMonthTranslation = function (month, translation) {
             this.monthTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation);
+        };
+        Translator.prototype.setMonthShortTranslation = function (month, translation) {
+            this.monthShortTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation);
         };
         Translator.prototype.setTitleTranslation = function (titleName, translation) {
             this.titles_[titleName] = TheDatepicker.Helper_.checkString_('Translation', translation);
@@ -2491,6 +2538,9 @@ var TheDatepicker;
         };
         Translator.prototype.translateMonth = function (month) {
             return this.monthTranslations_[month];
+        };
+        Translator.prototype.translateMonthShort = function (month) {
+            return this.monthShortTranslations_[month];
         };
         Translator.prototype.translateTitle = function (titleName) {
             var translation = this.titles_[titleName];

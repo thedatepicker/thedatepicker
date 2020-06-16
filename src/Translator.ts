@@ -34,6 +34,21 @@ namespace TheDatepicker {
 			'December',
 		];
 
+		private monthShortTranslations_ = [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec',
+		];
+
 		private titles_ = {
 			[TitleName.GoBack]: 'Previous month',
 			[TitleName.GoForward]: 'Next month',
@@ -42,11 +57,15 @@ namespace TheDatepicker {
 		};
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
-			this.dayOfWeekTranslations_[Helper_.checkNumber_('First day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation);
+			this.dayOfWeekTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation);
 		}
 
 		public setMonthTranslation(month: Month, translation: string): void {
 			this.monthTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation);
+		}
+
+		public setMonthShortTranslation(month: Month, translation: string): void {
+			this.monthShortTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation);
 		}
 
 		public setTitleTranslation(titleName: TitleName, translation: string): void {
@@ -59,6 +78,10 @@ namespace TheDatepicker {
 
 		public translateMonth(month: Month): string {
 			return this.monthTranslations_[month];
+		}
+
+		public translateMonthShort(month: Month): string {
+			return this.monthShortTranslations_[month];
 		}
 
 		public translateTitle(titleName: TitleName): string {
