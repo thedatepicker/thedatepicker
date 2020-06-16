@@ -48,7 +48,6 @@ namespace TheDatepicker {
 		public input: HTMLDatepickerInputElement | null;
 		public readonly container: HTMLDatepickerContainerElement;
 
-		private readonly document_: DocumentInterface;
 		private readonly isContainerExternal_: boolean;
 		private readonly isInputTextBox_: boolean;
 		private readonly viewModel_: ViewModel_;
@@ -59,6 +58,7 @@ namespace TheDatepicker {
 		private listenerRemovers_: (() => void)[] = [];
 		private deselectElement_: HTMLSpanElement | null = null;
 
+		private static document_: DocumentInterface;
 		private static readyListeners_: DatepickerReadyListener[] = [];
 		private static areGlobalListenersInitialized_ = false;
 		private static activeViewModel_: ViewModel_ | null = null;
@@ -82,7 +82,7 @@ namespace TheDatepicker {
 				throw new Error('Options was expected to be an instance of Options');
 			}
 
-			this.document_ = document;
+			Datepicker.document_ = document;
 			this.options = options ? options.clone() : new Options();
 
 			const duplicateError = 'There is already a datepicker present on ';
@@ -156,7 +156,7 @@ namespace TheDatepicker {
 					}
 
 					if (this.input && this.options.isHiddenOnBlur()) {
-						if (this.input === this.document_.activeElement) {
+						if (this.input === Datepicker.document_.activeElement) {
 							this.initializationPhase_ = InitializationPhase.Ready;
 							this.render();
 							this.open();
@@ -313,7 +313,7 @@ namespace TheDatepicker {
 		}
 
 		public updateInput_(): void {
-			if (!this.isInputTextBox_ || this.input === this.document_.activeElement) {
+			if (!this.isInputTextBox_ || this.input === Datepicker.document_.activeElement) {
 				return;
 			}
 
@@ -359,10 +359,11 @@ namespace TheDatepicker {
 		};
 
 		private createContainer_(): HTMLElement {
-			const container = this.document_.createElement('div');
+			const container = Datepicker.document_.createElement('div');
 			container.className = this.options.prefixClass_('container');
-			container.style.position = 'absolute';
-			container.style.zIndex = '99';
+			if (!this.options.isFullScreenOnMobile()) {
+				container.className += ' ' + this.options.prefixClass_('container--no-mobile')
+			}
 
 			return container;
 		}
@@ -372,16 +373,13 @@ namespace TheDatepicker {
 				return null;
 			}
 
-			const deselectElement = this.document_.createElement('span');
-			deselectElement.style.position = 'absolute';
-			const deselectButton = this.document_.createElement('a');
+			const deselectElement = Datepicker.document_.createElement('span');
+			const deselectButton = Datepicker.document_.createElement('a');
 			deselectButton.innerHTML = this.options.getDeselectHtml();
 			const title = this.options.translator.translateTitle(TitleName.Deselect);
 			if (title !== '') {
 				deselectButton.title = title;
 			}
-			deselectButton.style.position = 'relative';
-			deselectButton.style.left = '-0.8em';
 			deselectButton.href = '#';
 			deselectButton.onclick = (event: MouseEvent): void => {
 				event = event || window.event as MouseEvent;
@@ -423,9 +421,9 @@ namespace TheDatepicker {
 					}
 				};
 
-				Helper_.addEventListener_(this.document_, ListenerType_.MouseDown, checkMiss);
-				Helper_.addEventListener_(this.document_, ListenerType_.FocusIn, checkMiss);
-				Helper_.addEventListener_(this.document_, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
+				Helper_.addEventListener_(Datepicker.document_, ListenerType_.MouseDown, checkMiss);
+				Helper_.addEventListener_(Datepicker.document_, ListenerType_.FocusIn, checkMiss);
+				Helper_.addEventListener_(Datepicker.document_, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
 					if (Datepicker.activeViewModel_) {
 						Datepicker.activeViewModel_.triggerKeyPress_(event);
 					}
@@ -495,16 +493,16 @@ namespace TheDatepicker {
 				return;
 			}
 
-			const windowTop = window.pageYOffset || this.document_.documentElement.scrollTop;
-			const windowLeft = window.pageXOffset || this.document_.documentElement.scrollLeft;
+			const windowTop = window.pageYOffset || Datepicker.document_.documentElement.scrollTop;
+			const windowLeft = window.pageXOffset || Datepicker.document_.documentElement.scrollLeft;
 			let viewportHeight = null;
 			let viewportWidth = null;
 			if ((window as any).visualViewport) {
 				viewportHeight = (window as any).visualViewport.height;
 				viewportWidth = (window as any).visualViewport.width;
 			}
-			const windowHeight = viewportHeight || window.innerHeight || Math.max(this.document_.documentElement.clientHeight, this.document_.body.clientHeight) || 0;
-			const windowWidth = viewportWidth || window.innerWidth || Math.max(this.document_.documentElement.clientWidth, this.document_.body.clientWidth) || 0;
+			const windowHeight = viewportHeight || window.innerHeight || Math.max(Datepicker.document_.documentElement.clientHeight, Datepicker.document_.body.clientHeight) || 0;
+			const windowWidth = viewportWidth || window.innerWidth || Math.max(Datepicker.document_.documentElement.clientWidth, Datepicker.document_.body.clientWidth) || 0;
 			const windowBottom = windowTop + windowHeight;
 			const windowRight = windowLeft + windowWidth;
 
@@ -541,8 +539,11 @@ namespace TheDatepicker {
 			if (locateLeft) {
 				locationClass += ' ' + this.options.prefixClass_('container--left');
 			}
+			const mobileClass = this.options.isFullScreenOnMobile()
+				? ''
+				: ' ' + this.options.prefixClass_('container--no-mobile');
 
-			this.container.className = this.options.prefixClass_('container') + locationClass;
+			this.container.className = this.options.prefixClass_('container') + locationClass + mobileClass;
 
 			if (mainElement && (locateOver || locateLeft)) {
 				if (locateOver) {
@@ -554,6 +555,24 @@ namespace TheDatepicker {
 					mainElement.style.left = '-' + moveLeft + 'px';
 				}
 				mainElement.style.position = 'absolute';
+			}
+		}
+
+		private static setBodyClass_(enable: boolean) {
+			const pageClass = 'the-datepicker-page';
+			const body = Datepicker.document_.body;
+			const className = body.className;
+			const hasClass = className.indexOf(pageClass) > -1;
+			if (!hasClass && enable) {
+				body.className += (className.length > 0 ? ' ' : '') + pageClass;
+			} else if (hasClass && !enable) {
+				let search = pageClass;
+				if (className.indexOf(' ' + pageClass) > -1) {
+					search = ' ' + pageClass;
+				} else if (className.indexOf(pageClass + ' ') > -1) {
+					search = pageClass + ' ';
+				}
+				body.className = className.replace(search, '');
 			}
 		}
 
@@ -574,6 +593,8 @@ namespace TheDatepicker {
 			}
 
 			if (!viewModel) {
+				Datepicker.setBodyClass_(false);
+
 				Datepicker.activeViewModel_ = null;
 				return true;
 			}
@@ -587,6 +608,7 @@ namespace TheDatepicker {
 			}
 
 			datepicker.fixPosition_();
+			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
 
 			Datepicker.activeViewModel_ = viewModel;
 
