@@ -5,7 +5,24 @@ $highlight-background = #d1e8ff
 $table-header-color = #666
 $border = #ccc
 
+body.the-datepicker-page
+	overflow hidden
+	@media (min-width: 37.5em)
+		overflow auto
+
 .the-datepicker__container
+	position fixed
+	left 0
+	top 0
+	z-index 99
+	&.the-datepicker__container--no-mobile
+		position absolute
+		left auto
+		top auto
+	@media (min-width: 37.5em)
+		position absolute
+		left auto
+		top auto
 	.the-datepicker__main
 		border-top-left-radius 0
 	&.the-datepicker__container--over
@@ -23,6 +40,8 @@ $border = #ccc
 			border-bottom-right-radius 0
 
 .the-datepicker__main
+	width 100vw
+	height 100vh
 	background-color white
 	border 1px solid $border
 	border-radius 0.3em
@@ -30,15 +49,22 @@ $border = #ccc
 	font-family Arial, Helvetica, sans-serif
 	line-height 1em
 	box-sizing border-box
-	overflow hidden
+	overflow-x hidden
+	overflow-y auto
+
+	.the-datepicker__container--no-mobile &
+		width auto
+		height auto
+		overflow-y hidden
+	@media (min-width: 37.5em)
+		width auto
+		height auto
+		overflow-y hidden
 
 	.the-datepicker__body
 		margin-top 1em
 
 	th.the-datepicker__week-day
-		width 2.1em
-		min-width 2.1em
-		max-width 2.1em
 		padding 0.5em 0
 		text-align center
 		font-weight normal
@@ -49,8 +75,6 @@ $border = #ccc
 	a.the-datepicker__button
 		display block
 		width 2.1em
-		min-width 2.1em
-		max-width 2.1em
 		padding 0.6em 0
 		text-decoration none
 		text-align center
@@ -59,6 +83,13 @@ $border = #ccc
 		&:hover
 			background-color $highlight-background
 			text-decoration none
+
+	a.the-datepicker__day-button
+		width auto
+		.the-datepicker__container--no-mobile &
+			width 2.1em
+		@media (min-width: 37.5em)
+			width 2.1em
 
 	.the-datepicker__title
 		display inline-block
@@ -113,16 +144,12 @@ $border = #ccc
 		padding 0
 
 	table.the-datepicker__calendar
-		display table
+		width 100%
 		border-collapse collapse
-		thead
-			display table-header-group
-		tbody
-			display table-row-group
-		tr
-			display table-row
-			td, th
-				display table-cell
+		.the-datepicker__container--no-mobile &
+			width auto
+		@media (min-width: 37.5em)
+			width auto
 
 	td.the-datepicker__cell
 		padding 0
@@ -174,12 +201,16 @@ $border = #ccc
 		animation-duration 0.1s
 		animation-fill-mode both
 
-.the-datepicker__deselect-button
-	text-decoration none
-	color $base-color
-	font-weight bold
-	&:hover
+.the-datepicker__deselect
+	position absolute
+	.the-datepicker__deselect-button
+		position relative
+		left -0.8em
 		text-decoration none
+		color $base-color
+		font-weight bold
+		&:hover
+			text-decoration none
 
 @keyframes the-datepicker-fade-out-left
 	from
