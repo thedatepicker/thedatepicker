@@ -4,7 +4,7 @@ namespace TheDatepicker {
 	// todo mělo by smysl držet identitu dní?
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo static metody šětří výkon
-	// todo editovatelné titulky pro ikony (deselect, goToNow, close)
+	// todo editovatelný titulek pro deselect button
 	// todo proč výběr data volá Template.render() tolikrát?
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
@@ -15,11 +15,11 @@ namespace TheDatepicker {
 	// todo používat a || b místo a !== null ? a : b
 	//      !a místo a === null    ??
 	// todo lepší parser datumu ("1. January -30 years")
-	// todo multiselect, rangeselect, multirangeselect
+	// todo multiselect, rangeselect, multirangeselect (spíše umožnist propojit více datepickerů)
 	// todo favicona
 	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
 	// todo všechny definice anonymních fcí můřou mít return typehint
-	// todo září 275760 se nezobrazí a dál vyvolá Maximum call stack size exceeded (najít i záporný minimum)
+	// todo 13. 9. 275760 resp. 20. 4. -271821 se nezobrazí a dál vyvolá Maximum call stack size exceeded
 	// todo v optionech kterým se předává callback by bylo fajn dostat se k datepickeru (on* už se předává v this)
 	// todo proč styly containeru a deselectu nemám v css?
 	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
@@ -31,13 +31,14 @@ namespace TheDatepicker {
 	// todo HtmlHelper jako static třída
 	// todo spoustu opakujících se volání přes helper aby se neminifikovaný volaly jen jednou (stojí to ale za to volání navíc?)
 	// todo fix position by mělo počítat window bez scrollbarů, ale nevim jak to spolehlivě získat
-	// todo setShowWeekDays, setShowNavigation (jde to udělat přes css), setVerticalLayout (tabulka převrácená o 90°)?
+	// todo setShowWeekDays, setShowNavigation (jde to udělat přes css)?
+	// todo setVerticalLayout (tabulka převrácená o 90°)?
 	// todo setWeekDayContentStructureResolver
 	// todo setGoButtonContentStructureResolver ...
 	// todo ARIA ?
-	// todo slide animace změny měsíce
 	// todo zbavit se ts-ignore
 	// todo LICENSE file (issue)
+	// todo další formátery? https://www.php.net/manual/en/function.date.php
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
