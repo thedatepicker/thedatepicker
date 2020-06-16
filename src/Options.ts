@@ -96,6 +96,7 @@ namespace TheDatepicker {
 		private resetHtml_ = '&olarr;';
 		private deselectHtml_ = '&times;';
 		private positionFixing_ = true;
+		private fullScreenOnMobile_ = true;
 		private today_: Date | null = null;
 		private listeners_: Listeners = {
 			beforeSelect: [],
@@ -155,6 +156,7 @@ namespace TheDatepicker {
 			options.resetHtml_ = this.resetHtml_;
 			options.deselectHtml_ = this.deselectHtml_;
 			options.positionFixing_ = this.positionFixing_;
+			options.fullScreenOnMobile_ = this.fullScreenOnMobile_;
 			options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
 			options.listeners_.select = this.listeners_.select.slice(0);
 			options.listeners_.beforeOpenAndClose = this.listeners_.beforeOpenAndClose.slice(0);
@@ -494,11 +496,18 @@ namespace TheDatepicker {
 			this.deselectHtml_ = Helper_.checkString_('Html', html);
 		}
 
-		// Setting to true will render datepicker over the input when there's no enough space to fit it under.
+		// Setting to true will render datepicker to the different side of an input than normally, if there's no enough space.
 		// Works only when there is no custom container and setting HideOnBlur is set to true.
 		// defaults to true
 		public setPositionFixing(value: boolean): void {
 			this.positionFixing_ = !!value;
+		}
+
+		// Setting to true will render datepicker fullscreen on narrow displays (usually mobile).
+		// Works only when there is no custom container and setting HideOnBlur is set to true.
+		// defaults to true
+		public setFullScreenOnMobile(value: boolean): void {
+			this.fullScreenOnMobile_ = !!value;
 		}
 
 		// Sets mock/fake today.
@@ -932,6 +941,10 @@ namespace TheDatepicker {
 
 		public isPositionFixingEnabled(): boolean {
 			return this.hideOnBlur_ && this.positionFixing_;
+		}
+
+		public isFullScreenOnMobile(): boolean {
+			return this.hideOnBlur_ && this.fullScreenOnMobile_;
 		}
 
 		public getToday(): Date {

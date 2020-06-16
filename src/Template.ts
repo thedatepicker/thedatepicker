@@ -705,6 +705,8 @@ namespace TheDatepicker {
 				}
 			}) as HTMLDayButtonElement;
 
+			this.htmlHelper_.addClass_(cellButton, 'day-button');
+
 			cellButton.onfocus = (event: FocusEvent): void => {
 				viewModel.highlightDay_(event || window.event, cellButton.day);
 			};
