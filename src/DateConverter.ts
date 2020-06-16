@@ -136,43 +136,43 @@ namespace TheDatepicker {
 
 		private getFormatter_(type: string): ((date: Date) => string) | null {
 			switch (type) {
-				// Day of the month; 1 to 31
+				// Day of the month (1 to 31)
 				case 'j':
 					return this.formatDay_;
 
-				// Day of the month with leading zero; 01 to 31
+				// Day of the month with leading zero (01 to 31)
 				case 'd':
 					return this.formatDayWithLeadingZero_;
 
-				// Short textual representation of a day of the week; Mo through Su
+				// Short textual representation of a day of the week (Mo through Su)
 				case 'D':
 					return this.formatDayOfWeekTextual_;
 
-				// Textual representation of a day of the week; Monday through Sunday
+				// Textual representation of a day of the week (Monday through Sunday)
 				case 'l':
 					return this.formatDayOfWeekTextualFull_;
 
-				// Numeric representation of a month; 1 through 12
+				// Numeric representation of a month (1 through 12)
 				case 'n':
 					return this.formatMonth_;
 
-				// Numeric representation of a month with leading zero; 01 through 12
+				// Numeric representation of a month with leading zero (01 through 12)
 				case 'm':
 					return this.formatMonthWithLeadingZero_;
 
-				// Textual representation of a month; January through December
+				// Textual representation of a month (January through December)
 				case 'F':
 					return this.formatMonthTextual_;
 
-				// Short textual representation of a month; Jan through Dec
+				// Short textual representation of a month (Jan through Dec)
 				case 'M':
 					return this.formatMonthTextualShort_;
 
-				// Full year; 1999 or 2003
+				// Full year (1999 or 2003)
 				case 'Y':
 					return this.formatYear_;
 
-				// Year, 2 digits; 99 or 03
+				// Year, 2 digits (99 or 03)
 				case 'y':
 					return this.formatYearTwoDigits_;
 
