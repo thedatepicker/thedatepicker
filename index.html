@@ -9,6 +9,9 @@
 		<link rel="stylesheet" href="dist/the-datepicker.css">
 		<script src="dist/the-datepicker.js"></script>
 		<style>
+			html, body, input, textarea, select {
+				font-size: 16px;
+			}
 			article {
 				float: left;
 			}
@@ -71,6 +74,9 @@
 		<aside>
 			<div>
 				Some options take effect only if changed before first datepicker open.
+			</div>
+			<div>
+				Do not forget to call <span class="code">datepicker.render()</span> to start using datepicker.
 			</div>
 
 			<ul class="settings">
@@ -220,24 +226,24 @@
 				</li>
 				<li>
 					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">// return date.getDate() !== 5;</textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="dateAvailabilityResolver">// return date.getDate() !== 5;</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.setCellContentStructureResolver(() => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverInit">return document.createElement('span');</textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="cellContentStructureResolverInit">return document.createElement('span');</textarea><br>
 						}, (element, day) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverUpdate">element.innerText = day.dayNumber;</textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="cellContentStructureResolverUpdate">element.innerText = day.dayNumber;</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.setCellContentResolver((day) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="cellContentResolver">return day.dayNumber;</textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="cellContentResolver">return day.dayNumber;</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.addCellClassesResolver((day) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="cellClassesResolver">
+						&nbsp;<textarea rows="4" cols="70" id="cellClassesResolver">
 // if (day.dayNumber === 20) return ['red'];
 // if (day.dayNumber === 10) return ['green'];
 return [];</textarea><br>
@@ -245,13 +251,13 @@ return [];</textarea><br>
 				</li>
 				<li>
 					<label>datepicker.options.addDayModifier((day) => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="dayModifier">
+						&nbsp;<textarea rows="4" cols="70" id="dayModifier">
 // day.isSunday = day.dayOfWeek === TheDatepicker.DayOfWeek.Sunday;</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.setHeaderStructureResolver(() => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="headerStructureResolver">/*
+						&nbsp;<textarea rows="4" cols="70" id="headerStructureResolver">/*
 var header = document.createElement('div');
 header.innerText = 'Hello world';
 return header;
@@ -260,47 +266,47 @@ return header;
 				</li>
 				<li>
 					<label>datepicker.options.setFooterStructureResolver(() => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="footerStructureResolver"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="footerStructureResolver"></textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeSelect(function (event, day, previousDay) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker // applies to all on*</textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker // applies to all on*</textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onSelect(function (event, day, previousDay) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onSelect"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onSelect"></textarea><br>
 					});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeOpenAndClose(function (event, isOpening) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onBeforeOpenAndClose"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onBeforeOpenAndClose"></textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onOpenAndClose(function (event, isOpening) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onOpenAndClose"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onOpenAndClose"></textarea><br>
 					});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeMonthChange(function (event, month, previousMonth) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onBeforeMonthChange"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onBeforeMonthChange"></textarea><br>
 						});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onMonthChange(function (event, month, previousMonth) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onMonthChange"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onMonthChange"></textarea><br>
 					});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeFocus(function (event, day, previousDay) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onBeforeFocus"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onBeforeFocus"></textarea><br>
 					});</label>
 				</li>
 				<li>
 					<label>datepicker.options.onFocus(function (event, day, previousDay) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onFocus"></textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onFocus"></textarea><br>
 					});</label>
 				</li>
 				<li>
@@ -487,12 +493,12 @@ return header;
 				</li>
 				<li>
 					<label>var datepickerPromise = TheDatepicker.onDatepickerReady(input, function (datepicker) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onDatepickerReady">// this instanceof HTMLElement</textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="onDatepickerReady">// this instanceof HTMLElement</textarea><br>
 					});</label>
 				</li>
 				<li class="space">
 					<label>(async () => {<br>
-						&nbsp;<textarea rows="3" cols="70" id="datepickerPromise">var datepicker = await datepickerPromise;</textarea><br>
+						&nbsp;<textarea rows="4" cols="70" id="datepickerPromise">var datepicker = await datepickerPromise;</textarea><br>
 					})();</label>
 				</li>
 				<li>
