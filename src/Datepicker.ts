@@ -119,7 +119,7 @@ namespace TheDatepicker {
 				throw new Error('At least one of input or container is mandatory.');
 			}
 			if (options !== null && !(options instanceof Options)) {
-				throw new Error('Options was expected to be an instance of Options');
+				throw new Error('Options was expected to be an instance of Options.');
 			}
 
 			Datepicker.document_ = document;
