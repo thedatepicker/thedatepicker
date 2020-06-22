@@ -301,7 +301,7 @@ namespace TheDatepicker {
 		}
 
 		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
-			return this.viewModel_.selectDay_(event, Helper_.normalizeDate_('Date', date, this.options), doUpdateMonth);
+			return this.viewModel_.selectDay_(event, Helper_.normalizeDate_('Date', date, this.options), !!doUpdateMonth);
 		}
 
 		public getSelectedDate(): Date | null {
@@ -360,6 +360,11 @@ namespace TheDatepicker {
 		}
 
 		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<TheDatepicker.Datepicker> | null {
+			if (!Helper_.isElement_(element)) {
+				throw new Error('Element was expected to be an HTMLElement.');
+			}
+			callback = Helper_.checkFunction_('Callback', callback) as (ReadyListener | null);
+
 			let promise = null;
 			let promiseResolve: ReadyPromiseResolve | null = null;
 			// @ts-ignore
