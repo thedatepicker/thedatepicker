@@ -30,6 +30,8 @@ namespace TheDatepicker {
 	// todo další formátery? https://www.php.net/manual/en/function.date.php
 	// todo testy
 	// todo CDN
+	// todo na mobilu nejde deselect
+	// todo animace otevirani fullscreenu jako na Slevomatu (slide up)
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
