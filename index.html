@@ -270,6 +270,9 @@
 					<label>datepicker.options.setFullScreenOnMobile(<input type="checkbox" id="fullScreenOnMobile" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setKeyboardOnMobile(<input type="checkbox" id="keyboardOnMobile">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setDateAvailabilityResolver(function (date) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">// return date.getDate() !== 5;</textarea><br>
 						});</label>
@@ -882,6 +885,13 @@ return header;
 			fullScreenOnMobileInput.onchange = function () {
 				updateSetting(fullScreenOnMobileInput, function () {
 					datepicker.options.setFullScreenOnMobile(fullScreenOnMobileInput.checked);
+				});
+			};
+
+			var keyboardOnMobileInput = document.getElementById('keyboardOnMobile');
+			keyboardOnMobileInput.onchange = function () {
+				updateSetting(keyboardOnMobileInput, function () {
+					datepicker.options.setKeyboardOnMobile(keyboardOnMobileInput.checked);
 				});
 			};
 
