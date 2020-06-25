@@ -695,8 +695,17 @@ var TheDatepicker;
                 callback.call(element, this, element);
             }
         };
-        Datepicker.prototype.fixPosition_ = function () {
-            if (this.isContainerExternal_ || this.initializationPhase_ === InitializationPhase.Destroyed) {
+        Datepicker.prototype.onActivate_ = function () {
+            if (this.initializationPhase_ === InitializationPhase.Destroyed) {
+                return;
+            }
+            this.updateContainer_();
+            if (!this.options.isKeyboardOnMobile() && this.isInputTextBox_) {
+                this.input.readOnly = TheDatepicker.Helper_.isMobile_();
+            }
+        };
+        Datepicker.prototype.updateContainer_ = function () {
+            if (this.isContainerExternal_) {
                 return;
             }
             var windowTop = window.pageYOffset || Datepicker.document_.documentElement.scrollTop;
@@ -799,7 +808,7 @@ var TheDatepicker;
             if (Datepicker.activeViewModel_ !== activeViewModel) {
                 return true;
             }
-            datepicker.fixPosition_();
+            datepicker.onActivate_();
             Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
             Datepicker.activeViewModel_ = viewModel;
             return true;
@@ -1131,6 +1140,18 @@ var TheDatepicker;
             }
             return Helper_.passiveEventListenerSupport_;
         };
+        Helper_.isMobile_ = function () {
+            var matchMedia = window.matchMedia || window.msMatchMedia;
+            var mediaQuery = 'only all and (max-width: 37.5em)';
+            if (!matchMedia) {
+                return false;
+            }
+            var result = matchMedia(mediaQuery);
+            if (!result) {
+                return false;
+            }
+            return !!result.matches;
+        };
         Helper_.deprecatedMethods_ = [];
         Helper_.cssAnimationSupport_ = null;
         Helper_.passiveEventListenerSupport_ = null;
@@ -1311,6 +1332,7 @@ var TheDatepicker;
             this.deselectHtml_ = '&times;';
             this.positionFixing_ = true;
             this.fullScreenOnMobile_ = true;
+            this.keyboardOnMobile_ = false;
             this.today_ = null;
             this.listeners_ = {
                 beforeSelect: [],
@@ -1367,6 +1389,7 @@ var TheDatepicker;
             options.deselectHtml_ = this.deselectHtml_;
             options.positionFixing_ = this.positionFixing_;
             options.fullScreenOnMobile_ = this.fullScreenOnMobile_;
+            options.keyboardOnMobile_ = this.keyboardOnMobile_;
             options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
             options.listeners_.select = this.listeners_.select.slice(0);
             options.listeners_.beforeOpenAndClose = this.listeners_.beforeOpenAndClose.slice(0);
@@ -1523,6 +1546,9 @@ var TheDatepicker;
         };
         Options.prototype.setFullScreenOnMobile = function (value) {
             this.fullScreenOnMobile_ = !!value;
+        };
+        Options.prototype.setKeyboardOnMobile = function (value) {
+            this.keyboardOnMobile_ = !!value;
         };
         Options.prototype.setToday = function (date) {
             this.today_ = TheDatepicker.Helper_.normalizeDate_('Today', date, true, this);
@@ -1848,7 +1874,10 @@ var TheDatepicker;
             return this.hideOnBlur_ && this.positionFixing_;
         };
         Options.prototype.isFullScreenOnMobile = function () {
-            return this.hideOnBlur_ && this.fullScreenOnMobile_;
+            return this.fullScreenOnMobile_;
+        };
+        Options.prototype.isKeyboardOnMobile = function () {
+            return this.keyboardOnMobile_;
         };
         Options.prototype.getToday = function () {
             return this.today_ ? new Date(this.today_.getTime()) : TheDatepicker.Helper_.resetTime_(new Date());
