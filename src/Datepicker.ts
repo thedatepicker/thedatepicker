@@ -519,8 +519,22 @@ namespace TheDatepicker {
 			}
 		}
 
-		private fixPosition_(): void {
-			if (this.isContainerExternal_ || this.initializationPhase_ === InitializationPhase.Destroyed) {
+		private onActivate_(): void {
+			if (this.initializationPhase_ === InitializationPhase.Destroyed) {
+				return;
+			}
+
+			this.updateContainer_();
+
+			if (!this.options.isKeyboardOnMobile() && this.isInputTextBox_) {
+				// todo na mobilu nejde zpětně přepnout aby se klávesnice zobrazovala
+				(this.input as HTMLInputElement).readOnly = Helper_.isMobile_();
+			}
+		}
+
+		private updateContainer_(): void {
+			// todo co se zde děje když je to fullscreen?
+			if (this.isContainerExternal_) {
 				return;
 			}
 
@@ -638,7 +652,7 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			datepicker.fixPosition_();
+			datepicker.onActivate_();
 			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
 
 			Datepicker.activeViewModel_ = viewModel;

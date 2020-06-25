@@ -305,6 +305,22 @@ namespace TheDatepicker {
 			return Helper_.passiveEventListenerSupport_;
 		}
 
+		public static isMobile_(): boolean {
+			// @ts-ignore
+			const matchMedia = window.matchMedia || window.msMatchMedia;
+			const mediaQuery = 'only all and (max-width: 37.5em)';
+			if (!matchMedia) {
+				return false;
+			}
+
+			const result = matchMedia(mediaQuery);
+			if (!result) {
+				return false;
+			}
+
+			return !!result.matches;
+		}
+
 	}
 
 }
