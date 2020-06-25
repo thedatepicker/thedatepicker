@@ -97,6 +97,7 @@ namespace TheDatepicker {
 		private deselectHtml_ = '&times;';
 		private positionFixing_ = true;
 		private fullScreenOnMobile_ = true;
+		private keyboardOnMobile_ = false
 		private today_: Date | null = null;
 		private listeners_: Listeners = {
 			beforeSelect: [],
@@ -157,6 +158,7 @@ namespace TheDatepicker {
 			options.deselectHtml_ = this.deselectHtml_;
 			options.positionFixing_ = this.positionFixing_;
 			options.fullScreenOnMobile_ = this.fullScreenOnMobile_;
+			options.keyboardOnMobile_ = this.keyboardOnMobile_;
 			options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
 			options.listeners_.select = this.listeners_.select.slice(0);
 			options.listeners_.beforeOpenAndClose = this.listeners_.beforeOpenAndClose.slice(0);
@@ -493,10 +495,18 @@ namespace TheDatepicker {
 		}
 
 		// Setting to true will render datepicker fullscreen on narrow displays (usually mobile).
-		// Works only when there is no custom container and setting HideOnBlur is set to true.
+		// Works only when there is no custom container.
 		// defaults to true
 		public setFullScreenOnMobile(value: boolean): void {
 			this.fullScreenOnMobile_ = !!value;
+		}
+
+		// Setting to false will prevent displaying virtual keyboard on mobile devices.
+		// Useful especially with FullScreenOnMobile set to true.
+		// Works only when there an input exists.
+		// defaults to false
+		public setKeyboardOnMobile(value: boolean): void {
+			this.keyboardOnMobile_ = !!value;
 		}
 
 		// Sets mock/fake today.
@@ -936,7 +946,11 @@ namespace TheDatepicker {
 		}
 
 		public isFullScreenOnMobile(): boolean {
-			return this.hideOnBlur_ && this.fullScreenOnMobile_;
+			return this.fullScreenOnMobile_;
+		}
+
+		public isKeyboardOnMobile(): boolean {
+			return this.keyboardOnMobile_;
 		}
 
 		public getToday(): Date {
