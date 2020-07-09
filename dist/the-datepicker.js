@@ -497,7 +497,7 @@ var TheDatepicker;
         Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
             if (doUpdateMonth === void 0) { doUpdateMonth = true; }
             if (event === void 0) { event = null; }
-            return this.viewModel_.selectDay_(event, TheDatepicker.Helper_.normalizeDate_('Date', date, this.options), doUpdateMonth);
+            return this.viewModel_.selectDay_(event, TheDatepicker.Helper_.normalizeDate_('Date', date, this.options), !!doUpdateMonth);
         };
         Datepicker.prototype.getSelectedDate = function () {
             return this.viewModel_.selectedDate_ !== null ? new Date(this.viewModel_.selectedDate_.getTime()) : null;
@@ -547,6 +547,10 @@ var TheDatepicker;
         };
         Datepicker.onDatepickerReady = function (element, callback) {
             if (callback === void 0) { callback = null; }
+            if (!TheDatepicker.Helper_.isElement_(element)) {
+                throw new Error('Element was expected to be an HTMLElement.');
+            }
+            callback = TheDatepicker.Helper_.checkFunction_('Callback', callback);
             var promise = null;
             var promiseResolve = null;
             if (typeof Promise !== 'undefined') {
@@ -690,8 +694,14 @@ var TheDatepicker;
             }
             var windowTop = window.pageYOffset || this.document_.documentElement.scrollTop;
             var windowLeft = window.pageXOffset || this.document_.documentElement.scrollLeft;
-            var windowHeight = window.innerHeight || Math.max(this.document_.documentElement.clientHeight, this.document_.body.clientHeight);
-            var windowWidth = window.innerWidth || Math.max(this.document_.documentElement.clientWidth, this.document_.body.clientWidth);
+            var viewportHeight = null;
+            var viewportWidth = null;
+            if (window.visualViewport) {
+                viewportHeight = window.visualViewport.height;
+                viewportWidth = window.visualViewport.width;
+            }
+            var windowHeight = viewportHeight || window.innerHeight || Math.max(this.document_.documentElement.clientHeight, this.document_.body.clientHeight) || 0;
+            var windowWidth = viewportWidth || window.innerWidth || Math.max(this.document_.documentElement.clientWidth, this.document_.body.clientWidth) || 0;
             var windowBottom = windowTop + windowHeight;
             var windowRight = windowLeft + windowWidth;
             var inputTop = 0;

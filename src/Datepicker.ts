@@ -35,7 +35,7 @@ namespace TheDatepicker {
 	// todo setWeekDayContentStructureResolver
 	// todo setGoButtonContentStructureResolver ...
 	// todo ARIA ?
-	// todo zbavit se ts-ignore
+	// todo zbavit se ts-ignore (https://stackoverflow.com/questions/32408306/how-to-use-es6-promises-with-typescript)
 	// todo LICENSE file (issue)
 	// todo další formátery? https://www.php.net/manual/en/function.date.php
 	// todo testy
@@ -527,8 +527,14 @@ namespace TheDatepicker {
 
 			const windowTop = window.pageYOffset || this.document_.documentElement.scrollTop;
 			const windowLeft = window.pageXOffset || this.document_.documentElement.scrollLeft;
-			const windowHeight = window.innerHeight || Math.max(this.document_.documentElement.clientHeight, this.document_.body.clientHeight);
-			const windowWidth = window.innerWidth || Math.max(this.document_.documentElement.clientWidth, this.document_.body.clientWidth);
+			let viewportHeight = null;
+			let viewportWidth = null;
+			if ((window as any).visualViewport) {
+				viewportHeight = (window as any).visualViewport.height;
+				viewportWidth = (window as any).visualViewport.width;
+			}
+			const windowHeight = viewportHeight || window.innerHeight || Math.max(this.document_.documentElement.clientHeight, this.document_.body.clientHeight) || 0;
+			const windowWidth = viewportWidth || window.innerWidth || Math.max(this.document_.documentElement.clientWidth, this.document_.body.clientWidth) || 0;
 			const windowBottom = windowTop + windowHeight;
 			const windowRight = windowLeft + windowWidth;
 
