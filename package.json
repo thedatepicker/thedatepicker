@@ -8,9 +8,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "stylus": "*",
-    "typescript": "^3.9.5",
-    "uglify-js": "^3.9.4"
+    "stylus": "^0.54.8",
+    "typescript": "^3.9.7",
+    "uglify-js": "^3.12.7"
   },
   "scripts": {
     "js": "tsc",
