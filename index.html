@@ -93,10 +93,10 @@
 					// var datepicker = new TheDatepicker.Datepicker(input, null, new TheDatepicker.Options());
 				</li>
 				<li>
-					<label>datepicker.options.setInitialDate("<input type="text" size="15" id="initialDate">");</label> <span class="error" id="initialDateError"></span> // direct html input value has priority over this option
+					<label>datepicker.options.setInitialDate("<input type="text" size="15" id="initialDate" placeholder="Y-m-d">");</label> <span class="error" id="initialDateError"></span> // direct html input value has priority over this option
 				</li>
 				<li>
-					<label>datepicker.options.setInitialMonth("<input type="text" size="15" id="initialMonth">");</label> <span class="error" id="initialMonthError"></span>
+					<label>datepicker.options.setInitialMonth("<input type="text" size="15" id="initialMonth" placeholder="Y-m">");</label> <span class="error" id="initialMonthError"></span>
 				</li>
 				<li>
 					<label>datepicker.options.setInitialDatePriority(<input type="checkbox" id="initialDatePriority" checked="checked">);</label>
@@ -114,10 +114,10 @@
 					datepicker.<input type="button" id="destroy" value="destroy()">;
 				</li>
 				<li>
-					<label>datepicker.selectDate("<input type="text" size="15" id="selectDate">"</label>, <label>/* doUpdateMonth: */ <input type="checkbox" id="selectDateDoUpdateMonth" checked="checked"></label>); <span class="error" id="selectDateError"></span>
+					<label>datepicker.selectDate("<input type="text" size="15" id="selectDate" placeholder="Y-m-d">"</label>, <label>/* doUpdateMonth: */ <input type="checkbox" id="selectDateDoUpdateMonth" checked="checked"></label>); <span class="error" id="selectDateError"></span>
 				</li>
 				<li>
-					<label>datepicker.goToMonth("<input type="text" size="15" id="goToMonth">");</label> <span class="error" id="goToMonthError"></span>
+					<label>datepicker.goToMonth("<input type="text" size="15" id="goToMonth" placeholder="Y-m">");</label> <span class="error" id="goToMonthError"></span>
 				</li>
 				<li>
 					<label>datepicker.getSelectedDate()<span id="selectedDate"></span>;</label>
@@ -159,10 +159,10 @@
 						</select>);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setMinDate("<input type="text" size="15" id="minDate">");</label> <span class="error" id="minDateError"></span>
+					<label>datepicker.options.setMinDate("<input type="text" size="15" id="minDate" placeholder="Y-m-d">");</label> <span class="error" id="minDateError"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setMaxDate("<input type="text" size="15" id="maxDate">");</label> <span class="error" id="maxDateError"></span>
+					<label>datepicker.options.setMaxDate("<input type="text" size="15" id="maxDate" placeholder="Y-m-d">");</label> <span class="error" id="maxDateError"></span>
 				</li>
 				<li>
 					<label>datepicker.options.setDropdownItemsLimit(<input type="text" size="15" id="dropdownItemsLimit" value="200">);</label> <span class="error" id="dropdownItemsLimitError"></span>
