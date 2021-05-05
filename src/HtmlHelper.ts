@@ -25,13 +25,13 @@ namespace TheDatepicker {
 			this.addClass_(anchor, 'button');
 			anchor.href = '#';
 
-			anchor.onclick = (event: MouseEvent) => {
+			anchor.onclick = (event: MouseEvent): void => {
 				event = event || window.event as MouseEvent;
 				Helper_.preventDefault_(event);
 				onClick(event);
 			};
 
-			anchor.onkeydown = (event: KeyboardEvent) => {
+			anchor.onkeydown = (event: KeyboardEvent): void => {
 				event = event || window.event as KeyboardEvent;
 				if (Helper_.inArray_([KeyCode_.Enter, KeyCode_.Space], event.keyCode)) {
 					Helper_.preventDefault_(event);
@@ -109,11 +109,11 @@ namespace TheDatepicker {
 				input.appendChild(this.createSelectOption_(options[index].value, options[index].label));
 			}
 
-			input.onchange = (event: Event) => {
+			input.onchange = (event: Event): void => {
 				onChange(event || window.event, input.value);
 			};
 
-			input.onkeydown = (event: KeyboardEvent) => {
+			input.onkeydown = (event: KeyboardEvent): void => {
 				event = event || window.event as KeyboardEvent;
 				Helper_.stopPropagation_(event);
 			};

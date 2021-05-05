@@ -391,49 +391,49 @@ namespace TheDatepicker {
 		}
 
 		private triggerOnBeforeSelect_(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
-			return this.options_.triggerEvent_(EventType_.BeforeSelect, (listener: SelectListener) => {
+			return this.options_.triggerEvent_(EventType_.BeforeSelect, (listener: SelectListener): boolean => {
 				return listener.call(this.datepicker_, event, day, previousDay);
 			});
 		}
 
 		private triggerOnSelect_(event: Event | null, day: Day | null, previousDay: Day | null): void {
-			this.options_.triggerEvent_(EventType_.Select, (listener: SelectListener) => {
+			this.options_.triggerEvent_(EventType_.Select, (listener: SelectListener): boolean => {
 				return listener.call(this.datepicker_, event, day, previousDay);
 			});
 		}
 
 		private triggerOnBeforeOpenAndClose_(event: Event | null, isOpening: boolean): boolean {
-			return this.options_.triggerEvent_(EventType_.BeforeOpenAndClose, (listener: OpenAndCloseListener) => {
+			return this.options_.triggerEvent_(EventType_.BeforeOpenAndClose, (listener: OpenAndCloseListener): boolean => {
 				return listener.call(this.datepicker_, event, isOpening);
 			});
 		}
 
 		private triggerOnOpenAndClose_(event: Event | null, isOpening: boolean): void {
-			this.options_.triggerEvent_(EventType_.OpenAndClose, (listener: OpenAndCloseListener) => {
+			this.options_.triggerEvent_(EventType_.OpenAndClose, (listener: OpenAndCloseListener): boolean => {
 				return listener.call(this.datepicker_, event, isOpening);
 			});
 		}
 
 		private triggerOnBeforeMonthChange_(event: Event | null, month: Date, previousMonth: Date): boolean {
-			return this.options_.triggerEvent_(EventType_.BeforeMonthChange, (listener: MonthChangeListener) => {
+			return this.options_.triggerEvent_(EventType_.BeforeMonthChange, (listener: MonthChangeListener): boolean => {
 				return listener.call(this.datepicker_, event, month, previousMonth);
 			});
 		}
 
 		private triggerOnMonthChange_(event: Event | null, month: Date, previousMonth: Date): void {
-			this.options_.triggerEvent_(EventType_.MonthChange, (listener: MonthChangeListener) => {
+			this.options_.triggerEvent_(EventType_.MonthChange, (listener: MonthChangeListener): boolean => {
 				return listener.call(this.datepicker_, event, month, previousMonth);
 			});
 		}
 
 		private triggerOnBeforeFocus_(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
-			return this.options_.triggerEvent_(EventType_.BeforeFocus, (listener: FocusListener) => {
+			return this.options_.triggerEvent_(EventType_.BeforeFocus, (listener: FocusListener): boolean => {
 				return listener.call(this.datepicker_, event, day, previousDay);
 			});
 		}
 
 		private triggerOnFocus_(event: Event | null, day: Day | null, previousDay: Day | null): void {
-			this.options_.triggerEvent_(EventType_.Focus, (listener: FocusListener) => {
+			this.options_.triggerEvent_(EventType_.Focus, (listener: FocusListener): boolean => {
 				return listener.call(this.datepicker_, event, day, previousDay);
 			});
 		}

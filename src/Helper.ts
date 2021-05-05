@@ -154,7 +154,7 @@ namespace TheDatepicker {
 			if (element.addEventListener) {
 				element.addEventListener(listenerType, listener);
 
-				return () => {
+				return (): void => {
 					element.removeEventListener(listenerType, listener);
 				};
 			}
@@ -163,7 +163,7 @@ namespace TheDatepicker {
 			// @ts-ignore
 			const originalListener = element[listenerProperty] || null;
 			// @ts-ignore
-			element[listenerProperty] = (event: Event) => {
+			element[listenerProperty] = (event: Event): void => {
 				event = event || window.event;
 
 				if (originalListener !== null) {
@@ -173,7 +173,7 @@ namespace TheDatepicker {
 				listener(event);
 			};
 
-			return () => {
+			return (): void => {
 				// @ts-ignore
 				element[listenerProperty] = originalListener;
 			};
@@ -242,12 +242,12 @@ namespace TheDatepicker {
 			let startPosition: number | null = null;
 			let minDistance: number | null = null;
 
-			Helper_.addEventListener_(element, ListenerType_.TouchStart, (event: TouchEvent) => {
+			Helper_.addEventListener_(element, ListenerType_.TouchStart, (event: TouchEvent): void => {
 				startPosition = event.touches[0].clientX;
 				minDistance = element.offsetWidth / 5;
 			});
 
-			Helper_.addEventListener_(element, ListenerType_.TouchMove, (event:TouchEvent) => {
+			Helper_.addEventListener_(element, ListenerType_.TouchMove, (event:TouchEvent): void => {
 				if (startPosition === null) {
 					return;
 				}

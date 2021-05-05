@@ -17,7 +17,6 @@ namespace TheDatepicker {
 	// todo multiselect, rangeselect, multirangeselect (spíše umožnist propojit více datepickerů)
 	// todo favicona
 	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
-	// todo všechny definice anonymních fcí můřou mít return typehint
 	// todo v optionech kterým se předává callback by bylo fajn dostat se k datepickeru (on* už se předává v this)
 	// todo proč styly containeru a deselectu nemám v css?
 	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
@@ -209,7 +208,7 @@ namespace TheDatepicker {
 							return;
 						}
 
-						this.inputListenerRemover_ = Helper_.addEventListener_(this.input, ListenerType_.Focus, (event: FocusEvent) => {
+						this.inputListenerRemover_ = Helper_.addEventListener_(this.input, ListenerType_.Focus, (event: FocusEvent): void => {
 							this.open(event);
 						});
 
@@ -369,7 +368,7 @@ namespace TheDatepicker {
 			// @ts-ignore
 			if (typeof Promise !== 'undefined') {
 				// @ts-ignore
-				promise = new Promise<TheDatepicker.Datepicker>((resolve: ReadyPromiseResolve) => {
+				promise = new Promise<TheDatepicker.Datepicker>((resolve: ReadyPromiseResolve): void => {
 					promiseResolve = resolve;
 				});
 			}
@@ -416,7 +415,7 @@ namespace TheDatepicker {
 			deselectButton.style.position = 'relative';
 			deselectButton.style.left = '-0.8em';
 			deselectButton.href = '#';
-			deselectButton.onclick = (event: MouseEvent) => {
+			deselectButton.onclick = (event: MouseEvent): void => {
 				event = event || window.event as MouseEvent;
 				Helper_.preventDefault_(event);
 				this.viewModel_.cancelSelection_(event);
@@ -448,7 +447,7 @@ namespace TheDatepicker {
 			if (!Datepicker.areGlobalListenersInitialized_) {
 				let activeViewModel: ViewModel_ | null = null;
 
-				const checkMiss = (event: Event) => {
+				const checkMiss = (event: Event): void => {
 					if (Datepicker.hasClickedViewModel_) {
 						Datepicker.hasClickedViewModel_ = false;
 					} else {
@@ -458,7 +457,7 @@ namespace TheDatepicker {
 
 				Helper_.addEventListener_(this.document_, ListenerType_.MouseDown, checkMiss);
 				Helper_.addEventListener_(this.document_, ListenerType_.FocusIn, checkMiss);
-				Helper_.addEventListener_(this.document_, ListenerType_.KeyDown, (event: KeyboardEvent) => {
+				Helper_.addEventListener_(this.document_, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
 					if (Datepicker.activeViewModel_ !== null) {
 						Datepicker.activeViewModel_.triggerKeyPress_(event);
 					}
@@ -469,7 +468,7 @@ namespace TheDatepicker {
 
 			this.removeInitialInputListener_();
 
-			const hit = (event: Event) => {
+			const hit = (event: Event): void => {
 				Datepicker.activateViewModel_(event, this);
 				Datepicker.hasClickedViewModel_ = true;
 			};
@@ -485,13 +484,13 @@ namespace TheDatepicker {
 			if (this.input !== null) {
 				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.MouseDown, hit));
 				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.Focus, hit));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.Blur, () => {
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.Blur, (): void => {
 					this.updateInput_();
 				}));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyDown, (event: KeyboardEvent) => {
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
 					Helper_.stopPropagation_(event);
 				}));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyUp, (event: KeyboardEvent) => {
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyUp, (event: KeyboardEvent): void => {
 					this.readInput_(event);
 				}));
 			}

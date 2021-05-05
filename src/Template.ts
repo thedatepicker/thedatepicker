@@ -179,7 +179,7 @@ namespace TheDatepicker {
 
 		protected createResetElement_(viewModel: ViewModel_): HTMLElement {
 			const resetElement = this.htmlHelper_.createDiv_('reset');
-			const resetButton = this.htmlHelper_.createAnchor_((event: Event) => {
+			const resetButton = this.htmlHelper_.createAnchor_((event: Event): void => {
 				viewModel.reset_(event);
 			});
 
@@ -200,7 +200,7 @@ namespace TheDatepicker {
 
 		protected createCloseElement_(viewModel: ViewModel_): HTMLElement {
 			const closeElement = this.htmlHelper_.createDiv_('close');
-			const closeButton = this.htmlHelper_.createAnchor_((event: Event) => {
+			const closeButton = this.htmlHelper_.createAnchor_((event: Event): void => {
 				viewModel.close_(event);
 			});
 
@@ -268,7 +268,7 @@ namespace TheDatepicker {
 				});
 			}
 
-			const selectElement = this.htmlHelper_.createSelectInput_(options, (event: Event, monthNumber: string) => {
+			const selectElement = this.htmlHelper_.createSelectInput_(options, (event: Event, monthNumber: string): void => {
 				const currentMonth = viewModel.getCurrentMonth_();
 				const newMonth = new Date(currentMonth.getTime());
 				newMonth.setMonth(parseInt(monthNumber, 10));
@@ -321,7 +321,7 @@ namespace TheDatepicker {
 		}
 
 		protected createYearElement_(viewModel: ViewModel_): HTMLElement {
-			const selectElement = this.htmlHelper_.createSelectInput_([], (event: Event, year: string) => {
+			const selectElement = this.htmlHelper_.createSelectInput_([], (event: Event, year: string): void => {
 				const currentMonth = viewModel.getCurrentMonth_();
 				let newMonth = new Date(currentMonth.getTime());
 				newMonth.setFullYear(parseInt(year, 10));
@@ -394,7 +394,7 @@ namespace TheDatepicker {
 		protected createMonthAndYearElement_(viewModel: ViewModel_): HTMLElement {
 			const monthAndYear = this.htmlHelper_.createDiv_('month-year');
 
-			const selectElement = this.htmlHelper_.createSelectInput_([], (event: Event, value: string) => {
+			const selectElement = this.htmlHelper_.createSelectInput_([], (event: Event, value: string): void => {
 				const currentMonth = viewModel.getCurrentMonth_();
 				let newMonth = new Date(currentMonth.getTime());
 				const data = this.parseMonthAndYearOptionValue_(value);
@@ -697,7 +697,7 @@ namespace TheDatepicker {
 		}
 
 		protected createTableCellButtonElement_(viewModel: ViewModel_): HTMLDayButtonElement {
-			const cellButton = this.htmlHelper_.createAnchor_((event: Event) => {
+			const cellButton = this.htmlHelper_.createAnchor_((event: Event): void => {
 				const previous = viewModel.selectedDate_;
 				const isSelected = viewModel.selectDay_(event, cellButton.day, false, true, true);
 				if (this.options_.isHiddenOnSelect() && (isSelected || (previous !== null && cellButton.day.isEqualToDate(previous)))) {
@@ -705,11 +705,11 @@ namespace TheDatepicker {
 				}
 			}) as HTMLDayButtonElement;
 
-			cellButton.onfocus = (event: FocusEvent) => {
+			cellButton.onfocus = (event: FocusEvent): void => {
 				viewModel.highlightDay_(event || window.event, cellButton.day);
 			};
 
-			cellButton.onmouseenter = (event: MouseEvent) => {
+			cellButton.onmouseenter = (event: MouseEvent): void => {
 				if (this.options_.getBeforeFocusListeners().length > 0 || this.options_.getFocusListeners().length > 0) {
 					viewModel.highlightDay_(event || window.event, cellButton.day, false, false);
 				} else {
@@ -718,7 +718,7 @@ namespace TheDatepicker {
 				}
 			};
 
-			cellButton.onmouseleave = (event: MouseEvent) => {
+			cellButton.onmouseleave = (event: MouseEvent): void => {
 				viewModel.cancelHighlight_(event || window.event);
 			};
 
