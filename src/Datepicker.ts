@@ -20,7 +20,6 @@ namespace TheDatepicker {
 	// todo v optionech kterým se předává callback by bylo fajn dostat se k datepickeru (on* už se předává v this)
 	// todo proč styly containeru a deselectu nemám v css?
 	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
-	// todo měly by další callbacky smysl vrstvit podobně jako addCellClassesResolver ?
 	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
 	// todo je potřeba používat typeof 'undefined'? nestačilo by jen if (x) ...? (mám na pár místech)
 	// todo DateConverter apod. by se nemusely instanciovat pro každý dp (musely by se zbavit stavu - options)
@@ -34,9 +33,9 @@ namespace TheDatepicker {
 	// todo setGoButtonContentStructureResolver ...
 	// todo ARIA ?
 	// todo zbavit se ts-ignore (https://stackoverflow.com/questions/32408306/how-to-use-es6-promises-with-typescript)
-	// todo LICENSE file (issue)
 	// todo další formátery? https://www.php.net/manual/en/function.date.php
 	// todo testy
+	// todo odstranit deprecated
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
