@@ -590,6 +590,10 @@ var TheDatepicker;
             deselectElement.style.position = 'absolute';
             var deselectButton = this.document_.createElement('a');
             deselectButton.innerHTML = this.options.getDeselectHtml();
+            var title = this.options.translator.translateTitle(TheDatepicker.TitleName.Deselect);
+            if (title !== '') {
+                deselectButton.title = title;
+            }
             deselectButton.style.position = 'relative';
             deselectButton.style.left = '-0.8em';
             deselectButton.href = '#';
@@ -2534,6 +2538,7 @@ var TheDatepicker;
         TitleName[TitleName["GoForward"] = 1] = "GoForward";
         TitleName[TitleName["Close"] = 2] = "Close";
         TitleName[TitleName["Reset"] = 3] = "Reset";
+        TitleName[TitleName["Deselect"] = 4] = "Deselect";
     })(TitleName = TheDatepicker.TitleName || (TheDatepicker.TitleName = {}));
     var Translator = (function () {
         function Translator() {
@@ -2589,6 +2594,7 @@ var TheDatepicker;
                 _a[TitleName.GoForward] = 'Next month',
                 _a[TitleName.Close] = 'Close',
                 _a[TitleName.Reset] = 'Reset',
+                _a[TitleName.Deselect] = 'Deselect',
                 _a);
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {

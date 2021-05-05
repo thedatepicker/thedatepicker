@@ -480,8 +480,11 @@ return header;
 				<li>
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Close, "<input type="text" size="15" id="closeTranslation" value="Close">");</label>
 				</li>
-				<li class="space">
+				<li>
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Reset, "<input type="text" size="15" id="resetTranslation" value="Reset">");</label>
+				</li>
+				<li class="space">
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Deselect, "<input type="text" size="15" id="deselectTranslation" value="Deselect">");</label>
 				</li>
 				<li>
 					<label>var datepickerPromise = TheDatepicker.onDatepickerReady(input, function (datepicker) {<br>
@@ -1099,6 +1102,13 @@ return header;
 			resetTranslationInput.onchange = function () {
 				updateSetting(resetTranslationInput, function () {
 					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Reset, resetTranslationInput.value);
+				});
+			};
+
+			var deselectTranslationInput = document.getElementById('deselectTranslation');
+			deselectTranslationInput.onchange = function () {
+				updateSetting(deselectTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Deselect, deselectTranslationInput.value);
 				});
 			};
 

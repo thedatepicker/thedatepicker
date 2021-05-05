@@ -4,7 +4,6 @@ namespace TheDatepicker {
 	// todo mělo by smysl držet identitu dní?
 	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
 	// todo static metody šětří výkon
-	// todo editovatelný titulek pro deselect button
 	// todo proč výběr data volá Template.render() tolikrát?
 	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
@@ -410,6 +409,10 @@ namespace TheDatepicker {
 			deselectElement.style.position = 'absolute';
 			const deselectButton = this.document_.createElement('a');
 			deselectButton.innerHTML = this.options.getDeselectHtml();
+			const title = this.options.translator.translateTitle(TitleName.Deselect);
+			if (title !== '') {
+				deselectButton.title = title;
+			}
 			deselectButton.style.position = 'relative';
 			deselectButton.style.left = '-0.8em';
 			deselectButton.href = '#';

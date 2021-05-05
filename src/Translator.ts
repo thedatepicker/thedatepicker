@@ -5,6 +5,7 @@ namespace TheDatepicker {
 		GoForward,
 		Close,
 		Reset,
+		Deselect,
 	}
 
 	export class Translator {
@@ -64,6 +65,7 @@ namespace TheDatepicker {
 			[TitleName.GoForward]: 'Next month',
 			[TitleName.Close]: 'Close',
 			[TitleName.Reset]: 'Reset',
+			[TitleName.Deselect]: 'Deselect',
 		};
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
