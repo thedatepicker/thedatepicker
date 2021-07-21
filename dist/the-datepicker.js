@@ -961,9 +961,16 @@ var TheDatepicker;
             }
             return false;
         };
-        Helper_.addEventListener_ = function (element, listenerType, listener) {
+        Helper_.addEventListener_ = function (element, listenerType, listener, isPassive) {
+            if (isPassive === void 0) { isPassive = false; }
             if (element.addEventListener) {
-                element.addEventListener(listenerType, listener);
+                var options = void 0;
+                if (isPassive && Helper_.isPassiveEventListenerSupported_()) {
+                    options = {
+                        passive: true
+                    };
+                }
+                element.addEventListener(listenerType, listener, options);
                 return function () {
                     element.removeEventListener(listenerType, listener);
                 };
@@ -1044,7 +1051,7 @@ var TheDatepicker;
             Helper_.addEventListener_(element, ListenerType_.TouchStart, function (event) {
                 startPosition = event.touches[0].clientX;
                 minDistance = element.offsetWidth / 5;
-            });
+            }, true);
             Helper_.addEventListener_(element, ListenerType_.TouchMove, function (event) {
                 if (startPosition === null) {
                     return;
@@ -1054,7 +1061,7 @@ var TheDatepicker;
                     listener(event, diff > 0);
                     startPosition = null;
                 }
-            });
+            }, true);
         };
         Helper_.isCssAnimationSupported_ = function () {
             if (Helper_.cssAnimationSupport_ === null) {
@@ -1063,8 +1070,27 @@ var TheDatepicker;
             }
             return Helper_.cssAnimationSupport_;
         };
+        Helper_.isPassiveEventListenerSupported_ = function () {
+            if (Helper_.passiveEventListenerSupport_ === null) {
+                var isSupported_1 = false;
+                try {
+                    var options = Object.defineProperty({}, 'passive', {
+                        get: function () {
+                            isSupported_1 = true;
+                            return false;
+                        }
+                    });
+                    window.addEventListener('test', null, options);
+                    window.removeEventListener('test', null, options);
+                }
+                catch (error) { }
+                Helper_.passiveEventListenerSupport_ = isSupported_1;
+            }
+            return Helper_.passiveEventListenerSupport_;
+        };
         Helper_.deprecatedMethods_ = [];
         Helper_.cssAnimationSupport_ = null;
+        Helper_.passiveEventListenerSupport_ = null;
         return Helper_;
     }());
     TheDatepicker.Helper_ = Helper_;

@@ -52,6 +52,8 @@ namespace TheDatepicker {
 
 		private static cssAnimationSupport_: boolean | null = null;
 
+		private static passiveEventListenerSupport_: boolean | null = null;
+
 		public static resetTime_(date: Date | null): Date | null {
 			if (date === null) {
 				return null;
@@ -150,9 +152,15 @@ namespace TheDatepicker {
 			return false;
 		}
 
-		public static addEventListener_(element: Node, listenerType: ListenerType_, listener: (event: Event) => void): () => void {
+		public static addEventListener_(element: Node, listenerType: ListenerType_, listener: (event: Event) => void, isPassive: boolean = false): () => void {
 			if (element.addEventListener) {
-				element.addEventListener(listenerType, listener);
+				let options: AddEventListenerOptions;
+				if (isPassive && Helper_.isPassiveEventListenerSupported_()) {
+					options = {
+						passive: true,
+					};
+				}
+				element.addEventListener(listenerType, listener, options);
 
 				return (): void => {
 					element.removeEventListener(listenerType, listener);
@@ -245,7 +253,7 @@ namespace TheDatepicker {
 			Helper_.addEventListener_(element, ListenerType_.TouchStart, (event: TouchEvent): void => {
 				startPosition = event.touches[0].clientX;
 				minDistance = element.offsetWidth / 5;
-			});
+			}, true);
 
 			Helper_.addEventListener_(element, ListenerType_.TouchMove, (event:TouchEvent): void => {
 				if (startPosition === null) {
@@ -257,7 +265,7 @@ namespace TheDatepicker {
 					listener(event, diff > 0);
 					startPosition = null;
 				}
-			});
+			}, true);
 		}
 
 		public static isCssAnimationSupported_(): boolean {
@@ -267,6 +275,26 @@ namespace TheDatepicker {
 			}
 
 			return Helper_.cssAnimationSupport_;
+		}
+
+		public static isPassiveEventListenerSupported_(): boolean {
+			if (Helper_.passiveEventListenerSupport_ === null) {
+				let isSupported: boolean = false;
+				try {
+					const options = Object.defineProperty({}, 'passive', {
+						get: function() {
+							isSupported = true;
+							return false;
+						}
+					});
+					window.addEventListener('test', null, options);
+					window.removeEventListener('test', null, options);
+				} catch (error) {}
+
+				Helper_.passiveEventListenerSupport_ = isSupported;
+			}
+
+			return Helper_.passiveEventListenerSupport_;
 		}
 
 	}
