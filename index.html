@@ -129,6 +129,9 @@
 					<label>datepicker.getCurrentMonth()<span id="currentMonth"></span>;</label>
 				</li>
 				<li>
+					<label>datepicker.isOpened() === <span id="opened"></span>;</label>
+				</li>
+				<li>
 					<label>datepicker.options.setHideOnBlur(<input type="checkbox" id="hideOnBlur" checked="checked">);</label>
 				</li>
 				<li>
@@ -535,6 +538,13 @@ return header;
 			datepicker.options.onMonthChange(updateCurrentMonth);
 			updateCurrentMonth();
 
+			var openedOutput = document.getElementById('opened');
+			var updateOpened = function () {
+				openedOutput.innerText = datepicker.isOpened() ? 'true' : 'false';
+			};
+			datepicker.options.onOpenAndClose(updateOpened);
+			updateOpened();
+
 			datepicker.render();
 
 			var updateSetting = function (settingInput, callback, doNotCallRender) {
@@ -571,6 +581,8 @@ return header;
 					datepicker.options.onSelect(updateSelectedDate);
 				} else if (eventName === 'monthChange') {
 					datepicker.options.onMonthChange(updateCurrentMonth);
+				} else if (eventName === 'openAndClose') {
+					datepicker.options.onOpenAndClose(updateOpened);
 				}
 
 				if (body === '') {
