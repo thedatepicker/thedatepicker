@@ -224,11 +224,11 @@
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.setCellContentStructureResolver(() => {<br>
+					<label>datepicker.options.setCellContentStructureResolver( /* init: */ () => {<br>
 						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverInit">return document.createElement('span');</textarea><br>
-						}, (element, day) => {<br>
+						}</label>,<label> /* update: */ (element, day) => {<br>
 						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverUpdate">element.innerText = day.dayNumber;</textarea><br>
-						});</label>
+						}</label>);
 				</li>
 				<li>
 					<label>datepicker.options.setCellContentResolver((day) => {<br>
