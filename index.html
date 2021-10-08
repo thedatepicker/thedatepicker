@@ -250,6 +250,10 @@ return [];</textarea><br>
 						});</label>
 				</li>
 				<li>
+					<label>var day = datepicker.getDay("<input type="text" size="15" id="day" placeholder="Y-m-d">");</label> <span class="error" id="dayError"></span>
+					<span id="dayOutput"></span>
+				</li>
+				<li>
 					<label>datepicker.options.setHeaderStructureResolver(() => {<br>
 						&nbsp;<textarea rows="3" cols="70" id="headerStructureResolver">/*
 var header = document.createElement('div');
@@ -265,7 +269,7 @@ return header;
 				</li>
 				<li>
 					<label>datepicker.options.onBeforeSelect(function (event, day, previousDay) {<br>
-						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker // applies to all on*
+						&nbsp;<textarea rows="3" cols="70" id="onBeforeSelect">// this instanceof TheDatepicker.Datepicker; day instanceof TheDatepicker.Day; // applies to all on*
 // return false; // to disable action, applies to all onBefore*</textarea><br>
 						});</label>
 				</li>
@@ -880,6 +884,34 @@ return header;
 					datepicker.options.addDayModifier(createCallback('day', dayModifierInput.value));
 				}
 				datepicker.render();
+			};
+
+			var dayOutput = document.getElementById('dayOutput');
+			var dayInput = document.getElementById('day');
+			var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			dayInput.onchange = function () {
+				updateSetting(dayInput, function () {
+					if (dayInput.value !== '') {
+						var day = dayOutput.innerText = datepicker.getDay(dayInput.value);
+						dayOutput.innerHTML = '<br>day.dayNumber === ' + day.dayNumber + ';'
+							+ '<br>day.month === ' + day.month + ';'
+							+ '<br>day.year === ' + day.year + ';'
+							+ '<br>day.dayOfWeek === TheDatepicker.DayOfWeek.' + daysOfWeek[day.dayOfWeek] + ';'
+							+ '<br>day.isWeekend === ' + (day.isWeekend ? 'true' : 'false') + ';'
+							+ '<br>day.isToday === ' + (day.isToday ? 'true' : 'false') + ';'
+							+ '<br>day.isPast === ' + (day.isPast ? 'true' : 'false') + ';'
+							+ '<br>day.isAvailable === ' + (day.isAvailable ? 'true' : 'false') + ';'
+							+ '<br>day.isInValidity === ' + (day.isInValidity ? 'true' : 'false') + ';'
+							+ '<br>day.isVisible === ' + (day.isVisible ? 'true' : 'false') + ';'
+							+ '<br>day.isInCurrentMonth === ' + (day.isInCurrentMonth ? 'true' : 'false') + ';'
+							+ '<br>day.isSelected === ' + (day.isSelected ? 'true' : 'false') + ';'
+							+ '<br>day.getDate().toString() === "' + day.getDate().toString() + '";'
+							+ '<br>day.getFormatted() === "' + day.getFormatted() + '";'
+							+ '<br>day.getSibling(-2).dayNumber === ' + day.getSibling(-2).dayNumber + ';';
+					} else {
+						dayOutput.innerHTML = '';
+					}
+				}, true);
 			};
 
 			var headerStructureResolverInput = document.getElementById('headerStructureResolver');

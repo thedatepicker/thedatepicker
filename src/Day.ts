@@ -1,5 +1,7 @@
 namespace TheDatepicker {
 
+	type CreateDay = (date: Date) => Day;
+
 	export class Day {
 
 		public readonly dayNumber: number;
@@ -12,18 +14,21 @@ namespace TheDatepicker {
 		public isPast = false;
 		public isAvailable = true;
 		public isInValidity = true;
-		public isVisible = true;
-		public isInCurrentMonth = true;
+		public isVisible = false;
+		public isInCurrentMonth = false;
 		public isSelected = false;
 		public isHighlighted = false;
 		public isFocused = false;
 
-		public constructor(date: Date) {
+		private readonly createDay_: CreateDay;
+
+		public constructor(date: Date, createDay: CreateDay) {
 			this.dayNumber = date.getDate();
 			this.month = date.getMonth() + 1;
 			this.year = date.getFullYear();
 			this.dayOfWeek = date.getDay();
 			this.isWeekend = this.dayOfWeek === DayOfWeek.Saturday || this.dayOfWeek === DayOfWeek.Sunday;
+			this.createDay_ = createDay;
 		}
 
 		public getDate(): Date {
@@ -46,6 +51,12 @@ namespace TheDatepicker {
 				&& this.dayNumber === day.dayNumber
 				&& this.month === day.month
 				&& this.year === day.year;
+		}
+
+		public getSibling(shift = 1): Day {
+			const date = this.getDate();
+			date.setDate(date.getDate() + shift);
+			return this.createDay_(date);
 		}
 
 	}

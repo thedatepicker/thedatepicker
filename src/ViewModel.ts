@@ -7,6 +7,11 @@ namespace TheDatepicker {
 		Down = 7,
 	}
 
+	interface OutsideDates {
+		prepend: Date[];
+		append: Date[];
+	}
+
 	export class ViewModel_ {
 
 		public selectedDate_: Date | null = null;
@@ -14,6 +19,7 @@ namespace TheDatepicker {
 		private readonly template_: Template_;
 
 		private currentMonth_: Date | null = null;
+		private outsideDates_: OutsideDates | null = null;
 		private highlightedDay_: Day | null = null;
 		private isHighlightedDayFocused_ = false;
 		private active_ = false;
@@ -69,7 +75,7 @@ namespace TheDatepicker {
 
 		public getCurrentMonth_(): Date {
 			if (this.currentMonth_ === null) {
-				this.currentMonth_ = this.options_.getInitialMonth();
+				this.setCurrentMonth_(this.options_.getInitialMonth());
 			}
 
 			return this.currentMonth_;
@@ -119,7 +125,7 @@ namespace TheDatepicker {
 				return false;
 			}
 
-			this.currentMonth_ = month;
+			this.setCurrentMonth_(month);
 			if (!doCancelHighlight || !this.cancelHighlight_(event)) {
 				this.render_();
 			}
@@ -239,20 +245,18 @@ namespace TheDatepicker {
 		}
 
 		public highlightFirstAvailableDay_(event: Event): boolean {
-			let date = new Date(this.getCurrentMonth_().getTime());
 			const maxDate = this.options_.getMaxDate_();
-
-			let day = this.createDay_(date);
+			let day = this.createDay_(new Date(this.getCurrentMonth_().getTime()));
 			while (!day.isAvailable) {
-				date.setDate(day.dayNumber + 1);
-				if (date.getDate() === 1) {
+				const sibling = day.getSibling();
+				if (sibling.dayNumber === 1) {
 					break;
 				}
-				if (date.getTime() > maxDate.getTime()) {
+				if (sibling.getDate().getTime() > maxDate.getTime()) {
 					break;
 				}
 
-				day = this.createDay_(date);
+				day = sibling;
 			}
 
 			return this.highlightDay_(event, day);
@@ -260,12 +264,10 @@ namespace TheDatepicker {
 
 		public highlightSiblingDay_(event: Event, day: Day, direction: MoveDirection_): boolean {
 			let newDay = day;
-			let date = newDay.getDate();
 			let maxLoops = 1000; // infinite loop prevention
 
 			do {
-				date.setDate(newDay.dayNumber + direction);
-				newDay = this.createDay_(date);
+				newDay = newDay.getSibling(direction);
 				if (!newDay.isInValidity) {
 					break;
 				}
@@ -328,40 +330,24 @@ namespace TheDatepicker {
 		}
 
 		public getWeeks_(): Day[][] {
-			let date;
 			const days = [];
 			const currentMonth = this.getCurrentMonth_();
-			const firstDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-			const lastMonthDaysCount = (new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0)).getDate();
-			const prependDaysCount = (firstDateOfMonth.getDay() - this.options_.getFirstDayOfWeek() + 7) % 7;
-			for (date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
-				const day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
-				day.isVisible = this.options_.areDaysOutOfMonthVisible();
-				day.isInCurrentMonth = false;
+			const outsideDates = this.getOutsideDates_();
+
+			for (let index = 0; index < outsideDates.prepend.length; index++) {
+				const day = this.createDay_(outsideDates.prepend[index]);
 				days.push(day);
 			}
 
 			const lastDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 			const monthDaysCount = lastDateOfMonth.getDate();
-			for (date = 1; date <= monthDaysCount; date++) {
+			for (let date = 1; date <= monthDaysCount; date++) {
 				days.push(this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), date)));
 			}
 
-			const appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options_.getFirstDayOfWeek() + 7) % 7);
-			for (date = 1; date <= appendDaysCount; date++) {
-				const day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
-				day.isVisible = this.options_.areDaysOutOfMonthVisible();
-				day.isInCurrentMonth = false;
+			for (let index = 0; index < outsideDates.append.length; index++) {
+				const day = this.createDay_(outsideDates.append[index]);
 				days.push(day);
-			}
-
-			if (this.options_.hasFixedRowsCount()) {
-				for (let date = appendDaysCount + 1; days.length < 6 * 7; date++) {
-					const day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
-					day.isVisible = this.options_.areDaysOutOfMonthVisible();
-					day.isInCurrentMonth = false;
-					days.push(day);
-				}
 			}
 
 			const weeks = [];
@@ -388,6 +374,50 @@ namespace TheDatepicker {
 					this.highlightFirstAvailableDay_(event);
 				}
 			}
+		}
+
+		public createDay_(date: Date): Day {
+			date = Helper_.resetTime_(new Date(date.getTime()));
+			const today = this.options_.getToday();
+			const currentMonth = this.getCurrentMonth_();
+
+			const day = new Day(date, (date: Date): Day => {
+				return this.createDay_(date);
+			});
+			day.isToday = date.getTime() === today.getTime();
+			day.isPast = date.getTime() < today.getTime();
+			day.isInValidity = this.options_.isDateInValidity(date);
+			day.isAvailable = day.isInValidity && this.options_.isDateAvailable(date);
+			day.isInCurrentMonth = date.getMonth() === currentMonth.getMonth();
+			if (day.isInCurrentMonth) {
+				day.isVisible = true;
+			} else if (this.options_.areDaysOutOfMonthVisible()) {
+				const outsideDates = this.getOutsideDates_();
+				const pendants = outsideDates.prepend.concat(outsideDates.append);
+				for (let index = 0; index < pendants.length; index++) {
+					if (date.getTime() === pendants[index].getTime()) {
+						day.isVisible = true;
+						break;
+					}
+				}
+			}
+
+			if (day.isAvailable) {
+				if (day.isEqualToDate(this.selectedDate_)) {
+					day.isSelected = true;
+				}
+				if (day.isEqualToDay(this.highlightedDay_)) {
+					day.isHighlighted = true;
+					if (this.isHighlightedDayFocused_) {
+						day.isFocused = true;
+						this.isHighlightedDayFocused_ = false;
+					}
+				}
+			}
+
+			this.options_.modifyDay(day);
+
+			return day;
 		}
 
 		private triggerOnBeforeSelect_(event: Event | null, day: Day | null, previousDay: Day | null): boolean {
@@ -438,32 +468,48 @@ namespace TheDatepicker {
 			});
 		}
 
-		private createDay_(date: Date): Day {
-			date = Helper_.resetTime_(new Date(date.getTime()));
-			const today = this.options_.getToday();
+		private setCurrentMonth_(month: Date): void
+		{
+			this.currentMonth_ = month;
+			this.outsideDates_ = null;
+		}
 
-			const day = new Day(date);
-			day.isToday = date.getTime() === today.getTime();
-			day.isPast = date.getTime() < today.getTime();
-			day.isInValidity = this.options_.isDateInValidity(date);
-			day.isAvailable = day.isInValidity && this.options_.isDateAvailable(date);
+		private getOutsideDates_(): OutsideDates
+		{
+			if (this.outsideDates_ !== null) {
+				return this.outsideDates_;
+			}
 
-			if (day.isAvailable) {
-				if (day.isEqualToDate(this.selectedDate_)) {
-					day.isSelected = true;
-				}
-				if (day.isEqualToDay(this.highlightedDay_)) {
-					day.isHighlighted = true;
-					if (this.isHighlightedDayFocused_) {
-						day.isFocused = true;
-						this.isHighlightedDayFocused_ = false;
-					}
+			const currentMonth = this.getCurrentMonth_();
+			const firstDayOfWeek = this.options_.getFirstDayOfWeek();
+			const firstDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+			const lastMonthDaysCount = (new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0)).getDate();
+			const prependDaysCount = (firstDateOfMonth.getDay() - firstDayOfWeek + 7) % 7;
+			const prepend = [];
+			for (let date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
+				prepend.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
+			}
+
+			const lastDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+			const appendDaysCount = 6 - ((lastDateOfMonth.getDay() - firstDayOfWeek + 7) % 7);
+			const append = [];
+			for (let date = 1; date <= appendDaysCount; date++) {
+				append.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+			}
+
+			if (this.options_.hasFixedRowsCount()) {
+				const monthDaysCount = lastDateOfMonth.getDate();
+				for (let date = appendDaysCount + 1; prependDaysCount + monthDaysCount + append.length < 6 * 7; date++) {
+					append.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
 				}
 			}
 
-			this.options_.modifyDay(day);
+			this.outsideDates_ = {
+				prepend: prepend,
+				append: append,
+			};
 
-			return day;
+			return this.outsideDates_;
 		}
 
 		private translateKeyCodeToMoveDirection_(key: KeyCode_): MoveDirection_ {

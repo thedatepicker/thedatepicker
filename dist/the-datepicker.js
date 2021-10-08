@@ -497,7 +497,7 @@ var TheDatepicker;
         Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
             if (doUpdateMonth === void 0) { doUpdateMonth = true; }
             if (event === void 0) { event = null; }
-            return this.viewModel_.selectDay_(event, TheDatepicker.Helper_.normalizeDate_('Date', date, this.options), !!doUpdateMonth);
+            return this.viewModel_.selectDay_(event, TheDatepicker.Helper_.normalizeDate_('Date', date, true, this.options), !!doUpdateMonth);
         };
         Datepicker.prototype.getSelectedDate = function () {
             return this.viewModel_.selectedDate_ !== null ? new Date(this.viewModel_.selectedDate_.getTime()) : null;
@@ -510,12 +510,15 @@ var TheDatepicker;
         };
         Datepicker.prototype.goToMonth = function (month, event) {
             if (event === void 0) { event = null; }
-            return this.viewModel_.goToMonth_(event, TheDatepicker.Helper_.normalizeDate_('Month', month, this.options));
+            return this.viewModel_.goToMonth_(event, TheDatepicker.Helper_.normalizeDate_('Month', month, false, this.options));
         };
         Datepicker.prototype.parseRawInput = function () {
             return this.isInputTextBox_
                 ? this.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value)
                 : null;
+        };
+        Datepicker.prototype.getDay = function (date) {
+            return this.viewModel_.createDay_(TheDatepicker.Helper_.normalizeDate_('Date', date, false, this.options));
         };
         Datepicker.prototype.readInput_ = function (event) {
             if (event === void 0) { event = null; }
@@ -789,13 +792,13 @@ var TheDatepicker;
 var TheDatepicker;
 (function (TheDatepicker) {
     var Day = (function () {
-        function Day(date) {
+        function Day(date, createDay) {
             this.isToday = false;
             this.isPast = false;
             this.isAvailable = true;
             this.isInValidity = true;
-            this.isVisible = true;
-            this.isInCurrentMonth = true;
+            this.isVisible = false;
+            this.isInCurrentMonth = false;
             this.isSelected = false;
             this.isHighlighted = false;
             this.isFocused = false;
@@ -804,6 +807,7 @@ var TheDatepicker;
             this.year = date.getFullYear();
             this.dayOfWeek = date.getDay();
             this.isWeekend = this.dayOfWeek === TheDatepicker.DayOfWeek.Saturday || this.dayOfWeek === TheDatepicker.DayOfWeek.Sunday;
+            this.createDay_ = createDay;
         }
         Day.prototype.getDate = function () {
             return new Date(this.year, this.month - 1, this.dayNumber, 0, 0, 0, 0);
@@ -822,6 +826,12 @@ var TheDatepicker;
                 && this.dayNumber === day.dayNumber
                 && this.month === day.month
                 && this.year === day.year;
+        };
+        Day.prototype.getSibling = function (shift) {
+            if (shift === void 0) { shift = 1; }
+            var date = this.getDate();
+            date.setDate(date.getDate() + shift);
+            return this.createDay_(date);
         };
         return Day;
     }());
@@ -888,8 +898,11 @@ var TheDatepicker;
             date.setMilliseconds(0);
             return date;
         };
-        Helper_.normalizeDate_ = function (parameterName, value, options) {
+        Helper_.normalizeDate_ = function (parameterName, value, isNullable, options) {
             if (!value) {
+                if (!isNullable) {
+                    throw new Error(parameterName + ' cannot be empty.');
+                }
                 return null;
             }
             if (value instanceof TheDatepicker.Day) {
@@ -940,7 +953,9 @@ var TheDatepicker;
                     return date;
                 }
             }
-            throw new Error(parameterName + ' was expected to be a valid Date string or valid Date or Day or null.');
+            throw new Error(parameterName
+                + ' was expected to be a valid Date string or valid Date or Day'
+                + (isNullable ? ' or null.' : '.'));
         };
         Helper_.isElement_ = function (element) {
             return typeof element === 'object'
@@ -1341,20 +1356,20 @@ var TheDatepicker;
             this.hideOnSelect_ = !!value;
         };
         Options.prototype.setMinDate = function (date) {
-            var normalizedDate = TheDatepicker.Helper_.normalizeDate_('Min date', date, this);
+            var normalizedDate = TheDatepicker.Helper_.normalizeDate_('Min date', date, true, this);
             this.checkConstraints_(normalizedDate, this.maxDate_);
             this.minDate_ = normalizedDate;
         };
         Options.prototype.setMaxDate = function (date) {
-            var normalizedDate = TheDatepicker.Helper_.normalizeDate_('Max date', date, this);
+            var normalizedDate = TheDatepicker.Helper_.normalizeDate_('Max date', date, true, this);
             this.checkConstraints_(this.minDate_, normalizedDate);
             this.maxDate_ = normalizedDate;
         };
         Options.prototype.setInitialMonth = function (month) {
-            this.initialMonth_ = TheDatepicker.Helper_.normalizeDate_('Initial month', month, this);
+            this.initialMonth_ = TheDatepicker.Helper_.normalizeDate_('Initial month', month, true, this);
         };
         Options.prototype.setInitialDate = function (value) {
-            this.initialDate_ = TheDatepicker.Helper_.normalizeDate_('Initial date', value, this);
+            this.initialDate_ = TheDatepicker.Helper_.normalizeDate_('Initial date', value, true, this);
         };
         Options.prototype.setInitialDatePriority = function (value) {
             this.initialDatePriority_ = !!value;
@@ -1498,7 +1513,7 @@ var TheDatepicker;
             this.positionFixing_ = !!value;
         };
         Options.prototype.setToday = function (date) {
-            this.today_ = TheDatepicker.Helper_.normalizeDate_('Today', date, this);
+            this.today_ = TheDatepicker.Helper_.normalizeDate_('Today', date, true, this);
         };
         Options.prototype.onBeforeSelect = function (listener) {
             this.onEvent_(EventType_.BeforeSelect, listener);
@@ -2676,6 +2691,7 @@ var TheDatepicker;
             this.datepicker_ = datepicker_;
             this.selectedDate_ = null;
             this.currentMonth_ = null;
+            this.outsideDates_ = null;
             this.highlightedDay_ = null;
             this.isHighlightedDayFocused_ = false;
             this.active_ = false;
@@ -2714,7 +2730,7 @@ var TheDatepicker;
         };
         ViewModel_.prototype.getCurrentMonth_ = function () {
             if (this.currentMonth_ === null) {
-                this.currentMonth_ = this.options_.getInitialMonth();
+                this.setCurrentMonth_(this.options_.getInitialMonth());
             }
             return this.currentMonth_;
         };
@@ -2754,7 +2770,7 @@ var TheDatepicker;
             if (!this.triggerOnBeforeMonthChange_(event, month, this.currentMonth_)) {
                 return false;
             }
-            this.currentMonth_ = month;
+            this.setCurrentMonth_(month);
             if (!doCancelHighlight || !this.cancelHighlight_(event)) {
                 this.render_();
             }
@@ -2854,28 +2870,25 @@ var TheDatepicker;
             return true;
         };
         ViewModel_.prototype.highlightFirstAvailableDay_ = function (event) {
-            var date = new Date(this.getCurrentMonth_().getTime());
             var maxDate = this.options_.getMaxDate_();
-            var day = this.createDay_(date);
+            var day = this.createDay_(new Date(this.getCurrentMonth_().getTime()));
             while (!day.isAvailable) {
-                date.setDate(day.dayNumber + 1);
-                if (date.getDate() === 1) {
+                var sibling = day.getSibling();
+                if (sibling.dayNumber === 1) {
                     break;
                 }
-                if (date.getTime() > maxDate.getTime()) {
+                if (sibling.getDate().getTime() > maxDate.getTime()) {
                     break;
                 }
-                day = this.createDay_(date);
+                day = sibling;
             }
             return this.highlightDay_(event, day);
         };
         ViewModel_.prototype.highlightSiblingDay_ = function (event, day, direction) {
             var newDay = day;
-            var date = newDay.getDate();
             var maxLoops = 1000;
             do {
-                date.setDate(newDay.dayNumber + direction);
-                newDay = this.createDay_(date);
+                newDay = newDay.getSibling(direction);
                 if (!newDay.isInValidity) {
                     break;
                 }
@@ -2921,37 +2934,21 @@ var TheDatepicker;
             return weekDays;
         };
         ViewModel_.prototype.getWeeks_ = function () {
-            var date;
             var days = [];
             var currentMonth = this.getCurrentMonth_();
-            var firstDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-            var lastMonthDaysCount = (new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0)).getDate();
-            var prependDaysCount = (firstDateOfMonth.getDay() - this.options_.getFirstDayOfWeek() + 7) % 7;
-            for (date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
-                var day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
-                day.isVisible = this.options_.areDaysOutOfMonthVisible();
-                day.isInCurrentMonth = false;
+            var outsideDates = this.getOutsideDates_();
+            for (var index = 0; index < outsideDates.prepend.length; index++) {
+                var day = this.createDay_(outsideDates.prepend[index]);
                 days.push(day);
             }
             var lastDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
             var monthDaysCount = lastDateOfMonth.getDate();
-            for (date = 1; date <= monthDaysCount; date++) {
+            for (var date = 1; date <= monthDaysCount; date++) {
                 days.push(this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), date)));
             }
-            var appendDaysCount = 6 - ((lastDateOfMonth.getDay() - this.options_.getFirstDayOfWeek() + 7) % 7);
-            for (date = 1; date <= appendDaysCount; date++) {
-                var day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
-                day.isVisible = this.options_.areDaysOutOfMonthVisible();
-                day.isInCurrentMonth = false;
+            for (var index = 0; index < outsideDates.append.length; index++) {
+                var day = this.createDay_(outsideDates.append[index]);
                 days.push(day);
-            }
-            if (this.options_.hasFixedRowsCount()) {
-                for (var date_4 = appendDaysCount + 1; days.length < 6 * 7; date_4++) {
-                    var day = this.createDay_(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date_4));
-                    day.isVisible = this.options_.areDaysOutOfMonthVisible();
-                    day.isInCurrentMonth = false;
-                    days.push(day);
-                }
             }
             var weeks = [];
             for (var i = 0; i < days.length; i += 7) {
@@ -2974,6 +2971,47 @@ var TheDatepicker;
                     this.highlightFirstAvailableDay_(event);
                 }
             }
+        };
+        ViewModel_.prototype.createDay_ = function (date) {
+            var _this = this;
+            date = TheDatepicker.Helper_.resetTime_(new Date(date.getTime()));
+            var today = this.options_.getToday();
+            var currentMonth = this.getCurrentMonth_();
+            var day = new TheDatepicker.Day(date, function (date) {
+                return _this.createDay_(date);
+            });
+            day.isToday = date.getTime() === today.getTime();
+            day.isPast = date.getTime() < today.getTime();
+            day.isInValidity = this.options_.isDateInValidity(date);
+            day.isAvailable = day.isInValidity && this.options_.isDateAvailable(date);
+            day.isInCurrentMonth = date.getMonth() === currentMonth.getMonth();
+            if (day.isInCurrentMonth) {
+                day.isVisible = true;
+            }
+            else if (this.options_.areDaysOutOfMonthVisible()) {
+                var outsideDates = this.getOutsideDates_();
+                var pendants = outsideDates.prepend.concat(outsideDates.append);
+                for (var index = 0; index < pendants.length; index++) {
+                    if (date.getTime() === pendants[index].getTime()) {
+                        day.isVisible = true;
+                        break;
+                    }
+                }
+            }
+            if (day.isAvailable) {
+                if (day.isEqualToDate(this.selectedDate_)) {
+                    day.isSelected = true;
+                }
+                if (day.isEqualToDay(this.highlightedDay_)) {
+                    day.isHighlighted = true;
+                    if (this.isHighlightedDayFocused_) {
+                        day.isFocused = true;
+                        this.isHighlightedDayFocused_ = false;
+                    }
+                }
+            }
+            this.options_.modifyDay(day);
+            return day;
         };
         ViewModel_.prototype.triggerOnBeforeSelect_ = function (event, day, previousDay) {
             var _this = this;
@@ -3023,28 +3061,40 @@ var TheDatepicker;
                 return listener.call(_this.datepicker_, event, day, previousDay);
             });
         };
-        ViewModel_.prototype.createDay_ = function (date) {
-            date = TheDatepicker.Helper_.resetTime_(new Date(date.getTime()));
-            var today = this.options_.getToday();
-            var day = new TheDatepicker.Day(date);
-            day.isToday = date.getTime() === today.getTime();
-            day.isPast = date.getTime() < today.getTime();
-            day.isInValidity = this.options_.isDateInValidity(date);
-            day.isAvailable = day.isInValidity && this.options_.isDateAvailable(date);
-            if (day.isAvailable) {
-                if (day.isEqualToDate(this.selectedDate_)) {
-                    day.isSelected = true;
-                }
-                if (day.isEqualToDay(this.highlightedDay_)) {
-                    day.isHighlighted = true;
-                    if (this.isHighlightedDayFocused_) {
-                        day.isFocused = true;
-                        this.isHighlightedDayFocused_ = false;
-                    }
+        ViewModel_.prototype.setCurrentMonth_ = function (month) {
+            this.currentMonth_ = month;
+            this.outsideDates_ = null;
+        };
+        ViewModel_.prototype.getOutsideDates_ = function () {
+            if (this.outsideDates_ !== null) {
+                return this.outsideDates_;
+            }
+            var currentMonth = this.getCurrentMonth_();
+            var firstDayOfWeek = this.options_.getFirstDayOfWeek();
+            var firstDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+            var lastMonthDaysCount = (new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0)).getDate();
+            var prependDaysCount = (firstDateOfMonth.getDay() - firstDayOfWeek + 7) % 7;
+            var prepend = [];
+            for (var date = lastMonthDaysCount - prependDaysCount + 1; date <= lastMonthDaysCount; date++) {
+                prepend.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, date));
+            }
+            var lastDateOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+            var appendDaysCount = 6 - ((lastDateOfMonth.getDay() - firstDayOfWeek + 7) % 7);
+            var append = [];
+            for (var date = 1; date <= appendDaysCount; date++) {
+                append.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
+            }
+            if (this.options_.hasFixedRowsCount()) {
+                var monthDaysCount = lastDateOfMonth.getDate();
+                for (var date = appendDaysCount + 1; prependDaysCount + monthDaysCount + append.length < 6 * 7; date++) {
+                    append.push(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, date));
                 }
             }
-            this.options_.modifyDay(day);
-            return day;
+            this.outsideDates_ = {
+                prepend: prepend,
+                append: append
+            };
+            return this.outsideDates_;
         };
         ViewModel_.prototype.translateKeyCodeToMoveDirection_ = function (key) {
             switch (key) {

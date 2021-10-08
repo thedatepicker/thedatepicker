@@ -9,7 +9,6 @@ namespace TheDatepicker {
 	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
 	// todo v IE 9 se spontáně blurne input
 	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
-	// todo createDay zviditelnit z venku aby si případně mohl zjistit jaké vlastnosti den má
 	// todo onOpen a onClose přecejen? (společně vedle onOpenAndClose)
 	// todo používat a || b místo a !== null ? a : b
 	//      !a místo a === null    ??
@@ -298,7 +297,7 @@ namespace TheDatepicker {
 		}
 
 		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {
-			return this.viewModel_.selectDay_(event, Helper_.normalizeDate_('Date', date, this.options), !!doUpdateMonth);
+			return this.viewModel_.selectDay_(event, Helper_.normalizeDate_('Date', date, true, this.options), !!doUpdateMonth);
 		}
 
 		public getSelectedDate(): Date | null {
@@ -314,13 +313,17 @@ namespace TheDatepicker {
 		}
 
 		public goToMonth(month: Date | string, event: Event | null = null): boolean {
-			return this.viewModel_.goToMonth_(event, Helper_.normalizeDate_('Month', month, this.options));
+			return this.viewModel_.goToMonth_(event, Helper_.normalizeDate_('Month', month, false, this.options));
 		}
 
 		public parseRawInput(): Date | null {
 			return this.isInputTextBox_
 				? this.dateConverter_.parseDate_(this.options.getInputFormat(), (this.input as HTMLInputElement).value)
 				: null;
+		}
+
+		public getDay(date: Date | string): Day {
+			return this.viewModel_.createDay_(Helper_.normalizeDate_('Date', date, false, this.options));
 		}
 
 		public readInput_(event: Event | null = null): boolean {

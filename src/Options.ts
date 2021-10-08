@@ -195,7 +195,7 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMinDate(date: Day | Date | string | null): void {
-			const normalizedDate = Helper_.normalizeDate_('Min date', date, this);
+			const normalizedDate = Helper_.normalizeDate_('Min date', date, true, this);
 			this.checkConstraints_(normalizedDate, this.maxDate_);
 			this.minDate_ = normalizedDate;
 		}
@@ -210,7 +210,7 @@ namespace TheDatepicker {
 		// or null for no limit
 		// defaults to no limit
 		public setMaxDate(date: Day | Date | string | null): void {
-			const normalizedDate = Helper_.normalizeDate_('Max date', date, this);
+			const normalizedDate = Helper_.normalizeDate_('Max date', date, true, this);
 			this.checkConstraints_(this.minDate_, normalizedDate);
 			this.maxDate_ = normalizedDate;
 		}
@@ -224,7 +224,7 @@ namespace TheDatepicker {
 		// or null for current month
 		// defaults to current month
 		public setInitialMonth(month: Date | string | null): void {
-			this.initialMonth_ = Helper_.normalizeDate_('Initial month', month, this);
+			this.initialMonth_ = Helper_.normalizeDate_('Initial month', month, true, this);
 		}
 
 		// Preselected date.
@@ -238,7 +238,7 @@ namespace TheDatepicker {
 		// It's overloaded by direct input value, if any.
 		// defaults to null
 		public setInitialDate(value: Day | Date | string | null): void {
-			this.initialDate_ = Helper_.normalizeDate_('Initial date', value, this);
+			this.initialDate_ = Helper_.normalizeDate_('Initial date', value, true, this);
 		}
 
 		// Setting to true will make initial month ignored when there is any date preselected.
@@ -520,7 +520,7 @@ namespace TheDatepicker {
 		// null for real today
 		// defaults to null
 		public setToday(date: Day | Date | string | null): void {
-			this.today_ = Helper_.normalizeDate_('Today', date, this);
+			this.today_ = Helper_.normalizeDate_('Today', date, true, this);
 		}
 
 		// Callback to be called just before the day is selected or deselected.

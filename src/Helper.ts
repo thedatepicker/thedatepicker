@@ -67,8 +67,12 @@ namespace TheDatepicker {
 			return date;
 		}
 
-		public static normalizeDate_(parameterName: string, value: Day | Date | string | null, options: Options): Date | null {
+		public static normalizeDate_(parameterName: string, value: Day | Date | string | null, isNullable: boolean, options: Options): Date | null {
 			if (!value) {
+				if (!isNullable) {
+					throw new Error(parameterName + ' cannot be empty.');
+				}
+
 				return null;
 			}
 
@@ -126,7 +130,11 @@ namespace TheDatepicker {
 				}
 			}
 
-			throw new Error(parameterName + ' was expected to be a valid Date string or valid Date or Day or null.');
+			throw new Error(
+				parameterName
+				+ ' was expected to be a valid Date string or valid Date or Day'
+				+ (isNullable ? ' or null.' : '.')
+			);
 		}
 
 		public static isElement_(element: HTMLElement): boolean {
