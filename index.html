@@ -219,24 +219,24 @@
 					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setDateAvailabilityResolver((date) => {<br>
+					<label>datepicker.options.setDateAvailabilityResolver(function (date) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="dateAvailabilityResolver">// return date.getDate() !== 5;</textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.setCellContentStructureResolver( /* init: */ () => {<br>
+					<label>datepicker.options.setCellContentStructureResolver( /* init: */ function () {<br>
 						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverInit">return document.createElement('span');</textarea><br>
-						}</label>,<label> /* update: */ (element, day) => {<br>
+						}</label>,<label> /* update: */ function (element, day) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="cellContentStructureResolverUpdate">element.innerText = day.dayNumber;</textarea><br>
 						}</label>);
 				</li>
 				<li>
-					<label>datepicker.options.setCellContentResolver((day) => {<br>
+					<label>datepicker.options.setCellContentResolver(function (day) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="cellContentResolver">return day.dayNumber;</textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.addCellClassesResolver((day) => {<br>
+					<label>datepicker.options.addCellClassesResolver(function (day) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="cellClassesResolver">
 // if (day.dayNumber === 20) return ['red'];
 // if (day.dayNumber === 10) return ['green'];
@@ -244,7 +244,7 @@ return [];</textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.addDayModifier((day) => {<br>
+					<label>datepicker.options.addDayModifier(function (day) {<br>
 						&nbsp;<textarea rows="3" cols="70" id="dayModifier">
 // day.isSunday = day.dayOfWeek === TheDatepicker.DayOfWeek.Sunday;</textarea><br>
 						});</label>
@@ -254,7 +254,7 @@ return [];</textarea><br>
 					<span id="dayOutput"></span>
 				</li>
 				<li>
-					<label>datepicker.options.setHeaderStructureResolver(() => {<br>
+					<label>datepicker.options.setHeaderStructureResolver(function () {<br>
 						&nbsp;<textarea rows="3" cols="70" id="headerStructureResolver">/*
 var header = document.createElement('div');
 header.innerText = 'Hello world';
@@ -263,7 +263,7 @@ return header;
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.setFooterStructureResolver(() => {<br>
+					<label>datepicker.options.setFooterStructureResolver(function () {<br>
 						&nbsp;<textarea rows="3" cols="70" id="footerStructureResolver"></textarea><br>
 						});</label>
 				</li>
@@ -499,7 +499,7 @@ return header;
 					});</label>
 				</li>
 				<li class="space">
-					<label>(async () => {<br>
+					<label>(async function () {<br>
 						&nbsp;<textarea rows="3" cols="70" id="datepickerPromise">var datepicker = await datepickerPromise;</textarea><br>
 					})();</label>
 				</li>
