@@ -380,7 +380,7 @@ var TheDatepicker;
             this.input = input;
             this.container = container;
             this.dateConverter_ = new TheDatepicker.DateConverter_(this.options);
-            this.viewModel_ = new TheDatepicker.ViewModel_(this.options, this);
+            this.viewModel_ = new TheDatepicker.ViewModel_(this.options, this, this.dateConverter_);
             this.triggerReady_(input);
             this.triggerReady_(container);
         }
@@ -792,7 +792,7 @@ var TheDatepicker;
 var TheDatepicker;
 (function (TheDatepicker) {
     var Day = (function () {
-        function Day(date, createDay) {
+        function Day(date, createDay, formatDate) {
             this.isToday = false;
             this.isPast = false;
             this.isAvailable = true;
@@ -808,12 +808,16 @@ var TheDatepicker;
             this.dayOfWeek = date.getDay();
             this.isWeekend = this.dayOfWeek === TheDatepicker.DayOfWeek.Saturday || this.dayOfWeek === TheDatepicker.DayOfWeek.Sunday;
             this.createDay_ = createDay;
+            this.formatDate_ = formatDate;
         }
         Day.prototype.getDate = function () {
             return new Date(this.year, this.month - 1, this.dayNumber, 0, 0, 0, 0);
         };
         Day.prototype.getFormatted = function () {
             return this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.dayNumber).slice(-2);
+        };
+        Day.prototype.getInputFormatted = function () {
+            return this.formatDate_(this.getDate());
         };
         Day.prototype.isEqualToDate = function (date) {
             return date !== null
@@ -2686,9 +2690,10 @@ var TheDatepicker;
         MoveDirection_[MoveDirection_["Down"] = 7] = "Down";
     })(MoveDirection_ = TheDatepicker.MoveDirection_ || (TheDatepicker.MoveDirection_ = {}));
     var ViewModel_ = (function () {
-        function ViewModel_(options_, datepicker_) {
+        function ViewModel_(options_, datepicker_, dateConverter_) {
             this.options_ = options_;
             this.datepicker_ = datepicker_;
+            this.dateConverter_ = dateConverter_;
             this.selectedDate_ = null;
             this.currentMonth_ = null;
             this.outsideDates_ = null;
@@ -2979,6 +2984,8 @@ var TheDatepicker;
             var currentMonth = this.getCurrentMonth_();
             var day = new TheDatepicker.Day(date, function (date) {
                 return _this.createDay_(date);
+            }, function (date) {
+                return _this.dateConverter_.formatDate_(_this.options_.getInputFormat(), date);
             });
             day.isToday = date.getTime() === today.getTime();
             day.isPast = date.getTime() < today.getTime();

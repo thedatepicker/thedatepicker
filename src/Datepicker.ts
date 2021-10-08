@@ -155,7 +155,7 @@ namespace TheDatepicker {
 			this.container = container;
 
 			this.dateConverter_ = new DateConverter_(this.options);
-			this.viewModel_ = new ViewModel_(this.options, this);
+			this.viewModel_ = new ViewModel_(this.options, this, this.dateConverter_);
 
 			this.triggerReady_(input);
 			this.triggerReady_(container);

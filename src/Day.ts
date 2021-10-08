@@ -1,6 +1,7 @@
 namespace TheDatepicker {
 
 	type CreateDay = (date: Date) => Day;
+	type FormatDate = (date: Date) => string;
 
 	export class Day {
 
@@ -21,14 +22,16 @@ namespace TheDatepicker {
 		public isFocused = false;
 
 		private readonly createDay_: CreateDay;
+		private readonly formatDate_: FormatDate;
 
-		public constructor(date: Date, createDay: CreateDay) {
+		public constructor(date: Date, createDay: CreateDay, formatDate: FormatDate) {
 			this.dayNumber = date.getDate();
 			this.month = date.getMonth() + 1;
 			this.year = date.getFullYear();
 			this.dayOfWeek = date.getDay();
 			this.isWeekend = this.dayOfWeek === DayOfWeek.Saturday || this.dayOfWeek === DayOfWeek.Sunday;
 			this.createDay_ = createDay;
+			this.formatDate_ = formatDate;
 		}
 
 		public getDate(): Date {
@@ -37,6 +40,10 @@ namespace TheDatepicker {
 
 		public getFormatted(): string {
 			return this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.dayNumber).slice(-2);
+		}
+
+		public getInputFormatted(): string {
+			return this.formatDate_(this.getDate());
 		}
 
 		public isEqualToDate(date: Date): boolean {

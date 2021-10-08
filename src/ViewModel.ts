@@ -26,7 +26,8 @@ namespace TheDatepicker {
 
 		constructor(
 			private readonly options_: Options,
-			private readonly datepicker_: Datepicker
+			private readonly datepicker_: Datepicker,
+			private readonly dateConverter_: DateConverter_
 		) {
 			this.template_ = new Template_(this.options_, new HtmlHelper_(this.options_), datepicker_.container, datepicker_.input !== null)
 		}
@@ -383,6 +384,8 @@ namespace TheDatepicker {
 
 			const day = new Day(date, (date: Date): Day => {
 				return this.createDay_(date);
+			}, (date: Date): string => {
+				return this.dateConverter_.formatDate_(this.options_.getInputFormat(), date);
 			});
 			day.isToday = date.getTime() === today.getTime();
 			day.isPast = date.getTime() < today.getTime();
