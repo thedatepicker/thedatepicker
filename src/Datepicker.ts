@@ -163,13 +163,6 @@ namespace TheDatepicker {
 
 		public render(): void {
 			switch (this.initializationPhase_) {
-				case InitializationPhase.Destroyed:
-					return;
-
-				case InitializationPhase.Initialized:
-					this.viewModel_.render_();
-					return;
-
 				case InitializationPhase.Ready:
 					this.initListeners_();
 					this.initializationPhase_ = InitializationPhase.Initialized;
@@ -216,6 +209,10 @@ namespace TheDatepicker {
 
 					this.initializationPhase_ = InitializationPhase.Ready;
 					this.render();
+
+				default:
+					this.viewModel_.render_();
+					return;
 			}
 		}
 
@@ -294,6 +291,10 @@ namespace TheDatepicker {
 			}
 
 			this.initializationPhase_ = InitializationPhase.Destroyed;
+		}
+
+		public isDestroyed(): boolean {
+			return this.initializationPhase_ === InitializationPhase.Destroyed;
 		}
 
 		public selectDate(date: Date | string | null, doUpdateMonth = true, event: Event | null = null): boolean {

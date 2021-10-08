@@ -33,7 +33,7 @@ namespace TheDatepicker {
 		}
 
 		public render_(): void {
-			if (this.selectPossibleDate_()) {
+			if (this.datepicker_.isDestroyed() || this.selectPossibleDate_()) {
 				return;
 			}
 

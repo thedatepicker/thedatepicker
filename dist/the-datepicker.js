@@ -387,11 +387,6 @@ var TheDatepicker;
         Datepicker.prototype.render = function () {
             var _this = this;
             switch (this.initializationPhase_) {
-                case InitializationPhase.Destroyed:
-                    return;
-                case InitializationPhase.Initialized:
-                    this.viewModel_.render_();
-                    return;
                 case InitializationPhase.Ready:
                     this.initListeners_();
                     this.initializationPhase_ = InitializationPhase.Initialized;
@@ -428,6 +423,9 @@ var TheDatepicker;
                     }
                     this.initializationPhase_ = InitializationPhase.Ready;
                     this.render();
+                default:
+                    this.viewModel_.render_();
+                    return;
             }
         };
         Datepicker.prototype.open = function (event) {
@@ -493,6 +491,9 @@ var TheDatepicker;
                 this.deselectElement_ = null;
             }
             this.initializationPhase_ = InitializationPhase.Destroyed;
+        };
+        Datepicker.prototype.isDestroyed = function () {
+            return this.initializationPhase_ === InitializationPhase.Destroyed;
         };
         Datepicker.prototype.selectDate = function (date, doUpdateMonth, event) {
             if (doUpdateMonth === void 0) { doUpdateMonth = true; }
@@ -2703,7 +2704,7 @@ var TheDatepicker;
             this.template_ = new TheDatepicker.Template_(this.options_, new TheDatepicker.HtmlHelper_(this.options_), datepicker_.container, datepicker_.input !== null);
         }
         ViewModel_.prototype.render_ = function () {
-            if (this.selectPossibleDate_()) {
+            if (this.datepicker_.isDestroyed() || this.selectPossibleDate_()) {
                 return;
             }
             var correctMonth = this.options_.correctMonth(this.getCurrentMonth_());
