@@ -573,7 +573,7 @@ return header;
 			};
 
 			var createCallback = function (argumentsString, body) {
-				return (new Function('{ return function(' + argumentsString + ') { ' + body + ' } };'))();
+				return (new Function('{return function(' + argumentsString + ") { \n" + body + "\n } };"))();
 			};
 
 			var updateListener = function(eventName, body, argumentsString) {
