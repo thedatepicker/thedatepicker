@@ -55,7 +55,7 @@ namespace TheDatepicker {
 		private static passiveEventListenerSupport_: boolean | null = null;
 
 		public static resetTime_(date: Date | null): Date | null {
-			if (date === null) {
+			if (!date) {
 				return null;
 			}
 
@@ -98,7 +98,7 @@ namespace TheDatepicker {
 				}
 
 				const matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
-				if (matches !== null) {
+				if (matches) {
 					const date = options.getToday();
 					const amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
 					switch (matches[3].toLowerCase()) {
@@ -182,7 +182,7 @@ namespace TheDatepicker {
 			element[listenerProperty] = (event: Event): void => {
 				event = event || window.event;
 
-				if (originalListener !== null) {
+				if (originalListener) {
 					originalListener.call(element, event);
 				}
 

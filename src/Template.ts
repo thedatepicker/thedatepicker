@@ -61,7 +61,7 @@ namespace TheDatepicker {
 		}
 
 		public render_(viewModel: ViewModel_): void {
-			if (this.mainElement_ === null) {
+			if (!this.mainElement_) {
 				if (this.hasInput_ && this.options_.isHiddenOnBlur() && !viewModel.isActive_()) {
 					return;
 				}
@@ -289,7 +289,7 @@ namespace TheDatepicker {
 		}
 
 		protected updateMonthElement_(viewModel: ViewModel_): void {
-			if (this.monthElement_ === null) {
+			if (!this.monthElement_) {
 				return;
 			}
 
@@ -352,7 +352,7 @@ namespace TheDatepicker {
 		}
 
 		protected updateYearElement_(viewModel: ViewModel_): void {
-			if (this.yearElement_ === null) {
+			if (!this.yearElement_) {
 				return;
 			}
 
@@ -419,7 +419,7 @@ namespace TheDatepicker {
 		}
 
 		protected updateMonthAndYearElement_(viewModel: ViewModel_): void {
-			if (this.monthAndYearElement_ === null) {
+			if (!this.monthAndYearElement_) {
 				return;
 			}
 
@@ -598,9 +598,9 @@ namespace TheDatepicker {
 				const weekElement = this.weeksElements_[weekIndex];
 				const week = weeks.length > weekIndex ? weeks[weekIndex] : null;
 
-				weekElement.style.display = week !== null ? '' : 'none';
+				weekElement.style.display = week ? '' : 'none';
 
-				if (week !== null) {
+				if (week) {
 					for (let dayIndex = 0; dayIndex < this.daysElements_[weekIndex].length; dayIndex++) {
 						this.updateDayElement_(
 							viewModel,
@@ -700,7 +700,7 @@ namespace TheDatepicker {
 			const cellButton = this.htmlHelper_.createAnchor_((event: Event): void => {
 				const previous = viewModel.selectedDate_;
 				const isSelected = viewModel.selectDay_(event, cellButton.day, false, true, true);
-				if (this.options_.isHiddenOnSelect() && (isSelected || (previous !== null && cellButton.day.isEqualToDate(previous)))) {
+				if (this.options_.isHiddenOnSelect() && (isSelected || (previous && cellButton.day.isEqualToDate(previous)))) {
 					viewModel.close_(event);
 				}
 			}) as HTMLDayButtonElement;

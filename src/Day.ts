@@ -47,14 +47,14 @@ namespace TheDatepicker {
 		}
 
 		public isEqualToDate(date: Date): boolean {
-			return date !== null
+			return Helper_.isValidDate_(date)
 				&& this.dayNumber === date.getDate()
 				&& this.month === date.getMonth() + 1
 				&& this.year === date.getFullYear();
 		}
 
 		public isEqualToDay(day: Day): boolean {
-			return day !== null
+			return day instanceof Day
 				&& this.dayNumber === day.dayNumber
 				&& this.month === day.month
 				&& this.year === day.year;
@@ -62,7 +62,7 @@ namespace TheDatepicker {
 
 		public getSibling(shift = 1): Day {
 			const date = this.getDate();
-			date.setDate(date.getDate() + shift);
+			date.setDate(date.getDate() + Helper_.checkNumber_('Shift', shift));
 			return this.createDay_(date);
 		}
 

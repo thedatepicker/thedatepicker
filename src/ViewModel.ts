@@ -29,7 +29,7 @@ namespace TheDatepicker {
 			private readonly datepicker_: Datepicker,
 			private readonly dateConverter_: DateConverter_
 		) {
-			this.template_ = new Template_(this.options_, new HtmlHelper_(this.options_), datepicker_.container, datepicker_.input !== null)
+			this.template_ = new Template_(this.options_, new HtmlHelper_(this.options_), datepicker_.container, !!datepicker_.input)
 		}
 
 		public render_(): void {
@@ -75,7 +75,7 @@ namespace TheDatepicker {
 		}
 
 		public getCurrentMonth_(): Date {
-			if (this.currentMonth_ === null) {
+			if (!this.currentMonth_) {
 				this.setCurrentMonth_(this.options_.getInitialMonth());
 			}
 
@@ -144,7 +144,7 @@ namespace TheDatepicker {
 		}
 
 		public selectDay_(event: Event | null, date: Day | Date | null, doUpdateMonth = true, doHighlight = false, canToggle = false): boolean {
-			if (date === null) {
+			if (!date) {
 				return this.cancelSelection_(event);
 			}
 
@@ -168,7 +168,7 @@ namespace TheDatepicker {
 				return false;
 			}
 
-			const previousDay = this.selectedDate_ !== null ? this.createDay_(this.selectedDate_) : null;
+			const previousDay = this.selectedDate_ ? this.createDay_(this.selectedDate_) : null;
 
 			if (!this.triggerOnBeforeSelect_(event, day, previousDay)) {
 				return false;
@@ -284,7 +284,7 @@ namespace TheDatepicker {
 				return false;
 			}
 
-			if (this.selectedDate_ === null) {
+			if (!this.selectedDate_) {
 				return false;
 			}
 
@@ -303,7 +303,7 @@ namespace TheDatepicker {
 		}
 
 		public cancelHighlight_(event: Event | null): boolean {
-			if (this.highlightedDay_ === null) {
+			if (!this.highlightedDay_) {
 				return false;
 			}
 
@@ -363,10 +363,10 @@ namespace TheDatepicker {
 			if (Helper_.inArray_([KeyCode_.Left, KeyCode_.Up, KeyCode_.Right, KeyCode_.Down], event.keyCode)) {
 				Helper_.preventDefault_(event);
 
-				if (this.highlightedDay_ !== null) {
+				if (this.highlightedDay_) {
 					this.highlightSiblingDay_(event, this.highlightedDay_, this.translateKeyCodeToMoveDirection_(event.keyCode));
 				} else if (
-					this.selectedDate_ !== null
+					this.selectedDate_
 					&& this.selectedDate_.getFullYear() === this.getCurrentMonth_().getFullYear()
 					&& this.selectedDate_.getMonth() === this.getCurrentMonth_().getMonth()
 				) {
@@ -479,7 +479,7 @@ namespace TheDatepicker {
 
 		private getOutsideDates_(): OutsideDates
 		{
-			if (this.outsideDates_ !== null) {
+			if (this.outsideDates_) {
 				return this.outsideDates_;
 			}
 

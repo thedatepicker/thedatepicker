@@ -42,7 +42,7 @@ namespace TheDatepicker {
 		}
 
 		public formatDate_(format: string, date: Date | null): string | null {
-			if (date === null) {
+			if (!date) {
 				return null;
 			}
 
@@ -63,7 +63,7 @@ namespace TheDatepicker {
 				}
 
 				const formatter = this.getFormatter_(char);
-				if (formatter !== null) {
+				if (formatter) {
 					result += formatter.call(this, date);
 					continue;
 				}
@@ -94,7 +94,7 @@ namespace TheDatepicker {
 
 				} else {
 					const parser = this.getParser_(char);
-					if (parser !== null) {
+					if (parser) {
 						try {
 							textPosition += parser.call(this, text.substring(textPosition), dateData);
 						} catch (error) {

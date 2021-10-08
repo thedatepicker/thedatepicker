@@ -109,7 +109,7 @@ namespace TheDatepicker {
 		};
 
 		public constructor(translator: Translator | null = null) {
-			this.translator = translator !== null ? translator : new Translator();
+			this.translator = translator || new Translator();
 			this.document_ = document;
 		}
 
@@ -275,10 +275,10 @@ namespace TheDatepicker {
 			init = Helper_.checkFunction_('Resolver (init)', init) as (StructureResolverInit | null);
 			update = Helper_.checkFunction_('Resolver (update)', update) as (CellContentStructureResolverUpdate | null);
 
-			this.cellContentStructureResolver_ = init === null ? null : {
+			this.cellContentStructureResolver_ = init ? {
 				init,
 				update,
-			};
+			} : null;
 		}
 
 		// Accepts callback which has no arguments and returns HTMLElement instance which will be placed as datepicker header,
@@ -303,7 +303,7 @@ namespace TheDatepicker {
 		public removeCellClassesResolver(resolver: CellClassesResolver | null = null): void {
 			resolver = Helper_.checkFunction_('Resolver', resolver) as (CellClassesResolver | null);
 
-			if (resolver === null) {
+			if (!resolver) {
 				this.cellClassesResolvers_ = [];
 			} else {
 				const newResolvers: CellClassesResolver[] = [];
@@ -324,7 +324,7 @@ namespace TheDatepicker {
 		public removeDayModifier(modifier: DayModifier | null = null): void {
 			modifier = Helper_.checkFunction_('Modifier', modifier) as (DayModifier | null);
 
-			if (modifier === null) {
+			if (!modifier) {
 				this.dayModifiers_ = [];
 			} else {
 				const newModifiers: DayModifier[] = [];
@@ -602,10 +602,10 @@ namespace TheDatepicker {
 			const primarySource = this.initialDatePriority_ ? this.initialDate_ : this.initialMonth_;
 			const secondarySource = this.initialDatePriority_ ? this.initialMonth_ : this.initialDate_;
 
-			const initialMonth = primarySource !== null
+			const initialMonth = primarySource
 				? new Date(primarySource.getTime())
 				: (
-					secondarySource !== null
+					secondarySource
 						? new Date(secondarySource.getTime())
 						: this.getToday()
 				);
@@ -615,12 +615,12 @@ namespace TheDatepicker {
 		}
 
 		public isMonthInValidity(month: Date): boolean {
-			return this.calculateMonthCorrection_(month) === null;
+			return !this.calculateMonthCorrection_(month);
 		}
 
 		public correctMonth(month: Date): Date {
 			const correctMonth = this.calculateMonthCorrection_(month);
-			return correctMonth !== null ? correctMonth : month;
+			return correctMonth || month;
 		}
 
 		public getInitialDate(): Date | null {
@@ -629,14 +629,14 @@ namespace TheDatepicker {
 
 		public findPossibleAvailableDate(date: Date | null): Date | null {
 			if (this.isAllowedEmpty()) {
-				return date !== null && this.isDateInValidity(date) && this.isDateAvailable(date)
+				return date && this.isDateInValidity(date) && this.isDateAvailable(date)
 					? new Date(date.getTime())
 					: null;
 			}
 
-			date = date !== null ? new Date(date.getTime()) : this.getToday();
+			date = date ? new Date(date.getTime()) : this.getToday();
 			date = this.findNearestAvailableDate(date);
-			if (date !== null) {
+			if (date) {
 				return date;
 			}
 
@@ -657,7 +657,7 @@ namespace TheDatepicker {
 			let increasedDate: Date | null = date;
 			let decreasedDate: Date | null = new Date(date.getTime());
 			do {
-				if (increasedDate !== null) {
+				if (increasedDate) {
 					increasedDate.setDate(increasedDate.getDate() + 1);
 					if (increasedDate.getTime() > maxDate) {
 						increasedDate = null;
@@ -666,7 +666,7 @@ namespace TheDatepicker {
 					}
 				}
 
-				if (decreasedDate !== null) {
+				if (decreasedDate) {
 					decreasedDate.setDate(decreasedDate.getDate() - 1);
 					if (decreasedDate.getTime() < minDate) {
 						decreasedDate = null;
@@ -676,18 +676,18 @@ namespace TheDatepicker {
 				}
 
 				maxLoops--;
-			} while ((increasedDate !== null || decreasedDate !== null) && maxLoops > 0);
+			} while ((increasedDate || decreasedDate) && maxLoops > 0);
 
 			return null;
 		}
 
 		public isDateInValidity(date: Date): boolean {
-			return this.calculateDateCorrection_(date) === null;
+			return !this.calculateDateCorrection_(date);
 		}
 
 		private correctDate_(date: Date): Date {
 			const correctDate = this.calculateDateCorrection_(date);
-			return correctDate !== null ? correctDate : date;
+			return correctDate || date;
 		}
 
 		public getFirstDayOfWeek(): DayOfWeek {
@@ -755,16 +755,16 @@ namespace TheDatepicker {
 		}
 
 		public getMinDate(): Date | null {
-			return this.minDate_ !== null ? new Date(this.minDate_.getTime()) : null;
+			return this.minDate_ ? new Date(this.minDate_.getTime()) : null;
 		}
 
 		public getMaxDate(): Date | null {
-			return this.maxDate_ !== null ? new Date(this.maxDate_.getTime()) : null;
+			return this.maxDate_ ? new Date(this.maxDate_.getTime()) : null;
 		}
 
 		public getMinDate_(): Date {
 			const minDate = this.getMinDate();
-			if (minDate === null) {
+			if (!minDate) {
 				// Previous month is out of range
 				return new Date(-271821, 4, 1);
 			}
@@ -774,7 +774,7 @@ namespace TheDatepicker {
 
 		public getMaxDate_(): Date {
 			const maxDate = this.getMaxDate();
-			if (maxDate === null) {
+			if (!maxDate) {
 				// Next month is out of range
 				return new Date(275760, 7, 31);
 			}
@@ -783,7 +783,7 @@ namespace TheDatepicker {
 		}
 
 		public getMinMonth(): Date | null {
-			if (this.minDate_ === null) {
+			if (!this.minDate_) {
 				return null;
 			}
 
@@ -794,7 +794,7 @@ namespace TheDatepicker {
 		}
 
 		public getMaxMonth(): Date | null {
-			if (this.maxDate_ === null) {
+			if (!this.maxDate_) {
 				return null;
 			}
 
@@ -806,7 +806,7 @@ namespace TheDatepicker {
 
 		public getMinMonth_(): Date {
 			let minMonth = this.getMinMonth();
-			if (minMonth === null) {
+			if (!minMonth) {
 				minMonth = this.getMinDate_();
 			}
 
@@ -815,7 +815,7 @@ namespace TheDatepicker {
 
 		public getMaxMonth_(): Date {
 			let maxMonth = this.getMaxMonth();
-			if (maxMonth === null) {
+			if (!maxMonth) {
 				maxMonth = this.getMaxDate_();
 				maxMonth.setDate(1);
 			}
@@ -832,7 +832,7 @@ namespace TheDatepicker {
 		}
 
 		public isDateAvailable(date: Date): boolean {
-			if (this.dateAvailabilityResolver_ !== null) {
+			if (this.dateAvailabilityResolver_) {
 				return !!this.dateAvailabilityResolver_(new Date(date.getTime()));
 			}
 
@@ -840,7 +840,7 @@ namespace TheDatepicker {
 		}
 
 		public getCellContent(day: Day): string {
-			if (this.cellContentResolver_ !== null) {
+			if (this.cellContentResolver_) {
 				return this.cellContentResolver_(day);
 			}
 
@@ -852,7 +852,7 @@ namespace TheDatepicker {
 		}
 
 		public getCellStructure_(): HTMLElement {
-			if (this.cellContentStructureResolver_ !== null) {
+			if (this.cellContentStructureResolver_) {
 				return this.cellContentStructureResolver_.init();
 			}
 
@@ -860,7 +860,7 @@ namespace TheDatepicker {
 		}
 
 		public updateCellStructure_(element: HTMLElement, day: Day): void {
-			if (this.cellContentStructureResolver_ !== null) {
+			if (this.cellContentStructureResolver_) {
 				this.cellContentStructureResolver_.update(element, day);
 			} else {
 				element.innerText = this.getCellContent(day);
@@ -868,11 +868,11 @@ namespace TheDatepicker {
 		}
 
 		public getHeaderStructure_(): HTMLElement | null {
-			return this.headerStructureResolver_ !== null ? this.headerStructureResolver_() : null;
+			return this.headerStructureResolver_ ? this.headerStructureResolver_() : null;
 		}
 
 		public getFooterStructure_(): HTMLElement | null {
-			return this.footerStructureResolver_ !== null ? this.footerStructureResolver_() : null;
+			return this.footerStructureResolver_ ? this.footerStructureResolver_() : null;
 		}
 
 		public getCellClasses(day: Day): string[] {
@@ -935,7 +935,7 @@ namespace TheDatepicker {
 		}
 
 		public getToday(): Date {
-			return this.today_ !== null ? new Date(this.today_.getTime()) : Helper_.resetTime_(new Date());
+			return this.today_ ? new Date(this.today_.getTime()) : Helper_.resetTime_(new Date());
 		}
 
 		public getDateAvailabilityResolver(): DateAvailabilityResolver | null {
@@ -999,11 +999,7 @@ namespace TheDatepicker {
 		}
 
 		private checkConstraints_(minDate: Date | null, maxDate: Date | null): void {
-			if (
-				minDate !== null
-				&& maxDate !== null
-				&& minDate.getTime() > maxDate.getTime()
-			) {
+			if (minDate && maxDate && minDate.getTime() > maxDate.getTime()) {
 				throw new Error('Min date cannot be higher then max date.');
 			}
 		}
@@ -1043,7 +1039,7 @@ namespace TheDatepicker {
 		private offEvent_(eventType: EventType_, listener: OneOfListener | null): void {
 			listener = Helper_.checkFunction_('Event listener', listener) as (OneOfListener | null);
 
-			if (listener === null) {
+			if (!listener) {
 				this.listeners_[eventType] = [];
 			} else {
 				const newListeners = [];
