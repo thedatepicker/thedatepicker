@@ -518,10 +518,12 @@ return header;
 	</main>
 
 	<script>
+		var datepicker;
+
 		(function () {
 			var input = document.getElementById('my-input');
 
-			var datepicker = new TheDatepicker.Datepicker(input);
+			datepicker = new TheDatepicker.Datepicker(input);
 
 			var selectedDateOutput = document.getElementById('selectedDate');
 			var selectedDateFormattedOutput = document.getElementById('selectedDateFormatted');
