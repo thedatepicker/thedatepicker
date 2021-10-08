@@ -70,7 +70,6 @@ namespace TheDatepicker {
 		private cellContentStructureResolver_: CellContentStructureResolver | null = null;
 		private headerStructureResolver_: StructureResolverInit | null = null;
 		private footerStructureResolver_: StructureResolverInit | null = null;
-		private cellClassesResolver_: CellClassesResolver | null = null;
 		private cellClassesResolvers_: CellClassesResolver[] = [];
 		private dayModifiers_: DayModifier[] = [];
 		private inputFormat_ = 'j. n. Y';
@@ -130,7 +129,6 @@ namespace TheDatepicker {
 			options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
 			options.headerStructureResolver_ = this.headerStructureResolver_;
 			options.footerStructureResolver_ = this.footerStructureResolver_;
-			options.cellClassesResolver_ = this.cellClassesResolver_;
 			options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
 			options.dayModifiers_ = this.dayModifiers_.slice(0);
 			options.inputFormat_ = this.inputFormat_;
@@ -295,13 +293,6 @@ namespace TheDatepicker {
 		// defaults to no footer
 		public setFooterStructureResolver(resolver: StructureResolverInit | null): void {
 			this.footerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver) as (StructureResolverInit | null);
-		}
-
-		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
-		// deprecated, use addCellClassesResolver()
-		public setCellClassesResolver(resolver: CellClassesResolver | null): void {
-			Helper_.warnDeprecatedUsage_('setCellClassesResolver', 'addCellClassesResolver');
-			this.cellClassesResolver_ = Helper_.checkFunction_('Resolver', resolver) as (CellClassesResolver | null);
 		}
 
 		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
@@ -886,15 +877,6 @@ namespace TheDatepicker {
 
 		public getCellClasses(day: Day): string[] {
 			let result: string[] = [];
-
-			if (this.cellClassesResolver_ !== null) {
-				const classes = this.cellClassesResolver_(day);
-				if (typeof classes === 'string') {
-					result.push(classes);
-				} else if (typeof classes === 'object' && classes.constructor === Array) {
-					result = result.concat(classes)
-				}
-			}
 
 			const cellClassesResolvers = this.cellClassesResolvers_.slice(0);
 			for (let index = 0; index < cellClassesResolvers.length; index++) {

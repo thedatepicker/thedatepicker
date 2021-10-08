@@ -1261,7 +1261,6 @@ var TheDatepicker;
             this.cellContentStructureResolver_ = null;
             this.headerStructureResolver_ = null;
             this.footerStructureResolver_ = null;
-            this.cellClassesResolver_ = null;
             this.cellClassesResolvers_ = [];
             this.dayModifiers_ = [];
             this.inputFormat_ = 'j. n. Y';
@@ -1317,7 +1316,6 @@ var TheDatepicker;
             options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
             options.headerStructureResolver_ = this.headerStructureResolver_;
             options.footerStructureResolver_ = this.footerStructureResolver_;
-            options.cellClassesResolver_ = this.cellClassesResolver_;
             options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
             options.dayModifiers_ = this.dayModifiers_.slice(0);
             options.inputFormat_ = this.inputFormat_;
@@ -1402,10 +1400,6 @@ var TheDatepicker;
         };
         Options.prototype.setFooterStructureResolver = function (resolver) {
             this.footerStructureResolver_ = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
-        };
-        Options.prototype.setCellClassesResolver = function (resolver) {
-            TheDatepicker.Helper_.warnDeprecatedUsage_('setCellClassesResolver', 'addCellClassesResolver');
-            this.cellClassesResolver_ = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
         };
         Options.prototype.addCellClassesResolver = function (resolver) {
             this.cellClassesResolvers_.push(TheDatepicker.Helper_.checkFunction_('Resolver', resolver, false));
@@ -1792,15 +1786,6 @@ var TheDatepicker;
         };
         Options.prototype.getCellClasses = function (day) {
             var result = [];
-            if (this.cellClassesResolver_ !== null) {
-                var classes = this.cellClassesResolver_(day);
-                if (typeof classes === 'string') {
-                    result.push(classes);
-                }
-                else if (typeof classes === 'object' && classes.constructor === Array) {
-                    result = result.concat(classes);
-                }
-            }
             var cellClassesResolvers = this.cellClassesResolvers_.slice(0);
             for (var index = 0; index < cellClassesResolvers.length; index++) {
                 var classes = cellClassesResolvers[index](day);

@@ -34,7 +34,6 @@ namespace TheDatepicker {
 	// todo zbavit se ts-ignore (https://stackoverflow.com/questions/32408306/how-to-use-es6-promises-with-typescript)
 	// todo další formátery? https://www.php.net/manual/en/function.date.php
 	// todo testy
-	// todo odstranit deprecated
 
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
