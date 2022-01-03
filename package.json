@@ -8,8 +8,8 @@
   },
   "devDependencies": {
     "stylus": "^0.54.8",
-    "typescript": "^4.1.4",
-    "uglify-js": "^3.12.7"
+    "typescript": "^4.5.4",
+    "uglify-js": "^3.14.5"
   },
   "scripts": {
     "js": "tsc",
