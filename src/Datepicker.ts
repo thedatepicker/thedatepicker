@@ -204,6 +204,7 @@ namespace TheDatepicker {
 
 					this.initializationPhase_ = InitializationPhase.Ready;
 					this.render();
+					return;
 
 				default:
 					this.viewModel_.render_();
