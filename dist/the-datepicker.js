@@ -1391,19 +1391,7 @@ var TheDatepicker;
         };
         Options.prototype.removeDateAvailabilityResolver = function (resolver) {
             if (resolver === void 0) { resolver = null; }
-            resolver = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
-            if (!resolver) {
-                this.dateAvailabilityResolvers_ = [];
-            }
-            else {
-                var newResolvers = [];
-                for (var index = 0; index < this.dateAvailabilityResolvers_.length; index++) {
-                    if (this.dateAvailabilityResolvers_[index] !== resolver) {
-                        newResolvers.push(this.dateAvailabilityResolvers_[index]);
-                    }
-                }
-                this.dateAvailabilityResolvers_ = newResolvers;
-            }
+            this.removeCallback_(this.dateAvailabilityResolvers_, 'Resolver', resolver);
         };
         Options.prototype.setCellContentResolver = function (resolver) {
             this.cellContentResolver_ = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
@@ -1428,38 +1416,14 @@ var TheDatepicker;
         };
         Options.prototype.removeCellClassesResolver = function (resolver) {
             if (resolver === void 0) { resolver = null; }
-            resolver = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
-            if (!resolver) {
-                this.cellClassesResolvers_ = [];
-            }
-            else {
-                var newResolvers = [];
-                for (var index = 0; index < this.cellClassesResolvers_.length; index++) {
-                    if (this.cellClassesResolvers_[index] !== resolver) {
-                        newResolvers.push(this.cellClassesResolvers_[index]);
-                    }
-                }
-                this.cellClassesResolvers_ = newResolvers;
-            }
+            this.removeCallback_(this.cellClassesResolvers_, 'Resolver', resolver);
         };
         Options.prototype.addDayModifier = function (modifier) {
             this.dayModifiers_.push(TheDatepicker.Helper_.checkFunction_('Modifier', modifier, false));
         };
         Options.prototype.removeDayModifier = function (modifier) {
             if (modifier === void 0) { modifier = null; }
-            modifier = TheDatepicker.Helper_.checkFunction_('Modifier', modifier);
-            if (!modifier) {
-                this.dayModifiers_ = [];
-            }
-            else {
-                var newModifiers = [];
-                for (var index = 0; index < this.dayModifiers_.length; index++) {
-                    if (this.dayModifiers_[index] !== modifier) {
-                        newModifiers.push(this.dayModifiers_[index]);
-                    }
-                }
-                this.dayModifiers_ = newModifiers;
-            }
+            this.removeCallback_(this.dayModifiers_, 'Modifier', modifier);
         };
         Options.prototype.setInputFormat = function (format) {
             this.inputFormat_ = TheDatepicker.Helper_.checkString_('Input format', format, true);
@@ -1934,6 +1898,20 @@ var TheDatepicker;
                 return maxDate;
             }
             return null;
+        };
+        Options.prototype.removeCallback_ = function (callbacksList, parameterName, callback) {
+            callback = TheDatepicker.Helper_.checkFunction_(parameterName, callback);
+            if (!callback) {
+                callbacksList.splice(0, callbacksList.length);
+            }
+            else {
+                var callbacks = callbacksList.slice(0);
+                for (var index = callbacks.length - 1; index >= 0; index--) {
+                    if (callbacks[index] === callback) {
+                        callbacksList.splice(index, 1);
+                    }
+                }
+            }
         };
         Options.prototype.onEvent_ = function (eventType, listener) {
             this.listeners_[eventType].push(TheDatepicker.Helper_.checkFunction_('Event listener', listener, false));

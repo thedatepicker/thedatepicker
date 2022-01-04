@@ -269,19 +269,7 @@ namespace TheDatepicker {
 		}
 
 		public removeDateAvailabilityResolver(resolver: DateAvailabilityResolver | null = null): void {
-			resolver = Helper_.checkFunction_('Resolver', resolver) as (DateAvailabilityResolver | null);
-
-			if (!resolver) {
-				this.dateAvailabilityResolvers_ = [];
-			} else {
-				const newResolvers: DateAvailabilityResolver[] = [];
-				for (let index = 0; index < this.dateAvailabilityResolvers_.length; index++) {
-					if (this.dateAvailabilityResolvers_[index] !== resolver) {
-						newResolvers.push(this.dateAvailabilityResolvers_[index]);
-					}
-				}
-				this.dateAvailabilityResolvers_ = newResolvers;
-			}
+			this.removeCallback_(this.dateAvailabilityResolvers_, 'Resolver', resolver);
 		}
 
 		// Accepts callback which gets an instance of TheDatepicker.Day on input and returns string representing content of day cell,
@@ -326,19 +314,7 @@ namespace TheDatepicker {
 		}
 
 		public removeCellClassesResolver(resolver: CellClassesResolver | null = null): void {
-			resolver = Helper_.checkFunction_('Resolver', resolver) as (CellClassesResolver | null);
-
-			if (!resolver) {
-				this.cellClassesResolvers_ = [];
-			} else {
-				const newResolvers: CellClassesResolver[] = [];
-				for (let index = 0; index < this.cellClassesResolvers_.length; index++) {
-					if (this.cellClassesResolvers_[index] !== resolver) {
-						newResolvers.push(this.cellClassesResolvers_[index]);
-					}
-				}
-				this.cellClassesResolvers_ = newResolvers;
-			}
+			this.removeCallback_(this.cellClassesResolvers_, 'Resolver', resolver);
 		}
 
 		// Accepts callback which gets an instance of TheDatepicker.Day on input. It is designated to add arbitrary properties to the TheDatepicker.Day instance.
@@ -347,19 +323,7 @@ namespace TheDatepicker {
 		}
 
 		public removeDayModifier(modifier: DayModifier | null = null): void {
-			modifier = Helper_.checkFunction_('Modifier', modifier) as (DayModifier | null);
-
-			if (!modifier) {
-				this.dayModifiers_ = [];
-			} else {
-				const newModifiers: DayModifier[] = [];
-				for (let index = 0; index < this.dayModifiers_.length; index++) {
-					if (this.dayModifiers_[index] !== modifier) {
-						newModifiers.push(this.dayModifiers_[index]);
-					}
-				}
-				this.dayModifiers_ = newModifiers;
-			}
+			this.removeCallback_(this.dayModifiers_, 'Modifier', modifier);
 		}
 
 		// Format in which date is printed as an input value.
@@ -1063,6 +1027,21 @@ namespace TheDatepicker {
 			}
 
 			return null;
+		}
+
+		private removeCallback_(callbacksList: Function[], parameterName: string, callback: Function | null): void {
+			callback = Helper_.checkFunction_(parameterName, callback);
+
+			if (!callback) {
+				callbacksList.splice(0, callbacksList.length);
+			} else {
+				const callbacks = callbacksList.slice(0);
+				for (let index = callbacks.length - 1; index >= 0; index--) {
+					if (callbacks[index] === callback) {
+						callbacksList.splice(index, 1);
+					}
+				}
+			}
 		}
 
 		private onEvent_(eventType: EventType_, listener: AnyListener) {
