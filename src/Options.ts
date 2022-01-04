@@ -187,8 +187,8 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
-		// or instance of Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign> <number> <unit>"
+		// or instance of TheDatepicker.Day
+		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no limit
 		// defaults to no limit
@@ -202,8 +202,8 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
-		// or instance of Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign> <number> <unit>"
+		// or instance of TheDatepicker.Day
+		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no limit
 		// defaults to no limit
@@ -217,7 +217,7 @@ namespace TheDatepicker {
 		// string in format YYYY-MM; e.g.: "2019-02" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "September 2021"
 		// or instance of Date
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign> <number> <unit>"
+		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "month" or "year" or plural version
 		// or null for current month
 		// defaults to current month
@@ -229,8 +229,8 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
-		// or instance of Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign> <number> <unit>"
+		// or instance of TheDatepicker.Day
+		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// or null for no value
 		// It's overloaded by direct input value, if any.
@@ -259,7 +259,7 @@ namespace TheDatepicker {
 			this.dateAvailabilityResolver_ = Helper_.checkFunction_('Resolver', resolver) as DateAvailabilityResolver;
 		}
 
-		// Accepts callback which gets an instance of Day on input and returns string representing content of day cell,
+		// Accepts callback which gets an instance of TheDatepicker.Day on input and returns string representing content of day cell,
 		// or null for default behavior.
 		// Default callback returns day number.
 		public setCellContentResolver(resolver: CellContentResolver | null): void {
@@ -269,7 +269,7 @@ namespace TheDatepicker {
 		// Accepts two callbacks,
 		// or null for default behavior.
 		// First callback (init) has no arguments and returns HTMLElement instance representing empty html structure of day cell.
-		// Second callback (update) gets an instance of HTMLElement created by first callback, and an instance of Day. It should update html structure by given day. Returns void.
+		// Second callback (update) gets an instance of HTMLElement created by first callback, and an instance of TheDatepicker.Day. It should update html structure by given day. Returns void.
 		// Default init creates span element and default update fills it with day number.
 		public setCellContentStructureResolver(init: StructureResolverInit | null, update: CellContentStructureResolverUpdate | null = null): void {
 			init = Helper_.checkFunction_('Resolver (init)', init) as (StructureResolverInit | null);
@@ -295,7 +295,7 @@ namespace TheDatepicker {
 			this.footerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver) as (StructureResolverInit | null);
 		}
 
-		// Accepts callback which gets an instance of Day on input and returns array of strings representing custom classes for day cell.
+		// Accepts callback which gets an instance of TheDatepicker.Day on input and returns array of strings representing custom classes for day cell.
 		public addCellClassesResolver(resolver: CellClassesResolver): void {
 			this.cellClassesResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false) as CellClassesResolver);
 		}
@@ -316,7 +316,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		// Accepts callback which gets an instance of Day on input. It is designated to add arbitrary properties to the Day instance.
+		// Accepts callback which gets an instance of TheDatepicker.Day on input. It is designated to add arbitrary properties to the TheDatepicker.Day instance.
 		public addDayModifier(modifier: DayModifier): void {
 			this.dayModifiers_.push(Helper_.checkFunction_('Modifier', modifier, false) as DayModifier);
 		}
@@ -505,8 +505,8 @@ namespace TheDatepicker {
 		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
 		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
 		// or instance of Date
-		// or instance of Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign> <number> <unit>"
+		// or instance of TheDatepicker.Day
+		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
 		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
 		// null for real today
 		// defaults to null
@@ -515,7 +515,7 @@ namespace TheDatepicker {
 		}
 
 		// Callback to be called just before the day is selected or deselected.
-		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
+		// An Event instance, a TheDatepicker.Day instance (or null when deselected) and previous selected day TheDatepicker.Day instance (or null when nothing selected before) are given on input.
 		// If callback returns false, selection stops and nothing will be selected / deselected.
 		public onBeforeSelect(listener: SelectListener): void {
 			this.onEvent_(EventType_.BeforeSelect, listener as AnyListener);
@@ -526,7 +526,7 @@ namespace TheDatepicker {
 		}
 
 		// Callback to be called immediately after the day is selected or deselected.
-		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
+		// An Event instance, a TheDatepicker.Day instance (or null when deselected) and previous selected day TheDatepicker.Day instance (or null when nothing selected before) are given on input.
 		public onSelect(listener: SelectListener): void {
 			this.onEvent_(EventType_.Select, listener as AnyListener);
 		}
@@ -578,7 +578,7 @@ namespace TheDatepicker {
 		}
 
 		// Callback to be called just before the day is focused or blurred.
-		// An Event instance, a Day instance (or null when blurred) and previous focused day Day instance (or null when nothing focused before) are given on input.
+		// An Event instance, a TheDatepicker.Day instance (or null when blurred) and previous focused day TheDatepicker.Day instance (or null when nothing focused before) are given on input.
 		// If callback returns false, focus stops and nothing will be focused / blurred.
 		public onBeforeFocus(listener: FocusListener): void {
 			this.onEvent_(EventType_.BeforeFocus, listener as AnyListener);
@@ -589,7 +589,7 @@ namespace TheDatepicker {
 		}
 
 		// Callback to be called immediately after the day is selected or deselected.
-		// An Event instance, a Day instance (or null when deselected) and previous selected day Day instance (or null when nothing selected before) are given on input.
+		// An Event instance, a TheDatepicker.Day instance (or null when deselected) and previous selected day TheDatepicker.Day instance (or null when nothing selected before) are given on input.
 		public onFocus(listener: FocusListener): void {
 			this.onEvent_(EventType_.Focus, listener as AnyListener);
 		}
