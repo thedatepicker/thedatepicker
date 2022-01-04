@@ -30,8 +30,6 @@ namespace TheDatepicker {
 
 	export class Template_ {
 
-		// todo nějak hezky aby šlo snadno customizovat uspořádání prvků
-
 		private mainElement_: HTMLElement | null = null;
 		private bodyElement_: HTMLElement | null = null;
 		private controlElement_: HTMLElement | null = null;
@@ -241,7 +239,6 @@ namespace TheDatepicker {
 			}
 			goElement.appendChild(goButton);
 
-			// todo možná tohle ukládání udělat nějak v createSkeleton
 			if (directionForward) {
 				this.goForwardElement_ = goButton;
 			} else {

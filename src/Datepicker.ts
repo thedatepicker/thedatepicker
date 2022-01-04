@@ -1,36 +1,5 @@
 namespace TheDatepicker {
 
-	// todo jsou potřeba ty originální on* ? asi jo ale jak se to zachová např. s jquery?
-	// todo proč nejde  export const MaxRows = 6; export const DaysInWeekCount = 7;
-	// todo static metody šětří výkon
-	// todo proč výběr data volá Template.render() tolikrát?
-	// todo setActive má odlišný interface (vrací true tam kde jiný metody vrací false) - deal with it?
-	// todo pořád tam existuje mezírka kdy není hover nad žádným dnem
-	// todo v IE 9 se spontáně blurne input
-	// todo po kliku na deselect button by se to nemělo otevírat (pokud otevřený bylo tak zůstat otevřený)
-	// todo onOpen a onClose přecejen? (společně vedle onOpenAndClose)
-	// todo lepší parser datumu ("1. January -30 years")
-	// todo multiselect, rangeselect, multirangeselect (spíše umožnist propojit více datepickerů)
-	// todo favicona
-	// todo nastavení css tříd - pokud nastaví null, tak se třída nepřidá
-	// todo v optionech kterým se předává callback by bylo fajn dostat se k datepickeru (on* už se předává v this)
-	// todo proč styly containeru a deselectu nemám v css?
-	// todo jak do dp dostat volitelně fullscreen na malym breakpointu?
-	// todo vyhazovat vlastní instanci Error v options? (není BC problém?)
-	// todo DateConverter apod. by se nemusely instanciovat pro každý dp (musely by se zbavit stavu - options)
-	// todo volání options v kodu dp by mohlo být minifikovaný
-	// todo HtmlHelper jako static třída
-	// todo spoustu opakujících se volání přes helper aby se neminifikovaný volaly jen jednou (stojí to ale za to volání navíc?)
-	// todo fix position by mělo počítat window bez scrollbarů, ale nevim jak to spolehlivě získat
-	// todo setShowWeekDays, setShowNavigation (jde to udělat přes css)?
-	// todo setVerticalLayout (tabulka převrácená o 90°)?
-	// todo setWeekDayContentStructureResolver
-	// todo setGoButtonContentStructureResolver ...
-	// todo ARIA ?
-	// todo zbavit se ts-ignore (https://stackoverflow.com/questions/32408306/how-to-use-es6-promises-with-typescript)
-	// todo další formátery? https://www.php.net/manual/en/function.date.php
-	// todo testy
-
 	interface HTMLDatepickerInputElement extends HTMLElement {
 
 		datepicker?: Datepicker;
