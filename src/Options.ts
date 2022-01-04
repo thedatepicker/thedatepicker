@@ -65,7 +65,7 @@ namespace TheDatepicker {
 		private initialMonth_: Date | null = null;
 		private initialDatePriority_ = true;
 		private firstDayOfWeek_ = DayOfWeek.Monday;
-		private dateAvailabilityResolver_: DateAvailabilityResolver | null = null;
+		private dateAvailabilityResolvers_: DateAvailabilityResolver[] = [];
 		private cellContentResolver_: CellContentResolver | null = null;
 		private cellContentStructureResolver_: CellContentStructureResolver | null = null;
 		private headerStructureResolver_: StructureResolverInit | null = null;
@@ -124,7 +124,7 @@ namespace TheDatepicker {
 			options.initialMonth_ = this.initialMonth_;
 			options.initialDatePriority_ = this.initialDatePriority_;
 			options.firstDayOfWeek_ = this.firstDayOfWeek_;
-			options.dateAvailabilityResolver_ = this.dateAvailabilityResolver_;
+			options.dateAvailabilityResolvers_ = this.dateAvailabilityResolvers_.slice(0);
 			options.cellContentResolver_ = this.cellContentResolver_;
 			options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
 			options.headerStructureResolver_ = this.headerStructureResolver_;
@@ -255,8 +255,33 @@ namespace TheDatepicker {
 
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not,
 		// or null to make available all days.
+		// deprecated, use addDateAvailabilityResolver()
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
-			this.dateAvailabilityResolver_ = Helper_.checkFunction_('Resolver', resolver) as DateAvailabilityResolver;
+			Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', 'addDateAvailabilityResolver');
+			this.removeDateAvailabilityResolver();
+			this.addDateAvailabilityResolver(resolver);
+		}
+
+		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not.
+		// The date is available for select only if all resolvers return true.
+		public addDateAvailabilityResolver(resolver: DateAvailabilityResolver): void {
+			this.dateAvailabilityResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false) as DateAvailabilityResolver);
+		}
+
+		public removeDateAvailabilityResolver(resolver: DateAvailabilityResolver | null = null): void {
+			resolver = Helper_.checkFunction_('Resolver', resolver) as (DateAvailabilityResolver | null);
+
+			if (!resolver) {
+				this.dateAvailabilityResolvers_ = [];
+			} else {
+				const newResolvers: DateAvailabilityResolver[] = [];
+				for (let index = 0; index < this.dateAvailabilityResolvers_.length; index++) {
+					if (this.dateAvailabilityResolvers_[index] !== resolver) {
+						newResolvers.push(this.dateAvailabilityResolvers_[index]);
+					}
+				}
+				this.dateAvailabilityResolvers_ = newResolvers;
+			}
 		}
 
 		// Accepts callback which gets an instance of TheDatepicker.Day on input and returns string representing content of day cell,
@@ -832,8 +857,11 @@ namespace TheDatepicker {
 		}
 
 		public isDateAvailable(date: Date): boolean {
-			if (this.dateAvailabilityResolver_) {
-				return !!this.dateAvailabilityResolver_(new Date(date.getTime()));
+			const dateAvailabilityResolvers = this.dateAvailabilityResolvers_.slice(0);
+			for (let index = 0; index < dateAvailabilityResolvers.length; index++) {
+				if (!dateAvailabilityResolvers[index](new Date(date.getTime()))) {
+					return false;
+				}
 			}
 
 			return true;
@@ -939,7 +967,12 @@ namespace TheDatepicker {
 		}
 
 		public getDateAvailabilityResolver(): DateAvailabilityResolver | null {
-			return this.dateAvailabilityResolver_;
+			Helper_.warnDeprecatedUsage_('getDateAvailabilityResolver', 'getDateAvailabilityResolvers');
+			return this.dateAvailabilityResolvers_.length > 0 ? this.dateAvailabilityResolvers_[0] : null;
+		}
+
+		public getDateAvailabilityResolvers(): DateAvailabilityResolver[] {
+			return this.dateAvailabilityResolvers_;
 		}
 
 		public getCellContentResolver(): CellContentResolver | null {

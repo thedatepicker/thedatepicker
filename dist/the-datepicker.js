@@ -1257,7 +1257,7 @@ var TheDatepicker;
             this.initialMonth_ = null;
             this.initialDatePriority_ = true;
             this.firstDayOfWeek_ = TheDatepicker.DayOfWeek.Monday;
-            this.dateAvailabilityResolver_ = null;
+            this.dateAvailabilityResolvers_ = [];
             this.cellContentResolver_ = null;
             this.cellContentStructureResolver_ = null;
             this.headerStructureResolver_ = null;
@@ -1312,7 +1312,7 @@ var TheDatepicker;
             options.initialMonth_ = this.initialMonth_;
             options.initialDatePriority_ = this.initialDatePriority_;
             options.firstDayOfWeek_ = this.firstDayOfWeek_;
-            options.dateAvailabilityResolver_ = this.dateAvailabilityResolver_;
+            options.dateAvailabilityResolvers_ = this.dateAvailabilityResolvers_.slice(0);
             options.cellContentResolver_ = this.cellContentResolver_;
             options.cellContentStructureResolver_ = this.cellContentStructureResolver_;
             options.headerStructureResolver_ = this.headerStructureResolver_;
@@ -1382,7 +1382,28 @@ var TheDatepicker;
             this.firstDayOfWeek_ = TheDatepicker.Helper_.checkNumber_('First day of week', dayOfWeek, 0, 6);
         };
         Options.prototype.setDateAvailabilityResolver = function (resolver) {
-            this.dateAvailabilityResolver_ = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
+            TheDatepicker.Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', 'addDateAvailabilityResolver');
+            this.removeDateAvailabilityResolver();
+            this.addDateAvailabilityResolver(resolver);
+        };
+        Options.prototype.addDateAvailabilityResolver = function (resolver) {
+            this.dateAvailabilityResolvers_.push(TheDatepicker.Helper_.checkFunction_('Resolver', resolver, false));
+        };
+        Options.prototype.removeDateAvailabilityResolver = function (resolver) {
+            if (resolver === void 0) { resolver = null; }
+            resolver = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
+            if (!resolver) {
+                this.dateAvailabilityResolvers_ = [];
+            }
+            else {
+                var newResolvers = [];
+                for (var index = 0; index < this.dateAvailabilityResolvers_.length; index++) {
+                    if (this.dateAvailabilityResolvers_[index] !== resolver) {
+                        newResolvers.push(this.dateAvailabilityResolvers_[index]);
+                    }
+                }
+                this.dateAvailabilityResolvers_ = newResolvers;
+            }
         };
         Options.prototype.setCellContentResolver = function (resolver) {
             this.cellContentResolver_ = TheDatepicker.Helper_.checkFunction_('Resolver', resolver);
@@ -1751,8 +1772,11 @@ var TheDatepicker;
             return this.dropdownItemsLimit_;
         };
         Options.prototype.isDateAvailable = function (date) {
-            if (this.dateAvailabilityResolver_) {
-                return !!this.dateAvailabilityResolver_(new Date(date.getTime()));
+            var dateAvailabilityResolvers = this.dateAvailabilityResolvers_.slice(0);
+            for (var index = 0; index < dateAvailabilityResolvers.length; index++) {
+                if (!dateAvailabilityResolvers[index](new Date(date.getTime()))) {
+                    return false;
+                }
             }
             return true;
         };
@@ -1836,7 +1860,11 @@ var TheDatepicker;
             return this.today_ ? new Date(this.today_.getTime()) : TheDatepicker.Helper_.resetTime_(new Date());
         };
         Options.prototype.getDateAvailabilityResolver = function () {
-            return this.dateAvailabilityResolver_;
+            TheDatepicker.Helper_.warnDeprecatedUsage_('getDateAvailabilityResolver', 'getDateAvailabilityResolvers');
+            return this.dateAvailabilityResolvers_.length > 0 ? this.dateAvailabilityResolvers_[0] : null;
+        };
+        Options.prototype.getDateAvailabilityResolvers = function () {
+            return this.dateAvailabilityResolvers_;
         };
         Options.prototype.getCellContentResolver = function () {
             return this.cellContentResolver_;

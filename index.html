@@ -284,7 +284,7 @@
 					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setDateAvailabilityResolver(function (date) {<br>
+					<label>datepicker.options.addDateAvailabilityResolver(function (date) {<br>
 						&nbsp;<textarea rows="4" cols="70" id="dateAvailabilityResolver">// return date.getDate() !== 5;</textarea><br>
 						});</label>
 				</li>
@@ -372,6 +372,9 @@ return header;
 					<label>datepicker.options.onFocus(function (event, day, previousDay) {<br>
 						&nbsp;<textarea rows="4" cols="70" id="onFocus"></textarea><br>
 					});</label>
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="removeDateAvailabilityResolver" value="removeDateAvailabilityResolver()">; // optional argument: resolver
 				</li>
 				<li>
 					datepicker.options.<input type="button" id="removeCellClassesResolver" value="removeCellClassesResolver()">; // optional argument: resolver
@@ -894,10 +897,9 @@ return header;
 
 			var dateAvailabilityResolverInput = document.getElementById('dateAvailabilityResolver');
 			dateAvailabilityResolverInput.onchange = function () {
-				if (dateAvailabilityResolverInput.value === '') {
-					datepicker.options.setDateAvailabilityResolver(null);
-				} else {
-					datepicker.options.setDateAvailabilityResolver(createCallback('date', dateAvailabilityResolverInput.value));
+				datepicker.options.removeDateAvailabilityResolver();
+				if (dateAvailabilityResolverInput.value !== '') {
+					datepicker.options.addDateAvailabilityResolver(createCallback('date', dateAvailabilityResolverInput.value));
 				}
 				datepicker.render();
 			};
@@ -1037,6 +1039,12 @@ return header;
 			removeCellClassesResolverInput.onclick = function () {
 				datepicker.options.removeCellClassesResolver();
 				document.getElementById('cellClassesResolver').value = '';
+			};
+
+			var removeDateAvailabilityResolverInput = document.getElementById('removeDateAvailabilityResolver');
+			removeDateAvailabilityResolverInput.onclick = function () {
+				datepicker.options.removeDateAvailabilityResolver();
+				document.getElementById('dateAvailabilityResolver').value = '';
 			};
 
 			var removeDayModifierInput = document.getElementById('removeDayModifier');
