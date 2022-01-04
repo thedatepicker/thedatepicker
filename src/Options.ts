@@ -972,7 +972,7 @@ namespace TheDatepicker {
 		}
 
 		public getDateAvailabilityResolvers(): DateAvailabilityResolver[] {
-			return this.dateAvailabilityResolvers_;
+			return this.dateAvailabilityResolvers_.slice(0);
 		}
 
 		public getCellContentResolver(): CellContentResolver | null {
@@ -992,43 +992,43 @@ namespace TheDatepicker {
 		}
 
 		public getCellClassesResolvers(): CellClassesResolver[] {
-			return this.cellClassesResolvers_;
+			return this.cellClassesResolvers_.slice(0);
 		}
 
 		public getDayModifiers(): DayModifier[] {
-			return this.dayModifiers_;
+			return this.dayModifiers_.slice(0);
 		}
 
 		public getBeforeSelectListeners(): SelectListener[] {
-			return this.listeners_.beforeSelect;
+			return this.listeners_.beforeSelect.slice(0);
 		}
 
 		public getSelectListeners(): SelectListener[] {
-			return this.listeners_.select;
+			return this.listeners_.select.slice(0);
 		}
 
 		public getBeforeOpenAndCloseListeners(): OpenAndCloseListener[] {
-			return this.listeners_.beforeOpenAndClose;
+			return this.listeners_.beforeOpenAndClose.slice(0);
 		}
 
 		public getOpenAndCloseListeners(): OpenAndCloseListener[] {
-			return this.listeners_.openAndClose;
+			return this.listeners_.openAndClose.slice(0);
 		}
 
 		public getBeforeMonthChangeListeners(): MonthChangeListener[] {
-			return this.listeners_.beforeMonthChange;
+			return this.listeners_.beforeMonthChange.slice(0);
 		}
 
 		public getMonthChangeListeners(): MonthChangeListener[] {
-			return this.listeners_.monthChange;
+			return this.listeners_.monthChange.slice(0);
 		}
 
 		public getBeforeFocusListeners(): FocusListener[] {
-			return this.listeners_.beforeFocus;
+			return this.listeners_.beforeFocus.slice(0);
 		}
 
 		public getFocusListeners(): FocusListener[] {
-			return this.listeners_.focus;
+			return this.listeners_.focus.slice(0);
 		}
 
 		private checkConstraints_(minDate: Date | null, maxDate: Date | null): void {

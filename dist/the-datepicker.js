@@ -1864,7 +1864,7 @@ var TheDatepicker;
             return this.dateAvailabilityResolvers_.length > 0 ? this.dateAvailabilityResolvers_[0] : null;
         };
         Options.prototype.getDateAvailabilityResolvers = function () {
-            return this.dateAvailabilityResolvers_;
+            return this.dateAvailabilityResolvers_.slice(0);
         };
         Options.prototype.getCellContentResolver = function () {
             return this.cellContentResolver_;
@@ -1879,34 +1879,34 @@ var TheDatepicker;
             return this.footerStructureResolver_;
         };
         Options.prototype.getCellClassesResolvers = function () {
-            return this.cellClassesResolvers_;
+            return this.cellClassesResolvers_.slice(0);
         };
         Options.prototype.getDayModifiers = function () {
-            return this.dayModifiers_;
+            return this.dayModifiers_.slice(0);
         };
         Options.prototype.getBeforeSelectListeners = function () {
-            return this.listeners_.beforeSelect;
+            return this.listeners_.beforeSelect.slice(0);
         };
         Options.prototype.getSelectListeners = function () {
-            return this.listeners_.select;
+            return this.listeners_.select.slice(0);
         };
         Options.prototype.getBeforeOpenAndCloseListeners = function () {
-            return this.listeners_.beforeOpenAndClose;
+            return this.listeners_.beforeOpenAndClose.slice(0);
         };
         Options.prototype.getOpenAndCloseListeners = function () {
-            return this.listeners_.openAndClose;
+            return this.listeners_.openAndClose.slice(0);
         };
         Options.prototype.getBeforeMonthChangeListeners = function () {
-            return this.listeners_.beforeMonthChange;
+            return this.listeners_.beforeMonthChange.slice(0);
         };
         Options.prototype.getMonthChangeListeners = function () {
-            return this.listeners_.monthChange;
+            return this.listeners_.monthChange.slice(0);
         };
         Options.prototype.getBeforeFocusListeners = function () {
-            return this.listeners_.beforeFocus;
+            return this.listeners_.beforeFocus.slice(0);
         };
         Options.prototype.getFocusListeners = function () {
-            return this.listeners_.focus;
+            return this.listeners_.focus.slice(0);
         };
         Options.prototype.checkConstraints_ = function (minDate, maxDate) {
             if (minDate && maxDate && minDate.getTime() > maxDate.getTime()) {
