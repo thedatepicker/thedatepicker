@@ -350,13 +350,23 @@ return header;
 					});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onBeforeOpenAndClose(function (event, isOpening) {<br>
-						&nbsp;<textarea rows="4" cols="70" id="onBeforeOpenAndClose"></textarea><br>
+					<label>datepicker.options.onBeforeOpen(function (event) {<br>
+						&nbsp;<textarea rows="4" cols="70" id="onBeforeOpen"></textarea><br>
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.onOpenAndClose(function (event, isOpening) {<br>
-						&nbsp;<textarea rows="4" cols="70" id="onOpenAndClose"></textarea><br>
+					<label>datepicker.options.onOpen(function (event) {<br>
+						&nbsp;<textarea rows="4" cols="70" id="onOpen"></textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onBeforeClose(function (event) {<br>
+						&nbsp;<textarea rows="4" cols="70" id="onBeforeClose"></textarea><br>
+						});</label>
+				</li>
+				<li>
+					<label>datepicker.options.onClose(function (event) {<br>
+						&nbsp;<textarea rows="4" cols="70" id="onClose"></textarea><br>
 					});</label>
 				</li>
 				<li>
@@ -395,10 +405,16 @@ return header;
 					datepicker.options.<input type="button" id="offSelect" value="offSelect()">;
 				</li>
 				<li>
-					datepicker.options.<input type="button" id="offBeforeOpenAndClose" value="offBeforeOpenAndClose()">;
+					datepicker.options.<input type="button" id="offBeforeOpen" value="offBeforeOpen()">;
 				</li>
 				<li>
-					datepicker.options.<input type="button" id="offOpenAndClose" value="offOpenAndClose()">;
+					datepicker.options.<input type="button" id="offOpen" value="offOpen()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offBeforeClose" value="offBeforeClose()">;
+				</li>
+				<li>
+					datepicker.options.<input type="button" id="offClose" value="offClose()">;
 				</li>
 				<li>
 					datepicker.options.<input type="button" id="offBeforeMonthChange" value="offBeforeMonthChange()">;
@@ -615,7 +631,8 @@ return header;
 			var updateOpened = function () {
 				openedOutput.innerText = datepicker.isOpened() ? 'true' : 'false';
 			};
-			datepicker.options.onOpenAndClose(updateOpened);
+			datepicker.options.onOpen(updateOpened);
+			datepicker.options.onClose(updateOpened);
 			updateOpened();
 
 			datepicker.render();
@@ -654,8 +671,10 @@ return header;
 					datepicker.options.onSelect(updateSelectedDate);
 				} else if (eventName === 'monthChange') {
 					datepicker.options.onMonthChange(updateCurrentMonth);
-				} else if (eventName === 'openAndClose') {
-					datepicker.options.onOpenAndClose(updateOpened);
+				} else if (eventName === 'open') {
+					datepicker.options.onOpen(updateOpened);
+				} else if (eventName === 'close') {
+					datepicker.options.onClose(updateOpened);
 				}
 
 				if (body === '') {
@@ -1025,14 +1044,24 @@ return header;
 				updateListener('select', onSelectInput.value, 'event, day, previousDay');
 			};
 
-			var onBeforeOpenAndCloseInput = document.getElementById('onBeforeOpenAndClose');
-			onBeforeOpenAndCloseInput.onchange = function () {
-				updateListener('beforeOpenAndClose', onBeforeOpenAndCloseInput.value, 'event, isOpening');
+			var onBeforeOpenInput = document.getElementById('onBeforeOpen');
+			onBeforeOpenInput.onchange = function () {
+				updateListener('beforeOpen', onBeforeOpenInput.value, 'event');
 			};
 
-			var onOpenAndCloseInput = document.getElementById('onOpenAndClose');
-			onOpenAndCloseInput.onchange = function () {
-				updateListener('openAndClose', onOpenAndCloseInput.value, 'event, isOpening');
+			var onOpenInput = document.getElementById('onOpen');
+			onOpenInput.onchange = function () {
+				updateListener('open', onOpenInput.value, 'event');
+			};
+
+			var onBeforeCloseInput = document.getElementById('onBeforeClose');
+			onBeforeCloseInput.onchange = function () {
+				updateListener('beforeClose', onBeforeCloseInput.value, 'event');
+			};
+
+			var onCloseInput = document.getElementById('onClose');
+			onCloseInput.onchange = function () {
+				updateListener('close', onCloseInput.value, 'event');
 			};
 
 			var onBeforeMonthChangeInput = document.getElementById('onBeforeMonthChange');
@@ -1083,14 +1112,24 @@ return header;
 				removeListener('select');
 			};
 
-			var offBeforeOpenAndCloseInput = document.getElementById('offBeforeOpenAndClose');
-			offBeforeOpenAndCloseInput.onclick = function () {
-				removeListener('beforeOpenAndClose');
+			var offBeforeOpenInput = document.getElementById('offBeforeOpen');
+			offBeforeOpenInput.onclick = function () {
+				removeListener('beforeOpen');
 			};
 
-			var offOpenAndCloseInput = document.getElementById('offOpenAndClose');
-			offOpenAndCloseInput.onclick = function () {
-				removeListener('openAndClose');
+			var offOpenInput = document.getElementById('offOpen');
+			offOpenInput.onclick = function () {
+				removeListener('open');
+			};
+
+			var offBeforeCloseInput = document.getElementById('offBeforeClose');
+			offBeforeCloseInput.onclick = function () {
+				removeListener('beforeClose');
+			};
+
+			var offCloseInput = document.getElementById('offClose');
+			offCloseInput.onclick = function () {
+				removeListener('close');
 			};
 
 			var offBeforeMonthChangeInput = document.getElementById('offBeforeMonthChange');

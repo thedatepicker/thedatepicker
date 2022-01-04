@@ -51,8 +51,11 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			if (!this.triggerOnBeforeOpenAndClose_(event, value)) {
-				return false;
+			if (
+				(value && !this.triggerOnBeforeOpen_(event))
+				|| (!value && !this.triggerOnBeforeClose_(event))
+			) {
+				return false
 			}
 
 			this.active_ = value;
@@ -61,7 +64,11 @@ namespace TheDatepicker {
 				this.render_();
 			}
 
-			this.triggerOnOpenAndClose_(event, value);
+			if (value) {
+				this.triggerOnOpen_(event);
+			} else {
+				this.triggerOnClose_(event);
+			}
 
 			return true;
 		}
@@ -435,15 +442,27 @@ namespace TheDatepicker {
 			});
 		}
 
-		private triggerOnBeforeOpenAndClose_(event: Event | null, isOpening: boolean): boolean {
-			return this.options_.triggerEvent_(EventType_.BeforeOpenAndClose, (listener: OpenAndCloseListener): boolean => {
-				return listener.call(this.datepicker_, event, isOpening);
+		private triggerOnBeforeOpen_(event: Event | null): boolean {
+			return this.options_.triggerEvent_(EventType_.BeforeOpen, (listener: OpenOrCloseListener): boolean => {
+				return listener.call(this.datepicker_, event, true);
 			});
 		}
 
-		private triggerOnOpenAndClose_(event: Event | null, isOpening: boolean): void {
-			this.options_.triggerEvent_(EventType_.OpenAndClose, (listener: OpenAndCloseListener): boolean => {
-				return listener.call(this.datepicker_, event, isOpening);
+		private triggerOnOpen_(event: Event | null): void {
+			this.options_.triggerEvent_(EventType_.Open, (listener: OpenOrCloseListener): boolean => {
+				return listener.call(this.datepicker_, event, true);
+			});
+		}
+
+		private triggerOnBeforeClose_(event: Event | null): boolean {
+			return this.options_.triggerEvent_(EventType_.BeforeClose, (listener: OpenOrCloseListener): boolean => {
+				return listener.call(this.datepicker_, event, false);
+			});
+		}
+
+		private triggerOnClose_(event: Event | null): void {
+			this.options_.triggerEvent_(EventType_.Close, (listener: OpenOrCloseListener): boolean => {
+				return listener.call(this.datepicker_, event, false);
 			});
 		}
 

@@ -1276,8 +1276,10 @@ var TheDatepicker;
     (function (EventType_) {
         EventType_["BeforeSelect"] = "beforeSelect";
         EventType_["Select"] = "select";
-        EventType_["BeforeOpenAndClose"] = "beforeOpenAndClose";
-        EventType_["OpenAndClose"] = "openAndClose";
+        EventType_["BeforeOpen"] = "beforeOpen";
+        EventType_["Open"] = "open";
+        EventType_["BeforeClose"] = "beforeClose";
+        EventType_["Close"] = "close";
         EventType_["BeforeMonthChange"] = "beforeMonthChange";
         EventType_["MonthChange"] = "monthChange";
         EventType_["Focus"] = "focus";
@@ -1337,8 +1339,10 @@ var TheDatepicker;
             this.listeners_ = {
                 beforeSelect: [],
                 select: [],
-                beforeOpenAndClose: [],
-                openAndClose: [],
+                beforeOpen: [],
+                open: [],
+                beforeClose: [],
+                close: [],
                 beforeMonthChange: [],
                 monthChange: [],
                 beforeFocus: [],
@@ -1392,8 +1396,10 @@ var TheDatepicker;
             options.keyboardOnMobile_ = this.keyboardOnMobile_;
             options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
             options.listeners_.select = this.listeners_.select.slice(0);
-            options.listeners_.beforeOpenAndClose = this.listeners_.beforeOpenAndClose.slice(0);
-            options.listeners_.openAndClose = this.listeners_.openAndClose.slice(0);
+            options.listeners_.beforeOpen = this.listeners_.beforeOpen.slice(0);
+            options.listeners_.open = this.listeners_.open.slice(0);
+            options.listeners_.beforeClose = this.listeners_.beforeClose.slice(0);
+            options.listeners_.close = this.listeners_.close.slice(0);
             options.listeners_.beforeMonthChange = this.listeners_.beforeMonthChange.slice(0);
             options.listeners_.monthChange = this.listeners_.monthChange.slice(0);
             options.listeners_.beforeFocus = this.listeners_.beforeFocus.slice(0);
@@ -1567,19 +1573,55 @@ var TheDatepicker;
             if (listener === void 0) { listener = null; }
             this.offEvent_(EventType_.Select, listener);
         };
+        Options.prototype.onBeforeOpen = function (listener) {
+            this.onEvent_(EventType_.BeforeOpen, listener);
+        };
+        Options.prototype.offBeforeOpen = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEvent_(EventType_.BeforeOpen, listener);
+        };
+        Options.prototype.onOpen = function (listener) {
+            this.onEvent_(EventType_.Open, listener);
+        };
+        Options.prototype.offOpen = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEvent_(EventType_.Open, listener);
+        };
+        Options.prototype.onBeforeClose = function (listener) {
+            this.onEvent_(EventType_.BeforeClose, listener);
+        };
+        Options.prototype.offBeforeClose = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEvent_(EventType_.BeforeClose, listener);
+        };
+        Options.prototype.onClose = function (listener) {
+            this.onEvent_(EventType_.Close, listener);
+        };
+        Options.prototype.offClose = function (listener) {
+            if (listener === void 0) { listener = null; }
+            this.offEvent_(EventType_.Close, listener);
+        };
         Options.prototype.onBeforeOpenAndClose = function (listener) {
-            this.onEvent_(EventType_.BeforeOpenAndClose, listener);
+            TheDatepicker.Helper_.warnDeprecatedUsage_('onBeforeOpenAndClose', 'onBeforeOpen or onBeforeClose');
+            this.onBeforeOpen(listener);
+            this.onBeforeClose(listener);
         };
         Options.prototype.offBeforeOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEvent_(EventType_.BeforeOpenAndClose, listener);
+            TheDatepicker.Helper_.warnDeprecatedUsage_('offBeforeOpenAndClose', 'offBeforeOpen or offBeforeClose');
+            this.offBeforeOpen(listener);
+            this.offBeforeClose(listener);
         };
         Options.prototype.onOpenAndClose = function (listener) {
-            this.onEvent_(EventType_.OpenAndClose, listener);
+            TheDatepicker.Helper_.warnDeprecatedUsage_('onOpenAndClose', 'onOpen or onClose');
+            this.onOpen(listener);
+            this.onClose(listener);
         };
         Options.prototype.offOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            this.offEvent_(EventType_.OpenAndClose, listener);
+            TheDatepicker.Helper_.warnDeprecatedUsage_('offOpenAndClose', 'offOpen or offClose');
+            this.offOpen(listener);
+            this.offClose(listener);
         };
         Options.prototype.onBeforeMonthChange = function (listener) {
             this.onEvent_(EventType_.BeforeMonthChange, listener);
@@ -1913,11 +1955,25 @@ var TheDatepicker;
         Options.prototype.getSelectListeners = function () {
             return this.listeners_.select.slice(0);
         };
+        Options.prototype.getBeforeOpenListeners = function () {
+            return this.listeners_.beforeOpen.slice(0);
+        };
+        Options.prototype.getOpenListeners = function () {
+            return this.listeners_.open.slice(0);
+        };
+        Options.prototype.getBeforeCloseListeners = function () {
+            return this.listeners_.beforeClose.slice(0);
+        };
+        Options.prototype.getCloseListeners = function () {
+            return this.listeners_.close.slice(0);
+        };
         Options.prototype.getBeforeOpenAndCloseListeners = function () {
-            return this.listeners_.beforeOpenAndClose.slice(0);
+            TheDatepicker.Helper_.warnDeprecatedUsage_('getBeforeOpenAndCloseListeners', 'getBeforeOpenListeners or getBeforeCloseListeners');
+            return this.listeners_.beforeOpen.concat(this.listeners_.beforeClose);
         };
         Options.prototype.getOpenAndCloseListeners = function () {
-            return this.listeners_.openAndClose.slice(0);
+            TheDatepicker.Helper_.warnDeprecatedUsage_('getOpenAndCloseListeners', 'getOpenListeners or getCloseListeners');
+            return this.listeners_.open.concat(this.listeners_.close);
         };
         Options.prototype.getBeforeMonthChangeListeners = function () {
             return this.listeners_.beforeMonthChange.slice(0);
@@ -2768,14 +2824,20 @@ var TheDatepicker;
             if (this.active_ === value) {
                 return true;
             }
-            if (!this.triggerOnBeforeOpenAndClose_(event, value)) {
+            if ((value && !this.triggerOnBeforeOpen_(event))
+                || (!value && !this.triggerOnBeforeClose_(event))) {
                 return false;
             }
             this.active_ = value;
             if (this.options_.isHiddenOnBlur()) {
                 this.render_();
             }
-            this.triggerOnOpenAndClose_(event, value);
+            if (value) {
+                this.triggerOnOpen_(event);
+            }
+            else {
+                this.triggerOnClose_(event);
+            }
             return true;
         };
         ViewModel_.prototype.isActive_ = function () {
@@ -3083,16 +3145,28 @@ var TheDatepicker;
                 return listener.call(_this.datepicker_, event, day, previousDay);
             });
         };
-        ViewModel_.prototype.triggerOnBeforeOpenAndClose_ = function (event, isOpening) {
+        ViewModel_.prototype.triggerOnBeforeOpen_ = function (event) {
             var _this = this;
-            return this.options_.triggerEvent_(TheDatepicker.EventType_.BeforeOpenAndClose, function (listener) {
-                return listener.call(_this.datepicker_, event, isOpening);
+            return this.options_.triggerEvent_(TheDatepicker.EventType_.BeforeOpen, function (listener) {
+                return listener.call(_this.datepicker_, event, true);
             });
         };
-        ViewModel_.prototype.triggerOnOpenAndClose_ = function (event, isOpening) {
+        ViewModel_.prototype.triggerOnOpen_ = function (event) {
             var _this = this;
-            this.options_.triggerEvent_(TheDatepicker.EventType_.OpenAndClose, function (listener) {
-                return listener.call(_this.datepicker_, event, isOpening);
+            this.options_.triggerEvent_(TheDatepicker.EventType_.Open, function (listener) {
+                return listener.call(_this.datepicker_, event, true);
+            });
+        };
+        ViewModel_.prototype.triggerOnBeforeClose_ = function (event) {
+            var _this = this;
+            return this.options_.triggerEvent_(TheDatepicker.EventType_.BeforeClose, function (listener) {
+                return listener.call(_this.datepicker_, event, false);
+            });
+        };
+        ViewModel_.prototype.triggerOnClose_ = function (event) {
+            var _this = this;
+            this.options_.triggerEvent_(TheDatepicker.EventType_.Close, function (listener) {
+                return listener.call(_this.datepicker_, event, false);
             });
         };
         ViewModel_.prototype.triggerOnBeforeMonthChange_ = function (event, month, previousMonth) {

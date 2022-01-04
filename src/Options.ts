@@ -3,8 +3,10 @@ namespace TheDatepicker {
 	export enum EventType_ {
 		BeforeSelect = 'beforeSelect',
 		Select = 'select',
-		BeforeOpenAndClose = 'beforeOpenAndClose',
-		OpenAndClose = 'openAndClose',
+		BeforeOpen = 'beforeOpen',
+		Open = 'open',
+		BeforeClose = 'beforeClose',
+		Close = 'close',
 		BeforeMonthChange = 'beforeMonthChange',
 		MonthChange = 'monthChange',
 		Focus = 'focus',
@@ -16,18 +18,20 @@ namespace TheDatepicker {
 	}
 
 	export type SelectListener = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
-	export type OpenAndCloseListener = (event: Event | null, isOpening: boolean) => boolean;
+	export type OpenOrCloseListener = (event: Event | null) => boolean;
 	export type MonthChangeListener = (event: Event | null, month: Date, previousMonth: Date) => boolean;
 	export type FocusListener = (event: Event | null, day: Day| null, previousDay: Day| null) => boolean;
-	type OneOfListener = SelectListener | OpenAndCloseListener | MonthChangeListener | FocusListener;
-	type AnyListener = SelectListener & OpenAndCloseListener & MonthChangeListener & FocusListener;
+	type OneOfListener = SelectListener | OpenOrCloseListener | MonthChangeListener | FocusListener;
+	type AnyListener = SelectListener & OpenOrCloseListener & MonthChangeListener & FocusListener;
 	type ListenerCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
 
 	interface Listeners {
 		beforeSelect: SelectListener[];
 		select: SelectListener[];
-		beforeOpenAndClose: OpenAndCloseListener[];
-		openAndClose: OpenAndCloseListener[];
+		beforeOpen: OpenOrCloseListener[];
+		open: OpenOrCloseListener[];
+		beforeClose: OpenOrCloseListener[];
+		close: OpenOrCloseListener[];
 		beforeMonthChange: MonthChangeListener[];
 		monthChange: MonthChangeListener[];
 		beforeFocus: FocusListener[];
@@ -102,8 +106,10 @@ namespace TheDatepicker {
 		private listeners_: Listeners = {
 			beforeSelect: [],
 			select: [],
-			beforeOpenAndClose: [],
-			openAndClose: [],
+			beforeOpen: [],
+			open: [],
+			beforeClose: [],
+			close: [],
 			beforeMonthChange: [],
 			monthChange: [],
 			beforeFocus: [],
@@ -161,8 +167,10 @@ namespace TheDatepicker {
 			options.keyboardOnMobile_ = this.keyboardOnMobile_;
 			options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
 			options.listeners_.select = this.listeners_.select.slice(0);
-			options.listeners_.beforeOpenAndClose = this.listeners_.beforeOpenAndClose.slice(0);
-			options.listeners_.openAndClose = this.listeners_.openAndClose.slice(0);
+			options.listeners_.beforeOpen = this.listeners_.beforeOpen.slice(0);
+			options.listeners_.open = this.listeners_.open.slice(0);
+			options.listeners_.beforeClose = this.listeners_.beforeClose.slice(0);
+			options.listeners_.close = this.listeners_.close.slice(0);
 			options.listeners_.beforeMonthChange = this.listeners_.beforeMonthChange.slice(0);
 			options.listeners_.monthChange = this.listeners_.monthChange.slice(0);
 			options.listeners_.beforeFocus = this.listeners_.beforeFocus.slice(0);
@@ -543,25 +551,79 @@ namespace TheDatepicker {
 			this.offEvent_(EventType_.Select, listener);
 		}
 
+		// Callback to be called just before the datepicker is opened.
+		// An Event instance is given on input.
+		// If callback returns false, action stops and datepicker will not be opened.
+		public onBeforeOpen(listener: OpenOrCloseListener): void {
+			this.onEvent_(EventType_.BeforeOpen, listener as AnyListener);
+		}
+
+		public offBeforeOpen(listener: OpenOrCloseListener | null = null): void {
+			this.offEvent_(EventType_.BeforeOpen, listener);
+		}
+
+		// Callback to be called immediately after the datepicker is opened.
+		// An Event instance is given on input.
+		public onOpen(listener: OpenOrCloseListener): void {
+			this.onEvent_(EventType_.Open, listener as AnyListener);
+		}
+
+		public offOpen(listener: OpenOrCloseListener | null = null): void {
+			this.offEvent_(EventType_.Open, listener);
+		}
+
+		// Callback to be called just before the datepicker is closed.
+		// An Event instance is given on input.
+		// If callback returns false, action stops and datepicker will not be closed.
+		public onBeforeClose(listener: OpenOrCloseListener): void {
+			this.onEvent_(EventType_.BeforeClose, listener as AnyListener);
+		}
+
+		public offBeforeClose(listener: OpenOrCloseListener | null = null): void {
+			this.offEvent_(EventType_.BeforeClose, listener);
+		}
+
+		// Callback to be called immediately after the datepicker is closed.
+		// An Event instance is given on input.
+		public onClose(listener: OpenOrCloseListener): void {
+			this.onEvent_(EventType_.Close, listener as AnyListener);
+		}
+
+		public offClose(listener: OpenOrCloseListener | null = null): void {
+			this.offEvent_(EventType_.Close, listener);
+		}
+
 		// Callback to be called just before the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		// If callback returns false, action stops and datepicker will not be opened / closed.
-		public onBeforeOpenAndClose(listener: OpenAndCloseListener): void {
-			this.onEvent_(EventType_.BeforeOpenAndClose, listener as AnyListener);
+		// deprecated, use onBeforeOpen() or onBeforeClose()
+		public onBeforeOpenAndClose(listener: OpenOrCloseListener): void {
+			Helper_.warnDeprecatedUsage_('onBeforeOpenAndClose', 'onBeforeOpen or onBeforeClose');
+			this.onBeforeOpen(listener);
+			this.onBeforeClose(listener);
 		}
 
-		public offBeforeOpenAndClose(listener: OpenAndCloseListener | null = null): void {
-			this.offEvent_(EventType_.BeforeOpenAndClose, listener);
+		// deprecated, use offBeforeOpen() or offBeforeClose()
+		public offBeforeOpenAndClose(listener: OpenOrCloseListener | null = null): void {
+			Helper_.warnDeprecatedUsage_('offBeforeOpenAndClose', 'offBeforeOpen or offBeforeClose');
+			this.offBeforeOpen(listener);
+			this.offBeforeClose(listener);
 		}
 
 		// Callback to be called immediately after the datepicker is opened or closed.
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
-		public onOpenAndClose(listener: OpenAndCloseListener): void {
-			this.onEvent_(EventType_.OpenAndClose, listener as AnyListener);
+		// deprecated, use onOpen() or onClose()
+		public onOpenAndClose(listener: OpenOrCloseListener): void {
+			Helper_.warnDeprecatedUsage_('onOpenAndClose', 'onOpen or onClose');
+			this.onOpen(listener);
+			this.onClose(listener);
 		}
 
-		public offOpenAndClose(listener: OpenAndCloseListener | null = null): void {
-			this.offEvent_(EventType_.OpenAndClose, listener);
+		// deprecated, use offOpen() or offClose()
+		public offOpenAndClose(listener: OpenOrCloseListener | null = null): void {
+			Helper_.warnDeprecatedUsage_('offOpenAndClose', 'offOpen or offClose');
+			this.offOpen(listener);
+			this.offClose(listener);
 		}
 
 		// Callback to be called just before displayed month is changed.
@@ -998,12 +1060,30 @@ namespace TheDatepicker {
 			return this.listeners_.select.slice(0);
 		}
 
-		public getBeforeOpenAndCloseListeners(): OpenAndCloseListener[] {
-			return this.listeners_.beforeOpenAndClose.slice(0);
+		public getBeforeOpenListeners(): OpenOrCloseListener[] {
+			return this.listeners_.beforeOpen.slice(0);
 		}
 
-		public getOpenAndCloseListeners(): OpenAndCloseListener[] {
-			return this.listeners_.openAndClose.slice(0);
+		public getOpenListeners(): OpenOrCloseListener[] {
+			return this.listeners_.open.slice(0);
+		}
+
+		public getBeforeCloseListeners(): OpenOrCloseListener[] {
+			return this.listeners_.beforeClose.slice(0);
+		}
+
+		public getCloseListeners(): OpenOrCloseListener[] {
+			return this.listeners_.close.slice(0);
+		}
+
+		public getBeforeOpenAndCloseListeners(): OpenOrCloseListener[] {
+			Helper_.warnDeprecatedUsage_('getBeforeOpenAndCloseListeners', 'getBeforeOpenListeners or getBeforeCloseListeners');
+			return this.listeners_.beforeOpen.concat(this.listeners_.beforeClose);
+		}
+
+		public getOpenAndCloseListeners(): OpenOrCloseListener[] {
+			Helper_.warnDeprecatedUsage_('getOpenAndCloseListeners', 'getOpenListeners or getCloseListeners');
+			return this.listeners_.open.concat(this.listeners_.close);
 		}
 
 		public getBeforeMonthChangeListeners(): MonthChangeListener[] {
