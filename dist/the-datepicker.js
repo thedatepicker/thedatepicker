@@ -1335,6 +1335,7 @@ var TheDatepicker;
             this.positionFixing_ = true;
             this.fullScreenOnMobile_ = false;
             this.keyboardOnMobile_ = true;
+            this.includeAria_ = true;
             this.today_ = null;
             this.listeners_ = {
                 beforeSelect: [],
@@ -1394,6 +1395,7 @@ var TheDatepicker;
             options.positionFixing_ = this.positionFixing_;
             options.fullScreenOnMobile_ = this.fullScreenOnMobile_;
             options.keyboardOnMobile_ = this.keyboardOnMobile_;
+            options.includeAria_ = this.includeAria_;
             options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
             options.listeners_.select = this.listeners_.select.slice(0);
             options.listeners_.beforeOpen = this.listeners_.beforeOpen.slice(0);
@@ -1555,6 +1557,9 @@ var TheDatepicker;
         };
         Options.prototype.setKeyboardOnMobile = function (value) {
             this.keyboardOnMobile_ = !!value;
+        };
+        Options.prototype.setIncludeAria = function (value) {
+            this.includeAria_ = !!value;
         };
         Options.prototype.setToday = function (date) {
             this.today_ = TheDatepicker.Helper_.normalizeDate_('Today', date, true, this);
@@ -1921,6 +1926,9 @@ var TheDatepicker;
         Options.prototype.isKeyboardOnMobile = function () {
             return this.keyboardOnMobile_;
         };
+        Options.prototype.isAriaIncluded = function () {
+            return this.includeAria_;
+        };
         Options.prototype.getToday = function () {
             return this.today_ ? new Date(this.today_.getTime()) : TheDatepicker.Helper_.resetTime_(new Date());
         };
@@ -2183,10 +2191,7 @@ var TheDatepicker;
                 viewModel.reset_(event);
             });
             resetButton.innerHTML = this.options_.getResetHtml();
-            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Reset);
-            if (title !== '') {
-                resetButton.title = title;
-            }
+            this.addTitle_(resetButton, TheDatepicker.TitleName.Reset);
             resetElement.appendChild(resetButton);
             this.resetElement_ = resetElement;
             return resetElement;
@@ -2200,10 +2205,7 @@ var TheDatepicker;
                 viewModel.close_(event);
             });
             closeButton.innerHTML = this.options_.getCloseHtml();
-            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Close);
-            if (title !== '') {
-                closeButton.title = title;
-            }
+            this.addTitle_(closeButton, TheDatepicker.TitleName.Close);
             closeElement.appendChild(closeButton);
             this.closeElement_ = closeElement;
             return closeElement;
@@ -2225,10 +2227,7 @@ var TheDatepicker;
                 _this.slideMonth_(viewModel, event, directionForward);
             });
             goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
-            var title = this.options_.translator.translateTitle(directionForward ? TheDatepicker.TitleName.GoForward : TheDatepicker.TitleName.GoBack);
-            if (title !== '') {
-                goButton.title = title;
-            }
+            this.addTitle_(goButton, directionForward ? TheDatepicker.TitleName.GoForward : TheDatepicker.TitleName.GoBack);
             goElement.appendChild(goButton);
             if (directionForward) {
                 this.goForwardElement_ = goButton;
@@ -2261,10 +2260,7 @@ var TheDatepicker;
                     _this.monthSelect_.value = currentMonth.getMonth() + '';
                 }
             });
-            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Month);
-            if (title !== '') {
-                selectElement.title = title;
-            }
+            this.addTitle_(selectElement, TheDatepicker.TitleName.Month);
             var monthElement = this.htmlHelper_.createDiv_('month');
             var monthContent = this.htmlHelper_.createSpan_();
             monthElement.appendChild(selectElement);
@@ -2317,10 +2313,7 @@ var TheDatepicker;
                     _this.yearSelect_.value = currentMonth.getFullYear() + '';
                 }
             });
-            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Year);
-            if (title !== '') {
-                selectElement.title = title;
-            }
+            this.addTitle_(selectElement, TheDatepicker.TitleName.Year);
             var yearElement = this.htmlHelper_.createDiv_('year');
             var yearContent = this.htmlHelper_.createSpan_();
             yearElement.appendChild(selectElement);
@@ -2685,6 +2678,15 @@ var TheDatepicker;
             return this.options_.isMonthShort()
                 ? this.options_.translator.translateMonthShort(monthNumber)
                 : this.options_.translator.translateMonth(monthNumber);
+        };
+        Template_.prototype.addTitle_ = function (element, titleName) {
+            var title = this.options_.translator.translateTitle(titleName);
+            if (title !== '') {
+                element.title = title;
+                if (this.options_.isAriaIncluded()) {
+                    element.setAttribute('aria-label', title);
+                }
+            }
         };
         return Template_;
     }());

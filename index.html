@@ -290,6 +290,9 @@
 					<label>datepicker.options.setKeyboardOnMobile(<input type="checkbox" id="keyboardOnMobile" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setIncludeAria(<input type="checkbox" id="includeAria" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.addDateAvailabilityResolver(function (date) {<br>
 						&nbsp;<textarea rows="4" cols="70" id="dateAvailabilityResolver">// return date.getDate() !== 5;</textarea><br>
 						});</label>
@@ -937,6 +940,13 @@ return header;
 			keyboardOnMobileInput.onchange = function () {
 				updateSetting(keyboardOnMobileInput, function () {
 					datepicker.options.setKeyboardOnMobile(keyboardOnMobileInput.checked);
+				});
+			};
+
+			var includeAriaInput = document.getElementById('includeAria');
+			includeAriaInput.onchange = function () {
+				updateSetting(includeAriaInput, function () {
+					datepicker.options.setIncludeAria(includeAriaInput.checked);
 				});
 			};
 

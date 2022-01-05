@@ -182,10 +182,7 @@ namespace TheDatepicker {
 			});
 
 			resetButton.innerHTML = this.options_.getResetHtml();
-			const title = this.options_.translator.translateTitle(TitleName.Reset);
-			if (title !== '') {
-				resetButton.title = title;
-			}
+			this.addTitle_(resetButton, TitleName.Reset);
 			resetElement.appendChild(resetButton);
 			this.resetElement_ = resetElement;
 
@@ -203,10 +200,7 @@ namespace TheDatepicker {
 			});
 
 			closeButton.innerHTML = this.options_.getCloseHtml();
-			const title = this.options_.translator.translateTitle(TitleName.Close);
-			if (title !== '') {
-				closeButton.title = title;
-			}
+			this.addTitle_(closeButton, TitleName.Close);
 			closeElement.appendChild(closeButton);
 			this.closeElement_ = closeElement;
 
@@ -233,10 +227,7 @@ namespace TheDatepicker {
 			});
 
 			goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
-			const title = this.options_.translator.translateTitle(directionForward ? TitleName.GoForward : TitleName.GoBack);
-			if (title !== '') {
-				goButton.title = title;
-			}
+			this.addTitle_(goButton, directionForward ? TitleName.GoForward : TitleName.GoBack);
 			goElement.appendChild(goButton);
 
 			if (directionForward) {
@@ -273,10 +264,7 @@ namespace TheDatepicker {
 					this.monthSelect_.value = currentMonth.getMonth() + '';
 				}
 			});
-			const title = this.options_.translator.translateTitle(TitleName.Month);
-			if (title !== '') {
-				selectElement.title = title;
-			}
+			this.addTitle_(selectElement, TitleName.Month);
 
 			const monthElement = this.htmlHelper_.createDiv_('month');
 			const monthContent = this.htmlHelper_.createSpan_();
@@ -340,10 +328,7 @@ namespace TheDatepicker {
 					this.yearSelect_.value = currentMonth.getFullYear() + '';
 				}
 			});
-			const title = this.options_.translator.translateTitle(TitleName.Year);
-			if (title !== '') {
-				selectElement.title = title;
-			}
+			this.addTitle_(selectElement, TitleName.Year);
 
 			const yearElement = this.htmlHelper_.createDiv_('year');
 			const yearContent = this.htmlHelper_.createSpan_();
@@ -786,6 +771,16 @@ namespace TheDatepicker {
 			return this.options_.isMonthShort()
 				? this.options_.translator.translateMonthShort(monthNumber)
 				: this.options_.translator.translateMonth(monthNumber);
+		}
+
+		private addTitle_(element: HTMLAnchorElement | HTMLSelectElement, titleName: TitleName): void {
+			const title = this.options_.translator.translateTitle(titleName);
+			if (title !== '') {
+				element.title = title;
+				if (this.options_.isAriaIncluded()) {
+					element.setAttribute('aria-label', title);
+				}
+			}
 		}
 
 	}

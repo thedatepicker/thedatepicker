@@ -102,6 +102,7 @@ namespace TheDatepicker {
 		private positionFixing_ = true;
 		private fullScreenOnMobile_ = false;
 		private keyboardOnMobile_ = true
+		private includeAria_ = true
 		private today_: Date | null = null;
 		private listeners_: Listeners = {
 			beforeSelect: [],
@@ -165,6 +166,7 @@ namespace TheDatepicker {
 			options.positionFixing_ = this.positionFixing_;
 			options.fullScreenOnMobile_ = this.fullScreenOnMobile_;
 			options.keyboardOnMobile_ = this.keyboardOnMobile_;
+			options.includeAria_ = this.includeAria_;
 			options.listeners_.beforeSelect = this.listeners_.beforeSelect.slice(0);
 			options.listeners_.select = this.listeners_.select.slice(0);
 			options.listeners_.beforeOpen = this.listeners_.beforeOpen.slice(0);
@@ -516,6 +518,13 @@ namespace TheDatepicker {
 		// defaults to true
 		public setKeyboardOnMobile(value: boolean): void {
 			this.keyboardOnMobile_ = !!value;
+		}
+
+		// Setting to true will include Aria attributes into html.
+		// For more info, see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA
+		// defaults to true
+		public setIncludeAria(value: boolean): void {
+			this.includeAria_ = !!value;
 		}
 
 		// Sets mock/fake today.
@@ -1014,6 +1023,10 @@ namespace TheDatepicker {
 
 		public isKeyboardOnMobile(): boolean {
 			return this.keyboardOnMobile_;
+		}
+
+		public isAriaIncluded(): boolean {
+			return this.includeAria_;
 		}
 
 		public getToday(): Date {
