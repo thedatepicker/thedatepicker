@@ -179,7 +179,7 @@
 					datepicker.<input type="button" id="destroy" value="destroy()">;
 				</li>
 				<li>
-					<label>datepicker.selectDate("<input type="text" size="15" id="selectDate" placeholder="Y-m-d">"</label>, <label>/* doUpdateMonth: */ <input type="checkbox" id="selectDateDoUpdateMonth" checked="checked"></label>); <span class="error" id="selectDateError"></span>
+					<label>var doUpdateMonth = <input type="checkbox" id="selectDateDoUpdateMonth" checked="checked"></label>; <label>datepicker.selectDate("<input type="text" size="15" id="selectDate" placeholder="Y-m-d">"</label>, <label for="selectDateDoUpdateMonth">doUpdateMonth</label>); <span class="error" id="selectDateError"></span>
 				</li>
 				<li>
 					<label>datepicker.goToMonth("<input type="text" size="15" id="goToMonth" placeholder="Y-m">");</label> <span class="error" id="goToMonthError"></span>
@@ -301,11 +301,17 @@
 						});</label>
 				</li>
 				<li>
-					<label>datepicker.options.setCellContentStructureResolver( /* init: */ function () {<br>
-						&nbsp;<textarea rows="4" cols="70" id="cellContentStructureResolverInit">return document.createElement('span');</textarea><br>
-						}</label>,<label> /* update: */ function (element, day) {<br>
-						&nbsp;<textarea rows="4" cols="70" id="cellContentStructureResolverUpdate">element.innerText = day.dayNumber;</textarea><br>
-						}</label>);
+					<label>var cellContentInit = function () {<br>
+					&nbsp;<textarea rows="4" cols="70" id="cellContentStructureResolverInit">return document.createElement('span');</textarea><br>
+					}</label>;
+				</li>
+				<li>
+					<label>var cellContentUpdate = function (element, day) {<br>
+					&nbsp;<textarea rows="4" cols="70" id="cellContentStructureResolverUpdate">element.innerText = day.dayNumber;</textarea><br>
+					}</label>;
+				</li>
+				<li>
+					datepicker.options.setCellContentStructureResolver(<label for="cellContentStructureResolverInit">cellContentInit</label>, <label for="cellContentStructureResolverUpdate">cellContentUpdate</label>);
 				</li>
 				<li>
 					<label>datepicker.options.setCellContentResolver(function (day) {<br>
