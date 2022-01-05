@@ -504,6 +504,7 @@ namespace TheDatepicker {
 
 		// Setting to true will render datepicker fullscreen on narrow displays (usually mobile).
 		// Works only when there is no custom container.
+		// Feature is experimental for now, some issues exist.
 		// defaults to false
 		public setFullScreenOnMobile(value: boolean): void {
 			this.fullScreenOnMobile_ = !!value;
