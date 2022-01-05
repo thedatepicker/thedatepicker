@@ -455,6 +455,9 @@ namespace TheDatepicker {
 				}));
 				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
 					Helper_.stopPropagation_(event);
+					if (event.keyCode === KeyCode_.Esc && this.options.isClosedOnEscPress()) {
+						this.close(event);
+					}
 				}));
 				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyUp, (event: KeyboardEvent): void => {
 					this.readInput_(event);

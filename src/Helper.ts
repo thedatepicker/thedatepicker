@@ -32,6 +32,7 @@ namespace TheDatepicker {
 		Up = 38,
 		Right = 39,
 		Down = 40,
+		Esc = 27,
 	}
 
 	export enum ListenerType_ {

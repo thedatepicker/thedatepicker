@@ -666,6 +666,9 @@ var TheDatepicker;
                 }));
                 this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.input, TheDatepicker.ListenerType_.KeyDown, function (event) {
                     TheDatepicker.Helper_.stopPropagation_(event);
+                    if (event.keyCode === TheDatepicker.KeyCode_.Esc && _this.options.isClosedOnEscPress()) {
+                        _this.close(event);
+                    }
                 }));
                 this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.input, TheDatepicker.ListenerType_.KeyUp, function (event) {
                     _this.readInput_(event);
@@ -909,6 +912,7 @@ var TheDatepicker;
         KeyCode_[KeyCode_["Up"] = 38] = "Up";
         KeyCode_[KeyCode_["Right"] = 39] = "Right";
         KeyCode_[KeyCode_["Down"] = 40] = "Down";
+        KeyCode_[KeyCode_["Esc"] = 27] = "Esc";
     })(KeyCode_ = TheDatepicker.KeyCode_ || (TheDatepicker.KeyCode_ = {}));
     var ListenerType_;
     (function (ListenerType_) {
@@ -1324,6 +1328,7 @@ var TheDatepicker;
             this.animateMonthChange_ = true;
             this.classesPrefix_ = 'the-datepicker__';
             this.showCloseButton_ = true;
+            this.closeOnEscPress_ = true;
             this.title_ = '';
             this.dropdownItemsLimit_ = 200;
             this.hideDropdownWithOneItem_ = true;
@@ -1384,6 +1389,7 @@ var TheDatepicker;
             options.animateMonthChange_ = this.animateMonthChange_;
             options.classesPrefix_ = this.classesPrefix_;
             options.showCloseButton_ = this.showCloseButton_;
+            options.closeOnEscPress_ = this.closeOnEscPress_;
             options.title_ = this.title_;
             options.dropdownItemsLimit_ = this.dropdownItemsLimit_;
             options.hideDropdownWithOneItem_ = this.hideDropdownWithOneItem_;
@@ -1524,6 +1530,9 @@ var TheDatepicker;
         };
         Options.prototype.setShowCloseButton = function (value) {
             this.showCloseButton_ = !!value;
+        };
+        Options.prototype.setCloseOnEscPress = function (value) {
+            this.closeOnEscPress_ = !!value;
         };
         Options.prototype.setTitle = function (title) {
             this.title_ = TheDatepicker.Helper_.checkString_('Title', title);
@@ -1774,6 +1783,9 @@ var TheDatepicker;
         };
         Options.prototype.isCloseButtonShown = function () {
             return this.hideOnBlur_ && this.showCloseButton_;
+        };
+        Options.prototype.isClosedOnEscPress = function () {
+            return this.hideOnBlur_ && this.closeOnEscPress_;
         };
         Options.prototype.getTitle = function () {
             return this.title_;
@@ -3102,6 +3114,9 @@ var TheDatepicker;
                 else {
                     this.highlightFirstAvailableDay_(event);
                 }
+            }
+            else if (event.keyCode === TheDatepicker.KeyCode_.Esc && this.options_.isClosedOnEscPress()) {
+                this.datepicker_.close(event);
             }
         };
         ViewModel_.prototype.createDay_ = function (date) {

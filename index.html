@@ -257,6 +257,9 @@
 					<label>datepicker.options.setShowCloseButton(<input type="checkbox" id="showCloseButton" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setCloseOnEscPress(<input type="checkbox" id="closeOnEscPress" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setTitle("<input type="text" size="15" id="title">");</label> <span class="error" id="titleError"></span>
 				</li>
 				<li>
@@ -863,6 +866,13 @@ return header;
 			showCloseButtonInput.onchange = function () {
 				updateSetting(showCloseButtonInput, function () {
 					datepicker.options.setShowCloseButton(showCloseButtonInput.checked);
+				});
+			};
+
+			var closeOnEscPressInput = document.getElementById('closeOnEscPress');
+			closeOnEscPressInput.onchange = function () {
+				updateSetting(closeOnEscPressInput, function () {
+					datepicker.options.setCloseOnEscPress(closeOnEscPressInput.checked);
 				});
 			};
 

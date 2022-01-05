@@ -91,6 +91,7 @@ namespace TheDatepicker {
 		private animateMonthChange_ = true;
 		private classesPrefix_ = 'the-datepicker__';
 		private showCloseButton_ = true;
+		private closeOnEscPress_ = true;
 		private title_ = '';
 		private dropdownItemsLimit_ = 200;
 		private hideDropdownWithOneItem_ = true;
@@ -155,6 +156,7 @@ namespace TheDatepicker {
 			options.animateMonthChange_ = this.animateMonthChange_;
 			options.classesPrefix_ = this.classesPrefix_;
 			options.showCloseButton_ = this.showCloseButton_;
+			options.closeOnEscPress_ = this.closeOnEscPress_;
 			options.title_ = this.title_;
 			options.dropdownItemsLimit_ = this.dropdownItemsLimit_;
 			options.hideDropdownWithOneItem_ = this.hideDropdownWithOneItem_;
@@ -446,6 +448,13 @@ namespace TheDatepicker {
 		// defaults to true
 		public setShowCloseButton(value: boolean): void {
 			this.showCloseButton_ = !!value;
+		}
+
+		// Setting to true will close datepicker when ESC key is pressed.
+		// Works only when the setting HideOnBlur is set to true.
+		// defaults to true
+		public setCloseOnEscPress(value: boolean): void {
+			this.closeOnEscPress_ = !!value;
 		}
 
 		// Sets title which is displayed in the datepicker header.
@@ -828,6 +837,10 @@ namespace TheDatepicker {
 
 		public isCloseButtonShown(): boolean {
 			return this.hideOnBlur_ && this.showCloseButton_;
+		}
+
+		public isClosedOnEscPress(): boolean {
+			return this.hideOnBlur_ && this.closeOnEscPress_;
 		}
 
 		public getTitle(): string {

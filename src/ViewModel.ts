@@ -381,6 +381,8 @@ namespace TheDatepicker {
 				} else {
 					this.highlightFirstAvailableDay_(event);
 				}
+			} else if (event.keyCode === KeyCode_.Esc && this.options_.isClosedOnEscPress()) {
+				this.datepicker_.close(event);
 			}
 		}
 
