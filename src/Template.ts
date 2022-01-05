@@ -273,6 +273,10 @@ namespace TheDatepicker {
 					this.monthSelect_.value = currentMonth.getMonth() + '';
 				}
 			});
+			const title = this.options_.translator.translateTitle(TitleName.Month);
+			if (title !== '') {
+				selectElement.title = title;
+			}
 
 			const monthElement = this.htmlHelper_.createDiv_('month');
 			const monthContent = this.htmlHelper_.createSpan_();
@@ -336,6 +340,10 @@ namespace TheDatepicker {
 					this.yearSelect_.value = currentMonth.getFullYear() + '';
 				}
 			});
+			const title = this.options_.translator.translateTitle(TitleName.Year);
+			if (title !== '') {
+				selectElement.title = title;
+			}
 
 			const yearElement = this.htmlHelper_.createDiv_('year');
 			const yearContent = this.htmlHelper_.createSpan_();

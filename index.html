@@ -580,8 +580,14 @@ return header;
 				<li>
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Reset, "<input type="text" size="15" id="resetTranslation" value="Reset">");</label>
 				</li>
-				<li class="space">
+				<li>
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Deselect, "<input type="text" size="15" id="deselectTranslation" value="Deselect">");</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Month, "<input type="text" size="15" id="monthTranslation" value="Month">");</label>
+				</li>
+				<li class="space">
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Year, "<input type="text" size="15" id="yearTranslation" value="Year">");</label>
 				</li>
 				<li>
 					<label>var datepickerPromise = TheDatepicker.onDatepickerReady(input, function (datepicker) {<br>
@@ -1281,6 +1287,20 @@ return header;
 			deselectTranslationInput.onchange = function () {
 				updateSetting(deselectTranslationInput, function () {
 					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Deselect, deselectTranslationInput.value);
+				});
+			};
+
+			var monthTranslationInput = document.getElementById('monthTranslation');
+			monthTranslationInput.onchange = function () {
+				updateSetting(monthTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Month, monthTranslationInput.value);
+				});
+			};
+
+			var yearTranslationInput = document.getElementById('yearTranslation');
+			yearTranslationInput.onchange = function () {
+				updateSetting(yearTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Year, yearTranslationInput.value);
 				});
 			};
 

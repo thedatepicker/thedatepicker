@@ -2261,6 +2261,10 @@ var TheDatepicker;
                     _this.monthSelect_.value = currentMonth.getMonth() + '';
                 }
             });
+            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Month);
+            if (title !== '') {
+                selectElement.title = title;
+            }
             var monthElement = this.htmlHelper_.createDiv_('month');
             var monthContent = this.htmlHelper_.createSpan_();
             monthElement.appendChild(selectElement);
@@ -2313,6 +2317,10 @@ var TheDatepicker;
                     _this.yearSelect_.value = currentMonth.getFullYear() + '';
                 }
             });
+            var title = this.options_.translator.translateTitle(TheDatepicker.TitleName.Year);
+            if (title !== '') {
+                selectElement.title = title;
+            }
             var yearElement = this.htmlHelper_.createDiv_('year');
             var yearContent = this.htmlHelper_.createSpan_();
             yearElement.appendChild(selectElement);
@@ -2691,6 +2699,8 @@ var TheDatepicker;
         TitleName[TitleName["Close"] = 2] = "Close";
         TitleName[TitleName["Reset"] = 3] = "Reset";
         TitleName[TitleName["Deselect"] = 4] = "Deselect";
+        TitleName[TitleName["Month"] = 5] = "Month";
+        TitleName[TitleName["Year"] = 6] = "Year";
     })(TitleName = TheDatepicker.TitleName || (TheDatepicker.TitleName = {}));
     var Translator = (function () {
         function Translator() {
@@ -2747,6 +2757,8 @@ var TheDatepicker;
                 _a[TitleName.Close] = 'Close',
                 _a[TitleName.Reset] = 'Reset',
                 _a[TitleName.Deselect] = 'Deselect',
+                _a[TitleName.Month] = 'Month',
+                _a[TitleName.Year] = 'Year',
                 _a);
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {

@@ -6,6 +6,8 @@ namespace TheDatepicker {
 		Close,
 		Reset,
 		Deselect,
+		Month,
+		Year,
 	}
 
 	export class Translator {
@@ -66,6 +68,8 @@ namespace TheDatepicker {
 			[TitleName.Close]: 'Close',
 			[TitleName.Reset]: 'Reset',
 			[TitleName.Deselect]: 'Deselect',
+			[TitleName.Month]: 'Month',
+			[TitleName.Year]: 'Year',
 		};
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
