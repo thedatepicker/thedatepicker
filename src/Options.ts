@@ -77,6 +77,7 @@ namespace TheDatepicker {
 		private cellClassesResolvers_: CellClassesResolver[] = [];
 		private dayModifiers_: DayModifier[] = [];
 		private inputFormat_ = 'j. n. Y';
+		private allowInputAnyChar_ = false;
 		private daysOutOfMonthVisible_ = false;
 		private fixedRowsCount_ = false;
 		private toggleSelection_ = false;
@@ -142,6 +143,7 @@ namespace TheDatepicker {
 			options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
 			options.dayModifiers_ = this.dayModifiers_.slice(0);
 			options.inputFormat_ = this.inputFormat_;
+			options.allowInputAnyChar_ = this.allowInputAnyChar_;
 			options.daysOutOfMonthVisible_ = this.daysOutOfMonthVisible_;
 			options.fixedRowsCount_ = this.fixedRowsCount_;
 			options.toggleSelection_ = this.toggleSelection_;
@@ -354,10 +356,16 @@ namespace TheDatepicker {
 		// "y": Year, 2 digits; 99 or 03
 		// Any other character is printed as is.
 		// To print a placeholder character as normal character just put a backslash "\" before it (e.g. "\D").
-		// Works only when there an input exists.
 		// defaults to "j. n. Y"
 		public setInputFormat(format: string): void {
 			this.inputFormat_ = Helper_.checkString_('Input format', format, true);
+		}
+
+		// Setting to false will allow type only those characters which are valid by InputFormat,
+		// otherwise any character can be typed.
+		// defaults to false
+		public setAllowInputAnyChar(value: boolean): void {
+			this.allowInputAnyChar_ = !!value;
 		}
 
 		// Setting to false will hide days which belongs to other months.
@@ -1024,6 +1032,10 @@ namespace TheDatepicker {
 
 		public getInputFormat(): string {
 			return this.inputFormat_;
+		}
+
+		public isAllowedInputAnyChar(): boolean {
+			return this.allowInputAnyChar_;
 		}
 
 		public isPositionFixingEnabled(): boolean {

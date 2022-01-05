@@ -12,7 +12,7 @@ namespace TheDatepicker {
 
 	export class Translator {
 
-		private dayOfWeekFullTranslations_ = [
+		public dayOfWeekFullTranslations_ = [
 			'Sunday',
 			'Monday',
 			'Tuesday',
@@ -22,7 +22,7 @@ namespace TheDatepicker {
 			'Saturday',
 		];
 
-		private dayOfWeekTranslations_ = [
+		public dayOfWeekTranslations_ = [
 			'Su',
 			'Mo',
 			'Tu',
@@ -32,7 +32,7 @@ namespace TheDatepicker {
 			'Sa',
 		];
 
-		private monthTranslations_ = [
+		public monthTranslations_ = [
 			'January',
 			'February',
 			'March',
@@ -47,7 +47,7 @@ namespace TheDatepicker {
 			'December',
 		];
 
-		private monthShortTranslations_ = [
+		public monthShortTranslations_ = [
 			'Jan',
 			'Feb',
 			'Mar',

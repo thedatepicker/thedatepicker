@@ -292,6 +292,14 @@ namespace TheDatepicker {
 			return this.viewModel_.createDay_(Helper_.normalizeDate_('Date', date, false, this.options));
 		}
 
+		public canType_(char: string): boolean {
+			if (!this.isInputTextBox_ || this.options.isAllowedInputAnyChar()) {
+				return true;
+			}
+
+			return this.dateConverter_.isValidChar_(this.options.getInputFormat(), char);
+		}
+
 		public readInput_(event: Event | null = null): boolean {
 			if (!this.isInputTextBox_) {
 				return false;
@@ -461,6 +469,12 @@ namespace TheDatepicker {
 				}));
 				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyUp, (event: KeyboardEvent): void => {
 					this.readInput_(event);
+				}));
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyPress, (event: KeyboardEvent): void => {
+					const charCode = event.charCode || event.keyCode;
+					if (charCode && !this.canType_(String.fromCharCode(charCode))) {
+						Helper_.preventDefault_(event);
+					}
 				}));
 			}
 		}

@@ -217,6 +217,9 @@
 					// "y" = Year, 2 digits (99 or 03)
 				</li>
 				<li>
+					<label>datepicker.options.setAllowInputAnyChar(<input type="checkbox" id="allowInputAnyChar">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setFirstDayOfWeek(<select id="firstDayOfWeek">
 							<option value="1" selected="selected">TheDatepicker.DayOfWeek.Monday</option>
 							<option value="2">TheDatepicker.DayOfWeek.Tuesday</option>
@@ -796,6 +799,13 @@ return header;
 				updateSetting(inputFormatInput, function () {
 					datepicker.options.setInputFormat(inputFormatInput.value);
 					updateSelectedDate();
+				});
+			};
+
+			var allowInputAnyCharInput = document.getElementById('allowInputAnyChar');
+			allowInputAnyCharInput.onchange = function () {
+				updateSetting(allowInputAnyCharInput, function () {
+					datepicker.options.setAllowInputAnyChar(allowInputAnyCharInput.checked);
 				});
 			};
 

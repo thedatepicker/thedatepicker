@@ -42,6 +42,7 @@ namespace TheDatepicker {
 		Blur = 'blur',
 		KeyDown = 'keydown',
 		KeyUp = 'keyup',
+		KeyPress = 'keypress',
 		TouchStart = 'touchstart',
 		TouchMove = 'touchmove',
 		AnimationEnd = 'animationend',

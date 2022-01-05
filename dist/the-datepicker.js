@@ -119,6 +119,38 @@ var TheDatepicker;
             }
             return dateData.createDate();
         };
+        DateConverter_.prototype.isValidChar_ = function (format, textChar) {
+            if (textChar === '' || textChar === ' ' || /[0-9]/.test(textChar)) {
+                return true;
+            }
+            var escapeNext = false;
+            for (var position = 0; position < format.length; position++) {
+                var char = format.substring(position, position + 1);
+                if (escapeNext) {
+                    escapeNext = false;
+                }
+                else if (char === this.escapeChar_) {
+                    escapeNext = true;
+                    continue;
+                }
+                else {
+                    var phrases = this.getValidPhrases_(char);
+                    if (phrases) {
+                        var textCharLower = textChar.toLowerCase();
+                        for (var index = 0; index < phrases.length; index++) {
+                            if (phrases[index].toLowerCase().indexOf(textCharLower) > -1) {
+                                return true;
+                            }
+                        }
+                        continue;
+                    }
+                }
+                if (textChar === char) {
+                    return true;
+                }
+            }
+            return false;
+        };
         DateConverter_.prototype.getFormatter_ = function (type) {
             switch (type) {
                 case 'j':
@@ -314,6 +346,27 @@ var TheDatepicker;
             var yearBeginning = currentYear.substring(0, currentYear.length - 2);
             dateData.year = parseInt(yearBeginning + yearEnd, 10);
             return 2;
+        };
+        DateConverter_.prototype.getValidPhrases_ = function (type) {
+            switch (type) {
+                case 'j':
+                case 'd':
+                case 'n':
+                case 'm':
+                case 'Y':
+                case 'y':
+                    return [];
+                case 'D':
+                    return this.options_.translator.dayOfWeekTranslations_;
+                case 'l':
+                    return this.options_.translator.dayOfWeekFullTranslations_;
+                case 'F':
+                    return this.options_.translator.monthTranslations_;
+                case 'M':
+                    return this.options_.translator.monthShortTranslations_;
+                default:
+                    return null;
+            }
         };
         return DateConverter_;
     }());
@@ -522,6 +575,12 @@ var TheDatepicker;
         Datepicker.prototype.getDay = function (date) {
             return this.viewModel_.createDay_(TheDatepicker.Helper_.normalizeDate_('Date', date, false, this.options));
         };
+        Datepicker.prototype.canType_ = function (char) {
+            if (!this.isInputTextBox_ || this.options.isAllowedInputAnyChar()) {
+                return true;
+            }
+            return this.dateConverter_.isValidChar_(this.options.getInputFormat(), char);
+        };
         Datepicker.prototype.readInput_ = function (event) {
             if (event === void 0) { event = null; }
             if (!this.isInputTextBox_) {
@@ -672,6 +731,12 @@ var TheDatepicker;
                 }));
                 this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.input, TheDatepicker.ListenerType_.KeyUp, function (event) {
                     _this.readInput_(event);
+                }));
+                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.input, TheDatepicker.ListenerType_.KeyPress, function (event) {
+                    var charCode = event.charCode || event.keyCode;
+                    if (charCode && !_this.canType_(String.fromCharCode(charCode))) {
+                        TheDatepicker.Helper_.preventDefault_(event);
+                    }
                 }));
             }
         };
@@ -922,6 +987,7 @@ var TheDatepicker;
         ListenerType_["Blur"] = "blur";
         ListenerType_["KeyDown"] = "keydown";
         ListenerType_["KeyUp"] = "keyup";
+        ListenerType_["KeyPress"] = "keypress";
         ListenerType_["TouchStart"] = "touchstart";
         ListenerType_["TouchMove"] = "touchmove";
         ListenerType_["AnimationEnd"] = "animationend";
@@ -1314,6 +1380,7 @@ var TheDatepicker;
             this.cellClassesResolvers_ = [];
             this.dayModifiers_ = [];
             this.inputFormat_ = 'j. n. Y';
+            this.allowInputAnyChar_ = false;
             this.daysOutOfMonthVisible_ = false;
             this.fixedRowsCount_ = false;
             this.toggleSelection_ = false;
@@ -1375,6 +1442,7 @@ var TheDatepicker;
             options.cellClassesResolvers_ = this.cellClassesResolvers_.slice(0);
             options.dayModifiers_ = this.dayModifiers_.slice(0);
             options.inputFormat_ = this.inputFormat_;
+            options.allowInputAnyChar_ = this.allowInputAnyChar_;
             options.daysOutOfMonthVisible_ = this.daysOutOfMonthVisible_;
             options.fixedRowsCount_ = this.fixedRowsCount_;
             options.toggleSelection_ = this.toggleSelection_;
@@ -1488,6 +1556,9 @@ var TheDatepicker;
         };
         Options.prototype.setInputFormat = function (format) {
             this.inputFormat_ = TheDatepicker.Helper_.checkString_('Input format', format, true);
+        };
+        Options.prototype.setAllowInputAnyChar = function (value) {
+            this.allowInputAnyChar_ = !!value;
         };
         Options.prototype.setDaysOutOfMonthVisible = function (value) {
             this.daysOutOfMonthVisible_ = !!value;
@@ -1928,6 +1999,9 @@ var TheDatepicker;
         };
         Options.prototype.getInputFormat = function () {
             return this.inputFormat_;
+        };
+        Options.prototype.isAllowedInputAnyChar = function () {
+            return this.allowInputAnyChar_;
         };
         Options.prototype.isPositionFixingEnabled = function () {
             return this.hideOnBlur_ && this.positionFixing_;

@@ -134,6 +134,43 @@ namespace TheDatepicker {
 			return dateData.createDate();
 		}
 
+		public isValidChar_(format: string, textChar: string): boolean {
+			if (textChar === '' || textChar === ' ' || /[0-9]/.test(textChar)) {
+				return true;
+			}
+
+			let escapeNext = false;
+			for (let position = 0; position < format.length; position++) {
+				const char = format.substring(position, position + 1);
+
+				if (escapeNext) {
+					escapeNext = false;
+
+				} else if (char === this.escapeChar_) {
+					escapeNext = true;
+					continue;
+
+				} else {
+					const phrases = this.getValidPhrases_(char);
+					if (phrases) {
+						const textCharLower = textChar.toLowerCase();
+						for (let index = 0; index < phrases.length; index++) {
+							if (phrases[index].toLowerCase().indexOf(textCharLower) > -1) {
+								return true;
+							}
+						}
+						continue;
+					}
+				}
+
+				if (textChar === char) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		private getFormatter_(type: string): ((date: Date) => string) | null {
 			switch (type) {
 				// Day of the month (1 to 31)
@@ -392,6 +429,28 @@ namespace TheDatepicker {
 			dateData.year = parseInt(yearBeginning + yearEnd, 10);
 
 			return 2;
+		}
+
+		private getValidPhrases_(type: string): string[] | null {
+			switch (type) {
+				case 'j':
+				case 'd':
+				case 'n':
+				case 'm':
+				case 'Y':
+				case 'y':
+					return [];
+				case 'D':
+					return this.options_.translator.dayOfWeekTranslations_;
+				case 'l':
+					return this.options_.translator.dayOfWeekFullTranslations_;
+				case 'F':
+					return this.options_.translator.monthTranslations_;
+				case 'M':
+					return this.options_.translator.monthShortTranslations_;
+				default:
+					return null;
+			}
 		}
 
 	}
