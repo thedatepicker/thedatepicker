@@ -63,13 +63,13 @@ namespace TheDatepicker {
 		];
 
 		private titles_ = {
-			[TitleName.GoBack]: 'Previous month',
-			[TitleName.GoForward]: 'Next month',
-			[TitleName.Close]: 'Close',
-			[TitleName.Reset]: 'Reset',
-			[TitleName.Deselect]: 'Deselect',
-			[TitleName.Month]: 'Month',
-			[TitleName.Year]: 'Year',
+			[TitleName.GoBack]: 'Go to previous month',
+			[TitleName.GoForward]: 'Go to next month',
+			[TitleName.Close]: 'Close calendar',
+			[TitleName.Reset]: 'Reset calendar',
+			[TitleName.Deselect]: 'Deselect date',
+			[TitleName.Month]: 'Month selection',
+			[TitleName.Year]: 'Year selection',
 		};
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {

@@ -2752,13 +2752,13 @@ var TheDatepicker;
                 'Dec',
             ];
             this.titles_ = (_a = {},
-                _a[TitleName.GoBack] = 'Previous month',
-                _a[TitleName.GoForward] = 'Next month',
-                _a[TitleName.Close] = 'Close',
-                _a[TitleName.Reset] = 'Reset',
-                _a[TitleName.Deselect] = 'Deselect',
-                _a[TitleName.Month] = 'Month',
-                _a[TitleName.Year] = 'Year',
+                _a[TitleName.GoBack] = 'Go to previous month',
+                _a[TitleName.GoForward] = 'Go to next month',
+                _a[TitleName.Close] = 'Close calendar',
+                _a[TitleName.Reset] = 'Reset calendar',
+                _a[TitleName.Deselect] = 'Deselect date',
+                _a[TitleName.Month] = 'Month selection',
+                _a[TitleName.Year] = 'Year selection',
                 _a);
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
