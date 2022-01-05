@@ -133,7 +133,7 @@ namespace TheDatepicker {
 
 			throw new Error(
 				parameterName
-				+ ' was expected to be a valid Date string or valid Date or Day'
+				+ ' was expected to be a valid Date string or valid Date or TheDatepicker.Day'
 				+ (isNullable ? ' or null.' : '.')
 			);
 		}
