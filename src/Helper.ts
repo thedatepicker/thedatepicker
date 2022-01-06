@@ -241,7 +241,7 @@ namespace TheDatepicker {
 			return value;
 		}
 
-		public static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethod: string): void {
+		public static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethods: string[]): void {
 			if (!window.console) {
 				return;
 			}
@@ -252,7 +252,11 @@ namespace TheDatepicker {
 				}
 			}
 
-			window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethod + '()');
+			for (let index = 0; index < alternateMethods.length; index++) {
+				alternateMethods[index] += '()';
+			}
+
+			window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethods.join(' or '));
 			Helper_.deprecatedMethods_.push(deprecatedMethod);
 		}
 

@@ -272,7 +272,7 @@ namespace TheDatepicker {
 		// or null to make available all days.
 		// deprecated, use addDateAvailabilityResolver()
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
-			Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', 'addDateAvailabilityResolver');
+			Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', ['addDateAvailabilityResolver']);
 			this.removeDateAvailabilityResolver();
 			this.addDateAvailabilityResolver(resolver);
 		}
@@ -622,14 +622,14 @@ namespace TheDatepicker {
 		// If callback returns false, action stops and datepicker will not be opened / closed.
 		// deprecated, use onBeforeOpen() or onBeforeClose()
 		public onBeforeOpenAndClose(listener: OpenOrCloseListener): void {
-			Helper_.warnDeprecatedUsage_('onBeforeOpenAndClose', 'onBeforeOpen or onBeforeClose');
+			Helper_.warnDeprecatedUsage_('onBeforeOpenAndClose', ['onBeforeOpen', 'onBeforeClose']);
 			this.onBeforeOpen(listener);
 			this.onBeforeClose(listener);
 		}
 
 		// deprecated, use offBeforeOpen() or offBeforeClose()
 		public offBeforeOpenAndClose(listener: OpenOrCloseListener | null = null): void {
-			Helper_.warnDeprecatedUsage_('offBeforeOpenAndClose', 'offBeforeOpen or offBeforeClose');
+			Helper_.warnDeprecatedUsage_('offBeforeOpenAndClose', ['offBeforeOpen', 'offBeforeClose']);
 			this.offBeforeOpen(listener);
 			this.offBeforeClose(listener);
 		}
@@ -638,14 +638,14 @@ namespace TheDatepicker {
 		// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
 		// deprecated, use onOpen() or onClose()
 		public onOpenAndClose(listener: OpenOrCloseListener): void {
-			Helper_.warnDeprecatedUsage_('onOpenAndClose', 'onOpen or onClose');
+			Helper_.warnDeprecatedUsage_('onOpenAndClose', ['onOpen', 'onClose']);
 			this.onOpen(listener);
 			this.onClose(listener);
 		}
 
 		// deprecated, use offOpen() or offClose()
 		public offOpenAndClose(listener: OpenOrCloseListener | null = null): void {
-			Helper_.warnDeprecatedUsage_('offOpenAndClose', 'offOpen or offClose');
+			Helper_.warnDeprecatedUsage_('offOpenAndClose', ['offOpen', 'offClose']);
 			this.offOpen(listener);
 			this.offClose(listener);
 		}
@@ -1056,7 +1056,7 @@ namespace TheDatepicker {
 		}
 
 		public getDateAvailabilityResolver(): DateAvailabilityResolver | null {
-			Helper_.warnDeprecatedUsage_('getDateAvailabilityResolver', 'getDateAvailabilityResolvers');
+			Helper_.warnDeprecatedUsage_('getDateAvailabilityResolver', ['getDateAvailabilityResolvers']);
 			return this.dateAvailabilityResolvers_.length > 0 ? this.dateAvailabilityResolvers_[0] : null;
 		}
 
@@ -1113,12 +1113,12 @@ namespace TheDatepicker {
 		}
 
 		public getBeforeOpenAndCloseListeners(): OpenOrCloseListener[] {
-			Helper_.warnDeprecatedUsage_('getBeforeOpenAndCloseListeners', 'getBeforeOpenListeners or getBeforeCloseListeners');
+			Helper_.warnDeprecatedUsage_('getBeforeOpenAndCloseListeners', ['getBeforeOpenListeners', 'getBeforeCloseListeners']);
 			return this.listeners_.beforeOpen.concat(this.listeners_.beforeClose);
 		}
 
 		public getOpenAndCloseListeners(): OpenOrCloseListener[] {
-			Helper_.warnDeprecatedUsage_('getOpenAndCloseListeners', 'getOpenListeners or getCloseListeners');
+			Helper_.warnDeprecatedUsage_('getOpenAndCloseListeners', ['getOpenListeners', 'getCloseListeners']);
 			return this.listeners_.open.concat(this.listeners_.close);
 		}
 

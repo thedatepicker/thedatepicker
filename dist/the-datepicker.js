@@ -1167,7 +1167,7 @@ var TheDatepicker;
             }
             return value;
         };
-        Helper_.warnDeprecatedUsage_ = function (deprecatedMethod, alternateMethod) {
+        Helper_.warnDeprecatedUsage_ = function (deprecatedMethod, alternateMethods) {
             if (!window.console) {
                 return;
             }
@@ -1176,7 +1176,10 @@ var TheDatepicker;
                     return;
                 }
             }
-            window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethod + '()');
+            for (var index = 0; index < alternateMethods.length; index++) {
+                alternateMethods[index] += '()';
+            }
+            window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethods.join(' or '));
             Helper_.deprecatedMethods_.push(deprecatedMethod);
         };
         Helper_.addSwipeListener_ = function (element, listener) {
@@ -1521,7 +1524,7 @@ var TheDatepicker;
             this.firstDayOfWeek_ = TheDatepicker.Helper_.checkNumber_('First day of week', dayOfWeek, 0, 6);
         };
         Options.prototype.setDateAvailabilityResolver = function (resolver) {
-            TheDatepicker.Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', 'addDateAvailabilityResolver');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', ['addDateAvailabilityResolver']);
             this.removeDateAvailabilityResolver();
             this.addDateAvailabilityResolver(resolver);
         };
@@ -1697,24 +1700,24 @@ var TheDatepicker;
             this.offEvent_(EventType_.Close, listener);
         };
         Options.prototype.onBeforeOpenAndClose = function (listener) {
-            TheDatepicker.Helper_.warnDeprecatedUsage_('onBeforeOpenAndClose', 'onBeforeOpen or onBeforeClose');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('onBeforeOpenAndClose', ['onBeforeOpen', 'onBeforeClose']);
             this.onBeforeOpen(listener);
             this.onBeforeClose(listener);
         };
         Options.prototype.offBeforeOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            TheDatepicker.Helper_.warnDeprecatedUsage_('offBeforeOpenAndClose', 'offBeforeOpen or offBeforeClose');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('offBeforeOpenAndClose', ['offBeforeOpen', 'offBeforeClose']);
             this.offBeforeOpen(listener);
             this.offBeforeClose(listener);
         };
         Options.prototype.onOpenAndClose = function (listener) {
-            TheDatepicker.Helper_.warnDeprecatedUsage_('onOpenAndClose', 'onOpen or onClose');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('onOpenAndClose', ['onOpen', 'onClose']);
             this.onOpen(listener);
             this.onClose(listener);
         };
         Options.prototype.offOpenAndClose = function (listener) {
             if (listener === void 0) { listener = null; }
-            TheDatepicker.Helper_.warnDeprecatedUsage_('offOpenAndClose', 'offOpen or offClose');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('offOpenAndClose', ['offOpen', 'offClose']);
             this.offOpen(listener);
             this.offClose(listener);
         };
@@ -2029,7 +2032,7 @@ var TheDatepicker;
             return this.today_ ? new Date(this.today_.getTime()) : TheDatepicker.Helper_.resetTime_(new Date());
         };
         Options.prototype.getDateAvailabilityResolver = function () {
-            TheDatepicker.Helper_.warnDeprecatedUsage_('getDateAvailabilityResolver', 'getDateAvailabilityResolvers');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('getDateAvailabilityResolver', ['getDateAvailabilityResolvers']);
             return this.dateAvailabilityResolvers_.length > 0 ? this.dateAvailabilityResolvers_[0] : null;
         };
         Options.prototype.getDateAvailabilityResolvers = function () {
@@ -2072,11 +2075,11 @@ var TheDatepicker;
             return this.listeners_.close.slice(0);
         };
         Options.prototype.getBeforeOpenAndCloseListeners = function () {
-            TheDatepicker.Helper_.warnDeprecatedUsage_('getBeforeOpenAndCloseListeners', 'getBeforeOpenListeners or getBeforeCloseListeners');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('getBeforeOpenAndCloseListeners', ['getBeforeOpenListeners', 'getBeforeCloseListeners']);
             return this.listeners_.beforeOpen.concat(this.listeners_.beforeClose);
         };
         Options.prototype.getOpenAndCloseListeners = function () {
-            TheDatepicker.Helper_.warnDeprecatedUsage_('getOpenAndCloseListeners', 'getOpenListeners or getCloseListeners');
+            TheDatepicker.Helper_.warnDeprecatedUsage_('getOpenAndCloseListeners', ['getOpenListeners', 'getCloseListeners']);
             return this.listeners_.open.concat(this.listeners_.close);
         };
         Options.prototype.getBeforeMonthChangeListeners = function () {
