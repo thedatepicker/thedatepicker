@@ -326,13 +326,21 @@ namespace TheDatepicker {
 
 		private parseDayOfWeekByTranslator_(text: string, translate: (dayOfWeek: DayOfWeek) => string): number {
 			let maxLength = 0;
+			let matchedTranslationLength: number = 0;
 			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
 				const translation = translate(dayOfWeek);
 				maxLength = Math.max(maxLength, translation.length);
 
-				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-					return translation.length;
+				if (
+					text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()
+					&& translation.length > matchedTranslationLength
+				) {
+					matchedTranslationLength = translation.length;
 				}
+			}
+
+			if (matchedTranslationLength > 0) {
+				return matchedTranslationLength;
 			}
 
 			let took = 0;
@@ -380,16 +388,25 @@ namespace TheDatepicker {
 		}
 
 		private parseMonthByTranslator_(text: string, dateData: ParsedDateData, translate: (month: Month) => string): number {
+			let matchedMonth: number | null = null;
+			let matchedTranslationLength: number = 0;
 			for (let month = 1; month <= 12; month++) {
 				const translation = translate(month - 1);
-
-				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-					dateData.month = month;
-					return translation.length;
+				if (
+					text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()
+					&& translation.length > matchedTranslationLength
+				) {
+					matchedMonth = month;
+					matchedTranslationLength = translation.length;
 				}
 			}
 
-			throw new CannotParseDateException();
+			if (matchedMonth === null) {
+				throw new CannotParseDateException();
+			}
+
+			dateData.month = matchedMonth;
+			return matchedTranslationLength;
 		}
 
 		private parseYear_(text: string, dateData: ParsedDateData): number {

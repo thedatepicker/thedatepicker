@@ -262,12 +262,17 @@ var TheDatepicker;
         };
         DateConverter_.prototype.parseDayOfWeekByTranslator_ = function (text, translate) {
             var maxLength = 0;
+            var matchedTranslationLength = 0;
             for (var dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
                 var translation = translate(dayOfWeek);
                 maxLength = Math.max(maxLength, translation.length);
-                if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-                    return translation.length;
+                if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()
+                    && translation.length > matchedTranslationLength) {
+                    matchedTranslationLength = translation.length;
                 }
+            }
+            if (matchedTranslationLength > 0) {
+                return matchedTranslationLength;
             }
             var took = 0;
             while (/[a-zA-Z]/.test(text.substring(0, 1))) {
@@ -308,14 +313,21 @@ var TheDatepicker;
             });
         };
         DateConverter_.prototype.parseMonthByTranslator_ = function (text, dateData, translate) {
+            var matchedMonth = null;
+            var matchedTranslationLength = 0;
             for (var month = 1; month <= 12; month++) {
                 var translation = translate(month - 1);
-                if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
-                    dateData.month = month;
-                    return translation.length;
+                if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()
+                    && translation.length > matchedTranslationLength) {
+                    matchedMonth = month;
+                    matchedTranslationLength = translation.length;
                 }
             }
-            throw new CannotParseDateException();
+            if (matchedMonth === null) {
+                throw new CannotParseDateException();
+            }
+            dateData.month = matchedMonth;
+            return matchedTranslationLength;
         };
         DateConverter_.prototype.parseYear_ = function (text, dateData) {
             var isNegative = false;
