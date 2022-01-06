@@ -73,19 +73,19 @@ namespace TheDatepicker {
 		};
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
-			this.dayOfWeekTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation);
+			this.dayOfWeekTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation, true);
 		}
 
 		public setDayOfWeekFullTranslation(dayOfWeek: DayOfWeek, translation: string): void {
-			this.dayOfWeekFullTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation);
+			this.dayOfWeekFullTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation, true);
 		}
 
 		public setMonthTranslation(month: Month, translation: string): void {
-			this.monthTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation);
+			this.monthTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation, true);
 		}
 
 		public setMonthShortTranslation(month: Month, translation: string): void {
-			this.monthShortTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation);
+			this.monthShortTranslations_[Helper_.checkNumber_('Month', month, 0, 11)] = Helper_.checkString_('Translation', translation, true);
 		}
 
 		public setTitleTranslation(titleName: TitleName, translation: string): void {

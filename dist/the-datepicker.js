@@ -2863,16 +2863,16 @@ var TheDatepicker;
                 _a);
         }
         Translator.prototype.setDayOfWeekTranslation = function (dayOfWeek, translation) {
-            this.dayOfWeekTranslations_[TheDatepicker.Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation);
+            this.dayOfWeekTranslations_[TheDatepicker.Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation, true);
         };
         Translator.prototype.setDayOfWeekFullTranslation = function (dayOfWeek, translation) {
-            this.dayOfWeekFullTranslations_[TheDatepicker.Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation);
+            this.dayOfWeekFullTranslations_[TheDatepicker.Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = TheDatepicker.Helper_.checkString_('Translation', translation, true);
         };
         Translator.prototype.setMonthTranslation = function (month, translation) {
-            this.monthTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation);
+            this.monthTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation, true);
         };
         Translator.prototype.setMonthShortTranslation = function (month, translation) {
-            this.monthShortTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation);
+            this.monthShortTranslations_[TheDatepicker.Helper_.checkNumber_('Month', month, 0, 11)] = TheDatepicker.Helper_.checkString_('Translation', translation, true);
         };
         Translator.prototype.setTitleTranslation = function (titleName, translation) {
             this.titles_[titleName] = TheDatepicker.Helper_.checkString_('Translation', translation);
