@@ -44,18 +44,22 @@
 				font-size: 0.75em;
 				color: #999;
 			}
-			#datepicker, #datepicker input, #datepicker select {
+			#form-wrapper, #form-wrapper input, #form-wrapper select {
 				font-family: "Arial", sans-serif !important;
 			}
 			#footer {
 				color: #555;
-				font-size: 0.9em;
+				font-size: 0.8em;
 				padding: 1em 1em 0 0;
 			}
 			.desktop-only {
 				display: none;
 			}
-			@media (min-width: 800px) {
+			#my-container {
+				position: absolute;
+				right: 6%;
+			}
+			@media (min-width: 920px) {
 				article {
 					width: 20%;
 					height: 95%;
@@ -74,6 +78,16 @@
 				}
 				.desktop-only {
 					display: block;
+				}
+				#my-container {
+					position: static;
+					clear: left;
+					padding: 1em 1em 0 0;
+				}
+			}
+			@media (min-width: 1300px) {
+				#footer {
+					font-size: 0.9em;
 				}
 			}
 			#label-wrapper {
@@ -114,7 +128,7 @@
 <body>
 	<main>
 		<article>
-			<div id="datepicker">
+			<div id="form-wrapper">
 				<div id="label-wrapper">
 					<label for="my-input">Date:</label>
 				</div>
@@ -122,6 +136,7 @@
 					<input type="text" id="my-input" size="20">
 				</div>
 			</div>
+			<div id="my-container" class="hidden"></div>
 
 			<div id="footer">
 				<div class="desktop-only">
@@ -144,16 +159,16 @@
 					var input = document.getElementById('my-input');
 				</li>
 				<li class="space">
-					var datepicker = <span id="datepicker1">new <strong>TheDatepicker</strong>.Datepicker(input);</span><input type="button" id="datepicker2" value="new TheDatepicker.Datepicker(input);" class="hidden">
+					var container = document.getElementById('my-container');
 				</li>
 				<li>
-					// var container = document.getElementById('my-container');
+					<span id="datepicker0Comment" class="hidden">// </span>var datepicker = <span id="datepicker0Text">new TheDatepicker.Datepicker(input);</span><input type="button" id="datepicker0Button" value="new TheDatepicker.Datepicker(input);" class="hidden">
 				</li>
 				<li>
-					// var datepicker = new TheDatepicker.Datepicker(input, container);
+					<span id="datepicker1Comment">// </span>var datepicker = <span id="datepicker1Text">new TheDatepicker.Datepicker(input, container);</span><input type="button" id="datepicker1Button" value="new TheDatepicker.Datepicker(input, container);" class="hidden">
 				</li>
 				<li>
-					// var datepicker = new TheDatepicker.Datepicker(null, container);
+					<span id="datepicker2Comment">// </span>var datepicker = <span id="datepicker2Text">new TheDatepicker.Datepicker(null, container);</span><input type="button" id="datepicker2Button" value="new TheDatepicker.Datepicker(null, container);" class="hidden">
 				</li>
 				<li class="space">
 					// var datepicker = new TheDatepicker.Datepicker(input, null, new TheDatepicker.Options());
@@ -627,6 +642,8 @@ return header;
 
 		(function () {
 			var input = document.getElementById('my-input');
+			var container = document.getElementById('my-container');
+			var formWrapper = document.getElementById('form-wrapper');
 
 			datepicker = new TheDatepicker.Datepicker(input);
 
@@ -712,12 +729,41 @@ return header;
 				document.getElementById('on' + eventNameCapitalized).value = '';
 			};
 
-			var datepicker1Text = document.getElementById('datepicker1');
-			var datepicker2Input = document.getElementById('datepicker2');
-			datepicker2Input.onclick = function () {
+			var datepickerInputs = [];
+			var datepickerInputsCount = 3;
+			for (var i = 0; i < datepickerInputsCount; i++) {
+				datepickerInputs.push({
+					text: document.getElementById('datepicker' + i + 'Text'),
+					button: document.getElementById('datepicker' + i + 'Button'),
+					comment: document.getElementById('datepicker' + i + 'Comment'),
+				});
+			}
+			var commentCreation = (except) => {
+				for (var i = 0; i < datepickerInputsCount; i++) {
+					datepickerInputs[i].text.className = '';
+					datepickerInputs[i].button.className = 'hidden';
+					datepickerInputs[i].comment.className = except === i ? 'hidden' : '';
+				}
+			};
+			datepickerInputs[0].button.onclick = function () {
 				datepicker = new TheDatepicker.Datepicker(input, null, datepicker.options);
-				datepicker1Text.className = '';
-				datepicker2Input.className = 'hidden';
+				commentCreation(0);
+				container.className = 'hidden';
+				formWrapper.className = '';
+				datepicker.render();
+			};
+			datepickerInputs[1].button.onclick = function () {
+				datepicker = new TheDatepicker.Datepicker(input, container, datepicker.options);
+				commentCreation(1);
+				container.className = '';
+				formWrapper.className = '';
+				datepicker.render();
+			};
+			datepickerInputs[2].button.onclick = function () {
+				datepicker = new TheDatepicker.Datepicker(null, container, datepicker.options);
+				commentCreation(2);
+				container.className = '';
+				formWrapper.className = 'hidden';
 				datepicker.render();
 			};
 
@@ -760,8 +806,11 @@ return header;
 			var destroyInput = document.getElementById('destroy');
 			destroyInput.onclick = function () {
 				datepicker.destroy();
-				datepicker1Text.className = 'hidden';
-				datepicker2Input.className = '';
+				for (var i = 0; i < datepickerInputsCount; i++) {
+					datepickerInputs[i].text.className = 'hidden';
+					datepickerInputs[i].button.className = '';
+					datepickerInputs[i].comment.className = '';
+				}
 			};
 
 			var selectDateInput = document.getElementById('selectDate');
