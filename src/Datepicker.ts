@@ -367,10 +367,9 @@ namespace TheDatepicker {
 		};
 
 		private createContainer_(): HTMLElement {
-			const container = Datepicker.document_.createElement('div');
-			container.className = this.options.prefixClass_('container');
+			const container = HtmlHelper_.createDiv_('container', this.options);
 			if (!this.options.isFullScreenOnMobile()) {
-				container.className += ' ' + this.options.prefixClass_('container--no-mobile')
+				HtmlHelper_.addClass_(container, 'container--no-mobile', this.options);
 			}
 
 			return container;
@@ -381,30 +380,19 @@ namespace TheDatepicker {
 				return null;
 			}
 
-			const deselectElement = Datepicker.document_.createElement('span');
-			const deselectButton = Datepicker.document_.createElement('a');
+			const deselectButton = HtmlHelper_.createAnchor_((event: Event): void => {
+				deselectButton.focus();
+				this.viewModel_.cancelSelection_(event);
+			}, this.options, 'deselect-button');
+
 			deselectButton.innerHTML = this.options.getDeselectHtml();
 			const title = this.options.translator.translateTitle(TitleName.Deselect);
 			if (title !== '') {
 				deselectButton.title = title;
 			}
-			deselectButton.href = '#';
-			const onClick = (event: Event): void => {
-				Helper_.preventDefault_(event);
-				deselectButton.focus();
-				this.viewModel_.cancelSelection_(event);
-			};
-			deselectButton.onmousedown = (event: MouseEvent): void => {
-				onClick(event || window.event as Event);
-			};
-			deselectButton.onkeydown = (event: KeyboardEvent): void => {
-				event = event || window.event as KeyboardEvent;
-				if (Helper_.inArray_([KeyCode_.Enter, KeyCode_.Space], event.keyCode)) {
-					onClick(event);
-				}
-			};
-			deselectElement.className = this.options.prefixClass_('deselect');
-			deselectButton.className = this.options.prefixClass_('deselect-button');
+
+			const deselectElement = HtmlHelper_.createSpan_()
+			HtmlHelper_.addClass_(deselectElement, 'deselect', this.options);
 			deselectElement.appendChild(deselectButton);
 
 			this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
@@ -573,20 +561,19 @@ namespace TheDatepicker {
 			const containerHeight = this.container.offsetHeight;
 			const containerWidth = this.container.offsetWidth;
 
-			let locationClass = '';
+			this.container.className = '';
+			HtmlHelper_.addClass_(this.container, 'container', this.options);
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
 			const locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
 			if (locateOver) {
-				locationClass += ' ' + this.options.prefixClass_('container--over');
+				HtmlHelper_.addClass_(this.container, 'container--over', this.options);
 			}
 			if (locateLeft) {
-				locationClass += ' ' + this.options.prefixClass_('container--left');
+				HtmlHelper_.addClass_(this.container, 'container--left', this.options);
 			}
-			const mobileClass = this.options.isFullScreenOnMobile()
-				? ''
-				: ' ' + this.options.prefixClass_('container--no-mobile');
-
-			this.container.className = this.options.prefixClass_('container') + locationClass + mobileClass;
+			if (!this.options.isFullScreenOnMobile()) {
+				HtmlHelper_.addClass_(this.container, 'container--no-mobile', this.options);
+			}
 
 			if (mainElement && (locateOver || locateLeft)) {
 				if (locateOver) {

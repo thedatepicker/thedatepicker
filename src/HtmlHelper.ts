@@ -14,9 +14,9 @@ namespace TheDatepicker {
 			return div;
 		}
 
-		public static createAnchor_(onClick: (event: Event) => void, options: Options): HTMLAnchorElement {
+		public static createAnchor_(onClick: (event: Event) => void, options: Options, className: string = 'button'): HTMLAnchorElement {
 			const anchor = document.createElement('a');
-			this.addClass_(anchor, 'button', options);
+			this.addClass_(anchor, className, options);
 			anchor.href = '#';
 
 			anchor.onclick = (event: MouseEvent): void => {

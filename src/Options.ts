@@ -59,8 +59,6 @@ namespace TheDatepicker {
 
 		public readonly translator: Translator;
 
-		private readonly document_: Document;
-
 		private hideOnBlur_ = true;
 		private hideOnSelect_ = true;
 		private minDate_: Date | null = null;
@@ -121,7 +119,6 @@ namespace TheDatepicker {
 
 		public constructor(translator: Translator | null = null) {
 			this.translator = translator || new Translator();
-			this.document_ = document;
 		}
 
 		public clone(): Options {
@@ -960,7 +957,7 @@ namespace TheDatepicker {
 				return this.cellContentStructureResolver_.init();
 			}
 
-			return this.document_.createElement('span');
+			return HtmlHelper_.createSpan_();
 		}
 
 		public updateCellStructure_(element: HTMLElement, day: Day): void {

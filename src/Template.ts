@@ -749,20 +749,28 @@ namespace TheDatepicker {
 				? 'fade-in-right'
 				: 'fade-in-left';
 
+			const resetBody = () => {
+				this.bodyElement_.className = '';
+				HtmlHelper_.addClass_(this.bodyElement_, 'body', this.options_);
+			};
+			const animate = () => {
+				HtmlHelper_.addClass_(this.bodyElement_, 'animated', this.options_);
+			};
+
 			let listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
 				change();
 				listenerRemover();
-				this.bodyElement_.className = this.options_.prefixClass_('body');
-				HtmlHelper_.addClass_(this.bodyElement_, 'animated', this.options_);
+				resetBody();
+				animate();
 				HtmlHelper_.addClass_(this.bodyElement_, animationIn, this.options_);
 				listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
 					listenerRemover();
-					this.bodyElement_.className = this.options_.prefixClass_('body');
+					resetBody();
 				});
 			});
 
-			this.bodyElement_.className = this.options_.prefixClass_('body');
-			HtmlHelper_.addClass_(this.bodyElement_, 'animated', this.options_);
+			resetBody();
+			animate();
 			HtmlHelper_.addClass_(this.bodyElement_, animationOut, this.options_);
 		}
 
