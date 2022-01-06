@@ -460,8 +460,13 @@ namespace TheDatepicker {
 			this.listenerRemovers_.push(Helper_.addEventListener_(this.container, ListenerType_.FocusIn, hit));
 
 			if (this.deselectElement_) {
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectElement_, ListenerType_.MouseDown, hit));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectElement_, ListenerType_.FocusIn, hit));
+				const hitIfActive = (event: Event) => {
+					if (this.viewModel_.isActive_()) {
+						hit(event);
+					}
+				};
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectElement_, ListenerType_.MouseDown, hitIfActive));
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectElement_, ListenerType_.FocusIn, hitIfActive));
 			}
 
 			if (this.input) {

@@ -735,8 +735,13 @@ var TheDatepicker;
             this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.container, TheDatepicker.ListenerType_.MouseDown, hit));
             this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.container, TheDatepicker.ListenerType_.FocusIn, hit));
             if (this.deselectElement_) {
-                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectElement_, TheDatepicker.ListenerType_.MouseDown, hit));
-                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectElement_, TheDatepicker.ListenerType_.FocusIn, hit));
+                var hitIfActive = function (event) {
+                    if (_this.viewModel_.isActive_()) {
+                        hit(event);
+                    }
+                };
+                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectElement_, TheDatepicker.ListenerType_.MouseDown, hitIfActive));
+                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectElement_, TheDatepicker.ListenerType_.FocusIn, hitIfActive));
             }
             if (this.input) {
                 this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.input, TheDatepicker.ListenerType_.MouseDown, hit));
