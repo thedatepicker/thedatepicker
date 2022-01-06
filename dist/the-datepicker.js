@@ -2767,23 +2767,28 @@ var TheDatepicker;
                 _this.bodyElement_.className = '';
                 TheDatepicker.HtmlHelper_.addClass_(_this.bodyElement_, 'body', _this.options_);
             };
-            var animate = function () {
+            var animate = function (className) {
                 TheDatepicker.HtmlHelper_.addClass_(_this.bodyElement_, 'animated', _this.options_);
+                TheDatepicker.HtmlHelper_.addClass_(_this.bodyElement_, className, _this.options_);
             };
-            var listenerRemover = TheDatepicker.Helper_.addEventListener_(this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function (event) {
+            var listenerRemover;
+            var timeoutId = window.setTimeout(function () {
+                listenerRemover();
+                change();
+            }, 150);
+            listenerRemover = TheDatepicker.Helper_.addEventListener_(this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function () {
+                window.clearTimeout(timeoutId);
                 change();
                 listenerRemover();
                 resetBody();
-                animate();
-                TheDatepicker.HtmlHelper_.addClass_(_this.bodyElement_, animationIn, _this.options_);
-                listenerRemover = TheDatepicker.Helper_.addEventListener_(_this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function (event) {
+                animate(animationIn);
+                listenerRemover = TheDatepicker.Helper_.addEventListener_(_this.bodyElement_, TheDatepicker.ListenerType_.AnimationEnd, function () {
                     listenerRemover();
                     resetBody();
                 });
             });
             resetBody();
-            animate();
-            TheDatepicker.HtmlHelper_.addClass_(this.bodyElement_, animationOut, this.options_);
+            animate(animationOut);
         };
         Template_.prototype.translateMonth_ = function (monthNumber) {
             return this.options_.isMonthShort()

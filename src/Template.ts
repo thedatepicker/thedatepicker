@@ -753,25 +753,31 @@ namespace TheDatepicker {
 				this.bodyElement_.className = '';
 				HtmlHelper_.addClass_(this.bodyElement_, 'body', this.options_);
 			};
-			const animate = () => {
+			const animate = (className: string) => {
 				HtmlHelper_.addClass_(this.bodyElement_, 'animated', this.options_);
+				HtmlHelper_.addClass_(this.bodyElement_, className, this.options_);
 			};
 
-			let listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
+			let listenerRemover: () => void;
+			const timeoutId = window.setTimeout(() => {
+				listenerRemover();
+				change();
+			}, 150);
+
+			listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (): void => {
+				window.clearTimeout(timeoutId);
 				change();
 				listenerRemover();
 				resetBody();
-				animate();
-				HtmlHelper_.addClass_(this.bodyElement_, animationIn, this.options_);
-				listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (event: Event): void => {
+				animate(animationIn);
+				listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (): void => {
 					listenerRemover();
 					resetBody();
 				});
 			});
 
 			resetBody();
-			animate();
-			HtmlHelper_.addClass_(this.bodyElement_, animationOut, this.options_);
+			animate(animationOut);
 		}
 
 		private translateMonth_(monthNumber: number): string {
