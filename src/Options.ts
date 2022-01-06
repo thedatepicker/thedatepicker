@@ -103,8 +103,8 @@ namespace TheDatepicker {
 		private deselectHtml_ = '&times;';
 		private positionFixing_ = true;
 		private fullScreenOnMobile_ = false;
-		private keyboardOnMobile_ = true
-		private includeAria_ = true
+		private keyboardOnMobile_ = true;
+		private includeAria_ = true;
 		private today_: Date | null = null;
 		private listeners_: Listeners = {
 			beforeSelect: [],
