@@ -7,18 +7,18 @@ body.the-datepicker-page {
   }
 }
 .the-datepicker__container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 99;
-}
-.the-datepicker__container.the-datepicker__container--no-mobile {
   position: absolute;
   left: auto;
   top: auto;
+  z-index: 99;
+}
+.the-datepicker__container.the-datepicker__container--responsive {
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 @media (min-width: 37.5em) {
-  .the-datepicker__container {
+  .the-datepicker__container.the-datepicker__container--responsive {
     position: absolute;
     left: auto;
     top: auto;
@@ -41,8 +41,8 @@ body.the-datepicker-page {
   border-bottom-right-radius: 0;
 }
 .the-datepicker__main {
-  width: 100vw;
-  height: 100vh;
+  width: auto;
+  height: auto;
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 0.3em;
@@ -51,15 +51,15 @@ body.the-datepicker-page {
   line-height: 1em;
   box-sizing: border-box;
   overflow-x: hidden;
-  overflow-y: auto;
-}
-.the-datepicker__container--no-mobile .the-datepicker__main {
-  width: auto;
-  height: auto;
   overflow-y: hidden;
 }
+.the-datepicker__container--responsive .the-datepicker__main {
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+}
 @media (min-width: 37.5em) {
-  .the-datepicker__main {
+  .the-datepicker__container--responsive .the-datepicker__main {
     width: auto;
     height: auto;
     overflow-y: hidden;
@@ -92,11 +92,14 @@ body.the-datepicker-page {
 .the-datepicker__main a.the-datepicker__day-button {
   width: auto;
 }
-.the-datepicker__container--no-mobile .the-datepicker__main a.the-datepicker__day-button {
+.the-datepicker__container .the-datepicker__main a.the-datepicker__day-button {
   width: 2.1em;
 }
+.the-datepicker__container.the-datepicker__container--responsive .the-datepicker__main a.the-datepicker__day-button {
+  width: auto;
+}
 @media (min-width: 37.5em) {
-  .the-datepicker__main a.the-datepicker__day-button {
+  .the-datepicker__container.the-datepicker__container--responsive .the-datepicker__main a.the-datepicker__day-button {
     width: 2.1em;
   }
 }
@@ -158,11 +161,14 @@ body.the-datepicker-page {
   width: 100%;
   border-collapse: collapse;
 }
-.the-datepicker__container--no-mobile .the-datepicker__main table.the-datepicker__calendar {
+.the-datepicker__container .the-datepicker__main table.the-datepicker__calendar {
   width: auto;
 }
+.the-datepicker__container.the-datepicker__container--responsive .the-datepicker__main table.the-datepicker__calendar {
+  width: 100%;
+}
 @media (min-width: 37.5em) {
-  .the-datepicker__main table.the-datepicker__calendar {
+  .the-datepicker__container.the-datepicker__container--responsive .the-datepicker__main table.the-datepicker__calendar {
     width: auto;
   }
 }

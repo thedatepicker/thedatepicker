@@ -11,18 +11,18 @@ body.the-datepicker-page
 		overflow auto
 
 .the-datepicker__container
-	position fixed
-	left 0
-	top 0
+	position absolute
+	left auto
+	top auto
 	z-index 99
-	&.the-datepicker__container--no-mobile
-		position absolute
-		left auto
-		top auto
-	@media (min-width: 37.5em)
-		position absolute
-		left auto
-		top auto
+	&.the-datepicker__container--responsive
+		position fixed
+		left 0
+		top 0
+		@media (min-width: 37.5em)
+			position absolute
+			left auto
+			top auto
 	.the-datepicker__main
 		border-top-left-radius 0
 	&.the-datepicker__container--over
@@ -40,8 +40,8 @@ body.the-datepicker-page
 			border-bottom-right-radius 0
 
 .the-datepicker__main
-	width 100vw
-	height 100vh
+	width auto
+	height auto
 	background-color white
 	border 1px solid $border
 	border-radius 0.3em
@@ -50,16 +50,16 @@ body.the-datepicker-page
 	line-height 1em
 	box-sizing border-box
 	overflow-x hidden
-	overflow-y auto
+	overflow-y hidden
 
-	.the-datepicker__container--no-mobile &
-		width auto
-		height auto
-		overflow-y hidden
-	@media (min-width: 37.5em)
-		width auto
-		height auto
-		overflow-y hidden
+	.the-datepicker__container--responsive &
+		width 100vw
+		height 100vh
+		overflow-y auto
+		@media (min-width: 37.5em)
+			width auto
+			height auto
+			overflow-y hidden
 
 	.the-datepicker__body
 		margin-top 1em
@@ -86,10 +86,12 @@ body.the-datepicker-page
 
 	a.the-datepicker__day-button
 		width auto
-		.the-datepicker__container--no-mobile &
+		.the-datepicker__container &
 			width 2.1em
-		@media (min-width: 37.5em)
-			width 2.1em
+		.the-datepicker__container.the-datepicker__container--responsive &
+			width auto
+			@media (min-width: 37.5em)
+				width 2.1em
 
 	.the-datepicker__title
 		display inline-block
@@ -146,10 +148,12 @@ body.the-datepicker-page
 	table.the-datepicker__calendar
 		width 100%
 		border-collapse collapse
-		.the-datepicker__container--no-mobile &
+		.the-datepicker__container &
 			width auto
-		@media (min-width: 37.5em)
-			width auto
+		.the-datepicker__container.the-datepicker__container--responsive &
+			width 100%
+			@media (min-width: 37.5em)
+				width auto
 
 	td.the-datepicker__cell
 		padding 0

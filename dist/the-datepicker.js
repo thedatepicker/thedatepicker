@@ -652,8 +652,8 @@ var TheDatepicker;
         ;
         Datepicker.prototype.createContainer_ = function () {
             var container = TheDatepicker.HtmlHelper_.createDiv_('container', this.options);
-            if (!this.options.isFullScreenOnMobile()) {
-                TheDatepicker.HtmlHelper_.addClass_(container, 'container--no-mobile', this.options);
+            if (this.options.isFullScreenOnMobile()) {
+                TheDatepicker.HtmlHelper_.addClass_(container, 'container--responsive', this.options);
             }
             return container;
         };
@@ -831,8 +831,8 @@ var TheDatepicker;
             if (locateLeft) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, 'container--left', this.options);
             }
-            if (!this.options.isFullScreenOnMobile()) {
-                TheDatepicker.HtmlHelper_.addClass_(this.container, 'container--no-mobile', this.options);
+            if (this.options.isFullScreenOnMobile()) {
+                TheDatepicker.HtmlHelper_.addClass_(this.container, 'container--responsive', this.options);
             }
             if (mainElement && (locateOver || locateLeft)) {
                 if (locateOver) {

@@ -368,8 +368,8 @@ namespace TheDatepicker {
 
 		private createContainer_(): HTMLElement {
 			const container = HtmlHelper_.createDiv_('container', this.options);
-			if (!this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(container, 'container--no-mobile', this.options);
+			if (this.options.isFullScreenOnMobile()) {
+				HtmlHelper_.addClass_(container, 'container--responsive', this.options);
 			}
 
 			return container;
@@ -571,8 +571,8 @@ namespace TheDatepicker {
 			if (locateLeft) {
 				HtmlHelper_.addClass_(this.container, 'container--left', this.options);
 			}
-			if (!this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(this.container, 'container--no-mobile', this.options);
+			if (this.options.isFullScreenOnMobile()) {
+				HtmlHelper_.addClass_(this.container, 'container--responsive', this.options);
 			}
 
 			if (mainElement && (locateOver || locateLeft)) {
