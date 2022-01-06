@@ -120,7 +120,7 @@ var TheDatepicker;
             return dateData.createDate();
         };
         DateConverter_.prototype.isValidChar_ = function (format, textChar) {
-            if (textChar === '' || /[0-9 -]/.test(textChar)) {
+            if (textChar === '' || /[0-9-]/.test(textChar)) {
                 return true;
             }
             var escapeNext = false;
