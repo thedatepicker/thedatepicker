@@ -74,7 +74,7 @@ namespace TheDatepicker {
 			return result;
 		}
 
-		public parseDate_(format: string, text: string): Date | null {
+		public parseDate_(format: string, text: string, minDate: Date, maxDate: Date): Date | null {
 			if (text === '') {
 				return null;
 			}
@@ -96,7 +96,7 @@ namespace TheDatepicker {
 					const parser = this.getParser_(char);
 					if (parser) {
 						try {
-							textPosition += parser.call(this, text.substring(textPosition), dateData);
+							textPosition += parser.call(this, text.substring(textPosition), dateData, minDate, maxDate);
 						} catch (error) {
 							if (!(error instanceof CannotParseDateException)) {
 								throw error;
@@ -259,7 +259,7 @@ namespace TheDatepicker {
 			return year.substring(year.length - 2);
 		}
 
-		private getParser_(type: string): ((text: string, dateData: ParsedDateData) => number) | null {
+		private getParser_(type: string): ((text: string, dateData: ParsedDateData, minDate: Date, maxDate: Date) => number) | null {
 			switch (type) {
 				case 'j':
 				case 'd':
@@ -409,15 +409,24 @@ namespace TheDatepicker {
 			return matchedTranslationLength;
 		}
 
-		private parseYear_(text: string, dateData: ParsedDateData): number {
+		private parseYear_(text: string, dateData: ParsedDateData, minDate: Date, maxDate: Date): number {
 			let isNegative = false;
 			if (text.substring(0, 1) === '-') {
 				isNegative = true;
 				text = text.substring(1);
 			}
 
+			const maxPositiveLength = maxDate.getFullYear() > 0 ? (maxDate.getFullYear() + '').length : 0;
+			const maxNegativeLength = minDate.getFullYear() < 0 ? (-minDate.getFullYear() + '').length : 0;
+
 			let yearLength = 0;
 			while (/[0-9]/.test(text.substring(yearLength, yearLength + 1))) {
+				if (
+					(isNegative && yearLength + 1 > maxNegativeLength)
+					|| (!isNegative && yearLength + 1 > maxPositiveLength)
+				) {
+					break;
+				}
 				yearLength++;
 			}
 			if (yearLength === 0) {

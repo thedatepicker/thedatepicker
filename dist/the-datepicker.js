@@ -64,7 +64,7 @@ var TheDatepicker;
             }
             return result;
         };
-        DateConverter_.prototype.parseDate_ = function (format, text) {
+        DateConverter_.prototype.parseDate_ = function (format, text, minDate, maxDate) {
             if (text === '') {
                 return null;
             }
@@ -84,7 +84,7 @@ var TheDatepicker;
                     var parser = this.getParser_(char);
                     if (parser) {
                         try {
-                            textPosition += parser.call(this, text.substring(textPosition), dateData);
+                            textPosition += parser.call(this, text.substring(textPosition), dateData, minDate, maxDate);
                         }
                         catch (error) {
                             if (!(error instanceof CannotParseDateException)) {
@@ -329,14 +329,20 @@ var TheDatepicker;
             dateData.month = matchedMonth;
             return matchedTranslationLength;
         };
-        DateConverter_.prototype.parseYear_ = function (text, dateData) {
+        DateConverter_.prototype.parseYear_ = function (text, dateData, minDate, maxDate) {
             var isNegative = false;
             if (text.substring(0, 1) === '-') {
                 isNegative = true;
                 text = text.substring(1);
             }
+            var maxPositiveLength = maxDate.getFullYear() > 0 ? (maxDate.getFullYear() + '').length : 0;
+            var maxNegativeLength = minDate.getFullYear() < 0 ? (-minDate.getFullYear() + '').length : 0;
             var yearLength = 0;
             while (/[0-9]/.test(text.substring(yearLength, yearLength + 1))) {
+                if ((isNegative && yearLength + 1 > maxNegativeLength)
+                    || (!isNegative && yearLength + 1 > maxPositiveLength)) {
+                    break;
+                }
                 yearLength++;
             }
             if (yearLength === 0) {
@@ -581,7 +587,7 @@ var TheDatepicker;
         };
         Datepicker.prototype.parseRawInput = function () {
             return this.isInputTextBox_
-                ? this.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value)
+                ? this.dateConverter_.parseDate_(this.options.getInputFormat(), this.input.value, this.options.getMinDate_(), this.options.getMaxDate_())
                 : null;
         };
         Datepicker.prototype.getDay = function (date) {

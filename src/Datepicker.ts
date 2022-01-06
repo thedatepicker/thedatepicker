@@ -284,7 +284,12 @@ namespace TheDatepicker {
 
 		public parseRawInput(): Date | null {
 			return this.isInputTextBox_
-				? this.dateConverter_.parseDate_(this.options.getInputFormat(), (this.input as HTMLInputElement).value)
+				? this.dateConverter_.parseDate_(
+					this.options.getInputFormat(),
+					(this.input as HTMLInputElement).value,
+					this.options.getMinDate_(),
+					this.options.getMaxDate_()
+				)
 				: null;
 		}
 
