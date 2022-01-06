@@ -25,6 +25,13 @@ namespace TheDatepicker {
 		December = 11,
 	}
 
+	export enum OrdinalSuffix {
+		St,
+		Nd,
+		Rd,
+		Th,
+	}
+
 	export enum KeyCode_ {
 		Enter = 13,
 		Space = 32,

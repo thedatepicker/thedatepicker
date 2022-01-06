@@ -62,6 +62,13 @@ namespace TheDatepicker {
 			'Dec',
 		];
 
+		public ordinalSuffixes_ = [
+			'st',
+			'nd',
+			'rd',
+			'th',
+		];
+
 		private titles_ = {
 			[TitleName.GoBack]: 'Go to previous month',
 			[TitleName.GoForward]: 'Go to next month',

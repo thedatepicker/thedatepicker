@@ -213,6 +213,10 @@ namespace TheDatepicker {
 				case 'y':
 					return this.formatYearTwoDigits_;
 
+				// English ordinal suffix for the day of the month (st, nd, rd or th)
+				case 'S':
+					return this.formatDaySuffix_;
+
 				default:
 					return null;
 			}
@@ -259,6 +263,24 @@ namespace TheDatepicker {
 			return year.substring(year.length - 2);
 		}
 
+		private formatDaySuffix_(date: Date): string {
+			const dayNumber = date.getDate();
+			if (dayNumber > 3 && dayNumber < 21) {
+				return this.options_.translator.ordinalSuffixes_[OrdinalSuffix.Th];
+			}
+
+			switch (dayNumber % 10) {
+				case 1:
+					return this.options_.translator.ordinalSuffixes_[OrdinalSuffix.St];
+				case 2:
+					return this.options_.translator.ordinalSuffixes_[OrdinalSuffix.Nd];
+				case 3:
+					return this.options_.translator.ordinalSuffixes_[OrdinalSuffix.Rd];
+				default:
+					return this.options_.translator.ordinalSuffixes_[OrdinalSuffix.Th];
+			}
+		}
+
 		private getParser_(type: string): ((text: string, dateData: ParsedDateData) => number) | null {
 			switch (type) {
 				case 'j':
@@ -286,6 +308,9 @@ namespace TheDatepicker {
 
 				case 'y':
 					return this.parseYearTwoDigits_;
+
+				case 'S':
+					return this.parseDaySuffix_;
 
 				default:
 					return null;
@@ -429,6 +454,29 @@ namespace TheDatepicker {
 			dateData.year = parseInt(yearBeginning + yearEnd, 10);
 
 			return 2;
+		}
+
+		private parseDaySuffix_(text: string): number {
+			let maxLength = 0;
+			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+				const translation = translate(dayOfWeek);
+				maxLength = Math.max(maxLength, translation.length);
+
+				if (text.substring(0, translation.length).toLowerCase() === translation.toLowerCase()) {
+					return translation.length;
+				}
+			}
+
+			let took = 0;
+			while (/[a-zA-Z]/.test(text.substring(0, 1))) {
+				text = text.substring(1);
+				took++;
+				if (took === maxLength) {
+					break;
+				}
+			}
+
+			return took;
 		}
 
 		private getValidPhrases_(type: string): string[] | null {
