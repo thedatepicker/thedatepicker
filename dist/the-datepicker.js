@@ -2033,7 +2033,7 @@ var TheDatepicker;
             return this.hideOnBlur_ && this.positionFixing_;
         };
         Options.prototype.isFullScreenOnMobile = function () {
-            return this.fullScreenOnMobile_;
+            return this.hideOnBlur_ && this.fullScreenOnMobile_;
         };
         Options.prototype.isKeyboardOnMobile = function () {
             return this.keyboardOnMobile_;
