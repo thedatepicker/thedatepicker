@@ -135,7 +135,7 @@ namespace TheDatepicker {
 		}
 
 		public isValidChar_(format: string, textChar: string): boolean {
-			if (textChar === '' || textChar === ' ' || /[0-9]/.test(textChar)) {
+			if (textChar === '' || /[0-9 -]/.test(textChar)) {
 				return true;
 			}
 
