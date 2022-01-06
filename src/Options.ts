@@ -102,8 +102,8 @@ namespace TheDatepicker {
 		private resetHtml_ = '&olarr;';
 		private deselectHtml_ = '&times;';
 		private positionFixing_ = true;
-		private fullScreenOnMobile_ = false;
-		private keyboardOnMobile_ = true;
+		private fullScreenOnMobile_ = true;
+		private keyboardOnMobile_ = false;
 		private includeAria_ = true;
 		private today_: Date | null = null;
 		private listeners_: Listeners = {
@@ -523,8 +523,7 @@ namespace TheDatepicker {
 
 		// Setting to true will render datepicker fullscreen on narrow displays (usually mobile).
 		// Works only when there is no custom container.
-		// Feature is experimental for now, some issues exist.
-		// defaults to false
+		// defaults to true
 		public setFullScreenOnMobile(value: boolean): void {
 			this.fullScreenOnMobile_ = !!value;
 		}
@@ -532,7 +531,7 @@ namespace TheDatepicker {
 		// Setting to false will prevent displaying virtual keyboard on mobile devices.
 		// Useful especially with FullScreenOnMobile set to true.
 		// Works only when there an input exists.
-		// defaults to true
+		// defaults to false
 		public setKeyboardOnMobile(value: boolean): void {
 			this.keyboardOnMobile_ = !!value;
 		}

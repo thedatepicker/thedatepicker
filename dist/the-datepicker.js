@@ -1431,8 +1431,8 @@ var TheDatepicker;
             this.resetHtml_ = '&olarr;';
             this.deselectHtml_ = '&times;';
             this.positionFixing_ = true;
-            this.fullScreenOnMobile_ = false;
-            this.keyboardOnMobile_ = true;
+            this.fullScreenOnMobile_ = true;
+            this.keyboardOnMobile_ = false;
             this.includeAria_ = true;
             this.today_ = null;
             this.listeners_ = {
