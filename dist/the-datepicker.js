@@ -659,9 +659,10 @@ var TheDatepicker;
                 deselectButton.title = title;
             }
             deselectButton.href = '#';
-            deselectButton.onclick = function (event) {
+            deselectButton.onmousedown = function (event) {
                 event = event || window.event;
                 TheDatepicker.Helper_.preventDefault_(event);
+                deselectButton.focus();
                 _this.viewModel_.cancelSelection_(event);
             };
             deselectElement.className = this.options.prefixClass_('deselect');
