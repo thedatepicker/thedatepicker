@@ -1434,6 +1434,28 @@ return header;
 				}
 			};
 
+			var urlHash = window.location.hash;
+			urlHash = urlHash.replace(/^#/, '');
+			if (urlHash !== '') {
+				var urlSettings = urlHash.split(';');
+				for (var i = 0; i < urlSettings.length; i++) {
+					var urlSetting = urlSettings[0].split('=');
+					var setter = datepicker.options[urlSetting[0]];
+					if (typeof setter !== 'undefined') {
+						var value = urlSetting[1];
+						if (/^[0-9]+$/.test(value)) {
+							value = parseInt(value, 10);
+						}
+						try {
+							setter.call(datepicker.options, value);
+						} catch (error) {
+							console.error(error);
+						}
+					}
+				}
+				datepicker.render();
+			}
+
 		})();
 	</script>
 </body>
