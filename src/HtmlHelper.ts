@@ -7,22 +7,16 @@ namespace TheDatepicker {
 
 	export class HtmlHelper_ {
 
-		private readonly document_: Document;
-
-		public constructor(private readonly options_: Options) {
-			this.document_ = document;
-		}
-
-		public createDiv_(className: string): HTMLDivElement {
-			const div = this.document_.createElement('div');
-			this.addClass_(div, className);
+		public static createDiv_(className: string, options: Options): HTMLDivElement {
+			const div = document.createElement('div');
+			this.addClass_(div, className, options);
 
 			return div;
 		}
 
-		public createAnchor_(onClick: (event: Event) => void): HTMLAnchorElement {
-			const anchor = this.document_.createElement('a');
-			this.addClass_(anchor, 'button');
+		public static createAnchor_(onClick: (event: Event) => void, options: Options): HTMLAnchorElement {
+			const anchor = document.createElement('a');
+			this.addClass_(anchor, 'button', options);
 			anchor.href = '#';
 
 			anchor.onclick = (event: MouseEvent): void => {
@@ -42,24 +36,24 @@ namespace TheDatepicker {
 			return anchor;
 		}
 
-		public createSpan_(): HTMLSpanElement {
-			return this.document_.createElement('span');
+		public static createSpan_(): HTMLSpanElement {
+			return document.createElement('span');
 		}
 
-		public createTable_(className: string, header: HTMLTableSectionElement, body: HTMLTableSectionElement): HTMLTableElement {
-			const table = this.document_.createElement('table');
-			this.addClass_(table, className);
+		public static createTable_(className: string, header: HTMLTableSectionElement, body: HTMLTableSectionElement, options: Options): HTMLTableElement {
+			const table = document.createElement('table');
+			this.addClass_(table, className, options);
 			table.appendChild(header);
 			table.appendChild(body);
 
 			return table;
 		}
 
-		public createTableHeader_(className: string, cells: HTMLTableHeaderCellElement[]): HTMLTableSectionElement {
-			const tableHeader = this.document_.createElement('thead');
-			this.addClass_(tableHeader, className);
+		public static createTableHeader_(className: string, cells: HTMLTableHeaderCellElement[], options: Options): HTMLTableSectionElement {
+			const tableHeader = document.createElement('thead');
+			this.addClass_(tableHeader, className, options);
 
-			const row = this.document_.createElement('tr');
+			const row = document.createElement('tr');
 			for (let index = 0; index < cells.length; index++) {
 				row.appendChild(cells[index]);
 			}
@@ -68,17 +62,17 @@ namespace TheDatepicker {
 			return tableHeader;
 		}
 
-		public createTableHeaderCell_(className: string): HTMLTableHeaderCellElement {
-			const cell = this.document_.createElement('th');
+		public static createTableHeaderCell_(className: string, options: Options): HTMLTableHeaderCellElement {
+			const cell = document.createElement('th');
 			cell.scope = 'col';
-			this.addClass_(cell, className);
+			this.addClass_(cell, className, options);
 
 			return cell;
 		}
 
-		public createTableBody_(className: string, rows: HTMLTableRowElement[]): HTMLTableSectionElement {
-			const tableBody = this.document_.createElement('tbody');
-			this.addClass_(tableBody, className);
+		public static createTableBody_(className: string, rows: HTMLTableRowElement[], options: Options): HTMLTableSectionElement {
+			const tableBody = document.createElement('tbody');
+			this.addClass_(tableBody, className, options);
 
 			for (let index = 0; index < rows.length; index++) {
 				tableBody.appendChild(rows[index]);
@@ -87,8 +81,8 @@ namespace TheDatepicker {
 			return tableBody;
 		}
 
-		public createTableRow_(className: string, cells: HTMLTableCellElement[]): HTMLTableRowElement {
-			const row = this.document_.createElement('tr');
+		public static createTableRow_(className: string, cells: HTMLTableCellElement[]): HTMLTableRowElement {
+			const row = document.createElement('tr');
 
 			for (let index = 0; index < cells.length; index++) {
 				row.appendChild(cells[index]);
@@ -97,16 +91,16 @@ namespace TheDatepicker {
 			return row;
 		}
 
-		public createTableCell_(): HTMLTableCellElement {
-			return this.document_.createElement('td');
+		public static createTableCell_(): HTMLTableCellElement {
+			return document.createElement('td');
 		}
 
-		public createSelectInput_(options: Option[], onChange: (event: Event, value: string) => void): HTMLSelectElement {
-			const input = this.document_.createElement('select');
-			this.addClass_(input, 'select');
+		public static createSelectInput_(selectOptions: Option[], onChange: (event: Event, value: string) => void, options: Options): HTMLSelectElement {
+			const input = document.createElement('select');
+			this.addClass_(input, 'select', options);
 
-			for (let index = 0; index < options.length; index++) {
-				input.appendChild(this.createSelectOption_(options[index].value, options[index].label));
+			for (let index = 0; index < selectOptions.length; index++) {
+				input.appendChild(this.createSelectOption_(selectOptions[index].value, selectOptions[index].label));
 			}
 
 			input.onchange = (event: Event): void => {
@@ -121,23 +115,23 @@ namespace TheDatepicker {
 			return input;
 		}
 
-		public createSelectOption_(value: string, label: string): HTMLOptionElement {
-			const option = this.document_.createElement('option');
+		public static createSelectOption_(value: string, label: string): HTMLOptionElement {
+			const option = document.createElement('option');
 			option.value = value;
 			option.innerText = label;
 
 			return option;
 		}
 
-		public addClass_(element: HTMLElement, className: string): void {
-			className = this.options_.prefixClass_(className);
+		public static addClass_(element: HTMLElement, className: string, options: Options): void {
+			className = options.prefixClass_(className);
 			if (element.className !== '') {
 				className = ' ' + className;
 			}
 			element.className += className;
 		}
 
-		public appendChild_(element: HTMLElement, child: HTMLElement | null): void {
+		public static appendChild_(element: HTMLElement, child: HTMLElement | null): void {
 			if (child) {
 				element.appendChild(child);
 			}

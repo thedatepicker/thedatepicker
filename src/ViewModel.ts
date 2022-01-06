@@ -29,7 +29,7 @@ namespace TheDatepicker {
 			private readonly datepicker_: Datepicker,
 			private readonly dateConverter_: DateConverter_
 		) {
-			this.template_ = new Template_(this.options_, new HtmlHelper_(this.options_), datepicker_.container, !!datepicker_.input)
+			this.template_ = new Template_(this.options_, datepicker_.container, !!datepicker_.input)
 		}
 
 		public render_(): void {
