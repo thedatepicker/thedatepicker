@@ -671,11 +671,19 @@ var TheDatepicker;
                 deselectButton.title = title;
             }
             deselectButton.href = '#';
-            deselectButton.onmousedown = function (event) {
-                event = event || window.event;
+            var onClick = function (event) {
                 TheDatepicker.Helper_.preventDefault_(event);
                 deselectButton.focus();
                 _this.viewModel_.cancelSelection_(event);
+            };
+            deselectButton.onmousedown = function (event) {
+                onClick(event || window.event);
+            };
+            deselectButton.onkeydown = function (event) {
+                event = event || window.event;
+                if (TheDatepicker.Helper_.inArray_([TheDatepicker.KeyCode_.Enter, TheDatepicker.KeyCode_.Space], event.keyCode)) {
+                    onClick(event);
+                }
             };
             deselectElement.className = this.options.prefixClass_('deselect');
             deselectButton.className = this.options.prefixClass_('deselect-button');

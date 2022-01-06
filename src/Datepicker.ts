@@ -389,11 +389,19 @@ namespace TheDatepicker {
 				deselectButton.title = title;
 			}
 			deselectButton.href = '#';
-			deselectButton.onmousedown = (event: MouseEvent): void => {
-				event = event || window.event as MouseEvent;
+			const onClick = (event: Event): void => {
 				Helper_.preventDefault_(event);
 				deselectButton.focus();
 				this.viewModel_.cancelSelection_(event);
+			};
+			deselectButton.onmousedown = (event: MouseEvent): void => {
+				onClick(event || window.event as Event);
+			};
+			deselectButton.onkeydown = (event: KeyboardEvent): void => {
+				event = event || window.event as KeyboardEvent;
+				if (Helper_.inArray_([KeyCode_.Enter, KeyCode_.Space], event.keyCode)) {
+					onClick(event);
+				}
 			};
 			deselectElement.className = this.options.prefixClass_('deselect');
 			deselectButton.className = this.options.prefixClass_('deselect-button');
