@@ -48,9 +48,11 @@
 				font-family: "Arial", sans-serif !important;
 			}
 			#footer {
+				float: left;
+				clear: left;
 				color: #555;
 				font-size: 0.8em;
-				padding: 1em 1em 0 0;
+				padding: 0;
 			}
 			.desktop-only {
 				display: none;
@@ -84,6 +86,9 @@
 					clear: left;
 					padding: 1em 1em 0 0;
 				}
+				#footer {
+					padding: 1em 1em 0 0;
+				}
 			}
 			@media (min-width: 1300px) {
 				#footer {
@@ -96,6 +101,9 @@
 			#input-wrapper {
 				float: left;
 				margin-left: 0.8em;
+			}
+			#button-wrapper {
+				float: left;
 			}
 			.space {
 				margin-bottom: 0.5em;
@@ -136,6 +144,9 @@
 					<input type="text" id="my-input" size="20">
 				</div>
 			</div>
+			<div id="button-wrapper" class="hidden">
+				<input type="button" id="my-button" value="Calendar">
+			</div>
 			<div id="my-container" class="hidden"></div>
 
 			<div id="footer">
@@ -158,8 +169,11 @@
 				<li>
 					var input = document.getElementById('my-input');
 				</li>
-				<li class="space">
+				<li>
 					var container = document.getElementById('my-container');
+				</li>
+				<li class="space">
+					var button = document.getElementById('my-button');
 				</li>
 				<li>
 					<span id="datepicker0Comment" class="hidden">// </span>var datepicker = <span id="datepicker0Text">new TheDatepicker.Datepicker(input);</span><input type="button" id="datepicker0Button" value="new TheDatepicker.Datepicker(input);" class="hidden">
@@ -169,6 +183,9 @@
 				</li>
 				<li>
 					<span id="datepicker2Comment">// </span>var datepicker = <span id="datepicker2Text">new TheDatepicker.Datepicker(null, container);</span><input type="button" id="datepicker2Button" value="new TheDatepicker.Datepicker(null, container);" class="hidden">
+				</li>
+				<li>
+					<span id="datepicker3Comment">// </span>var datepicker = <span id="datepicker3Text">new TheDatepicker.Datepicker(button);</span><input type="button" id="datepicker3Button" value="new TheDatepicker.Datepicker(button);" class="hidden">
 				</li>
 				<li class="space">
 					// var datepicker = new TheDatepicker.Datepicker(input, null, new TheDatepicker.Options());
@@ -642,8 +659,10 @@ return header;
 
 		(function () {
 			var input = document.getElementById('my-input');
+			var button = document.getElementById('my-button');
 			var container = document.getElementById('my-container');
 			var formWrapper = document.getElementById('form-wrapper');
+			var buttonWrapper = document.getElementById('button-wrapper');
 
 			datepicker = new TheDatepicker.Datepicker(input);
 
@@ -730,7 +749,7 @@ return header;
 			};
 
 			var datepickerInputs = [];
-			var datepickerInputsCount = 3;
+			var datepickerInputsCount = 4;
 			for (var i = 0; i < datepickerInputsCount; i++) {
 				datepickerInputs.push({
 					text: document.getElementById('datepicker' + i + 'Text'),
@@ -750,6 +769,7 @@ return header;
 				commentCreation(0);
 				container.className = 'hidden';
 				formWrapper.className = '';
+				buttonWrapper.className = 'hidden';
 				datepicker.render();
 			};
 			datepickerInputs[1].button.onclick = function () {
@@ -757,6 +777,7 @@ return header;
 				commentCreation(1);
 				container.className = '';
 				formWrapper.className = '';
+				buttonWrapper.className = 'hidden';
 				datepicker.render();
 			};
 			datepickerInputs[2].button.onclick = function () {
@@ -764,6 +785,15 @@ return header;
 				commentCreation(2);
 				container.className = '';
 				formWrapper.className = 'hidden';
+				buttonWrapper.className = 'hidden';
+				datepicker.render();
+			};
+			datepickerInputs[3].button.onclick = function () {
+				datepicker = new TheDatepicker.Datepicker(button, null, datepicker.options);
+				commentCreation(3);
+				container.className = '';
+				formWrapper.className = 'hidden';
+				buttonWrapper.className = '';
 				datepicker.render();
 			};
 
