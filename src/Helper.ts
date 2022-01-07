@@ -224,7 +224,7 @@ namespace TheDatepicker {
 		}
 
 		public static checkNumber_(parameterName: string, value: number, min: number | null = null, max: number | null = null): number {
-			value = typeof value === 'string' ? parseInt(value) : value;
+			value = typeof value === 'string' ? parseInt(value, 10) : value;
 			if (typeof value !== 'number' || isNaN(value) || (min !== null && value < min) || (max !== null && value > max)) {
 				throw new Error(parameterName + ' was expected to be a valid number' + (min !== null ? ' from ' + min : '') + (max !== null ? ' to ' + max : '') + '.');
 			}
