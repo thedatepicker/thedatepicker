@@ -84,10 +84,15 @@ namespace TheDatepicker {
 		private showResetButton_ = false;
 		private monthAsDropdown_ = true;
 		private yearAsDropdown_ = true;
+		private yearSelectedFromTableOfYears_ = true;
+		private tableOfYearsRowsCount_ = 6;
+		private tableOfYearsAlign_: Align | null = null;
+		private tableOfYearsOnSwipeDown_ = true;
+		private yearsOutOfTableOfYearsVisible_ = true;
 		private monthAndYearSeparated_ = true;
 		private monthShort_ = false;
 		private changeMonthOnSwipe_ = true;
-		private animateMonthChange_ = true;
+		private slideAnimation_ = true;
 		private classesPrefix_ = 'the-datepicker__';
 		private showCloseButton_ = true;
 		private closeOnEscPress_ = true;
@@ -149,10 +154,14 @@ namespace TheDatepicker {
 			options.showResetButton_ = this.showResetButton_;
 			options.monthAsDropdown_ = this.monthAsDropdown_;
 			options.yearAsDropdown_ = this.yearAsDropdown_;
+			options.yearSelectedFromTableOfYears_ = this.yearSelectedFromTableOfYears_;
+			options.tableOfYearsRowsCount_ = this.tableOfYearsRowsCount_;
+			options.tableOfYearsAlign_ = this.tableOfYearsAlign_;
+			options.tableOfYearsOnSwipeDown_ = this.tableOfYearsOnSwipeDown_;
 			options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
 			options.monthShort_ = this.monthShort_;
 			options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
-			options.animateMonthChange_ = this.animateMonthChange_;
+			options.slideAnimation_ = this.slideAnimation_;
 			options.classesPrefix_ = this.classesPrefix_;
 			options.showCloseButton_ = this.showCloseButton_;
 			options.closeOnEscPress_ = this.closeOnEscPress_;
@@ -417,8 +426,54 @@ namespace TheDatepicker {
 			this.yearAsDropdown_ = !!value;
 		}
 
+		// Setting to true will render year selection as a table of years instead of dropdown list (html select).
+		// Works only when setting YearAsDropdown is set to true.
+		// defaults to true
+		public setYearSelectedFromTableOfYears(value: boolean): void {
+			this.yearSelectedFromTableOfYears_ = !!value;
+		}
+
+		// Table of years rows count.
+		// defaults to 6
+		public setTableOfYearsRowsCount(count: number): void {
+			this.tableOfYearsRowsCount_ = Helper_.checkNumber_('Rows count', count, 1);
+		}
+
+		// Align of years in table of years.
+		// TheDatepicker.Align.Left means that first available year is placed in the upper left corner of the table.
+		//   Works only when setting MinDate is not null.
+		// TheDatepicker.Align.Right means that last available year is placed in the lower right corner of the table.
+		//   Works only when setting MaxDate is not null.
+		// TheDatepicker.Align.Center means that initial year is placed in the center of the table.
+		// When set to null, align is calculated as follows:
+		//   If both settings MinDate and MaxDate are set to null, the TheDatepicker.Align.Center is used.
+		//   If only setting MinDate is not null, the TheDatepicker.Align.Left is used.
+		//   If only setting MaxDate is not null, the TheDatepicker.Align.Right is used.
+		//   If both settings MinDate and MaxDate are not null, align is calculated as follows:
+		//     If the difference between MinDate and the initial year is less than or equal to the difference between
+		//     MaxDate and the initial year, the TheDatepicker.Align.Left is used.
+		//     Otherwise, the TheDatepicker.Align.Right is used.
+		// defaults to null
+		public setTableOfYearsAlign(align: Align | null): void {
+			this.tableOfYearsAlign_ = align ? Helper_.checkNumber_('Align', align, 1, 3) : null;
+		}
+
+		// Setting to true will open table of years on finger up-to-down swipe
+		// and close it on finger down-to-up swipe.
+		// defaults to true
+		public setTableOfYearsOnSwipeDown(value: boolean): void {
+			this.tableOfYearsOnSwipeDown_ = !!value;
+		}
+
+		// Setting to false will hide years in table of years which are not available.
+		// defaults to true
+		public setYearsOutOfTableOfYearsVisible(value: boolean): void {
+			this.yearsOutOfTableOfYearsVisible_ = !!value;
+		}
+
 		// Setting to true will render month and year in header each in separate element.
 		// If set to false it will be rendered as a dropdown only when both settings MonthAsDropdown and YearAsDropdown are set to true.
+		// Works only when setting YearSelectedFromTableOfYears is set to false.
 		// defaults to true
 		public setMonthAndYearSeparated(value: boolean): void {
 			this.monthAndYearSeparated_ = !!value;
@@ -436,10 +491,15 @@ namespace TheDatepicker {
 			this.changeMonthOnSwipe_ = !!value;
 		}
 
-		// If set to true then changing month to next/previous will become animated.
-		// defaults to true
 		public setAnimateMonthChange(value: boolean): void {
-			this.animateMonthChange_ = !!value;
+			Helper_.warnDeprecatedUsage_('setAnimateMonthChange', ['setSlideAnimation'])
+			this.setSlideAnimation(value);
+		}
+
+		// If set to true then changing month to next/previous and open/close of table of years will become animated.
+		// defaults to true
+		public setSlideAnimation(value: boolean): void {
+			this.slideAnimation_ = !!value;
 		}
 
 		// CSS classes of datepicker elements will be prefixed with given string.
@@ -820,20 +880,49 @@ namespace TheDatepicker {
 			return this.yearAsDropdown_;
 		}
 
+		public isYearSelectedFromTableOfYears(): boolean {
+			return this.yearAsDropdown_ && this.yearSelectedFromTableOfYears_;
+		}
+
+		public getTableOfYearsRowsCount(): number {
+			return this.tableOfYearsRowsCount_;
+		}
+
+		public getTableOfYearsColumnsCount(): number {
+			return 4;
+		}
+
+		public getTableOfYearsAlign(): Align | null {
+			return this.tableOfYearsAlign_;
+		}
+
+		public isTableOfYearsOnSwipeDownEnabled(): boolean {
+			return this.tableOfYearsOnSwipeDown_;
+		}
+
+		public areYearsOutOfTableOfYearsVisible(): boolean {
+			return this.yearsOutOfTableOfYearsVisible_;
+		}
+
 		public isMonthAndYearSeparated(): boolean {
-			return this.monthAndYearSeparated_;
+			return this.isYearSelectedFromTableOfYears() || this.monthAndYearSeparated_;
 		}
 
 		public isMonthShort(): boolean {
 			return this.monthShort_;
 		}
 
-		public isMonthChangeOnSwipeEnabled_(): boolean {
+		public isMonthChangeOnSwipeEnabled(): boolean {
 			return this.changeMonthOnSwipe_;
 		}
 
 		public isMonthChangeAnimated(): boolean {
-			return this.animateMonthChange_;
+			Helper_.warnDeprecatedUsage_('isMonthChangeAnimated', ['isSlideAnimationEnabled'])
+			return this.isSlideAnimationEnabled();
+		}
+
+		public isSlideAnimationEnabled(): boolean {
+			return this.slideAnimation_;
 		}
 
 		public getClassesPrefix(): string {

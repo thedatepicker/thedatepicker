@@ -6,6 +6,24 @@ namespace TheDatepicker {
 
 	}
 
+	export class YearCellData_ {
+
+		public isAvailable = true;
+		public isSelected = false;
+		public isHighlighted = false;
+		public isFocused = false;
+
+		public constructor(public readonly yearNumber: number) {
+		}
+
+	}
+
+	interface HTMLYearButtonElement extends HTMLAnchorElement {
+
+		yearCellData: YearCellData_;
+
+	}
+
 	interface Range {
 
 		from: number;
@@ -28,27 +46,40 @@ namespace TheDatepicker {
 
 	}
 
+	type AfterSlideListener = () => void;
+
 	export class Template_ {
 
 		private mainElement_: HTMLElement | null = null;
 		private bodyElement_: HTMLElement | null = null;
+		private tablesElement_: HTMLElement | null = null;
+		private tableElement_: HTMLElement | null = null;
+		private tableOfYearsElement_: HTMLElement | null = null;
 		private controlElement_: HTMLElement | null = null;
-		private goBackElement_: HTMLElement | null = null;
-		private goForwardElement_: HTMLElement | null = null;
+		private goBackElement_: HTMLAnchorElement | null = null;
+		private goForwardElement_: HTMLAnchorElement | null = null;
 		private titleElement_: HTMLElement | null = null;
 		private titleContentElement_: HTMLElement | null = null;
 		private resetElement_: HTMLElement | null = null;
+		private resetButton_: HTMLAnchorElement | null = null;
 		private closeElement_: HTMLElement | null = null;
+		private closeButton_: HTMLAnchorElement | null = null;
 		private monthSelect_: HTMLSelectElement | null = null;
 		private monthElement_: HTMLElement | null = null;
-		private yearSelect_: HTMLSelectElement | null = null;
-		private yearElement_: HTMLElement | null = null;
+		private yearActiveElement_: HTMLAnchorElement | HTMLSelectElement | null = null;
+		private yearTextElement_: HTMLElement | null = null;
 		private monthAndYearSelect_: HTMLSelectElement | null = null;
 		private monthAndYearElement_: HTMLElement | null = null;
 		private weeksElements_: HTMLElement[] = [];
 		private daysElements_: HTMLElement[][] = [];
 		private daysButtonsElements_: HTMLDayButtonElement[][] = [];
 		private daysContentsElements_: HTMLElement[][] = [];
+		private yearsRowsElements_: HTMLElement[] = [];
+		private yearsElements_: HTMLElement[][] = [];
+		private yearsButtonsElements_: HTMLYearButtonElement[][] = [];
+		private yearsContentsElements_: HTMLElement[][] = [];
+
+		private onAfterSlide_: AfterSlideListener[] | null = null;
 
 		public constructor(
 			private readonly options_: Options,
@@ -68,16 +99,18 @@ namespace TheDatepicker {
 			}
 
 			this.updateMainElement_(viewModel);
+			this.updateTableElements_(viewModel);
 			this.updateTopElement_(viewModel);
 			this.updateTitleElement_(viewModel);
 			this.updateCloseElement_(viewModel);
 			this.updateResetElement_(viewModel);
-			this.updateGoBackElement_(viewModel);
-			this.updateGoForwardElement_(viewModel);
+			this.updateGoElement_(viewModel, false);
+			this.updateGoElement_(viewModel, true);
 			this.updateMonthElement_(viewModel);
 			this.updateYearElement_(viewModel);
 			this.updateMonthAndYearElement_(viewModel);
 			this.updateWeeksElements_(viewModel);
+			this.updateTableOfYearsRowsElements_(viewModel);
 		}
 
 		protected createSkeleton_(viewModel: ViewModel_): HTMLElement {
@@ -97,18 +130,63 @@ namespace TheDatepicker {
 			this.mainElement_.style.display = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur() ? '' : 'none';
 		}
 
+		protected updateTableElements_(viewModel: ViewModel_): void {
+			this.tableElement_.style.display = viewModel.yearSelectionState_ ? 'none' : '';
+			if (this.tableOfYearsElement_) {
+				this.tableOfYearsElement_.style.display = viewModel.yearSelectionState_ ? '' : 'none';
+			}
+		}
+
 		protected createBodyElement_(viewModel: ViewModel_): HTMLElement {
 			const body = HtmlHelper_.createDiv_('body', this.options_);
+			const tables = HtmlHelper_.createDiv_('tables', this.options_);
+			body.appendChild(tables);
 
-			if (this.options_.isMonthChangeOnSwipeEnabled_()) {
-				Helper_.addSwipeListener_(body, (event: TouchEvent, isRightMove: boolean): void => {
-					this.slideMonth_(viewModel, event, !isRightMove);
+			if (this.options_.isMonthChangeOnSwipeEnabled() || this.options_.isTableOfYearsOnSwipeDownEnabled()) {
+				Helper_.addSwipeListener_(body, (event: TouchEvent, moveDirection: MoveDirection_): void => {
+					let isForward = false;
+					let change: (() => void) | null = null;
+
+					switch (moveDirection) {
+						case MoveDirection_.Down:
+							isForward = true;
+							// noinspection FallThroughInSwitchStatementJS
+						case MoveDirection_.Up:
+							if (this.tableOfYearsElement_ && this.options_.isTableOfYearsOnSwipeDownEnabled() && viewModel.canSetYearSelectionActive_(isForward)) {
+								change = () => {
+									viewModel.setYearSelectionActive_(isForward);
+								};
+							}
+							break;
+						case MoveDirection_.Left:
+							isForward = true;
+							// noinspection FallThroughInSwitchStatementJS
+						case MoveDirection_.Right:
+							if (this.options_.isMonthChangeOnSwipeEnabled() && viewModel.canGoDirection_(isForward)) {
+								change = () => {
+									viewModel.goDirection_(event, isForward);
+								};
+							}
+					}
+
+					if (change) {
+						this.slideTable_(viewModel, moveDirection, change);
+					}
 				});
 			}
 
-			body.appendChild(this.createTableElement_(viewModel));
+			const tableElement = this.createTableElement_(viewModel);
+			tables.appendChild(tableElement);
+			this.tableElement_ = tableElement;
+
+			if (this.options_.isYearSelectedFromTableOfYears()) {
+				const tableOfYearsElement = this.createTableOfYearsElement_(viewModel);
+				tables.appendChild(tableOfYearsElement);
+				this.tableOfYearsElement_ = tableOfYearsElement;
+			}
 
 			this.bodyElement_ = body;
+			this.tablesElement_ = tables;
 
 			return body;
 		}
@@ -130,7 +208,7 @@ namespace TheDatepicker {
 			const navigation = HtmlHelper_.createDiv_('navigation', this.options_);
 			header.appendChild(navigation);
 
-			navigation.appendChild(this.createGoBackElement_(viewModel));
+			navigation.appendChild(this.createGoElement_(viewModel, false));
 
 			const state = HtmlHelper_.createDiv_('state', this.options_);
 			navigation.appendChild(state);
@@ -142,7 +220,7 @@ namespace TheDatepicker {
 				state.appendChild(this.createMonthAndYearElement_(viewModel));
 			}
 
-			navigation.appendChild(this.createGoForwardElement_(viewModel));
+			navigation.appendChild(this.createGoElement_(viewModel, true));
 
 			this.controlElement_ = control;
 
@@ -181,8 +259,8 @@ namespace TheDatepicker {
 			}, this.options_);
 
 			resetButton.innerHTML = this.options_.getResetHtml();
-			this.addTitle_(resetButton, TitleName.Reset);
 			resetElement.appendChild(resetButton);
+			this.resetButton_ = resetButton;
 			this.resetElement_ = resetElement;
 
 			return resetElement;
@@ -190,6 +268,7 @@ namespace TheDatepicker {
 
 		protected updateResetElement_(viewModel: ViewModel_): void {
 			this.resetElement_.style.display = this.options_.isResetButtonShown() ? '' : 'none';
+			this.updateTitle_(this.resetButton_, TitleName.Reset);
 		}
 
 		protected createCloseElement_(viewModel: ViewModel_): HTMLElement {
@@ -199,8 +278,8 @@ namespace TheDatepicker {
 			}, this.options_);
 
 			closeButton.innerHTML = this.options_.getCloseHtml();
-			this.addTitle_(closeButton, TitleName.Close);
 			closeElement.appendChild(closeButton);
+			this.closeButton_ = closeButton;
 			this.closeElement_ = closeElement;
 
 			return closeElement;
@@ -208,28 +287,25 @@ namespace TheDatepicker {
 
 		protected updateCloseElement_(viewModel: ViewModel_): void {
 			this.closeElement_.style.display = this.hasInput_ && this.options_.isCloseButtonShown() ? '' : 'none';
+			this.updateTitle_(this.closeButton_, TitleName.Close);
 		}
 
-		protected createGoBackElement_(viewModel: ViewModel_): HTMLElement {
-			return this.createGoElement_(viewModel, false);
-		}
-
-		protected createGoForwardElement_(viewModel: ViewModel_): HTMLElement {
-			return this.createGoElement_(viewModel, true);
-		}
-
-		protected createGoElement_(viewModel: ViewModel_, directionForward: boolean): HTMLElement {
+		protected createGoElement_(viewModel: ViewModel_, isForward: boolean): HTMLElement {
 			const goElement = HtmlHelper_.createDiv_('go', this.options_);
-			HtmlHelper_.addClass_(goElement, directionForward ? 'go-next' : 'go-previous', this.options_);
+			HtmlHelper_.addClass_(goElement, isForward ? 'go-next' : 'go-previous', this.options_);
 			const goButton = HtmlHelper_.createAnchor_((event: Event): void => {
-				this.slideMonth_(viewModel, event, directionForward);
+				const moveDirection = isForward ? MoveDirection_.Left : MoveDirection_.Right;
+				if (viewModel.canGoDirection_(isForward)) {
+					this.slideTable_(viewModel, moveDirection, (): void => {
+						viewModel.goDirection_(event, isForward);
+					});
+				}
 			}, this.options_);
 
-			goButton.innerHTML = directionForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
-			this.addTitle_(goButton, directionForward ? TitleName.GoForward : TitleName.GoBack);
+			goButton.innerHTML = isForward ? this.options_.getGoForwardHtml() : this.options_.getGoBackHtml();
 			goElement.appendChild(goButton);
 
-			if (directionForward) {
+			if (isForward) {
 				this.goForwardElement_ = goButton;
 			} else {
 				this.goBackElement_ = goButton;
@@ -238,12 +314,13 @@ namespace TheDatepicker {
 			return goElement;
 		}
 
-		protected updateGoBackElement_(viewModel: ViewModel_): void {
-			this.goBackElement_.style.visibility = viewModel.canGoBack_() ? 'visible' : 'hidden';
-		}
-
-		protected updateGoForwardElement_(viewModel: ViewModel_): void {
-			this.goForwardElement_.style.visibility = viewModel.canGoForward_() ? 'visible' : 'hidden';
+		protected updateGoElement_(viewModel: ViewModel_, isForward: boolean): void {
+			const goElement = isForward ? this.goForwardElement_ : this.goBackElement_;
+			goElement.style.visibility = viewModel.canGoDirection_(isForward) ? 'visible' : 'hidden';
+			this.updateTitle_(goElement, viewModel.yearSelectionState_
+				? (isForward ? TitleName.GoForwardTableOfYears : TitleName.GoBackTableOfYears)
+				: (isForward ? TitleName.GoForward : TitleName.GoBack)
+			);
 		}
 
 		protected createMonthElement_(viewModel: ViewModel_): HTMLElement {
@@ -263,7 +340,6 @@ namespace TheDatepicker {
 					this.monthSelect_.value = currentMonth.getMonth() + '';
 				}
 			}, this.options_);
-			this.addTitle_(selectElement, TitleName.Month);
 
 			const monthElement = HtmlHelper_.createDiv_('month', this.options_);
 			const monthContent = HtmlHelper_.createSpan_();
@@ -283,6 +359,7 @@ namespace TheDatepicker {
 
 			const currentMonth = viewModel.getCurrentMonth_().getMonth();
 			this.monthElement_.innerText = this.translateMonth_(currentMonth);
+			this.updateTitle_(this.monthSelect_, TitleName.Month);
 
 			if (!this.options_.isMonthAsDropdown()) {
 				this.monthSelect_.style.display = 'none';
@@ -309,75 +386,97 @@ namespace TheDatepicker {
 		}
 
 		protected createYearElement_(viewModel: ViewModel_): HTMLElement {
-			const selectElement = HtmlHelper_.createSelectInput_([], (event: Event, year: string): void => {
-				const currentMonth = viewModel.getCurrentMonth_();
-				let newMonth = new Date(currentMonth.getTime());
-				newMonth.setFullYear(parseInt(year, 10));
-
-				const minMonth = this.options_.getMinMonth_();
-				const maxMonth = this.options_.getMaxMonth_();
-				if (newMonth.getTime() < minMonth.getTime()) {
-					newMonth = minMonth;
-				}
-				if (newMonth.getTime() > maxMonth.getTime()) {
-					newMonth = maxMonth;
-				}
-
-				if (!viewModel.goToMonth_(event, newMonth)) {
-					this.yearSelect_.value = currentMonth.getFullYear() + '';
-				}
-			}, this.options_);
-			this.addTitle_(selectElement, TitleName.Year);
-
 			const yearElement = HtmlHelper_.createDiv_('year', this.options_);
-			const yearContent = HtmlHelper_.createSpan_();
-			yearElement.appendChild(selectElement);
-			yearElement.appendChild(yearContent);
+			let yearActiveElement: HTMLAnchorElement | HTMLSelectElement;
 
-			this.yearElement_ = yearContent;
-			this.yearSelect_ = selectElement;
+			if (this.options_.isYearSelectedFromTableOfYears()) {
+				yearActiveElement = HtmlHelper_.createAnchor_((): void => {
+					this.slideTable_(viewModel, viewModel.yearSelectionState_ ? MoveDirection_.Up : MoveDirection_.Down, (): void => {
+						viewModel.setYearSelectionActive_(!viewModel.yearSelectionState_);
+					});
+				}, this.options_);
+
+				HtmlHelper_.addClass_(yearActiveElement, 'year-button', this.options_);
+
+			} else {
+				yearActiveElement = HtmlHelper_.createSelectInput_([], (event: Event, year: string): void => {
+					const currentMonth = viewModel.getCurrentMonth_();
+					let newMonth = new Date(currentMonth.getTime());
+					newMonth.setFullYear(parseInt(year, 10));
+
+					const minMonth = this.options_.getMinMonth_();
+					const maxMonth = this.options_.getMaxMonth_();
+					if (newMonth.getTime() < minMonth.getTime()) {
+						newMonth = minMonth;
+					}
+					if (newMonth.getTime() > maxMonth.getTime()) {
+						newMonth = maxMonth;
+					}
+
+					if (!viewModel.goToMonth_(event, newMonth)) {
+						(this.yearActiveElement_ as HTMLSelectElement).value = currentMonth.getFullYear() + '';
+					}
+				}, this.options_);
+			}
+
+			const yearTextElement = HtmlHelper_.createSpan_();
+			yearElement.appendChild(yearActiveElement);
+			yearElement.appendChild(yearTextElement);
+
+			this.yearTextElement_ = yearTextElement;
+			this.yearActiveElement_ = yearActiveElement;
 
 			return yearElement;
 		}
 
 		protected updateYearElement_(viewModel: ViewModel_): void {
-			if (!this.yearElement_) {
+			if (!this.yearTextElement_) {
 				return;
 			}
 
 			const currentYear = viewModel.getCurrentMonth_().getFullYear();
-			this.yearElement_.innerText = currentYear + '';
-
-			if (!this.options_.isYearAsDropdown()) {
-				this.yearSelect_.style.display = 'none';
-				this.yearElement_.style.display = '';
-				return;
-			}
+			this.yearTextElement_.innerText = currentYear + '';
+			this.updateTitle_(this.yearActiveElement_, TitleName.Year);
 
 			const minYear = this.options_.getMinDate_().getFullYear();
 			const maxYear = this.options_.getMaxDate_().getFullYear();
-			const range = this.calculateDropdownRange_(currentYear, minYear, maxYear);
 
-			const options = this.yearSelect_.getElementsByTagName('option');
-			const diff = this.calculateDropdownDiff_(options, range, (value: string): number => {
-				return parseInt(value, 10);
-			});
+			if (this.tableOfYearsElement_) {
+				this.yearActiveElement_.innerText = currentYear + '';
+				if (viewModel.isYearSelectionToggleButtonFocused_) {
+					this.yearActiveElement_.focus();
+					viewModel.isYearSelectionToggleButtonFocused_ = false;
+				}
 
-			for (let index = 0; index < diff.remove.length; index++) {
-				this.yearSelect_.removeChild(diff.remove[index]);
+			} else if (this.options_.isYearAsDropdown()) {
+				const range = this.calculateDropdownRange_(currentYear, minYear, maxYear);
+
+				const options = this.yearActiveElement_.getElementsByTagName('option');
+				const diff = this.calculateDropdownDiff_(options, range, (value: string): number => {
+					return parseInt(value, 10);
+				});
+
+				for (let index = 0; index < diff.remove.length; index++) {
+					this.yearActiveElement_.removeChild(diff.remove[index]);
+				}
+				for (let index = diff.prepend.length - 1; index >= 0; index--) {
+					this.yearActiveElement_.insertBefore(HtmlHelper_.createSelectOption_(diff.prepend[index] + '', diff.prepend[index] + ''), this.yearActiveElement_.firstChild);
+				}
+				for (let index = 0; index < diff.append.length; index++) {
+					this.yearActiveElement_.appendChild(HtmlHelper_.createSelectOption_(diff.append[index] + '', diff.append[index] + ''));
+				}
+
+				(this.yearActiveElement_ as HTMLSelectElement).value = currentYear + '';
+
+			} else {
+				this.yearActiveElement_.style.display = 'none';
+				this.yearTextElement_.style.display = '';
+				return;
 			}
-			for (let index = diff.prepend.length - 1; index >= 0; index--) {
-				this.yearSelect_.insertBefore(HtmlHelper_.createSelectOption_(diff.prepend[index] + '', diff.prepend[index] + ''), this.yearSelect_.firstChild);
-			}
-			for (let index = 0; index < diff.append.length; index++) {
-				this.yearSelect_.appendChild(HtmlHelper_.createSelectOption_(diff.append[index] + '', diff.append[index] + ''));
-			}
 
-			this.yearSelect_.value = currentYear + '';
-
-			const showSelect = !this.options_.isDropdownWithOneItemHidden() || range.from < range.to;
-			this.yearSelect_.style.display = showSelect ? '' : 'none';
-			this.yearElement_.style.display = showSelect ? 'none' : '';
+			const showSelect = !this.options_.isDropdownWithOneItemHidden() || minYear !== maxYear;
+			this.yearActiveElement_.style.display = showSelect ? '' : 'none';
+			this.yearTextElement_.style.display = showSelect ? 'none' : '';
 		}
 
 		protected createMonthAndYearElement_(viewModel: ViewModel_): HTMLElement {
@@ -539,7 +638,9 @@ namespace TheDatepicker {
 			const tableHeader = this.createTableHeaderElement_(viewModel) as HTMLTableSectionElement;
 			const tableBody = this.createTableBodyElement_(viewModel) as HTMLTableSectionElement;
 
-			return HtmlHelper_.createTable_('calendar', tableHeader, tableBody, this.options_);
+			const table = HtmlHelper_.createTable_('calendar', tableHeader, tableBody, this.options_);
+			HtmlHelper_.addClass_(table, 'table', this.options_);
+			return table;
 		}
 
 		protected createTableHeaderElement_(viewModel: ViewModel_): HTMLElement {
@@ -581,6 +682,10 @@ namespace TheDatepicker {
 		}
 
 		protected updateWeeksElements_(viewModel: ViewModel_): void {
+			if (viewModel.yearSelectionState_) {
+				return;
+			}
+
 			const weeks = viewModel.getWeeks_();
 
 			for (let weekIndex = 0; weekIndex < this.weeksElements_.length; weekIndex++) {
@@ -656,15 +761,18 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(dayElement, 'day--weekend', this.options_);
 			}
 			if (!day.isAvailable) {
+				HtmlHelper_.addClass_(dayElement, 'cell--unavailable', this.options_);
 				HtmlHelper_.addClass_(dayElement, 'day--unavailable', this.options_);
 			}
 			if (!day.isInCurrentMonth) {
 				HtmlHelper_.addClass_(dayElement, 'day--outside', this.options_);
 			}
 			if (day.isHighlighted) {
+				HtmlHelper_.addClass_(dayElement, 'cell--highlighted', this.options_);
 				HtmlHelper_.addClass_(dayElement, 'day--highlighted', this.options_);
 			}
 			if (day.isSelected) {
+				HtmlHelper_.addClass_(dayElement, 'cell--selected', this.options_);
 				HtmlHelper_.addClass_(dayElement, 'day--selected', this.options_);
 			}
 			const customClasses = this.options_.getCellClasses(day);
@@ -705,12 +813,12 @@ namespace TheDatepicker {
 					viewModel.highlightDay_(event || window.event, cellButton.day, false, false);
 				} else {
 					// optimization
-					viewModel.cancelHighlight_(event || window.event);
+					viewModel.cancelDayHighlight_(event || window.event);
 				}
 			};
 
 			cellButton.onmouseleave = (event: MouseEvent): void => {
-				viewModel.cancelHighlight_(event || window.event);
+				viewModel.cancelDayHighlight_(event || window.event);
 			};
 
 			return cellButton;
@@ -718,66 +826,231 @@ namespace TheDatepicker {
 
 		protected createTableCellContentElement_(viewModel: ViewModel_): HTMLElement {
 			const cellContent = this.options_.getCellStructure_();
+			HtmlHelper_.addClass_(cellContent, 'button-content', this.options_);
 			HtmlHelper_.addClass_(cellContent, 'day-content', this.options_);
 
 			return cellContent;
 		}
 
-		private slideMonth_(viewModel: ViewModel_, event: Event, directionForward: boolean): void {
-			const canGo = directionForward ? viewModel.canGoForward_() : viewModel.canGoBack_();
-			if (!canGo) {
+		protected createTableOfYearsElement_(viewModel: ViewModel_): HTMLElement {
+			const tableBody = this.createTableOfYearsBodyElement_(viewModel) as HTMLTableSectionElement;
+
+			const table = HtmlHelper_.createTable_('years', null, tableBody, this.options_);
+			HtmlHelper_.addClass_(table, 'table', this.options_);
+			return table;
+		}
+
+		protected createTableOfYearsBodyElement_(viewModel: ViewModel_): HTMLElement {
+			this.yearsElements_ = [];
+			this.yearsButtonsElements_ = [];
+			this.yearsContentsElements_ = [];
+
+			const rows = [];
+			for (let index = 0; index < this.options_.getTableOfYearsRowsCount(); index++) {
+				rows.push(this.createTableOfYearsRowElement_(viewModel));
+			}
+			this.yearsRowsElements_ = rows;
+
+			return HtmlHelper_.createTableBody_('years-body', rows as HTMLTableRowElement[], this.options_);
+		}
+
+		protected updateTableOfYearsRowsElements_(viewModel: ViewModel_): void {
+			if (!viewModel.yearSelectionState_) {
 				return;
 			}
 
-			const change = (): void => {
-				if (directionForward) {
-					viewModel.goForward_(event);
-				} else {
-					viewModel.goBack_(event);
+			const rows = viewModel.getYearsRows_();
+
+			for (let rowIndex = 0; rowIndex < this.yearsRowsElements_.length; rowIndex++) {
+				const rowElement = this.yearsRowsElements_[rowIndex];
+				const cells = rows.length > rowIndex ? rows[rowIndex] : null;
+
+				if (cells) {
+					for (let columnIndex = 0; columnIndex < this.yearsElements_[rowIndex].length; columnIndex++) {
+						this.updateTableOfYearsCellElement_(
+							viewModel,
+							this.yearsElements_[rowIndex][columnIndex],
+							this.yearsButtonsElements_[rowIndex][columnIndex],
+							this.yearsContentsElements_[rowIndex][columnIndex],
+							cells[columnIndex]
+						);
+					}
 				}
+			}
+		}
+
+		protected updateTableOfYearsCellElement_(
+			viewModel: ViewModel_,
+			yearElement: HTMLElement,
+			yearButtonElement: HTMLYearButtonElement,
+			yearContentElement: HTMLElement,
+			yearCellData: YearCellData_
+		): void {
+			yearButtonElement.yearCellData = yearCellData;
+			yearElement.setAttribute('data-year', yearCellData.yearNumber + '');
+			yearElement.className = '';
+			HtmlHelper_.addClass_(yearElement, 'cell', this.options_);
+			yearContentElement.innerText = yearCellData.yearNumber + '';
+
+			if (yearCellData.isAvailable) {
+				yearButtonElement.href = '#';
+			} else {
+				yearButtonElement.removeAttribute('href');
+				if (this.options_.areYearsOutOfTableOfYearsVisible()) {
+					HtmlHelper_.addClass_(yearElement, 'cell--unavailable', this.options_);
+				} else {
+					yearButtonElement.style.visibility = 'hidden';
+					return;
+				}
+			}
+			if (yearCellData.isHighlighted) {
+				HtmlHelper_.addClass_(yearElement, 'cell--highlighted', this.options_);
+			}
+			if (yearCellData.isSelected) {
+				HtmlHelper_.addClass_(yearElement, 'cell--selected', this.options_);
+			}
+
+			yearButtonElement.style.visibility = 'visible';
+
+			if (yearCellData.isFocused) {
+				yearButtonElement.focus();
+			}
+		}
+
+		protected createTableOfYearsRowElement_(viewModel: ViewModel_): HTMLElement {
+			const cells = [];
+			const cellsButtons = [];
+			const cellsContents = [];
+			for (let index = 0; index < this.options_.getTableOfYearsColumnsCount(); index++) {
+				const cell = HtmlHelper_.createTableCell_();
+				const cellButton = this.createTableOfYearsCellButtonElement_(viewModel);
+				const cellContent = this.createTableOfYearsCellContentElement_(viewModel);
+
+				cells.push(cell);
+				cellsButtons.push(cellButton);
+				cellsContents.push(cellContent);
+
+				cell.appendChild(cellButton);
+				cellButton.appendChild(cellContent);
+			}
+			this.yearsElements_.push(cells);
+			this.yearsButtonsElements_.push(cellsButtons);
+			this.yearsContentsElements_.push(cellsContents);
+
+			return HtmlHelper_.createTableRow_('years-row', cells as HTMLTableCellElement[]);
+		}
+
+		protected createTableOfYearsCellButtonElement_(viewModel: ViewModel_): HTMLYearButtonElement {
+			const cellButton = HtmlHelper_.createAnchor_((event: Event): void => {
+				const newMonth = new Date(cellButton.yearCellData.yearNumber, viewModel.getCurrentMonth_().getMonth(), 1);
+				const correctMonth = this.options_.correctMonth(newMonth);
+
+				if (correctMonth.getFullYear() === newMonth.getFullYear()) {
+					viewModel.goToMonth_(event, correctMonth)
+					viewModel.isYearSelectionToggleButtonFocused_ = true;
+					this.slideTable_(viewModel, MoveDirection_.Up, (): void => {
+						viewModel.setYearSelectionActive_(false);
+					});
+				}
+			}, this.options_) as HTMLYearButtonElement;
+
+			HtmlHelper_.addClass_(cellButton, 'year-cell-button', this.options_);
+
+			cellButton.onfocus = (): void => {
+				viewModel.highlightYear_(cellButton.yearCellData.yearNumber);
 			};
 
-			if (!this.options_.isMonthChangeAnimated() || !Helper_.isCssAnimationSupported_()) {
-				change();
+			cellButton.onmouseenter = (): void => {
+				viewModel.cancelYearHighlight_();
+			};
+
+			cellButton.onmouseleave = (): void => {
+				viewModel.cancelYearHighlight_();
+			};
+
+			return cellButton;
+		}
+
+		protected createTableOfYearsCellContentElement_(viewModel: ViewModel_): HTMLElement {
+			const cellContent = HtmlHelper_.createSpan_();
+			HtmlHelper_.addClass_(cellContent, 'button-content', this.options_);
+			HtmlHelper_.addClass_(cellContent, 'year-cell-content', this.options_);
+
+			return cellContent;
+		}
+
+		private slideTable_(viewModel: ViewModel_, moveDirection: MoveDirection_, onComplete: () => void): void {
+			if (!this.options_.isSlideAnimationEnabled() || !Helper_.isCssAnimationSupported_()) {
+				onComplete();
 				return;
 			}
 
-			const animationOut = directionForward
-				? 'fade-out-left'
-				: 'fade-out-right';
-			const animationIn = directionForward
-				? 'fade-in-right'
-				: 'fade-in-left';
+			const trigger = (): void => {
+				let animationOut: string;
+				let animationIn: string;
+				switch (moveDirection) {
+					case MoveDirection_.Left:
+						animationOut = 'fade-out-left';
+						animationIn = 'fade-in-right';
+						break;
+					case MoveDirection_.Up:
+						animationOut = 'fade-out-up';
+						animationIn = 'fade-in-down';
+						break;
+					case MoveDirection_.Right:
+						animationOut = 'fade-out-right';
+						animationIn = 'fade-in-left';
+						break;
+					case MoveDirection_.Down:
+						animationOut = 'fade-out-down';
+						animationIn = 'fade-in-up';
+						break;
+				}
 
-			const resetBody = () => {
-				this.bodyElement_.className = '';
-				HtmlHelper_.addClass_(this.bodyElement_, 'body', this.options_);
-			};
-			const animate = (className: string) => {
-				HtmlHelper_.addClass_(this.bodyElement_, 'animated', this.options_);
-				HtmlHelper_.addClass_(this.bodyElement_, className, this.options_);
-			};
+				const originalClassName = this.tablesElement_.className;
 
-			let listenerRemover: () => void;
-			const timeoutId = window.setTimeout(() => {
-				listenerRemover();
-				change();
-			}, 150);
+				const animate = (className: string) => {
+					HtmlHelper_.addClass_(this.tablesElement_, 'animated', this.options_);
+					HtmlHelper_.addClass_(this.tablesElement_, className, this.options_);
+				};
 
-			listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (): void => {
-				window.clearTimeout(timeoutId);
-				change();
-				listenerRemover();
-				resetBody();
-				animate(animationIn);
-				listenerRemover = Helper_.addEventListener_(this.bodyElement_, ListenerType_.AnimationEnd, (): void => {
+				const onAfterSlide = (): void => {
+					if (this.onAfterSlide_.length > 0) {
+						this.onAfterSlide_.shift()();
+					} else {
+						this.onAfterSlide_ = null;
+					}
+				};
+
+				let listenerRemover: () => void;
+				const timeoutId = window.setTimeout(() => {
 					listenerRemover();
-					resetBody();
-				});
-			});
+					onComplete();
+					onAfterSlide();
+				}, 150);
 
-			resetBody();
-			animate(animationOut);
+				listenerRemover = Helper_.addEventListener_(this.tablesElement_, ListenerType_.AnimationEnd, (): void => {
+					window.clearTimeout(timeoutId);
+					onComplete();
+					listenerRemover();
+					this.tablesElement_.className = originalClassName;
+					animate(animationIn);
+					listenerRemover = Helper_.addEventListener_(this.tablesElement_, ListenerType_.AnimationEnd, (): void => {
+						listenerRemover();
+						this.tablesElement_.className = originalClassName;
+						onAfterSlide();
+					});
+				});
+
+				animate(animationOut);
+			}
+
+			if (this.onAfterSlide_) {
+				this.onAfterSlide_.push(trigger);
+			} else {
+				this.onAfterSlide_ = [];
+				trigger();
+			}
 		}
 
 		private translateMonth_(monthNumber: number): string {
@@ -786,13 +1059,16 @@ namespace TheDatepicker {
 				: this.options_.translator.translateMonth(monthNumber);
 		}
 
-		private addTitle_(element: HTMLAnchorElement | HTMLSelectElement, titleName: TitleName): void {
+		private updateTitle_(element: HTMLAnchorElement | HTMLSelectElement, titleName: TitleName): void {
 			const title = this.options_.translator.translateTitle(titleName);
 			if (title !== '') {
 				element.title = title;
 				if (this.options_.isAriaIncluded()) {
 					element.setAttribute('aria-label', title);
 				}
+			} else {
+				element.removeAttribute('title');
+				element.removeAttribute('aria-label');
 			}
 		}
 

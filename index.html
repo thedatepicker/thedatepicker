@@ -308,6 +308,26 @@
 					<label>datepicker.options.setYearAsDropdown(<input type="checkbox" id="yearAsDropdown" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setYearSelectedFromTableOfYears(<input type="checkbox" id="yearSelectedFromTableOfYears" checked="checked">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setTableOfYearsRowsCount(<input type="text" size="15" id="tableOfYearsRowsCount" value="6">);</label> <span class="error" id="tableOfYearsRowsCountError"></span>
+				</li>
+				<li>
+					<label>datepicker.options.setTableOfYearsAlign(<select id="tableOfYearsAlign">
+						<option value="0" selected="selected">null</option>
+						<option value="1">TheDatepicker.DayOfWeek.Left</option>
+						<option value="2">TheDatepicker.DayOfWeek.Right</option>
+						<option value="3">TheDatepicker.DayOfWeek.Center</option>
+					</select>);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setTableOfYearsOnSwipeDown(<input type="checkbox" id="tableOfYearsOnSwipeDown" checked="checked">);</label>
+				</li>
+				<li>
+					<label>datepicker.options.setYearsOutOfTableOfYearsVisible(<input type="checkbox" id="yearsOutOfTableOfYearsVisible" checked="checked">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setMonthAndYearSeparated(<input type="checkbox" id="monthAndYearSeparated" checked="checked">);</label>
 				</li>
 				<li>
@@ -317,7 +337,7 @@
 					<label>datepicker.options.setChangeMonthOnSwipe(<input type="checkbox" id="changeMonthOnSwipe" checked="checked">);</label>
 				</li>
 				<li>
-					<label>datepicker.options.setAnimateMonthChange(<input type="checkbox" id="animateMonthChange" checked="checked">);</label>
+					<label>datepicker.options.setSlideAnimation(<input type="checkbox" id="slideAnimation" checked="checked">);</label>
 				</li>
 				<li>
 					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
@@ -634,8 +654,14 @@ return header;
 				<li>
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Month, "<input type="text" size="15" id="monthTranslation" value="Month selection">");</label>
 				</li>
-				<li class="space">
+				<li>
 					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.Year, "<input type="text" size="15" id="yearTranslation" value="Year selection">");</label>
+				</li>
+				<li>
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoBackTableOfYears, "<input type="text" size="15" id="goBackTableOfYearsTranslation" value="Show earlier years">");</label>
+				</li>
+				<li class="space">
+					<label>datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoForwardTableOfYears, "<input type="text" size="15" id="goForwardTableOfYearsTranslation" value="Show later years">");</label>
 				</li>
 				<li>
 					<label>var datepickerPromise = TheDatepicker.onDatepickerReady(input, function (datepicker) {<br>
@@ -1000,6 +1026,41 @@ return header;
 				});
 			};
 
+			var yearSelectedFromTableOfYearsInput = document.getElementById('yearSelectedFromTableOfYears');
+			yearSelectedFromTableOfYearsInput.onchange = function () {
+				updateSetting(yearSelectedFromTableOfYearsInput, function () {
+					datepicker.options.setYearSelectedFromTableOfYears(yearSelectedFromTableOfYearsInput.checked);
+				});
+			};
+
+			var tableOfYearsRowsCountInput = document.getElementById('tableOfYearsRowsCount');
+			tableOfYearsRowsCountInput.onchange = function () {
+				updateSetting(tableOfYearsRowsCountInput, function () {
+					datepicker.options.setTableOfYearsRowsCount(tableOfYearsRowsCountInput.value);
+				});
+			};
+
+			var tableOfYearsAlignInput = document.getElementById('tableOfYearsAlign');
+			tableOfYearsAlignInput.onchange = function () {
+				updateSetting(tableOfYearsAlignInput, function () {
+					datepicker.options.setTableOfYearsAlign(tableOfYearsAlignInput.value);
+				});
+			};
+
+			var tableOfYearsOnSwipeDownInput = document.getElementById('tableOfYearsOnSwipeDown');
+			tableOfYearsOnSwipeDownInput.onchange = function () {
+				updateSetting(tableOfYearsOnSwipeDownInput, function () {
+					datepicker.options.setTableOfYearsOnSwipeDown(tableOfYearsOnSwipeDownInput.checked);
+				});
+			};
+
+			var yearsOutOfTableOfYearsVisibleInput = document.getElementById('yearsOutOfTableOfYearsVisible');
+			yearsOutOfTableOfYearsVisibleInput.onchange = function () {
+				updateSetting(yearsOutOfTableOfYearsVisibleInput, function () {
+					datepicker.options.setYearsOutOfTableOfYearsVisible(yearsOutOfTableOfYearsVisibleInput.checked);
+				});
+			};
+
 			var monthAndYearSeparatedInput = document.getElementById('monthAndYearSeparated');
 			monthAndYearSeparatedInput.onchange = function () {
 				updateSetting(monthAndYearSeparatedInput, function () {
@@ -1021,10 +1082,10 @@ return header;
 				});
 			};
 
-			var animateMonthChangeInput = document.getElementById('animateMonthChange');
-			animateMonthChangeInput.onchange = function () {
-				updateSetting(animateMonthChangeInput, function () {
-					datepicker.options.setAnimateMonthChange(animateMonthChangeInput.checked);
+			var slideAnimationInput = document.getElementById('slideAnimation');
+			slideAnimationInput.onchange = function () {
+				updateSetting(slideAnimationInput, function () {
+					datepicker.options.setSlideAnimation(slideAnimationInput.checked);
 				});
 			};
 
@@ -1382,6 +1443,20 @@ return header;
 			goForwardTranslationInput.onchange = function () {
 				updateSetting(goForwardTranslationInput, function () {
 					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoForward, goForwardTranslationInput.value);
+				});
+			};
+
+			var goBackTableOfYearsTranslationInput = document.getElementById('goBackTableOfYearsTranslation');
+			goBackTableOfYearsTranslationInput.onchange = function () {
+				updateSetting(goBackTableOfYearsTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoBackTableOfYears, goBackTableOfYearsTranslationInput.value);
+				});
+			};
+
+			var goForwardTableOfYearsTranslationInput = document.getElementById('goForwardTableOfYearsTranslation');
+			goForwardTableOfYearsTranslationInput.onchange = function () {
+				updateSetting(goForwardTableOfYearsTranslationInput, function () {
+					datepicker.options.translator.setTitleTranslation(TheDatepicker.TitleName.GoForwardTableOfYears, goForwardTableOfYearsTranslationInput.value);
 				});
 			};
 

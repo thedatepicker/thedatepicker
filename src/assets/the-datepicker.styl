@@ -45,24 +45,26 @@ body.the-datepicker-page
 	background-color white
 	border 1px solid $border
 	border-radius 0.3em
-	padding 0.4em
 	font-family Arial, Helvetica, sans-serif
 	line-height 1em
 	box-sizing border-box
-	overflow-x hidden
-	overflow-y hidden
+	overflow-y auto
 
 	.the-datepicker__container--responsive &
 		width 100vw
 		height 100vh
-		overflow-y auto
 		@media (min-width: 37.5em)
 			width auto
 			height auto
-			overflow-y hidden
+
+	.the-datepicker__header
+		padding 0.4em 0.4em 0 0.4em
 
 	.the-datepicker__body
 		margin-top 1em
+		padding 0 0.4em 0.4em 0.4em
+		overflow-x hidden
+		overflow-y hidden
 
 	th.the-datepicker__week-day
 		padding 0.5em 0
@@ -92,6 +94,18 @@ body.the-datepicker-page
 			width auto
 			@media (min-width: 37.5em)
 				width 2.1em
+
+	a.the-datepicker__year-button
+		width auto
+
+	a.the-datepicker__year-cell-button
+		width auto
+		.the-datepicker__container &
+			width 3.82em
+		.the-datepicker__container.the-datepicker__container--responsive &
+			width auto
+			@media (min-width: 37.5em)
+				width 3.82em
 
 	.the-datepicker__title
 		display inline-block
@@ -145,7 +159,7 @@ body.the-datepicker-page
 		margin 0
 		padding 0
 
-	table.the-datepicker__calendar
+	table.the-datepicker__table
 		width 100%
 		border-collapse collapse
 		.the-datepicker__container &
@@ -159,43 +173,46 @@ body.the-datepicker-page
 		padding 0
 		a.the-datepicker__button
 			padding 0.1em
-			.the-datepicker__day-content
+			.the-datepicker__button-content
 				display block
-				padding 0.6em 0
+				&.the-datepicker__day-content
+					padding 0.6em 0
+				&.the-datepicker__year-cell-content
+					padding 0.755em 0
 
-	td.the-datepicker__day
+	td.the-datepicker__cell
 		a.the-datepicker__button
-			.the-datepicker__day-content
+			.the-datepicker__button-content
 				text-align center
 				border-radius 0.3em
 			&:hover
 				background-color transparent
-				.the-datepicker__day-content
+				.the-datepicker__button-content
 					background-color $highlight-background
 
-	td.the-datepicker__day--highlighted
+	td.the-datepicker__cell--highlighted
 		a.the-datepicker__button
-			.the-datepicker__day-content
+			.the-datepicker__button-content
 				background-color $highlight-background
 
 	td.the-datepicker__day--outside
 		a.the-datepicker__button
 			color $weak-color
 
-	td.the-datepicker__day--unavailable
+	td.the-datepicker__cell--unavailable
 		a.the-datepicker__button
 			color $unavailable-color
 			&:hover
-				.the-datepicker__day-content
+				.the-datepicker__button-content
 					background-color transparent
 
-	td.the-datepicker__day--selected, td.the-datepicker__day--selected.the-datepicker__day--highlighted
+	td.the-datepicker__cell--selected, td.the-datepicker__cell--selected.the-datepicker__cell--highlighted
 		a.the-datepicker__button
 			color white
-			.the-datepicker__day-content
+			.the-datepicker__button-content
 				background-color $base-color
 			&:hover
-				.the-datepicker__day-content
+				.the-datepicker__button-content
 					background-color $base-color
 
 	.the-datepicker__day--weekend, .the-datepicker__week-day--weekend, td.the-datepicker__day--today
@@ -255,3 +272,43 @@ body.the-datepicker-page
 
 .the-datepicker__fade-in-right
 	animation-name the-datepicker-fade-in-right
+
+@keyframes the-datepicker-fade-out-up
+	from
+		transform translate3d(0, 0, 0)
+
+	to
+		transform translate3d(0, -100%, 0)
+
+.the-datepicker__fade-out-up
+	animation-name the-datepicker-fade-out-up
+
+@keyframes the-datepicker-fade-out-down
+	from
+		transform translate3d(0, 0, 0)
+
+	to
+		transform translate3d(0, 100%, 0)
+
+.the-datepicker__fade-out-down
+	animation-name the-datepicker-fade-out-down
+
+@keyframes the-datepicker-fade-in-up
+	from
+		transform translate3d(0, -100%, 0)
+
+	to
+		transform translate3d(0, 0, 0)
+
+.the-datepicker__fade-in-up
+	animation-name the-datepicker-fade-in-up
+
+@keyframes the-datepicker-fade-in-down
+	from
+		transform translate3d(0, 100%, 0)
+
+	to
+		transform translate3d(0, 0, 0)
+
+.the-datepicker__fade-in-down
+	animation-name the-datepicker-fade-in-down

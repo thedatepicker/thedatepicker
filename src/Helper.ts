@@ -25,6 +25,12 @@ namespace TheDatepicker {
 		December = 11,
 	}
 
+	export enum Align {
+		Left = 1,
+		Right = 2,
+		Center = 3,
+	}
+
 	export enum KeyCode_ {
 		Enter = 13,
 		Space = 32,
@@ -260,23 +266,37 @@ namespace TheDatepicker {
 			Helper_.deprecatedMethods_.push(deprecatedMethod);
 		}
 
-		public static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, isRightMove: boolean) => void) {
-			let startPosition: number | null = null;
-			let minDistance: number | null = null;
+		public static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, moveDirection: MoveDirection_) => void) {
+			let startPosition: { x: number; y: number } | null = null;
+			let minDistance: { x: number; y: number };
 
 			Helper_.addEventListener_(element, ListenerType_.TouchStart, (event: TouchEvent): void => {
-				startPosition = event.touches[0].clientX;
-				minDistance = element.offsetWidth / 5;
+				startPosition = {
+					x: event.touches[0].clientX,
+					y: event.touches[0].clientY,
+				};
+				minDistance = {
+					x: element.offsetWidth / 5,
+					y: element.offsetHeight / 5,
+				};
 			}, true);
 
 			Helper_.addEventListener_(element, ListenerType_.TouchMove, (event:TouchEvent): void => {
-				if (startPosition === null) {
+				if (!startPosition) {
 					return;
 				}
 
-				const diff = event.touches[0].clientX - startPosition;
-				if (Math.abs(diff) > minDistance) {
-					listener(event, diff > 0);
+				const diffX = event.touches[0].clientX - startPosition.x;
+				const diffY = event.touches[0].clientY - startPosition.y;
+				let moveDirection: MoveDirection_ | null = null;
+				if (Math.abs(diffX) > minDistance.x) {
+					moveDirection = diffX > 0 ? MoveDirection_.Right : MoveDirection_.Left;
+				} else if (Math.abs(diffY) > minDistance.x) {
+					moveDirection = diffY > 0 ? MoveDirection_.Down : MoveDirection_.Up;
+				}
+
+				if (moveDirection) {
+					listener(event, moveDirection);
 					startPosition = null;
 				}
 			}, true);

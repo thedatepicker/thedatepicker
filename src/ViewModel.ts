@@ -1,10 +1,10 @@
 namespace TheDatepicker {
 
 	export enum MoveDirection_ {
-		Left = -1,
-		Up = -7,
-		Right = 1,
-		Down = 7,
+		Left = 1,
+		Up = 2,
+		Right = 3,
+		Down = 4,
 	}
 
 	interface OutsideDates {
@@ -12,12 +12,95 @@ namespace TheDatepicker {
 		append: Date[];
 	}
 
+	interface TableOfYearsSettings {
+		rowsCount: number,
+		columnsCount: number,
+	}
+
+	class YearSelectionState {
+
+		public readonly initialPage: number;
+
+		public highlightedYear: number | null = null;
+		public isHighlightedYearFocused = false;
+
+		constructor(
+			public readonly cellsCount: number,
+			public readonly lowestYear: number,
+			public readonly maxPage: number,
+			private page: number,
+		) {
+			this.initialPage = page;
+		}
+
+		public getPage(): number {
+			return this.page;
+		}
+
+		public canShiftPage(shift: number): boolean {
+			const newPage = this.page + shift;
+			return newPage >= 0 && newPage <= this.maxPage;
+		}
+
+		public shiftPage(shift: number): boolean {
+			if (!this.canShiftPage(shift)) {
+				return false;
+			}
+
+			this.page += shift;
+			return true;
+		}
+
+		public getFirstYear(): number {
+			return this.lowestYear + this.page * this.cellsCount;
+		}
+
+		public getLastYear(): number {
+			return this.lowestYear + this.page * this.cellsCount + this.cellsCount - 1;
+		}
+
+		public highlightYear(year: number, doFocus = true): boolean {
+			if (!this || year === this.highlightedYear) {
+				return false;
+			}
+
+			this.highlightedYear = year;
+			if (doFocus) {
+				this.isHighlightedYearFocused = true;
+			}
+
+			if (year < this.getFirstYear()) {
+				this.shiftPage(-1);
+			}
+			if (year > this.getLastYear()) {
+				this.shiftPage(1);
+			}
+
+			return true;
+		}
+
+		public cancelHighlight(): boolean {
+			if (!this.highlightedYear) {
+				return false;
+			}
+
+			this.highlightedYear = null;
+
+			return true;
+		}
+
+	}
+
 	export class ViewModel_ {
 
 		public selectedDate_: Date | null = null;
+		public yearSelectionState_: YearSelectionState | null = null;
+		public isYearSelectionToggleButtonFocused_ = false;
+		private tableOfYearsSettings_: TableOfYearsSettings | null = null;
 
 		private readonly template_: Template_;
 
+		private initialMonth_: Date | null = null;
 		private currentMonth_: Date | null = null;
 		private outsideDates_: OutsideDates | null = null;
 		private highlightedDay_: Day | null = null;
@@ -42,6 +125,13 @@ namespace TheDatepicker {
 				return;
 			}
 
+			if (!this.tableOfYearsSettings_) {
+				this.tableOfYearsSettings_ = {
+					rowsCount: this.options_.getTableOfYearsRowsCount(),
+					columnsCount: this.options_.getTableOfYearsColumnsCount(),
+				};
+			}
+
 			this.template_.render_(this);
 			this.datepicker_.updateInput_();
 		}
@@ -60,7 +150,12 @@ namespace TheDatepicker {
 
 			this.active_ = value;
 
-			if (this.options_.isHiddenOnBlur()) {
+			if (
+				(
+					(!value && !this.setYearSelectionActive_(false))
+					|| value
+				) && this.options_.isHiddenOnBlur()
+			) {
 				this.render_();
 			}
 
@@ -83,21 +178,21 @@ namespace TheDatepicker {
 
 		public getCurrentMonth_(): Date {
 			if (!this.currentMonth_) {
-				this.setCurrentMonth_(this.options_.getInitialMonth());
+				this.setCurrentMonth_(this.getInitialMonth_());
 			}
 
 			return this.currentMonth_;
 		}
 
-		public canGoBack_(): boolean {
-			const newMonth = new Date(this.getCurrentMonth_().getTime());
-			newMonth.setMonth(newMonth.getMonth() - 1);
-			return this.canGoToMonth_(newMonth);
-		}
+		public canGoDirection_(isForward: boolean): boolean {
+			const delta = isForward ? 1 : -1;
 
-		public canGoForward_(): boolean {
+			if (this.yearSelectionState_) {
+				return this.yearSelectionState_.canShiftPage(delta);
+			}
+
 			const newMonth = new Date(this.getCurrentMonth_().getTime());
-			newMonth.setMonth(newMonth.getMonth() + 1);
+			newMonth.setMonth(newMonth.getMonth() + delta);
 			return this.canGoToMonth_(newMonth);
 		}
 
@@ -109,15 +204,18 @@ namespace TheDatepicker {
 			return this.options_.isMonthInValidity(month);
 		}
 
-		public goBack_(event: Event): boolean {
-			const newMonth = new Date(this.getCurrentMonth_().getTime());
-			newMonth.setMonth(newMonth.getMonth() - 1);
-			return this.goToMonth_(event, newMonth);
-		}
+		public goDirection_(event: Event, isForward: boolean): boolean {
+			const delta = isForward ? 1 : -1;
 
-		public goForward_(event: Event): boolean {
+			if (this.yearSelectionState_) {
+				if (this.yearSelectionState_.shiftPage(delta)) {
+					this.render_();
+				}
+				return;
+			}
+
 			const newMonth = new Date(this.getCurrentMonth_().getTime());
-			newMonth.setMonth(newMonth.getMonth() + 1);
+			newMonth.setMonth(newMonth.getMonth() + delta);
 			return this.goToMonth_(event, newMonth);
 		}
 
@@ -134,7 +232,7 @@ namespace TheDatepicker {
 			}
 
 			this.setCurrentMonth_(month);
-			if (!doCancelHighlight || !this.cancelHighlight_(event)) {
+			if (!doCancelHighlight || !this.cancelDayHighlight_(event)) {
 				this.render_();
 			}
 
@@ -144,7 +242,8 @@ namespace TheDatepicker {
 		}
 
 		public reset_(event: Event | null): boolean {
-			const isMonthChanged = this.goToMonth_(event, this.options_.getInitialMonth());
+			this.initialMonth_ = null;
+			const isMonthChanged = this.goToMonth_(event, this.getInitialMonth_());
 			const isDaySelected = this.selectInitialDate_(event);
 
 			return isMonthChanged || isDaySelected;
@@ -194,6 +293,26 @@ namespace TheDatepicker {
 			this.triggerOnSelect_(event, day, previousDay);
 
 			return true;
+		}
+
+		public canSetYearSelectionActive_(value: boolean): boolean {
+			return !!this.yearSelectionState_ !== value
+				&& (
+					!value
+					|| this.options_.getMinDate_().getFullYear() !== this.options_.getMaxDate_().getFullYear()
+				);
+		}
+
+		public setYearSelectionActive_(value: boolean): boolean {
+			if (this.canSetYearSelectionActive_(value)) {
+				this.yearSelectionState_ = value
+					? this.createYearSelectionState_()
+					: null;
+				this.render_();
+				return true;
+			}
+
+			return false;
 		}
 
 		public selectNearestDate_(event: Event | null, date: Date): boolean {
@@ -271,11 +390,27 @@ namespace TheDatepicker {
 		}
 
 		public highlightSiblingDay_(event: Event, day: Day, direction: MoveDirection_): boolean {
+			let shift: number;
+			switch (direction) {
+				case MoveDirection_.Left:
+					shift = -1;
+					break;
+				case MoveDirection_.Up:
+					shift = -7;
+					break;
+				case MoveDirection_.Right:
+					shift = 1;
+					break;
+				case MoveDirection_.Down:
+					shift = 7;
+					break;
+			}
+
 			let newDay = day;
 			let maxLoops = 1000; // infinite loop prevention
 
 			do {
-				newDay = newDay.getSibling(direction);
+				newDay = newDay.getSibling(shift);
 				if (!newDay.isInValidity) {
 					break;
 				}
@@ -309,7 +444,7 @@ namespace TheDatepicker {
 			return true;
 		}
 
-		public cancelHighlight_(event: Event | null): boolean {
+		public cancelDayHighlight_(event: Event | null): boolean {
 			if (!this.highlightedDay_) {
 				return false;
 			}
@@ -324,6 +459,52 @@ namespace TheDatepicker {
 			this.render_();
 
 			this.triggerOnFocus_(event, null, previousDay);
+
+			return true;
+		}
+
+		public highlightYear_(year: number, doFocus = true): boolean {
+			if (this.yearSelectionState_ && this.yearSelectionState_.highlightYear(year, doFocus)) {
+				this.render_();
+				return true;
+			}
+
+			return false;
+		}
+
+		public highlightSiblingYear_(year: number, direction: MoveDirection_): boolean {
+			let shift: number;
+			switch (direction) {
+				case MoveDirection_.Left:
+					shift = -1;
+					break;
+				case MoveDirection_.Up:
+					shift = -this.tableOfYearsSettings_.columnsCount;
+					break;
+				case MoveDirection_.Right:
+					shift = 1;
+					break;
+				case MoveDirection_.Down:
+					shift = this.tableOfYearsSettings_.columnsCount;
+					break;
+			}
+
+			const newYear = year + shift;
+			if (
+				newYear < this.options_.getMinDate_().getFullYear()
+				|| newYear > this.options_.getMaxDate_().getFullYear()
+			) {
+				return;
+			}
+
+			return this.highlightYear_(newYear, true);
+		}
+
+		public cancelYearHighlight_(): boolean {
+			if (this.yearSelectionState_ && this.yearSelectionState_.cancelHighlight()) {
+				this.render_();
+				return true;
+			}
 
 			return true;
 		}
@@ -366,23 +547,130 @@ namespace TheDatepicker {
 			return weeks;
 		}
 
+		public getYearsRows_(): YearCellData_[][] {
+			if (!this.yearSelectionState_) {
+				return [];
+			}
+
+			const yearsData = [];
+			const minYear = this.options_.getMinDate_().getFullYear();
+			const maxYear = this.options_.getMaxDate_().getFullYear();
+			const currentYear = this.getCurrentMonth_().getFullYear();
+			const firstYear = this.yearSelectionState_.getFirstYear();
+			for (let year = firstYear; year <= firstYear + this.yearSelectionState_.cellsCount; year++) {
+				const yearCellData = new YearCellData_(year);
+				if (year > maxYear || year < minYear) {
+					yearCellData.isAvailable = false;
+				} else {
+					if (year === currentYear) {
+						yearCellData.isSelected = true;
+					}
+					if (year === this.yearSelectionState_.highlightedYear) {
+						yearCellData.isHighlighted = true;
+						if (this.yearSelectionState_.isHighlightedYearFocused) {
+							yearCellData.isFocused = true;
+							this.yearSelectionState_.isHighlightedYearFocused = false;
+						}
+					}
+				}
+				yearsData.push(yearCellData);
+			}
+
+			const yearsRows = [];
+			for (let i = 0; i < yearsData.length; i += this.tableOfYearsSettings_.columnsCount) {
+				yearsRows.push(yearsData.slice(i, i + this.tableOfYearsSettings_.columnsCount));
+			}
+
+			return yearsRows;
+		}
+
+		private createYearSelectionState_(): YearSelectionState {
+			let align = this.options_.getTableOfYearsAlign();
+			const minDate = this.options_.getMinDate();
+			const maxDate = this.options_.getMaxDate();
+			const initialYear = this.getInitialMonth_().getFullYear();
+			if (
+				(align === Align.Left && minDate === null)
+				|| (align === Align.Right && maxDate === null)
+			) {
+				align = null;
+			}
+			if (!align) {
+				if (minDate && maxDate) {
+					const lowDiff = initialYear - minDate.getFullYear();
+					const highDiff = maxDate.getFullYear() - initialYear;
+					align = lowDiff > highDiff ? Align.Right : Align.Left;
+				} else if (minDate) {
+					align = Align.Left;
+				} else if (maxDate) {
+					align = Align.Right;
+				} else {
+					align = Align.Center;
+				}
+			}
+
+			let lowestYear: number;
+			const cellsCount = this.tableOfYearsSettings_.rowsCount * this.tableOfYearsSettings_.columnsCount;
+			const minYear = this.options_.getMinDate_().getFullYear();
+			const maxYear = this.options_.getMaxDate_().getFullYear();
+			switch (align) {
+				case Align.Left:
+					lowestYear = minYear;
+					break;
+				case Align.Right:
+					lowestYear = minYear - (cellsCount - ((maxYear - minYear) % cellsCount) - 1);
+					break;
+				case Align.Center:
+					lowestYear = minYear - (cellsCount - ((initialYear + Math.floor(cellsCount / 2) - minYear) % cellsCount) - 1);
+					break;
+				default:
+					throw new Error('Invalid align: ' + align);
+			}
+
+			const currentYear = this.getCurrentMonth_().getFullYear();
+			const page = Math.floor((currentYear - lowestYear) / cellsCount);
+
+			return new YearSelectionState(
+				cellsCount,
+				lowestYear,
+				Math.floor((maxYear - lowestYear) / cellsCount),
+				page
+			);
+		}
+
 		public triggerKeyPress_(event: KeyboardEvent): void {
 			if (Helper_.inArray_([KeyCode_.Left, KeyCode_.Up, KeyCode_.Right, KeyCode_.Down], event.keyCode)) {
 				Helper_.preventDefault_(event);
+				const moveDirection = this.translateKeyCodeToMoveDirection_(event.keyCode);
 
-				if (this.highlightedDay_) {
-					this.highlightSiblingDay_(event, this.highlightedDay_, this.translateKeyCodeToMoveDirection_(event.keyCode));
-				} else if (
-					this.selectedDate_
-					&& this.selectedDate_.getFullYear() === this.getCurrentMonth_().getFullYear()
-					&& this.selectedDate_.getMonth() === this.getCurrentMonth_().getMonth()
-				) {
-					this.highlightSiblingDay_(event, this.createDay_(this.selectedDate_), this.translateKeyCodeToMoveDirection_(event.keyCode));
+				if (this.yearSelectionState_) {
+					if (this.yearSelectionState_.highlightedYear) {
+						this.highlightSiblingYear_(this.yearSelectionState_.highlightedYear, moveDirection);
+					} else if (this.yearSelectionState_.getPage() === this.yearSelectionState_.initialPage) {
+						this.highlightSiblingYear_(this.getCurrentMonth_().getFullYear(), moveDirection);
+					} else {
+						this.highlightYear_(this.yearSelectionState_.getPage() === 0 ? this.yearSelectionState_.lowestYear : this.yearSelectionState_.getFirstYear());
+					}
 				} else {
-					this.highlightFirstAvailableDay_(event);
+					if (this.highlightedDay_) {
+						this.highlightSiblingDay_(event, this.highlightedDay_, moveDirection);
+					} else if (
+						this.selectedDate_
+						&& this.selectedDate_.getFullYear() === this.getCurrentMonth_().getFullYear()
+						&& this.selectedDate_.getMonth() === this.getCurrentMonth_().getMonth()
+					) {
+						this.highlightSiblingDay_(event, this.createDay_(this.selectedDate_), moveDirection);
+					} else {
+						this.highlightFirstAvailableDay_(event);
+					}
 				}
 			} else if (event.keyCode === KeyCode_.Esc && this.options_.isClosedOnEscPress()) {
-				this.datepicker_.close(event);
+				if (this.yearSelectionState_) {
+					this.isYearSelectionToggleButtonFocused_ = true;
+					this.setYearSelectionActive_(false);
+				} else {
+					this.datepicker_.close(event);
+				}
 			}
 		}
 
@@ -534,6 +822,13 @@ namespace TheDatepicker {
 			};
 
 			return this.outsideDates_;
+		}
+
+		private getInitialMonth_(): Date {
+			if (!this.initialMonth_) {
+				this.initialMonth_ = this.options_.getInitialMonth();
+			}
+			return this.initialMonth_;
 		}
 
 		private translateKeyCodeToMoveDirection_(key: KeyCode_): MoveDirection_ {

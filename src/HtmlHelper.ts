@@ -40,10 +40,12 @@ namespace TheDatepicker {
 			return document.createElement('span');
 		}
 
-		public static createTable_(className: string, header: HTMLTableSectionElement, body: HTMLTableSectionElement, options: Options): HTMLTableElement {
+		public static createTable_(className: string, header: HTMLTableSectionElement | null, body: HTMLTableSectionElement, options: Options): HTMLTableElement {
 			const table = document.createElement('table');
 			this.addClass_(table, className, options);
-			table.appendChild(header);
+			if (header) {
+				table.appendChild(header);
+			}
 			table.appendChild(body);
 
 			return table;

@@ -8,6 +8,8 @@ namespace TheDatepicker {
 		Deselect,
 		Month,
 		Year,
+		GoBackTableOfYears,
+		GoForwardTableOfYears,
 	}
 
 	export class Translator {
@@ -70,6 +72,8 @@ namespace TheDatepicker {
 			[TitleName.Deselect]: 'Deselect date',
 			[TitleName.Month]: 'Month selection',
 			[TitleName.Year]: 'Year selection',
+			[TitleName.GoBackTableOfYears]: 'Show earlier years',
+			[TitleName.GoForwardTableOfYears]: 'Show later years',
 		};
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
