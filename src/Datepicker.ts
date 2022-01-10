@@ -1,6 +1,6 @@
 namespace TheDatepicker {
 
-	interface HTMLDatepickerInputElement extends HTMLElement {
+	interface HTMLDatepickerInputElement {
 
 		datepicker?: Datepicker;
 
@@ -13,7 +13,7 @@ namespace TheDatepicker {
 
 	}
 
-	type HTMLDatepickerElement = HTMLDatepickerInputElement | HTMLDatepickerContainerElement;
+	type HTMLDatepickerElement = (HTMLDatepickerInputElement&HTMLElement) | HTMLDatepickerContainerElement;
 
 	interface DocumentInterface extends Document {
 
@@ -45,11 +45,12 @@ namespace TheDatepicker {
 
 		public readonly options: Options;
 
-		public input: HTMLDatepickerInputElement | null;
+		public input: (HTMLDatepickerInputElement&HTMLElement) | null;
 		public readonly container: HTMLDatepickerContainerElement;
 
 		private readonly isContainerExternal_: boolean;
-		private readonly isInputTextBox_: boolean;
+		private readonly inputClickable_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
+		private readonly inputText_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly viewModel_: ViewModel_;
 		private readonly dateConverter_: DateConverter_;
 
@@ -65,7 +66,7 @@ namespace TheDatepicker {
 		private static hasClickedViewModel_ = false;
 
 		public constructor(
-			input: HTMLDatepickerInputElement | null,
+			input: (HTMLDatepickerInputElement&HTMLElement) | null,
 			container: HTMLDatepickerContainerElement | null = null,
 			options: Options | null = null
 		) {
@@ -103,14 +104,14 @@ namespace TheDatepicker {
 					throw new Error(duplicateError + 'input.');
 				}
 				input.datepicker = this;
-			}
 
-			this.isInputTextBox_ = input
-				&& (typeof HTMLInputElement !== 'undefined' ? input instanceof HTMLInputElement : true)
-				&& (input as HTMLInputElement).type === 'text';
-
-			if (this.isInputTextBox_) {
-				(input as HTMLInputElement).autocomplete = 'off';
+				if (input && typeof HTMLInputElement !== 'undefined' && input instanceof HTMLInputElement) {
+					this.inputClickable_ = input;
+					if (input.type === 'text') {
+						this.inputText_ = input;
+						input.autocomplete = 'off';
+					}
+				}
 			}
 
 			container.datepicker = this;
@@ -155,15 +156,15 @@ namespace TheDatepicker {
 						this.updateInput_();
 					}
 
-					if (this.input && this.options.isHiddenOnBlur()) {
-						if (this.input === Datepicker.document_.activeElement) {
+					if (this.inputClickable_ && this.options.isHiddenOnBlur()) {
+						if (this.inputClickable_ === Datepicker.document_.activeElement) {
 							this.initializationPhase_ = InitializationPhase.Ready;
 							this.render();
 							this.open();
 							return;
 						}
 
-						this.inputListenerRemover_ = Helper_.addEventListener_(this.input, ListenerType_.Focus, (event: FocusEvent): void => {
+						this.inputListenerRemover_ = Helper_.addEventListener_(this.inputClickable_, ListenerType_.Focus, (event: FocusEvent): void => {
 							this.open(event);
 						});
 
@@ -196,8 +197,8 @@ namespace TheDatepicker {
 				return false;
 			}
 
-			if (this.input) {
-				this.input.focus();
+			if (this.inputClickable_) {
+				this.inputClickable_.focus();
 			}
 
 			return true;
@@ -216,8 +217,8 @@ namespace TheDatepicker {
 				return false;
 			}
 
-			if (this.input) {
-				this.input.blur();
+			if (this.inputClickable_) {
+				this.inputClickable_.blur();
 			}
 
 			return true;
@@ -283,10 +284,10 @@ namespace TheDatepicker {
 		}
 
 		public parseRawInput(): Date | null {
-			return this.isInputTextBox_
+			return this.inputText_
 				? this.dateConverter_.parseDate_(
 					this.options.getInputFormat(),
-					(this.input as HTMLInputElement).value,
+					this.inputText_.value,
 					this.options.getMinDate_(),
 					this.options.getMaxDate_()
 				)
@@ -298,7 +299,7 @@ namespace TheDatepicker {
 		}
 
 		public canType_(char: string): boolean {
-			if (!this.isInputTextBox_ || this.options.isAllowedInputAnyChar()) {
+			if (!this.inputText_ || this.options.isAllowedInputAnyChar()) {
 				return true;
 			}
 
@@ -306,7 +307,7 @@ namespace TheDatepicker {
 		}
 
 		public readInput_(event: Event | null = null): boolean {
-			if (!this.isInputTextBox_) {
+			if (!this.inputText_) {
 				return false;
 			}
 
@@ -326,14 +327,14 @@ namespace TheDatepicker {
 		}
 
 		public updateInput_(): void {
-			if (!this.isInputTextBox_ || this.input === Datepicker.document_.activeElement) {
+			if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
 				return;
 			}
 
-			(this.input as HTMLInputElement).value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
+			this.inputText_.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
 
 			if (this.deselectElement_) {
-				const isVisible = this.options.isDeselectButtonShown() && (this.input as HTMLInputElement).value !== '';
+				const isVisible = this.options.isDeselectButtonShown() && this.inputText_.value !== '';
 				this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
 			}
 		}
@@ -381,7 +382,7 @@ namespace TheDatepicker {
 		}
 
 		private createDeselectElement_(): HTMLElement | null {
-			if (!this.isInputTextBox_ || !this.options.isDeselectButtonShown() || this.deselectElement_) {
+			if (!this.inputText_ || !this.options.isDeselectButtonShown() || this.deselectElement_) {
 				return null;
 			}
 
@@ -400,12 +401,12 @@ namespace TheDatepicker {
 			HtmlHelper_.addClass_(deselectElement, 'deselect', this.options);
 			deselectElement.appendChild(deselectButton);
 
-			this.input.parentNode.insertBefore(deselectElement, this.input.nextSibling);
+			this.inputText_.parentNode.insertBefore(deselectElement, this.inputText_.nextSibling);
 			this.deselectElement_ = deselectElement;
 		}
 
 		private preselectFromInput_(): void {
-			if (this.isInputTextBox_) {
+			if (this.inputText_) {
 				try {
 					const date = this.parseRawInput();
 					if (date) {
@@ -462,22 +463,25 @@ namespace TheDatepicker {
 				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectElement_, ListenerType_.FocusIn, hitIfActive));
 			}
 
-			if (this.input) {
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.MouseDown, hit));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.Focus, hit));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.Blur, (): void => {
+			if (this.inputClickable_) {
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.inputClickable_, ListenerType_.MouseDown, hit));
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.inputClickable_, ListenerType_.Focus, hit));
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.inputClickable_, ListenerType_.Blur, (): void => {
 					this.updateInput_();
 				}));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
+			}
+
+			if (this.inputText_) {
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.inputText_, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
 					Helper_.stopPropagation_(event);
 					if (event.keyCode === KeyCode_.Esc && this.options.isClosedOnEscPress()) {
 						this.close(event);
 					}
 				}));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyUp, (event: KeyboardEvent): void => {
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.inputText_, ListenerType_.KeyUp, (event: KeyboardEvent): void => {
 					this.readInput_(event);
 				}));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.input, ListenerType_.KeyPress, (event: KeyboardEvent): void => {
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.inputText_, ListenerType_.KeyPress, (event: KeyboardEvent): void => {
 					const charCode = event.charCode || event.keyCode;
 					if (charCode && !this.canType_(String.fromCharCode(charCode))) {
 						Helper_.preventDefault_(event);
@@ -519,8 +523,8 @@ namespace TheDatepicker {
 
 			this.updateContainer_();
 
-			if (!this.options.isKeyboardOnMobile() && this.isInputTextBox_) {
-				(this.input as HTMLInputElement).readOnly = Helper_.isMobile_();
+			if (!this.options.isKeyboardOnMobile() && this.inputText_) {
+				this.inputText_.readOnly = Helper_.isMobile_();
 			}
 		}
 

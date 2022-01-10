@@ -44,8 +44,20 @@
 				font-size: 0.75em;
 				color: #999;
 			}
-			#form-wrapper, #form-wrapper input, #form-wrapper select {
+			#form-wrapper,
+			#form-wrapper input,
+			#form-wrapper select,
+			#my-container input,
+			#my-container select,
+			#button-wrapper input,
+			#button-wrapper select,
+			#paragraph-wrapper input,
+			#paragraph-wrapper select
+			{
 				font-family: "Arial", sans-serif !important;
+			}
+			#my-paragraph {
+				display: inline;
 			}
 			#footer {
 				float: left;
@@ -147,6 +159,9 @@
 			<div id="button-wrapper" class="hidden">
 				<input type="button" id="my-button" value="Calendar">
 			</div>
+			<div id="paragraph-wrapper" class="hidden">
+				<p id="my-paragraph">Paragraph...</p>
+			</div>
 			<div id="my-container" class="hidden"></div>
 
 			<div id="footer">
@@ -172,8 +187,11 @@
 				<li>
 					var container = document.getElementById('my-container');
 				</li>
-				<li class="space">
+				<li>
 					var button = document.getElementById('my-button');
+				</li>
+				<li class="space">
+					var paragraph = document.getElementById('my-paragraph');
 				</li>
 				<li>
 					<span id="datepicker0Comment" class="hidden">// </span>var datepicker = <span id="datepicker0Text">new TheDatepicker.Datepicker(input);</span><input type="button" id="datepicker0Button" value="new TheDatepicker.Datepicker(input);" class="hidden">
@@ -186,6 +204,9 @@
 				</li>
 				<li>
 					<span id="datepicker3Comment">// </span>var datepicker = <span id="datepicker3Text">new TheDatepicker.Datepicker(button);</span><input type="button" id="datepicker3Button" value="new TheDatepicker.Datepicker(button);" class="hidden">
+				</li>
+				<li>
+					<span id="datepicker4Comment">// </span>var datepicker = <span id="datepicker4Text">new TheDatepicker.Datepicker(paragraph);</span><input type="button" id="datepicker4Button" value="new TheDatepicker.Datepicker(paragraph);" class="hidden">
 				</li>
 				<li class="space">
 					// var datepicker = new TheDatepicker.Datepicker(input, null, new TheDatepicker.Options());
@@ -686,9 +707,11 @@ return header;
 		(function () {
 			var input = document.getElementById('my-input');
 			var button = document.getElementById('my-button');
+			var paragraph = document.getElementById('my-paragraph');
 			var container = document.getElementById('my-container');
 			var formWrapper = document.getElementById('form-wrapper');
 			var buttonWrapper = document.getElementById('button-wrapper');
+			var paragraphWrapper = document.getElementById('paragraph-wrapper');
 
 			datepicker = new TheDatepicker.Datepicker(input);
 
@@ -775,7 +798,7 @@ return header;
 			};
 
 			var datepickerInputs = [];
-			var datepickerInputsCount = 4;
+			var datepickerInputsCount = 5;
 			for (var i = 0; i < datepickerInputsCount; i++) {
 				datepickerInputs.push({
 					text: document.getElementById('datepicker' + i + 'Text'),
@@ -796,6 +819,7 @@ return header;
 				container.className = 'hidden';
 				formWrapper.className = '';
 				buttonWrapper.className = 'hidden';
+				paragraphWrapper.className = 'hidden';
 				datepicker.render();
 			};
 			datepickerInputs[1].button.onclick = function () {
@@ -804,6 +828,7 @@ return header;
 				container.className = '';
 				formWrapper.className = '';
 				buttonWrapper.className = 'hidden';
+				paragraphWrapper.className = 'hidden';
 				datepicker.render();
 			};
 			datepickerInputs[2].button.onclick = function () {
@@ -812,6 +837,7 @@ return header;
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = 'hidden';
+				paragraphWrapper.className = 'hidden';
 				datepicker.render();
 			};
 			datepickerInputs[3].button.onclick = function () {
@@ -820,6 +846,16 @@ return header;
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = '';
+				paragraphWrapper.className = 'hidden';
+				datepicker.render();
+			};
+			datepickerInputs[4].button.onclick = function () {
+				datepicker = new TheDatepicker.Datepicker(paragraph, null, datepicker.options);
+				commentCreation(4);
+				container.className = '';
+				formWrapper.className = 'hidden';
+				buttonWrapper.className = 'hidden';
+				paragraphWrapper.className = '';
 				datepicker.render();
 			};
 
