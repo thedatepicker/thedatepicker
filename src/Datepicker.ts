@@ -422,8 +422,6 @@ namespace TheDatepicker {
 
 		private initListeners_(): void {
 			if (!Datepicker.areGlobalListenersInitialized_) {
-				let activeViewModel: ViewModel_ | null = null;
-
 				const checkMiss = (event: Event): void => {
 					if (Datepicker.hasClickedViewModel_) {
 						Datepicker.hasClickedViewModel_ = false;

@@ -704,7 +704,6 @@ var TheDatepicker;
         Datepicker.prototype.initListeners_ = function () {
             var _this = this;
             if (!Datepicker.areGlobalListenersInitialized_) {
-                var activeViewModel = null;
                 var checkMiss = function (event) {
                     if (Datepicker.hasClickedViewModel_) {
                         Datepicker.hasClickedViewModel_ = false;
