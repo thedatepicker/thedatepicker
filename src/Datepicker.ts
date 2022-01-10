@@ -58,6 +58,7 @@ namespace TheDatepicker {
 		private inputListenerRemover_: (() => void) | null = null;
 		private listenerRemovers_: (() => void)[] = [];
 		private deselectElement_: HTMLSpanElement | null = null;
+		private deselectButton_: HTMLAnchorElement | null = null;
 
 		private static document_: DocumentInterface;
 		private static readyListeners_: DatepickerReadyListener[] = [];
@@ -403,6 +404,7 @@ namespace TheDatepicker {
 
 			this.inputText_.parentNode.insertBefore(deselectElement, this.inputText_.nextSibling);
 			this.deselectElement_ = deselectElement;
+			this.deselectButton_ = deselectButton;
 		}
 
 		private preselectFromInput_(): void {
@@ -451,14 +453,14 @@ namespace TheDatepicker {
 			this.listenerRemovers_.push(Helper_.addEventListener_(this.container, ListenerType_.MouseDown, hit));
 			this.listenerRemovers_.push(Helper_.addEventListener_(this.container, ListenerType_.FocusIn, hit));
 
-			if (this.deselectElement_) {
+			if (this.deselectButton_) {
 				const hitIfActive = (event: Event) => {
 					if (this.viewModel_.isActive_()) {
 						hit(event);
 					}
 				};
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectElement_, ListenerType_.MouseDown, hitIfActive));
-				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectElement_, ListenerType_.FocusIn, hitIfActive));
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectButton_, ListenerType_.MouseDown, hitIfActive));
+				this.listenerRemovers_.push(Helper_.addEventListener_(this.deselectButton_, ListenerType_.Focus, hitIfActive));
 			}
 
 			if (this.inputClickable_) {

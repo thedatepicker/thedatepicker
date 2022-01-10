@@ -410,6 +410,7 @@ var TheDatepicker;
             this.inputListenerRemover_ = null;
             this.listenerRemovers_ = [];
             this.deselectElement_ = null;
+            this.deselectButton_ = null;
             if (input && !TheDatepicker.Helper_.isElement_(input)) {
                 throw new Error('Input was expected to be null or an HTMLElement.');
             }
@@ -685,6 +686,7 @@ var TheDatepicker;
             deselectElement.appendChild(deselectButton);
             this.inputText_.parentNode.insertBefore(deselectElement, this.inputText_.nextSibling);
             this.deselectElement_ = deselectElement;
+            this.deselectButton_ = deselectButton;
         };
         Datepicker.prototype.preselectFromInput_ = function () {
             if (this.inputText_) {
@@ -728,14 +730,14 @@ var TheDatepicker;
             };
             this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.container, TheDatepicker.ListenerType_.MouseDown, hit));
             this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.container, TheDatepicker.ListenerType_.FocusIn, hit));
-            if (this.deselectElement_) {
+            if (this.deselectButton_) {
                 var hitIfActive = function (event) {
                     if (_this.viewModel_.isActive_()) {
                         hit(event);
                     }
                 };
-                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectElement_, TheDatepicker.ListenerType_.MouseDown, hitIfActive));
-                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectElement_, TheDatepicker.ListenerType_.FocusIn, hitIfActive));
+                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectButton_, TheDatepicker.ListenerType_.MouseDown, hitIfActive));
+                this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.deselectButton_, TheDatepicker.ListenerType_.Focus, hitIfActive));
             }
             if (this.inputClickable_) {
                 this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.inputClickable_, TheDatepicker.ListenerType_.MouseDown, hit));
