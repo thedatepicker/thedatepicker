@@ -112,14 +112,14 @@ body.the-datepicker-page {
   width: auto;
 }
 .the-datepicker__container .the-datepicker__main a.the-datepicker__year-cell-button {
-  width: 3.82em;
+  width: 3.825em;
 }
 .the-datepicker__container.the-datepicker__container--responsive .the-datepicker__main a.the-datepicker__year-cell-button {
   width: auto;
 }
 @media (min-width: 37.5em) {
   .the-datepicker__container.the-datepicker__container--responsive .the-datepicker__main a.the-datepicker__year-cell-button {
-    width: 3.82em;
+    width: 3.825em;
   }
 }
 .the-datepicker__main .the-datepicker__title {
