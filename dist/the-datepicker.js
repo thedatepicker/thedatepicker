@@ -3646,6 +3646,7 @@ var TheDatepicker;
             for (var i = 0; i < days.length; i += 7) {
                 weeks.push(days.slice(i, i + 7));
             }
+            this.isHighlightedDayFocused_ = false;
             return weeks;
         };
         ViewModel_.prototype.getYearsRows_ = function () {
@@ -3670,7 +3671,6 @@ var TheDatepicker;
                         yearCellData.isHighlighted = true;
                         if (this.yearSelectionState_.isHighlightedYearFocused) {
                             yearCellData.isFocused = true;
-                            this.yearSelectionState_.isHighlightedYearFocused = false;
                         }
                     }
                 }
@@ -3680,6 +3680,7 @@ var TheDatepicker;
             for (var i = 0; i < yearsData.length; i += this.tableOfYearsSettings_.columnsCount) {
                 yearsRows.push(yearsData.slice(i, i + this.tableOfYearsSettings_.columnsCount));
             }
+            this.yearSelectionState_.isHighlightedYearFocused;
             return yearsRows;
         };
         ViewModel_.prototype.createYearSelectionState_ = function () {
@@ -3804,7 +3805,6 @@ var TheDatepicker;
                     day.isHighlighted = true;
                     if (this.isHighlightedDayFocused_) {
                         day.isFocused = true;
-                        this.isHighlightedDayFocused_ = false;
                     }
                 }
             }

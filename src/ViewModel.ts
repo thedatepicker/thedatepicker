@@ -544,6 +544,8 @@ namespace TheDatepicker {
 				weeks.push(days.slice(i, i + 7));
 			}
 
+			this.isHighlightedDayFocused_ = false;
+
 			return weeks;
 		}
 
@@ -569,7 +571,6 @@ namespace TheDatepicker {
 						yearCellData.isHighlighted = true;
 						if (this.yearSelectionState_.isHighlightedYearFocused) {
 							yearCellData.isFocused = true;
-							this.yearSelectionState_.isHighlightedYearFocused = false;
 						}
 					}
 				}
@@ -580,6 +581,8 @@ namespace TheDatepicker {
 			for (let i = 0; i < yearsData.length; i += this.tableOfYearsSettings_.columnsCount) {
 				yearsRows.push(yearsData.slice(i, i + this.tableOfYearsSettings_.columnsCount));
 			}
+
+			this.yearSelectionState_.isHighlightedYearFocused
 
 			return yearsRows;
 		}
@@ -711,7 +714,6 @@ namespace TheDatepicker {
 					day.isHighlighted = true;
 					if (this.isHighlightedDayFocused_) {
 						day.isFocused = true;
-						this.isHighlightedDayFocused_ = false;
 					}
 				}
 			}
