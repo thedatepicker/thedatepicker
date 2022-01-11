@@ -621,7 +621,8 @@ namespace TheDatepicker {
 					lowestYear = minYear - (cellsCount - ((maxYear - minYear) % cellsCount) - 1);
 					break;
 				case Align.Center:
-					lowestYear = minYear - (cellsCount - ((initialYear + Math.floor(cellsCount / 2) - minYear) % cellsCount) - 1);
+					const shift = Math.floor(this.tableOfYearsSettings_.rowsCount / 2) * this.tableOfYearsSettings_.columnsCount + Math.floor(this.tableOfYearsSettings_.columnsCount / 2);
+					lowestYear = minYear - (cellsCount - ((initialYear + shift - minYear) % cellsCount) - 1);
 					break;
 				default:
 					throw new Error('Invalid align: ' + align);
