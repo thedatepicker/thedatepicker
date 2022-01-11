@@ -247,6 +247,10 @@ namespace TheDatepicker {
 			delete this.container.datepicker;
 
 			if (this.input) {
+				if (this.inputText_) {
+					this.inputText_.autocomplete = '';
+					this.inputText_.readOnly = false;
+				}
 				delete this.input.datepicker;
 				this.removeInitialInputListener_();
 				this.input = null;
