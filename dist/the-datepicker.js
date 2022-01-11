@@ -610,26 +610,24 @@ var TheDatepicker;
             }
             try {
                 var date = this.parseRawInput();
-                return date
-                    ? this.viewModel_.selectNearestDate_(event, date)
-                    : this.viewModel_.cancelSelection_(event);
+                if (date ? this.viewModel_.selectNearestDate_(event, date) : this.viewModel_.cancelSelection_(event)) {
+                    this.updateDeselectElement_();
+                    return true;
+                }
             }
             catch (error) {
                 if (!(error instanceof TheDatepicker.CannotParseDateException)) {
                     throw error;
                 }
-                return false;
             }
+            return false;
         };
         Datepicker.prototype.updateInput_ = function () {
             if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
                 return;
             }
             this.inputText_.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
-            if (this.deselectElement_) {
-                var isVisible = this.options.isDeselectButtonShown() && this.inputText_.value !== '';
-                this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
-            }
+            this.updateDeselectElement_();
         };
         Datepicker.onDatepickerReady = function (element, callback) {
             if (callback === void 0) { callback = null; }
@@ -687,6 +685,13 @@ var TheDatepicker;
             this.inputText_.parentNode.insertBefore(deselectElement, this.inputText_.nextSibling);
             this.deselectElement_ = deselectElement;
             this.deselectButton_ = deselectButton;
+        };
+        Datepicker.prototype.updateDeselectElement_ = function () {
+            if (!this.deselectElement_) {
+                return;
+            }
+            var isVisible = this.options.isDeselectButtonShown() && this.viewModel_.selectedDate_;
+            this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
         };
         Datepicker.prototype.preselectFromInput_ = function () {
             if (this.inputText_) {

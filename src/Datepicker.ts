@@ -314,17 +314,18 @@ namespace TheDatepicker {
 
 			try {
 				const date = this.parseRawInput();
-				return date
-					? this.viewModel_.selectNearestDate_(event, date)
-					: this.viewModel_.cancelSelection_(event);
+				if (date ? this.viewModel_.selectNearestDate_(event, date) : this.viewModel_.cancelSelection_(event)) {
+					this.updateDeselectElement_();
+					return true;
+				}
 
 			} catch (error) {
 				if (!(error instanceof CannotParseDateException)) {
 					throw error;
 				}
-
-				return false;
 			}
+
+			return false;
 		}
 
 		public updateInput_(): void {
@@ -334,10 +335,7 @@ namespace TheDatepicker {
 
 			this.inputText_.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
 
-			if (this.deselectElement_) {
-				const isVisible = this.options.isDeselectButtonShown() && this.inputText_.value !== '';
-				this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
-			}
+			this.updateDeselectElement_();
 		}
 
 		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<TheDatepicker.Datepicker> | null {
@@ -405,6 +403,15 @@ namespace TheDatepicker {
 			this.inputText_.parentNode.insertBefore(deselectElement, this.inputText_.nextSibling);
 			this.deselectElement_ = deselectElement;
 			this.deselectButton_ = deselectButton;
+		}
+
+		private updateDeselectElement_(): void {
+			if (!this.deselectElement_) {
+				return;
+			}
+
+			const isVisible = this.options.isDeselectButtonShown() && this.viewModel_.selectedDate_;
+			this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
 		}
 
 		private preselectFromInput_(): void {
