@@ -530,8 +530,8 @@ namespace TheDatepicker {
 
 			this.updateContainer_();
 
-			if (!this.options.isKeyboardOnMobile() && this.inputText_) {
-				this.inputText_.readOnly = Helper_.isMobile_();
+			if (this.inputText_) {
+				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && Helper_.isMobile_();
 			}
 		}
 

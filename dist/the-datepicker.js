@@ -797,8 +797,8 @@ var TheDatepicker;
                 return;
             }
             this.updateContainer_();
-            if (!this.options.isKeyboardOnMobile() && this.inputText_) {
-                this.inputText_.readOnly = TheDatepicker.Helper_.isMobile_();
+            if (this.inputText_) {
+                this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && TheDatepicker.Helper_.isMobile_();
             }
         };
         Datepicker.prototype.updateContainer_ = function () {
