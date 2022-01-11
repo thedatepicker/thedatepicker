@@ -70,6 +70,9 @@ body.the-datepicker-page {
   overflow-x: hidden;
   overflow-y: hidden;
 }
+.the-datepicker__main .the-datepicker__body.the-datepicker__body--swipeable {
+  touch-action: none;
+}
 .the-datepicker__main th.the-datepicker__week-day {
   padding: 0.5em 0;
   text-align: center;

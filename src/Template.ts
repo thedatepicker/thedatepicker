@@ -143,6 +143,7 @@ namespace TheDatepicker {
 			body.appendChild(tables);
 
 			if (this.options_.isMonthChangeOnSwipeEnabled() || this.options_.isTableOfYearsOnSwipeDownEnabled()) {
+				HtmlHelper_.addClass_(body, 'body--swipeable', this.options_);
 				Helper_.addSwipeListener_(body, (event: TouchEvent, moveDirection: MoveDirection_): void => {
 					let isForward = false;
 					let change: (() => void) | null = null;

@@ -2349,6 +2349,7 @@ var TheDatepicker;
             var tables = TheDatepicker.HtmlHelper_.createDiv_('tables', this.options_);
             body.appendChild(tables);
             if (this.options_.isMonthChangeOnSwipeEnabled() || this.options_.isTableOfYearsOnSwipeDownEnabled()) {
+                TheDatepicker.HtmlHelper_.addClass_(body, 'body--swipeable', this.options_);
                 TheDatepicker.Helper_.addSwipeListener_(body, function (event, moveDirection) {
                     var isForward = false;
                     var change = null;
