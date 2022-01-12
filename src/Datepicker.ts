@@ -52,7 +52,6 @@ namespace TheDatepicker {
 		private readonly inputClickable_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly inputText_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly viewModel_: ViewModel_;
-		private readonly dateConverter_: DateConverter_;
 
 		private initializationPhase_ = InitializationPhase.Untouched;
 		private inputListenerRemover_: (() => void) | null = null;
@@ -120,8 +119,7 @@ namespace TheDatepicker {
 			this.input = input;
 			this.container = container;
 
-			this.dateConverter_ = new DateConverter_(this.options);
-			this.viewModel_ = new ViewModel_(this.options, this, this.dateConverter_);
+			this.viewModel_ = new ViewModel_(this.options, this);
 
 			this.triggerReady_(input);
 			this.triggerReady_(container);
@@ -277,7 +275,7 @@ namespace TheDatepicker {
 		}
 
 		public getSelectedDateFormatted(): string | null {
-			return this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_);
+			return DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options);
 		}
 
 		public getCurrentMonth(): Date {
@@ -290,12 +288,7 @@ namespace TheDatepicker {
 
 		public parseRawInput(): Date | null {
 			return this.inputText_
-				? this.dateConverter_.parseDate_(
-					this.options.getInputFormat(),
-					this.inputText_.value,
-					this.options.getMinDate_(),
-					this.options.getMaxDate_()
-				)
+				? DateConverter_.parseDate_(this.inputText_.value, this.options)
 				: null;
 		}
 
@@ -308,7 +301,7 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			return this.dateConverter_.isValidChar_(this.options.getInputFormat(), char);
+			return DateConverter_.isValidChar_(char, this.options);
 		}
 
 		public readInput_(event: Event | null = null): boolean {
@@ -337,7 +330,7 @@ namespace TheDatepicker {
 				return;
 			}
 
-			this.inputText_.value = this.dateConverter_.formatDate_(this.options.getInputFormat(), this.viewModel_.selectedDate_) || '';
+			this.inputText_.value = DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
 
 			this.updateDeselectElement_();
 		}

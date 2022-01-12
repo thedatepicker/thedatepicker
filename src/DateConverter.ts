@@ -36,16 +36,14 @@ namespace TheDatepicker {
 
 	export class DateConverter_ {
 
-		private readonly escapeChar_ = '\\';
+		private static readonly escapeChar_ = '\\';
 
-		public constructor(private readonly options_: Options) {
-		}
-
-		public formatDate_(format: string, date: Date | null): string | null {
+		public static formatDate_(date: Date | null, options: Options): string | null {
 			if (!date) {
 				return null;
 			}
 
+			const format = options.getInputFormat();
 			let escapeNext = false;
 			let result = '';
 			for (let position = 0; position < format.length; position++) {
@@ -57,14 +55,14 @@ namespace TheDatepicker {
 					continue;
 				}
 
-				if (char === this.escapeChar_) {
+				if (char === DateConverter_.escapeChar_) {
 					escapeNext = true;
 					continue;
 				}
 
-				const formatter = this.getFormatter_(char);
+				const formatter = DateConverter_.getFormatter_(char);
 				if (formatter) {
-					result += formatter.call(this, date);
+					result += formatter.call(null, date, options);
 					continue;
 				}
 
@@ -74,11 +72,12 @@ namespace TheDatepicker {
 			return result;
 		}
 
-		public parseDate_(format: string, text: string, minDate: Date, maxDate: Date): Date | null {
+		public static parseDate_(text: string, options: Options): Date | null {
 			if (text === '') {
 				return null;
 			}
 
+			const format = options.getInputFormat();
 			const dateData = new ParsedDateData();
 			let escapeNext = false;
 			let textPosition = 0;
@@ -88,15 +87,15 @@ namespace TheDatepicker {
 				if (escapeNext) {
 					escapeNext = false;
 
-				} else if (char === this.escapeChar_) {
+				} else if (char === DateConverter_.escapeChar_) {
 					escapeNext = true;
 					continue;
 
 				} else {
-					const parser = this.getParser_(char);
+					const parser = DateConverter_.getParser_(char);
 					if (parser) {
 						try {
-							textPosition += parser.call(this, text.substring(textPosition), dateData, minDate, maxDate);
+							textPosition += parser.call(null, text.substring(textPosition), dateData, options);
 						} catch (error) {
 							if (!(error instanceof CannotParseDateException)) {
 								throw error;
@@ -134,11 +133,12 @@ namespace TheDatepicker {
 			return dateData.createDate();
 		}
 
-		public isValidChar_(format: string, textChar: string): boolean {
+		public static isValidChar_(textChar: string, options: Options): boolean {
 			if (textChar === '' || /[0-9-]/.test(textChar)) {
 				return true;
 			}
 
+			const format = options.getInputFormat();
 			let escapeNext = false;
 			for (let position = 0; position < format.length; position++) {
 				const char = format.substring(position, position + 1);
@@ -146,12 +146,12 @@ namespace TheDatepicker {
 				if (escapeNext) {
 					escapeNext = false;
 
-				} else if (char === this.escapeChar_) {
+				} else if (char === DateConverter_.escapeChar_) {
 					escapeNext = true;
 					continue;
 
 				} else {
-					const phrases = this.getValidPhrases_(char);
+					const phrases = DateConverter_.getValidPhrases_(char, options);
 					if (phrases) {
 						const textCharLower = textChar.toLowerCase();
 						for (let index = 0; index < phrases.length; index++) {
@@ -171,128 +171,128 @@ namespace TheDatepicker {
 			return false;
 		}
 
-		private getFormatter_(type: string): ((date: Date) => string) | null {
+		private static getFormatter_(type: string): ((date: Date, options: Options) => string) | null {
 			switch (type) {
 				// Day of the month (1 to 31)
 				case 'j':
-					return this.formatDay_;
+					return DateConverter_.formatDay_;
 
 				// Day of the month with leading zero (01 to 31)
 				case 'd':
-					return this.formatDayWithLeadingZero_;
+					return DateConverter_.formatDayWithLeadingZero_;
 
 				// Short textual representation of a day of the week (Mo through Su)
 				case 'D':
-					return this.formatDayOfWeekTextual_;
+					return DateConverter_.formatDayOfWeekTextual_;
 
 				// Textual representation of a day of the week (Monday through Sunday)
 				case 'l':
-					return this.formatDayOfWeekTextualFull_;
+					return DateConverter_.formatDayOfWeekTextualFull_;
 
 				// Numeric representation of a month (1 through 12)
 				case 'n':
-					return this.formatMonth_;
+					return DateConverter_.formatMonth_;
 
 				// Numeric representation of a month with leading zero (01 through 12)
 				case 'm':
-					return this.formatMonthWithLeadingZero_;
+					return DateConverter_.formatMonthWithLeadingZero_;
 
 				// Textual representation of a month (January through December)
 				case 'F':
-					return this.formatMonthTextual_;
+					return DateConverter_.formatMonthTextual_;
 
 				// Short textual representation of a month (Jan through Dec)
 				case 'M':
-					return this.formatMonthTextualShort_;
+					return DateConverter_.formatMonthTextualShort_;
 
 				// Full year (1999 or 2003)
 				case 'Y':
-					return this.formatYear_;
+					return DateConverter_.formatYear_;
 
 				// Year, 2 digits (99 or 03)
 				case 'y':
-					return this.formatYearTwoDigits_;
+					return DateConverter_.formatYearTwoDigits_;
 
 				default:
 					return null;
 			}
 		}
 
-		private formatDay_(date: Date): string {
+		private static formatDay_(date: Date): string {
 			return date.getDate() + '';
 		}
 
-		private formatDayWithLeadingZero_(date: Date): string {
+		private static formatDayWithLeadingZero_(date: Date): string {
 			return ('0' + date.getDate()).slice(-2);
 		}
 
-		private formatDayOfWeekTextual_(date: Date): string {
-			return this.options_.translator.translateDayOfWeek(date.getDay());
+		private static formatDayOfWeekTextual_(date: Date, options: Options): string {
+			return options.translator.translateDayOfWeek(date.getDay());
 		}
 
-		private formatDayOfWeekTextualFull_(date: Date): string {
-			return this.options_.translator.translateDayOfWeekFull(date.getDay());
+		private static formatDayOfWeekTextualFull_(date: Date, options: Options): string {
+			return options.translator.translateDayOfWeekFull(date.getDay());
 		}
 
-		private formatMonth_(date: Date): string {
+		private static formatMonth_(date: Date): string {
 			return (date.getMonth() + 1) + '';
 		}
 
-		private formatMonthWithLeadingZero_(date: Date): string {
+		private static formatMonthWithLeadingZero_(date: Date): string {
 			return ('0' + (date.getMonth() + 1)).slice(-2);
 		}
 
-		private formatMonthTextual_(date: Date): string {
-			return this.options_.translator.translateMonth(date.getMonth());
+		private static formatMonthTextual_(date: Date, options: Options): string {
+			return options.translator.translateMonth(date.getMonth());
 		}
 
-		private formatMonthTextualShort_(date: Date): string {
-			return this.options_.translator.translateMonthShort(date.getMonth());
+		private static formatMonthTextualShort_(date: Date, options: Options): string {
+			return options.translator.translateMonthShort(date.getMonth());
 		}
 
-		private formatYear_(date: Date): string {
+		private static formatYear_(date: Date): string {
 			return date.getFullYear() + '';
 		}
 
-		private formatYearTwoDigits_(date: Date): string {
+		private static formatYearTwoDigits_(date: Date): string {
 			const year = date.getFullYear() + '';
 			return year.substring(year.length - 2);
 		}
 
-		private getParser_(type: string): ((text: string, dateData: ParsedDateData, minDate: Date, maxDate: Date) => number) | null {
+		private static getParser_(type: string): ((text: string, dateData: ParsedDateData, options: Options) => number) | null {
 			switch (type) {
 				case 'j':
 				case 'd':
-					return this.parseDay_;
+					return DateConverter_.parseDay_;
 
 				case 'D':
-					return this.parseDayOfWeekTextual_;
+					return DateConverter_.parseDayOfWeekTextual_;
 
 				case 'l':
-					return this.parseDayOfWeekTextualFull_;
+					return DateConverter_.parseDayOfWeekTextualFull_;
 
 				case 'n':
 				case 'm':
-					return this.parseMonth_;
+					return DateConverter_.parseMonth_;
 
 				case 'F':
-					return this.parseMonthTextual_;
+					return DateConverter_.parseMonthTextual_;
 
 				case 'M':
-					return this.parseMonthTextualShort_;
+					return DateConverter_.parseMonthTextualShort_;
 
 				case 'Y':
-					return this.parseYear_;
+					return DateConverter_.parseYear_;
 
 				case 'y':
-					return this.parseYearTwoDigits_;
+					return DateConverter_.parseYearTwoDigits_;
 
 				default:
 					return null;
 			}
 		}
 
-		private parseDay_(text: string, dateData: ParsedDateData): number {
+		private static parseDay_(text: string, dateData: ParsedDateData): number {
 			let took = 0;
 			while (text.substring(0, 1) === '0') {
 				text = text.substring(1);
@@ -312,19 +312,19 @@ namespace TheDatepicker {
 			return took + day.length;
 		}
 
-		private parseDayOfWeekTextual_(text: string): number {
-			return this.parseDayOfWeekByTranslator_(text, (dayOfWeek: DayOfWeek): string => {
-				return this.options_.translator.translateDayOfWeek(dayOfWeek);
+		private static parseDayOfWeekTextual_(text: string, dateData: ParsedDateData, options: Options): number {
+			return DateConverter_.parseDayOfWeekByTranslator_(text, (dayOfWeek: DayOfWeek): string => {
+				return options.translator.translateDayOfWeek(dayOfWeek);
 			});
 		}
 
-		private parseDayOfWeekTextualFull_(text: string): number {
-			return this.parseDayOfWeekByTranslator_(text, (dayOfWeek: DayOfWeek): string => {
-				return this.options_.translator.translateDayOfWeekFull(dayOfWeek);
+		private static parseDayOfWeekTextualFull_(text: string, dateData: ParsedDateData, options: Options): number {
+			return DateConverter_.parseDayOfWeekByTranslator_(text, (dayOfWeek: DayOfWeek): string => {
+				return options.translator.translateDayOfWeekFull(dayOfWeek);
 			});
 		}
 
-		private parseDayOfWeekByTranslator_(text: string, translate: (dayOfWeek: DayOfWeek) => string): number {
+		private static parseDayOfWeekByTranslator_(text: string, translate: (dayOfWeek: DayOfWeek) => string): number {
 			let maxLength = 0;
 			let matchedTranslationLength: number = 0;
 			for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
@@ -355,7 +355,7 @@ namespace TheDatepicker {
 			return took;
 		}
 
-		private parseMonth_(text: string, dateData: ParsedDateData): number {
+		private static parseMonth_(text: string, dateData: ParsedDateData): number {
 			let took = 0;
 			while (text.substring(0, 1) === '0') {
 				text = text.substring(1);
@@ -375,19 +375,19 @@ namespace TheDatepicker {
 			return took + month.length;
 		}
 
-		private parseMonthTextual_(text: string, dateData: ParsedDateData): number {
-			return this.parseMonthByTranslator_(text, dateData, (month: Month): string => {
-				return this.options_.translator.translateMonth(month);
+		private static parseMonthTextual_(text: string, dateData: ParsedDateData, options: Options): number {
+			return DateConverter_.parseMonthByTranslator_(text, dateData, (month: Month): string => {
+				return options.translator.translateMonth(month);
 			});
 		}
 
-		private parseMonthTextualShort_(text: string, dateData: ParsedDateData): number {
-			return this.parseMonthByTranslator_(text, dateData, (month: Month): string => {
-				return this.options_.translator.translateMonthShort(month);
+		private static parseMonthTextualShort_(text: string, dateData: ParsedDateData, options: Options): number {
+			return DateConverter_.parseMonthByTranslator_(text, dateData, (month: Month): string => {
+				return options.translator.translateMonthShort(month);
 			});
 		}
 
-		private parseMonthByTranslator_(text: string, dateData: ParsedDateData, translate: (month: Month) => string): number {
+		private static parseMonthByTranslator_(text: string, dateData: ParsedDateData, translate: (month: Month) => string): number {
 			let matchedMonth: number | null = null;
 			let matchedTranslationLength: number = 0;
 			for (let month = 1; month <= 12; month++) {
@@ -409,13 +409,15 @@ namespace TheDatepicker {
 			return matchedTranslationLength;
 		}
 
-		private parseYear_(text: string, dateData: ParsedDateData, minDate: Date, maxDate: Date): number {
+		private static parseYear_(text: string, dateData: ParsedDateData, options: Options): number {
 			let isNegative = false;
 			if (text.substring(0, 1) === '-') {
 				isNegative = true;
 				text = text.substring(1);
 			}
 
+			const minDate = options.getMinDate_();
+			const maxDate = options.getMaxDate_();
 			const maxPositiveLength = maxDate.getFullYear() > 0 ? (maxDate.getFullYear() + '').length : 0;
 			const maxNegativeLength = minDate.getFullYear() < 0 ? (-minDate.getFullYear() + '').length : 0;
 
@@ -443,13 +445,13 @@ namespace TheDatepicker {
 			return yearLength + (isNegative ? 1 : 0);
 		}
 
-		private parseYearTwoDigits_(text: string, dateData: ParsedDateData): number {
+		private static parseYearTwoDigits_(text: string, dateData: ParsedDateData, options: Options): number {
 			const yearEnd = text.substring(0, 2);
 			if (!/[0-9]{2}/.test(yearEnd)) {
 				throw new CannotParseDateException();
 			}
 
-			const currentYear = (this.options_.getToday()).getFullYear() + '';
+			const currentYear = (options.getToday()).getFullYear() + '';
 			const yearBeginning = currentYear.substring(0, currentYear.length - 2);
 
 			dateData.year = parseInt(yearBeginning + yearEnd, 10);
@@ -457,7 +459,7 @@ namespace TheDatepicker {
 			return 2;
 		}
 
-		private getValidPhrases_(type: string): string[] | null {
+		private static getValidPhrases_(type: string, options: Options): string[] | null {
 			switch (type) {
 				case 'j':
 				case 'd':
@@ -467,13 +469,13 @@ namespace TheDatepicker {
 				case 'y':
 					return [];
 				case 'D':
-					return this.options_.translator.dayOfWeekTranslations_;
+					return options.translator.dayOfWeekTranslations_;
 				case 'l':
-					return this.options_.translator.dayOfWeekFullTranslations_;
+					return options.translator.dayOfWeekFullTranslations_;
 				case 'F':
-					return this.options_.translator.monthTranslations_;
+					return options.translator.monthTranslations_;
 				case 'M':
-					return this.options_.translator.monthShortTranslations_;
+					return options.translator.monthShortTranslations_;
 				default:
 					return null;
 			}

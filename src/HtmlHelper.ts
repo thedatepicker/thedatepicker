@@ -9,14 +9,14 @@ namespace TheDatepicker {
 
 		public static createDiv_(className: string, options: Options): HTMLDivElement {
 			const div = document.createElement('div');
-			this.addClass_(div, className, options);
+			HtmlHelper_.addClass_(div, className, options);
 
 			return div;
 		}
 
 		public static createAnchor_(onClick: (event: Event) => void, options: Options, className: string = 'button'): HTMLAnchorElement {
 			const anchor = document.createElement('a');
-			this.addClass_(anchor, className, options);
+			HtmlHelper_.addClass_(anchor, className, options);
 			anchor.href = '#';
 
 			anchor.onclick = (event: MouseEvent): void => {
@@ -42,7 +42,7 @@ namespace TheDatepicker {
 
 		public static createTable_(className: string, header: HTMLTableSectionElement | null, body: HTMLTableSectionElement, options: Options): HTMLTableElement {
 			const table = document.createElement('table');
-			this.addClass_(table, className, options);
+			HtmlHelper_.addClass_(table, className, options);
 			if (header) {
 				table.appendChild(header);
 			}
@@ -53,7 +53,7 @@ namespace TheDatepicker {
 
 		public static createTableHeader_(className: string, cells: HTMLTableHeaderCellElement[], options: Options): HTMLTableSectionElement {
 			const tableHeader = document.createElement('thead');
-			this.addClass_(tableHeader, className, options);
+			HtmlHelper_.addClass_(tableHeader, className, options);
 
 			const row = document.createElement('tr');
 			for (let index = 0; index < cells.length; index++) {
@@ -67,14 +67,14 @@ namespace TheDatepicker {
 		public static createTableHeaderCell_(className: string, options: Options): HTMLTableHeaderCellElement {
 			const cell = document.createElement('th');
 			cell.scope = 'col';
-			this.addClass_(cell, className, options);
+			HtmlHelper_.addClass_(cell, className, options);
 
 			return cell;
 		}
 
 		public static createTableBody_(className: string, rows: HTMLTableRowElement[], options: Options): HTMLTableSectionElement {
 			const tableBody = document.createElement('tbody');
-			this.addClass_(tableBody, className, options);
+			HtmlHelper_.addClass_(tableBody, className, options);
 
 			for (let index = 0; index < rows.length; index++) {
 				tableBody.appendChild(rows[index]);
@@ -99,10 +99,10 @@ namespace TheDatepicker {
 
 		public static createSelectInput_(selectOptions: Option[], onChange: (event: Event, value: string) => void, options: Options): HTMLSelectElement {
 			const input = document.createElement('select');
-			this.addClass_(input, 'select', options);
+			HtmlHelper_.addClass_(input, 'select', options);
 
 			for (let index = 0; index < selectOptions.length; index++) {
-				input.appendChild(this.createSelectOption_(selectOptions[index].value, selectOptions[index].label));
+				input.appendChild(HtmlHelper_.createSelectOption_(selectOptions[index].value, selectOptions[index].label));
 			}
 
 			input.onchange = (event: Event): void => {
