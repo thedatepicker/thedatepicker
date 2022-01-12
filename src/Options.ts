@@ -58,6 +58,7 @@ namespace TheDatepicker {
 	export class Options {
 
 		public readonly translator: Translator;
+		public readonly classNames: ClassNames;
 
 		private hideOnBlur_ = true;
 		private hideOnSelect_ = true;
@@ -122,12 +123,13 @@ namespace TheDatepicker {
 			focus: [],
 		};
 
-		public constructor(translator: Translator | null = null) {
+		public constructor(translator: Translator | null = null, classNames: ClassNames | null = null) {
 			this.translator = translator || new Translator();
+			this.classNames = classNames || new ClassNames();
 		}
 
 		public clone(): Options {
-			const options = new Options(this.translator);
+			const options = new Options(this.translator.clone(), this.classNames.clone());
 
 			options.hideOnBlur_ = this.hideOnBlur_;
 			options.hideOnSelect_ = this.hideOnSelect_;

@@ -114,7 +114,7 @@ namespace TheDatepicker {
 		}
 
 		protected createSkeleton_(viewModel: ViewModel_): HTMLElement {
-			const main = HtmlHelper_.createDiv_('main', this.options_);
+			const main = HtmlHelper_.createDiv_(ClassNameType.Main, this.options_);
 
 			HtmlHelper_.appendChild_(main, this.options_.getHeaderStructure_());
 			main.appendChild(this.createHeaderElement_(viewModel));
@@ -138,12 +138,12 @@ namespace TheDatepicker {
 		}
 
 		protected createBodyElement_(viewModel: ViewModel_): HTMLElement {
-			const body = HtmlHelper_.createDiv_('body', this.options_);
-			const tables = HtmlHelper_.createDiv_('tables', this.options_);
+			const body = HtmlHelper_.createDiv_(ClassNameType.Body, this.options_);
+			const tables = HtmlHelper_.createDiv_(ClassNameType.Tables, this.options_);
 			body.appendChild(tables);
 
 			if (this.options_.isMonthChangeOnSwipeEnabled() || this.options_.isTableOfYearsOnSwipeDownEnabled()) {
-				HtmlHelper_.addClass_(body, 'body--swipeable', this.options_);
+				HtmlHelper_.addClass_(body, ClassNameType.BodySwipeable, this.options_);
 				Helper_.addSwipeListener_(body, (event: TouchEvent, moveDirection: MoveDirection_): void => {
 					let isForward = false;
 					let change: (() => void) | null = null;
@@ -193,25 +193,25 @@ namespace TheDatepicker {
 		}
 
 		protected createHeaderElement_(viewModel: ViewModel_): HTMLElement {
-			const header = HtmlHelper_.createDiv_('header', this.options_);
+			const header = HtmlHelper_.createDiv_(ClassNameType.Header, this.options_);
 
-			const top = HtmlHelper_.createDiv_('top', this.options_);
+			const top = HtmlHelper_.createDiv_(ClassNameType.HeaderTop, this.options_);
 			header.appendChild(top);
 
 			top.appendChild(this.createTitleElement_(viewModel));
 
-			const control = HtmlHelper_.createDiv_('control', this.options_);
+			const control = HtmlHelper_.createDiv_(ClassNameType.HeaderControl, this.options_);
 			top.appendChild(control);
 
 			control.appendChild(this.createResetElement_(viewModel));
 			control.appendChild(this.createCloseElement_(viewModel));
 
-			const navigation = HtmlHelper_.createDiv_('navigation', this.options_);
+			const navigation = HtmlHelper_.createDiv_(ClassNameType.HeaderNavigation, this.options_);
 			header.appendChild(navigation);
 
 			navigation.appendChild(this.createGoElement_(viewModel, false));
 
-			const state = HtmlHelper_.createDiv_('state', this.options_);
+			const state = HtmlHelper_.createDiv_(ClassNameType.HeaderState, this.options_);
 			navigation.appendChild(state);
 
 			if (this.options_.isMonthAndYearSeparated()) {
@@ -237,10 +237,10 @@ namespace TheDatepicker {
 		}
 
 		protected createTitleElement_(viewModel: ViewModel_): HTMLElement {
-			const titleElement = HtmlHelper_.createDiv_('title', this.options_);
+			const titleElement = HtmlHelper_.createDiv_(ClassNameType.HeaderTitle, this.options_);
 			const titleContent = HtmlHelper_.createSpan_();
 			titleElement.appendChild(titleContent);
-			HtmlHelper_.addClass_(titleContent, 'title-content', this.options_);
+			HtmlHelper_.addClass_(titleContent, ClassNameType.HeaderTitleContent, this.options_);
 			this.titleElement_ = titleElement;
 			this.titleContentElement_ = titleContent;
 
@@ -254,7 +254,7 @@ namespace TheDatepicker {
 		}
 
 		protected createResetElement_(viewModel: ViewModel_): HTMLElement {
-			const resetElement = HtmlHelper_.createDiv_('reset', this.options_);
+			const resetElement = HtmlHelper_.createDiv_(ClassNameType.Reset, this.options_);
 			const resetButton = HtmlHelper_.createAnchor_((event: Event): void => {
 				viewModel.reset_(event);
 			}, this.options_);
@@ -273,7 +273,7 @@ namespace TheDatepicker {
 		}
 
 		protected createCloseElement_(viewModel: ViewModel_): HTMLElement {
-			const closeElement = HtmlHelper_.createDiv_('close', this.options_);
+			const closeElement = HtmlHelper_.createDiv_(ClassNameType.Close, this.options_);
 			const closeButton = HtmlHelper_.createAnchor_((event: Event): void => {
 				viewModel.close_(event);
 			}, this.options_);
@@ -292,8 +292,8 @@ namespace TheDatepicker {
 		}
 
 		protected createGoElement_(viewModel: ViewModel_, isForward: boolean): HTMLElement {
-			const goElement = HtmlHelper_.createDiv_('go', this.options_);
-			HtmlHelper_.addClass_(goElement, isForward ? 'go-next' : 'go-previous', this.options_);
+			const goElement = HtmlHelper_.createDiv_(ClassNameType.Go, this.options_);
+			HtmlHelper_.addClass_(goElement, isForward ? ClassNameType.GoNext : ClassNameType.GoPrevious, this.options_);
 			const goButton = HtmlHelper_.createAnchor_((event: Event): void => {
 				const moveDirection = isForward ? MoveDirection_.Left : MoveDirection_.Right;
 				if (viewModel.canGoDirection_(isForward)) {
@@ -342,7 +342,7 @@ namespace TheDatepicker {
 				}
 			}, this.options_);
 
-			const monthElement = HtmlHelper_.createDiv_('month', this.options_);
+			const monthElement = HtmlHelper_.createDiv_(ClassNameType.HeaderMonth, this.options_);
 			const monthContent = HtmlHelper_.createSpan_();
 			monthElement.appendChild(selectElement);
 			monthElement.appendChild(monthContent);
@@ -387,7 +387,7 @@ namespace TheDatepicker {
 		}
 
 		protected createYearElement_(viewModel: ViewModel_): HTMLElement {
-			const yearElement = HtmlHelper_.createDiv_('year', this.options_);
+			const yearElement = HtmlHelper_.createDiv_(ClassNameType.HeaderYear, this.options_);
 			let yearActiveElement: HTMLAnchorElement | HTMLSelectElement;
 
 			if (this.options_.isYearSelectedFromTableOfYears()) {
@@ -397,7 +397,7 @@ namespace TheDatepicker {
 					});
 				}, this.options_);
 
-				HtmlHelper_.addClass_(yearActiveElement, 'year-button', this.options_);
+				HtmlHelper_.addClass_(yearActiveElement, ClassNameType.HeaderYearsToggle, this.options_);
 
 			} else {
 				yearActiveElement = HtmlHelper_.createSelectInput_([], (event: Event, year: string): void => {
@@ -481,7 +481,7 @@ namespace TheDatepicker {
 		}
 
 		protected createMonthAndYearElement_(viewModel: ViewModel_): HTMLElement {
-			const monthAndYear = HtmlHelper_.createDiv_('month-year', this.options_);
+			const monthAndYear = HtmlHelper_.createDiv_(ClassNameType.HeaderMonthYear, this.options_);
 
 			const selectElement = HtmlHelper_.createSelectInput_([], (event: Event, value: string): void => {
 				const currentMonth = viewModel.getCurrentMonth_();
@@ -639,8 +639,8 @@ namespace TheDatepicker {
 			const tableHeader = this.createTableHeaderElement_(viewModel) as HTMLTableSectionElement;
 			const tableBody = this.createTableBodyElement_(viewModel) as HTMLTableSectionElement;
 
-			const table = HtmlHelper_.createTable_('calendar', tableHeader, tableBody, this.options_);
-			HtmlHelper_.addClass_(table, 'table', this.options_);
+			const table = HtmlHelper_.createTable_(tableHeader, tableBody, ClassNameType.CalendarTable, this.options_);
+			HtmlHelper_.addClass_(table, ClassNameType.Table, this.options_);
 			return table;
 		}
 
@@ -653,14 +653,14 @@ namespace TheDatepicker {
 				cells.push(this.createTableHeaderCellElement_(viewModel, dayOfWeek));
 			}
 
-			return HtmlHelper_.createTableHeader_('calendar-header', cells as HTMLTableHeaderCellElement[], this.options_);
+			return HtmlHelper_.createTableHeader_(cells as HTMLTableHeaderCellElement[], ClassNameType.CalendarTableHeader, this.options_);
 		}
 
 		protected createTableHeaderCellElement_(viewModel: ViewModel_, dayOfWeek: DayOfWeek): HTMLElement {
-			const headerCell = HtmlHelper_.createTableHeaderCell_('week-day', this.options_);
+			const headerCell = HtmlHelper_.createTableHeaderCell_(ClassNameType.CalendarTableHeaderCell, this.options_);
 
 			if (dayOfWeek === DayOfWeek.Saturday || dayOfWeek === DayOfWeek.Sunday) {
-				HtmlHelper_.addClass_(headerCell, 'week-day--weekend', this.options_);
+				HtmlHelper_.addClass_(headerCell, ClassNameType.WeekDayWeekend, this.options_);
 			}
 
 			headerCell.innerText = this.options_.translator.translateDayOfWeek(dayOfWeek);
@@ -679,7 +679,7 @@ namespace TheDatepicker {
 			}
 			this.weeksElements_ = rows;
 
-			return HtmlHelper_.createTableBody_('calendar-body', rows as HTMLTableRowElement[], this.options_);
+			return HtmlHelper_.createTableBody_(rows as HTMLTableRowElement[], ClassNameType.CalendarTableBody, this.options_);
 		}
 
 		protected updateWeeksElements_(viewModel: ViewModel_): void {
@@ -729,7 +729,7 @@ namespace TheDatepicker {
 			this.daysButtonsElements_.push(cellsButtons);
 			this.daysContentsElements_.push(cellsContents);
 
-			return HtmlHelper_.createTableRow_('week', cells as HTMLTableCellElement[]);
+			return HtmlHelper_.createTableRow_(cells as HTMLTableCellElement[], this.options_);
 		}
 
 		protected updateDayElement_(
@@ -742,7 +742,7 @@ namespace TheDatepicker {
 			dayButtonElement.day = day;
 			dayElement.setAttribute('data-date', day.getFormatted());
 			dayElement.className = '';
-			HtmlHelper_.addClass_(dayElement, 'cell', this.options_);
+			HtmlHelper_.addClass_(dayElement, ClassNameType.TableCell, this.options_);
 			this.options_.updateCellStructure_(dayContentElement, day);
 
 			if (!day.isVisible) {
@@ -751,30 +751,30 @@ namespace TheDatepicker {
 				return;
 			}
 
-			HtmlHelper_.addClass_(dayElement, 'day', this.options_);
+			HtmlHelper_.addClass_(dayElement, ClassNameType.Day, this.options_);
 			if (day.isToday) {
-				HtmlHelper_.addClass_(dayElement, 'day--today', this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.DayToday, this.options_);
 			}
 			if (day.isPast) {
-				HtmlHelper_.addClass_(dayElement, 'day--past', this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.DayPast, this.options_);
 			}
 			if (day.isWeekend) {
-				HtmlHelper_.addClass_(dayElement, 'day--weekend', this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.DayWeekend, this.options_);
 			}
 			if (!day.isAvailable) {
-				HtmlHelper_.addClass_(dayElement, 'cell--unavailable', this.options_);
-				HtmlHelper_.addClass_(dayElement, 'day--unavailable', this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.TableCellUnavailable, this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.DayUnavailable, this.options_);
 			}
 			if (!day.isInCurrentMonth) {
-				HtmlHelper_.addClass_(dayElement, 'day--outside', this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.DayOutside, this.options_);
 			}
 			if (day.isHighlighted) {
-				HtmlHelper_.addClass_(dayElement, 'cell--highlighted', this.options_);
-				HtmlHelper_.addClass_(dayElement, 'day--highlighted', this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.TableCellHighlighted, this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.DayHighlighted, this.options_);
 			}
 			if (day.isSelected) {
-				HtmlHelper_.addClass_(dayElement, 'cell--selected', this.options_);
-				HtmlHelper_.addClass_(dayElement, 'day--selected', this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.TableCellSelected, this.options_);
+				HtmlHelper_.addClass_(dayElement, ClassNameType.DaySelected, this.options_);
 			}
 			const customClasses = this.options_.getCellClasses(day);
 			for (let index = 0; index < customClasses.length; index++) {
@@ -803,7 +803,7 @@ namespace TheDatepicker {
 				}
 			}, this.options_) as HTMLDayButtonElement;
 
-			HtmlHelper_.addClass_(cellButton, 'day-button', this.options_);
+			HtmlHelper_.addClass_(cellButton, ClassNameType.DayButton, this.options_);
 
 			cellButton.onfocus = (event: FocusEvent): void => {
 				viewModel.highlightDay_(event || window.event, cellButton.day);
@@ -827,8 +827,8 @@ namespace TheDatepicker {
 
 		protected createTableCellContentElement_(viewModel: ViewModel_): HTMLElement {
 			const cellContent = this.options_.getCellStructure_();
-			HtmlHelper_.addClass_(cellContent, 'button-content', this.options_);
-			HtmlHelper_.addClass_(cellContent, 'day-content', this.options_);
+			HtmlHelper_.addClass_(cellContent, ClassNameType.ButtonContent, this.options_);
+			HtmlHelper_.addClass_(cellContent, ClassNameType.DayButtonContent, this.options_);
 
 			return cellContent;
 		}
@@ -836,8 +836,8 @@ namespace TheDatepicker {
 		protected createTableOfYearsElement_(viewModel: ViewModel_): HTMLElement {
 			const tableBody = this.createTableOfYearsBodyElement_(viewModel) as HTMLTableSectionElement;
 
-			const table = HtmlHelper_.createTable_('years', null, tableBody, this.options_);
-			HtmlHelper_.addClass_(table, 'table', this.options_);
+			const table = HtmlHelper_.createTable_(null, tableBody, ClassNameType.YearsTable, this.options_);
+			HtmlHelper_.addClass_(table, ClassNameType.Table, this.options_);
 			return table;
 		}
 
@@ -852,7 +852,7 @@ namespace TheDatepicker {
 			}
 			this.yearsRowsElements_ = rows;
 
-			return HtmlHelper_.createTableBody_('years-body', rows as HTMLTableRowElement[], this.options_);
+			return HtmlHelper_.createTableBody_(rows as HTMLTableRowElement[], ClassNameType.YearsTableBody, this.options_);
 		}
 
 		protected updateTableOfYearsRowsElements_(viewModel: ViewModel_): void {
@@ -890,7 +890,7 @@ namespace TheDatepicker {
 			yearButtonElement.yearCellData = yearCellData;
 			yearElement.setAttribute('data-year', yearCellData.yearNumber + '');
 			yearElement.className = '';
-			HtmlHelper_.addClass_(yearElement, 'cell', this.options_);
+			HtmlHelper_.addClass_(yearElement, ClassNameType.TableCell, this.options_);
 			yearContentElement.innerText = yearCellData.yearNumber + '';
 
 			if (yearCellData.isAvailable) {
@@ -898,17 +898,17 @@ namespace TheDatepicker {
 			} else {
 				yearButtonElement.removeAttribute('href');
 				if (this.options_.areYearsOutOfTableOfYearsVisible()) {
-					HtmlHelper_.addClass_(yearElement, 'cell--unavailable', this.options_);
+					HtmlHelper_.addClass_(yearElement, ClassNameType.TableCellUnavailable, this.options_);
 				} else {
 					yearButtonElement.style.visibility = 'hidden';
 					return;
 				}
 			}
 			if (yearCellData.isHighlighted) {
-				HtmlHelper_.addClass_(yearElement, 'cell--highlighted', this.options_);
+				HtmlHelper_.addClass_(yearElement, ClassNameType.TableCellHighlighted, this.options_);
 			}
 			if (yearCellData.isSelected) {
-				HtmlHelper_.addClass_(yearElement, 'cell--selected', this.options_);
+				HtmlHelper_.addClass_(yearElement, ClassNameType.TableCellSelected, this.options_);
 			}
 
 			yearButtonElement.style.visibility = 'visible';
@@ -938,7 +938,7 @@ namespace TheDatepicker {
 			this.yearsButtonsElements_.push(cellsButtons);
 			this.yearsContentsElements_.push(cellsContents);
 
-			return HtmlHelper_.createTableRow_('years-row', cells as HTMLTableCellElement[]);
+			return HtmlHelper_.createTableRow_(cells as HTMLTableCellElement[], this.options_);
 		}
 
 		protected createTableOfYearsCellButtonElement_(viewModel: ViewModel_): HTMLYearButtonElement {
@@ -955,7 +955,7 @@ namespace TheDatepicker {
 				}
 			}, this.options_) as HTMLYearButtonElement;
 
-			HtmlHelper_.addClass_(cellButton, 'year-cell-button', this.options_);
+			HtmlHelper_.addClass_(cellButton, ClassNameType.YearCellButton, this.options_);
 
 			cellButton.onfocus = (): void => {
 				viewModel.highlightYear_(cellButton.yearCellData.yearNumber);
@@ -974,8 +974,8 @@ namespace TheDatepicker {
 
 		protected createTableOfYearsCellContentElement_(viewModel: ViewModel_): HTMLElement {
 			const cellContent = HtmlHelper_.createSpan_();
-			HtmlHelper_.addClass_(cellContent, 'button-content', this.options_);
-			HtmlHelper_.addClass_(cellContent, 'year-cell-content', this.options_);
+			HtmlHelper_.addClass_(cellContent, ClassNameType.ButtonContent, this.options_);
+			HtmlHelper_.addClass_(cellContent, ClassNameType.YearCellButtonContent, this.options_);
 
 			return cellContent;
 		}
@@ -987,32 +987,32 @@ namespace TheDatepicker {
 			}
 
 			const trigger = (): void => {
-				let animationOut: string;
-				let animationIn: string;
+				let animationOut: ClassNameType;
+				let animationIn: ClassNameType;
 				switch (moveDirection) {
 					case MoveDirection_.Left:
-						animationOut = 'fade-out-left';
-						animationIn = 'fade-in-right';
+						animationOut = ClassNameType.AnimateFadeOutLeft;
+						animationIn = ClassNameType.AnimateFadeInRight;
 						break;
 					case MoveDirection_.Up:
-						animationOut = 'fade-out-up';
-						animationIn = 'fade-in-down';
+						animationOut = ClassNameType.AnimateFadeOutUp;
+						animationIn = ClassNameType.AnimateFadeInDown;
 						break;
 					case MoveDirection_.Right:
-						animationOut = 'fade-out-right';
-						animationIn = 'fade-in-left';
+						animationOut = ClassNameType.AnimateFadeOutRight;
+						animationIn = ClassNameType.AnimateFadeInLeft;
 						break;
 					case MoveDirection_.Down:
-						animationOut = 'fade-out-down';
-						animationIn = 'fade-in-up';
+						animationOut = ClassNameType.AnimateFadeOutDown;
+						animationIn = ClassNameType.AnimateFadeInUp;
 						break;
 				}
 
 				const originalClassName = this.tablesElement_.className;
 
-				const animate = (className: string) => {
-					HtmlHelper_.addClass_(this.tablesElement_, 'animated', this.options_);
-					HtmlHelper_.addClass_(this.tablesElement_, className, this.options_);
+				const animate = (type: ClassNameType) => {
+					HtmlHelper_.addClass_(this.tablesElement_, ClassNameType.Animated, this.options_);
+					HtmlHelper_.addClass_(this.tablesElement_, type, this.options_);
 				};
 
 				const onAfterSlide = (): void => {

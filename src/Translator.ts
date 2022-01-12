@@ -64,17 +64,38 @@ namespace TheDatepicker {
 			'Dec',
 		];
 
-		private titles_ = {
-			[TitleName.GoBack]: 'Go to previous month',
-			[TitleName.GoForward]: 'Go to next month',
-			[TitleName.Close]: 'Close calendar',
-			[TitleName.Reset]: 'Reset calendar',
-			[TitleName.Deselect]: 'Deselect date',
-			[TitleName.Month]: 'Month selection',
-			[TitleName.Year]: 'Year selection',
-			[TitleName.GoBackTableOfYears]: 'Show earlier years',
-			[TitleName.GoForwardTableOfYears]: 'Show later years',
-		};
+		private titles_ = [
+			'Go to previous month', // GoBack
+			'Go to next month', // GoForward
+			'Close calendar', // Close
+			'Reset calendar', // Reset
+			'Deselect date', // Deselect
+			'Month selection', // Month
+			'Year selection', // Year
+			'Show earlier years', // GoBackTableOfYears
+			'Show later years', // GoForwardTableOfYears
+		];
+
+		public clone(): Translator {
+			const translator = new Translator();
+			let index;
+			for (index = 0; index < this.dayOfWeekFullTranslations_.length; index++) {
+				translator.dayOfWeekFullTranslations_ = this.dayOfWeekFullTranslations_.slice(0);
+			}
+			for (index = 0; index < this.dayOfWeekTranslations_.length; index++) {
+				translator.dayOfWeekTranslations_ = this.dayOfWeekTranslations_.slice(0);
+			}
+			for (index = 0; index < this.monthTranslations_.length; index++) {
+				translator.monthTranslations_ = this.monthTranslations_.slice(0);
+			}
+			for (index = 0; index < this.monthShortTranslations_.length; index++) {
+				translator.monthShortTranslations_ = this.monthShortTranslations_.slice(0);
+			}
+			for (index = 0; index < this.titles_.length; index++) {
+				translator.titles_ = this.titles_.slice(0);
+			}
+			return translator;
+		}
 
 		public setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void {
 			this.dayOfWeekTranslations_[Helper_.checkNumber_('Day of week', dayOfWeek, 0, 6)] = Helper_.checkString_('Translation', translation, true);
@@ -93,7 +114,7 @@ namespace TheDatepicker {
 		}
 
 		public setTitleTranslation(titleName: TitleName, translation: string): void {
-			this.titles_[titleName] = Helper_.checkString_('Translation', translation);
+			this.titles_[Helper_.checkNumber_('Title', titleName, 0, this.titles_.length - 1)] = Helper_.checkString_('Translation', translation);
 		}
 
 		public translateDayOfWeek(dayOfWeek: DayOfWeek): string {
@@ -113,12 +134,7 @@ namespace TheDatepicker {
 		}
 
 		public translateTitle(titleName: TitleName): string {
-			const translation = this.titles_[titleName];
-			if (typeof translation !== 'string') {
-				throw new Error('Unknown title ' + titleName);
-			}
-
-			return translation;
+			return this.titles_[titleName];
 		}
 
 	}

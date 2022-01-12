@@ -369,9 +369,9 @@ namespace TheDatepicker {
 		};
 
 		private createContainer_(): HTMLElement {
-			const container = HtmlHelper_.createDiv_('container', this.options);
+			const container = HtmlHelper_.createDiv_(ClassNameType.Container, this.options);
 			if (this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(container, 'container--responsive', this.options);
+				HtmlHelper_.addClass_(container, ClassNameType.ContainerResponsive, this.options);
 			}
 
 			return container;
@@ -385,7 +385,7 @@ namespace TheDatepicker {
 			const deselectButton = HtmlHelper_.createAnchor_((event: Event): void => {
 				deselectButton.focus();
 				this.viewModel_.cancelSelection_(event);
-			}, this.options, 'deselect-button');
+			}, this.options, ClassNameType.DeselectButton);
 
 			deselectButton.innerHTML = this.options.getDeselectHtml();
 			const title = this.options.translator.translateTitle(TitleName.Deselect);
@@ -394,7 +394,7 @@ namespace TheDatepicker {
 			}
 
 			const deselectElement = HtmlHelper_.createSpan_()
-			HtmlHelper_.addClass_(deselectElement, 'deselect', this.options);
+			HtmlHelper_.addClass_(deselectElement, ClassNameType.Deselect, this.options);
 			deselectElement.appendChild(deselectButton);
 
 			this.inputText_.parentNode.insertBefore(deselectElement, this.inputText_.nextSibling);
@@ -575,17 +575,17 @@ namespace TheDatepicker {
 			const containerWidth = this.container.offsetWidth;
 
 			this.container.className = '';
-			HtmlHelper_.addClass_(this.container, 'container', this.options);
+			HtmlHelper_.addClass_(this.container, ClassNameType.Container, this.options);
 			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
 			const locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
 			if (locateOver) {
-				HtmlHelper_.addClass_(this.container, 'container--over', this.options);
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
 			}
 			if (locateLeft) {
-				HtmlHelper_.addClass_(this.container, 'container--left', this.options);
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
 			}
 			if (this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(this.container, 'container--responsive', this.options);
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
 			}
 
 			if (mainElement && (locateOver || locateLeft)) {
