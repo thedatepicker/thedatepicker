@@ -1402,7 +1402,8 @@ return header;
 				updateSetting(dayInput, function () {
 					if (dayInput.value !== '') {
 						var day = dayOutput.innerText = datepicker.getDay(dayInput.value);
-						dayOutput.innerHTML = '<br>day.dayNumber === ' + day.dayNumber + ';'
+						dayOutput.innerHTML = '<br>day instanceof TheDatepicker.Day;'
+							+ '<br>day.dayNumber === ' + day.dayNumber + ';'
 							+ '<br>day.month === ' + day.month + ';'
 							+ '<br>day.year === ' + day.year + ';'
 							+ '<br>day.dayOfWeek === TheDatepicker.DayOfWeek.' + daysOfWeek[day.dayOfWeek] + ';'
