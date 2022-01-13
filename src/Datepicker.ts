@@ -339,7 +339,7 @@ namespace TheDatepicker {
 			if (!Helper_.isElement_(element)) {
 				throw new Error('Element was expected to be an HTMLElement.');
 			}
-			callback = Helper_.checkFunction_('Callback', callback) as (ReadyListener | null);
+			callback = Helper_.checkFunction_('Callback', callback);
 
 			let promise = null;
 			let promiseResolve: ReadyPromiseResolve | null = null;

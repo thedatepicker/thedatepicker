@@ -237,7 +237,7 @@ namespace TheDatepicker {
 			return value;
 		}
 
-		public static checkFunction_(parameterName: string, value: Function | null, isNullable = true): Function | null {
+		public static checkFunction_<Type extends Function>(parameterName: string, value: Type | null, isNullable = true): Type | null {
 			if (isNullable && !value) {
 				return null;
 			}

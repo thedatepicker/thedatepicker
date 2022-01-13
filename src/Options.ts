@@ -291,7 +291,7 @@ namespace TheDatepicker {
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not.
 		// The date is available for select only if all resolvers return true.
 		public addDateAvailabilityResolver(resolver: DateAvailabilityResolver): void {
-			this.dateAvailabilityResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false) as DateAvailabilityResolver);
+			this.dateAvailabilityResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false));
 		}
 
 		public removeDateAvailabilityResolver(resolver: DateAvailabilityResolver | null = null): void {
@@ -302,7 +302,7 @@ namespace TheDatepicker {
 		// or null for default behavior.
 		// Default callback returns day number.
 		public setCellContentResolver(resolver: CellContentResolver | null): void {
-			this.cellContentResolver_ = Helper_.checkFunction_('Resolver', resolver) as (CellContentResolver | null);
+			this.cellContentResolver_ = Helper_.checkFunction_('Resolver', resolver);
 		}
 
 		// Accepts two callbacks,
@@ -311,8 +311,8 @@ namespace TheDatepicker {
 		// Second callback (update) gets an instance of HTMLElement created by first callback, and an instance of TheDatepicker.Day. It should update html structure by given day. Returns void.
 		// Default init creates span element and default update fills it with day number.
 		public setCellContentStructureResolver(init: StructureResolverInit | null, update: CellContentStructureResolverUpdate | null = null): void {
-			init = Helper_.checkFunction_('Resolver (init)', init) as (StructureResolverInit | null);
-			update = Helper_.checkFunction_('Resolver (update)', update) as (CellContentStructureResolverUpdate | null);
+			init = Helper_.checkFunction_('Resolver (init)', init);
+			update = Helper_.checkFunction_('Resolver (update)', update);
 
 			this.cellContentStructureResolver_ = init ? {
 				init,
@@ -324,19 +324,19 @@ namespace TheDatepicker {
 		// or null for no header.
 		// defaults to no header
 		public setHeaderStructureResolver(resolver: StructureResolverInit | null): void {
-			this.headerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver) as (StructureResolverInit | null);
+			this.headerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver);
 		}
 
 		// Accepts callback which has no arguments and returns HTMLElement instance which will be placed as datepicker footer,
 		// or null for no footer.
 		// defaults to no footer
 		public setFooterStructureResolver(resolver: StructureResolverInit | null): void {
-			this.footerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver) as (StructureResolverInit | null);
+			this.footerStructureResolver_ = Helper_.checkFunction_('Resolver', resolver);
 		}
 
 		// Accepts callback which gets an instance of TheDatepicker.Day on input and returns array of strings representing custom classes for day cell.
 		public addCellClassesResolver(resolver: CellClassesResolver): void {
-			this.cellClassesResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false) as CellClassesResolver);
+			this.cellClassesResolvers_.push(Helper_.checkFunction_('Resolver', resolver, false));
 		}
 
 		public removeCellClassesResolver(resolver: CellClassesResolver | null = null): void {
@@ -345,7 +345,7 @@ namespace TheDatepicker {
 
 		// Accepts callback which gets an instance of TheDatepicker.Day on input. It is designated to add arbitrary properties to the TheDatepicker.Day instance.
 		public addDayModifier(modifier: DayModifier): void {
-			this.dayModifiers_.push(Helper_.checkFunction_('Modifier', modifier, false) as DayModifier);
+			this.dayModifiers_.push(Helper_.checkFunction_('Modifier', modifier, false));
 		}
 
 		public removeDayModifier(modifier: DayModifier | null = null): void {
@@ -1263,7 +1263,7 @@ namespace TheDatepicker {
 			return null;
 		}
 
-		private removeCallback_(callbacksList: Function[], parameterName: string, callback: Function | null): void {
+		private removeCallback_<Type extends Function>(callbacksList: Type[], parameterName: string, callback: Type | null): void {
 			callback = Helper_.checkFunction_(parameterName, callback);
 
 			if (!callback) {
@@ -1279,11 +1279,11 @@ namespace TheDatepicker {
 		}
 
 		private onEvent_(eventType: EventType_, listener: AnyListener) {
-			this.listeners_[eventType].push(Helper_.checkFunction_('Event listener', listener, false) as AnyListener);
+			this.listeners_[eventType].push(Helper_.checkFunction_('Event listener', listener, false));
 		}
 
 		private offEvent_(eventType: EventType_, listener: OneOfListener | null): void {
-			listener = Helper_.checkFunction_('Event listener', listener) as (OneOfListener | null);
+			listener = Helper_.checkFunction_('Event listener', listener);
 
 			if (!listener) {
 				this.listeners_[eventType] = [];
