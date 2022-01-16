@@ -1242,31 +1242,45 @@ var TheDatepicker;
                     date_2.setDate(date_2.getDate() - 1);
                     return date_2;
                 }
-                var matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*$/i);
-                if (matches) {
-                    var date_3 = options.getToday();
-                    var amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
+                var date = options.getToday();
+                var parsedValue = value;
+                var sumPositive = true;
+                while (parsedValue) {
+                    var matches = parsedValue.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*/i);
+                    if (!matches) {
+                        break;
+                    }
+                    switch (matches[1]) {
+                        case '+':
+                            sumPositive = true;
+                            break;
+                        case '-':
+                            sumPositive = false;
+                    }
+                    var amount = parseInt(matches[2], 10) * (sumPositive ? 1 : -1);
                     switch (matches[3].toLowerCase()) {
                         case 'day':
                         case 'days':
-                            date_3.setDate(date_3.getDate() + amount);
+                            date.setDate(date.getDate() + amount);
                             break;
                         case 'week':
                         case 'weeks':
-                            date_3.setDate(date_3.getDate() + amount * 7);
+                            date.setDate(date.getDate() + amount * 7);
                             break;
                         case 'month':
                         case 'months':
-                            date_3.setMonth(date_3.getMonth() + amount);
+                            date.setMonth(date.getMonth() + amount);
                             break;
                         case 'year':
                         case 'years':
-                            date_3.setFullYear(date_3.getFullYear() + amount);
-                            break;
+                            date.setFullYear(date.getFullYear() + amount);
                     }
-                    return date_3;
+                    parsedValue = parsedValue.substring(matches[0].length);
+                    if (!parsedValue) {
+                        return date;
+                    }
                 }
-                var date = Helper_.resetTime_(new Date(value));
+                date = Helper_.resetTime_(new Date(value));
                 if (!isNaN(date.getTime())) {
                     return date;
                 }

@@ -107,10 +107,22 @@ namespace TheDatepicker {
 					return date;
 				}
 
-				const matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*$/i);
-				if (matches) {
-					const date = options.getToday();
-					const amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
+				let date = options.getToday();
+				let parsedValue = value;
+				let sumPositive = true;
+				while (parsedValue) {
+					const matches = parsedValue.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*/i);
+					if (!matches) {
+						break;
+					}
+					switch (matches[1]) {
+						case '+':
+							sumPositive = true;
+							break;
+						case '-':
+							sumPositive = false;
+					}
+					const amount = parseInt(matches[2], 10) * (sumPositive ? 1 : -1);
 					switch (matches[3].toLowerCase()) {
 						case 'day':
 						case 'days':
@@ -127,12 +139,14 @@ namespace TheDatepicker {
 						case 'year':
 						case 'years':
 							date.setFullYear(date.getFullYear() + amount);
-							break;
 					}
-					return date;
+					parsedValue = parsedValue.substring(matches[0].length);
+					if (!parsedValue) {
+						return date;
+					}
 				}
 
-				const date = Helper_.resetTime_(new Date(value));
+				date = Helper_.resetTime_(new Date(value));
 				if (!isNaN(date.getTime())) {
 					return date;
 				}

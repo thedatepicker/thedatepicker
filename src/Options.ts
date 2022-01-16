@@ -202,7 +202,8 @@ namespace TheDatepicker {
 		// - string in format "<sign><number> <unit>"
 	    //     where <sign> is "+" or "-" and is optional,
 		//     <unit> is one of "day", "week", "month" or "year" or plural version
-		//     e.g.: "-10 years"
+		//     possibly repeating
+		//     e.g.: "-10 years", "+1 year 3 months"
 
 		// Setting to true will display datepicker only when input or datepicker itself is focused,
 		// otherwise datepicker will be visible always.
