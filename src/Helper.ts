@@ -56,6 +56,21 @@ namespace TheDatepicker {
 
 	export class Helper_ {
 
+		private static readonly months_ = [
+			'january',
+			'february',
+			'march',
+			'april',
+			'may',
+			'june',
+			'july',
+			'august',
+			'september',
+			'october',
+			'november',
+			'december',
+		];
+
 		private static deprecatedMethods_: string[] = [];
 
 		private static cssAnimationSupport_: boolean | null = null;
@@ -109,6 +124,20 @@ namespace TheDatepicker {
 
 				let date = options.getToday();
 				let parsedValue = value;
+				const matches = value.match(new RegExp('^\\s*([0-9]+)\.?\\s*(' + Helper_.months_.join('|') + ')\\s*', 'i'));
+				if (matches) {
+					const day = parseInt(matches[1], 10);
+					let month: number;
+					for (month = 0; month < Helper_.months_.length; month++) {
+						if (matches[2].toLowerCase() === Helper_.months_[month]) {
+							date.setMonth(month);
+							date.setDate(day);
+							break;
+						}
+					}
+					parsedValue = parsedValue.substring(matches[0].length);
+				}
+
 				let sumPositive = true;
 				while (parsedValue) {
 					const matches = parsedValue.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*/i);

@@ -1244,21 +1244,34 @@ var TheDatepicker;
                 }
                 var date = options.getToday();
                 var parsedValue = value;
+                var matches = value.match(new RegExp('^\\s*([0-9]+)\.?\\s*(' + Helper_.months_.join('|') + ')\\s*', 'i'));
+                if (matches) {
+                    var day = parseInt(matches[1], 10);
+                    var month = void 0;
+                    for (month = 0; month < Helper_.months_.length; month++) {
+                        if (matches[2].toLowerCase() === Helper_.months_[month]) {
+                            date.setMonth(month);
+                            date.setDate(day);
+                            break;
+                        }
+                    }
+                    parsedValue = parsedValue.substring(matches[0].length);
+                }
                 var sumPositive = true;
                 while (parsedValue) {
-                    var matches = parsedValue.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*/i);
-                    if (!matches) {
+                    var matches_1 = parsedValue.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*/i);
+                    if (!matches_1) {
                         break;
                     }
-                    switch (matches[1]) {
+                    switch (matches_1[1]) {
                         case '+':
                             sumPositive = true;
                             break;
                         case '-':
                             sumPositive = false;
                     }
-                    var amount = parseInt(matches[2], 10) * (sumPositive ? 1 : -1);
-                    switch (matches[3].toLowerCase()) {
+                    var amount = parseInt(matches_1[2], 10) * (sumPositive ? 1 : -1);
+                    switch (matches_1[3].toLowerCase()) {
                         case 'day':
                         case 'days':
                             date.setDate(date.getDate() + amount);
@@ -1275,7 +1288,7 @@ var TheDatepicker;
                         case 'years':
                             date.setFullYear(date.getFullYear() + amount);
                     }
-                    parsedValue = parsedValue.substring(matches[0].length);
+                    parsedValue = parsedValue.substring(matches_1[0].length);
                     if (!parsedValue) {
                         return date;
                     }
@@ -1470,6 +1483,20 @@ var TheDatepicker;
             }
             return !!result.matches;
         };
+        Helper_.months_ = [
+            'january',
+            'february',
+            'march',
+            'april',
+            'may',
+            'june',
+            'july',
+            'august',
+            'september',
+            'october',
+            'november',
+            'december',
+        ];
         Helper_.deprecatedMethods_ = [];
         Helper_.cssAnimationSupport_ = null;
         Helper_.passiveEventListenerSupport_ = null;
