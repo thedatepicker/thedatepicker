@@ -193,6 +193,17 @@ namespace TheDatepicker {
 			return options
 		}
 
+		// <Date> definition (can be one of following):
+		// - instance of Date
+		// - string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
+		// - any string which is accepted by Date constructor, e.g.: "7 September 2021"
+		// - instance of TheDatepicker.Day
+		// - string "now" or "today" or "tomorrow" or "yesterday"
+		// - string in format "<sign><number> <unit>"
+	    //     where <sign> is "+" or "-" and is optional,
+		//     <unit> is one of "day", "week", "month" or "year" or plural version
+		//     e.g.: "-10 years"
+
 		// Setting to true will display datepicker only when input or datepicker itself is focused,
 		// otherwise datepicker will be visible always.
 		// Works only when there an input exists.
@@ -210,13 +221,8 @@ namespace TheDatepicker {
 		}
 
 		// Minimal date which can be selected (inclusive).
-		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
-		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
-		// or instance of Date
-		// or instance of TheDatepicker.Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
-		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
-		// or null for no limit
+		// Define as <Date> (see the definition above)
+		// or null for no limit.
 		// defaults to no limit
 		public setMinDate(date: Day | Date | string | null): void {
 			const normalizedDate = Helper_.normalizeDate_('Min date', date, true, this);
@@ -225,13 +231,8 @@ namespace TheDatepicker {
 		}
 
 		// Maximal date which can be selected (inclusive).
-		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
-		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
-		// or instance of Date
-		// or instance of TheDatepicker.Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
-		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
-		// or null for no limit
+		// Define as <Date> (see the definition above)
+		// or null for no limit.
 		// defaults to no limit
 		public setMaxDate(date: Day | Date | string | null): void {
 			const normalizedDate = Helper_.normalizeDate_('Max date', date, true, this);
@@ -240,25 +241,16 @@ namespace TheDatepicker {
 		}
 
 		// Month to be rendered when datepicker opened first time.
-		// string in format YYYY-MM; e.g.: "2019-02" (months 1-based)
-		// or any string which is accepted by Date constructor, e.g.: "September 2021"
-		// or instance of Date
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
-		// where <sign> is "+" or "-" and is optional, <unit> is one of "month" or "year" or plural version
-		// or null for current month
+		// Define as <Date> (see the definition above)
+		// or null for the current month.
 		// defaults to current month
 		public setInitialMonth(month: Date | string | null): void {
 			this.initialMonth_ = Helper_.normalizeDate_('Initial month', month, true, this);
 		}
 
 		// Preselected date.
-		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
-		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
-		// or instance of Date
-		// or instance of TheDatepicker.Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
-		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
-		// or null for no value
+		// Define as <Date> (see the definition above)
+		// or null for no value.
 		// It's overloaded by direct input value, if any.
 		// defaults to null
 		public setInitialDate(value: Day | Date | string | null): void {
@@ -604,13 +596,8 @@ namespace TheDatepicker {
 		}
 
 		// Sets mock/fake today.
-		// string in format YYYY-MM-DD; e.g.: "2019-02-10" (months 1-based)
-		// or any string which is accepted by Date constructor, e.g.: "7 September 2021"
-		// or instance of Date
-		// or instance of TheDatepicker.Day
-		// or "now" or "today" or "tomorrow" or "yesterday" or string in format "<sign><number> <unit>"
-		// where <sign> is "+" or "-" and is optional, <unit> is one of "day", "month" or "year" or plural version
-		// null for real today
+		// Define as <Date> (see the definition above)
+		// or null for real today.
 		// defaults to null
 		public setToday(date: Day | Date | string | null): void {
 			this.today_ = Helper_.normalizeDate_('Today', date, true, this);

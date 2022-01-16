@@ -1228,6 +1228,7 @@ var TheDatepicker;
                 return value.getDate();
             }
             if (typeof value === 'string') {
+                value = value.trim ? value.trim() : value;
                 if (value === 'today' || value === 'now') {
                     return options.getToday();
                 }
@@ -1241,7 +1242,7 @@ var TheDatepicker;
                     date_2.setDate(date_2.getDate() - 1);
                     return date_2;
                 }
-                var matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
+                var matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*$/i);
                 if (matches) {
                     var date_3 = options.getToday();
                     var amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
@@ -1249,6 +1250,10 @@ var TheDatepicker;
                         case 'day':
                         case 'days':
                             date_3.setDate(date_3.getDate() + amount);
+                            break;
+                        case 'week':
+                        case 'weeks':
+                            date_3.setDate(date_3.getDate() + amount * 7);
                             break;
                         case 'month':
                         case 'months':

@@ -89,6 +89,8 @@ namespace TheDatepicker {
 			}
 
 			if (typeof value === 'string') {
+				value = value.trim ? value.trim() : value;
+
 				if (value === 'today' || value === 'now') {
 					return options.getToday();
 				}
@@ -105,7 +107,7 @@ namespace TheDatepicker {
 					return date;
 				}
 
-				const matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|month|year)s?\s*$/i);
+				const matches = value.match(/^\s*([+-]?)\s*([0-9]+)\s*(day|week|month|year)s?\s*$/i);
 				if (matches) {
 					const date = options.getToday();
 					const amount = parseInt(matches[2], 10) * (matches[1] === '-' ? -1 : 1);
@@ -113,6 +115,10 @@ namespace TheDatepicker {
 						case 'day':
 						case 'days':
 							date.setDate(date.getDate() + amount);
+							break;
+						case 'week':
+						case 'weeks':
+							date.setDate(date.getDate() + amount * 7);
 							break;
 						case 'month':
 						case 'months':
