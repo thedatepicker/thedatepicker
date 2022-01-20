@@ -52,6 +52,7 @@ namespace TheDatepicker {
 		private readonly inputClickable_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly inputText_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly viewModel_: ViewModel_;
+		private isContainerLocatedOver_: boolean = false;
 
 		private initializationPhase_ = InitializationPhase.Untouched;
 		private inputListenerRemover_: (() => void) | null = null;
@@ -525,6 +526,12 @@ namespace TheDatepicker {
 				return;
 			}
 
+			this.animateActivation_();
+
+			if (!this.viewModel_.isActive_()) {
+				return;
+			}
+
 			this.updateContainer_();
 
 			if (this.inputText_) {
@@ -533,7 +540,8 @@ namespace TheDatepicker {
 		}
 
 		private updateContainer_(): void {
-			if (this.isContainerExternal_) {
+			// todo když se option isHiddenOnBlur změní za chodu, zachová se to správně?
+			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
 				return;
 			}
 
@@ -601,6 +609,20 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
 				mainElement.style.left = '-' + (containerWidth - inputWidth) + 'px';
 			}
+
+			this.isContainerLocatedOver_ = locateOver;
+		}
+
+		private animateActivation_(): void {
+			// todo fallbacky jako jsou u slideTable
+			// todo option
+			const originalClassName = this.container.className;
+			Helper_.addEventListener_(this.container, ListenerType_.AnimationEnd, (): void => {
+				this.container.className = originalClassName;
+			});
+			HtmlHelper_.addClass_(this.container, ClassNameType.Animated, this.options);
+			HtmlHelper_.addClass_(this.container, this.viewModel_.isActive_() ? ClassNameType.AnimateExpand : ClassNameType.AnimateCollapse, this.options);
+			HtmlHelper_.addClass_(this.container, this.isContainerLocatedOver_ ? ClassNameType.AnimateFoldingOver : ClassNameType.AnimateFoldingUnder, this.options);
 		}
 
 		private static setBodyClass_(enable: boolean) {
@@ -640,6 +662,8 @@ namespace TheDatepicker {
 			if (!viewModel) {
 				Datepicker.setBodyClass_(false);
 
+				// todo tady bych musel volat onActivate_ na zavíraném DP...
+				// datepicker.onActivate_();
 				Datepicker.activeViewModel_ = null;
 				return true;
 			}

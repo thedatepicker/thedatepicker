@@ -40,6 +40,11 @@ body.the-datepicker-page {
   border-top-right-radius: 0.3em;
   border-bottom-right-radius: 0;
 }
+.the-datepicker__container.the-datepicker__animated {
+  animation-fill-mode: both;
+  animation-duration: 0.1s;
+  overflow-y: hidden;
+}
 .the-datepicker__main {
   width: auto;
   height: auto;
@@ -280,7 +285,7 @@ body.the-datepicker-page {
 .the-datepicker__main--darkmode.the-datepicker__main td.the-datepicker__cell--selected.the-datepicker__cell--highlighted a.the-datepicker__button:hover .the-datepicker__button-content {
   background-color: #007eff;
 }
-.the-datepicker__main .the-datepicker__animated {
+.the-datepicker__main .the-datepicker__tables.the-datepicker__animated {
   animation-duration: 0.1s;
   animation-fill-mode: both;
 }
@@ -296,6 +301,18 @@ body.the-datepicker-page {
 }
 .the-datepicker__deselect .the-datepicker__deselect-button:hover {
   text-decoration: none;
+}
+.the-datepicker__expand {
+  animation-name: the-datepicker-expand;
+}
+.the-datepicker__collapse {
+  animation-name: the-datepicker-collapse;
+}
+.the-datepicker__folding--over {
+  transform-origin: bottom;
+}
+.the-datepicker__folding--under {
+  transform-origin: top;
 }
 .the-datepicker__fade-out-left {
   animation-name: the-datepicker-fade-out-left;
@@ -320,6 +337,70 @@ body.the-datepicker-page {
 }
 .the-datepicker__fade-in-down {
   animation-name: the-datepicker-fade-in-down;
+}
+@-moz-keyframes the-datepicker-expand {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@-webkit-keyframes the-datepicker-expand {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@-o-keyframes the-datepicker-expand {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes the-datepicker-expand {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@-moz-keyframes the-datepicker-collapse {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+@-webkit-keyframes the-datepicker-collapse {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+@-o-keyframes the-datepicker-collapse {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+@keyframes the-datepicker-collapse {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
 }
 @-moz-keyframes the-datepicker-fade-out-left {
   from {

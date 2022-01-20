@@ -66,6 +66,10 @@ namespace TheDatepicker {
 		AnimateFadeInUp,
 		ContainerDarkMode,
 		MainDarkMode,
+		AnimateExpand,
+		AnimateCollapse,
+		AnimateFoldingOver,
+		AnimateFoldingUnder,
 	}
 
 	export class ClassNames {
@@ -136,6 +140,10 @@ namespace TheDatepicker {
 			['fade-in-up'], // AnimateFadeInUp
 			['container--darkmode'], // ContainerDarkMode
 			['main--darkmode'], // MainDarkMode
+			['expand'], // AnimateExpand
+			['collapse'], // AnimateCollapse
+			['folding-over'], // AnimateFoldingOver
+			['folding-under'], // AnimateFoldingUnder
 		];
 
 		public clone(): ClassNames {

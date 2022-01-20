@@ -43,6 +43,11 @@ body.the-datepicker-page
 			border-bottom-left-radius 0.3em
 			border-top-right-radius 0.3em
 			border-bottom-right-radius 0
+	&.the-datepicker__animated
+		// todo je animation-fill-mode k něčemu?
+		animation-fill-mode both
+		animation-duration 0.1s
+		overflow-y hidden
 
 .the-datepicker__main
 	width auto
@@ -247,7 +252,7 @@ body.the-datepicker-page
 					.the-datepicker__main--darkmode&
 						background-color $base-color
 
-	.the-datepicker__animated
+	.the-datepicker__tables.the-datepicker__animated
 		animation-duration 0.1s
 		animation-fill-mode both
 
@@ -262,10 +267,32 @@ body.the-datepicker-page
 		&:hover
 			text-decoration none
 
+@keyframes the-datepicker-expand
+	from
+		transform scaleY(0)
+	to
+		transform scaleY(1)
+
+.the-datepicker__expand
+	animation-name the-datepicker-expand
+
+@keyframes the-datepicker-collapse
+	from
+		transform scaleY(1)
+	to
+		transform scaleY(0)
+
+.the-datepicker__collapse
+	animation-name the-datepicker-collapse
+
+.the-datepicker__folding--over
+	transform-origin bottom
+.the-datepicker__folding--under
+	transform-origin top
+
 @keyframes the-datepicker-fade-out-left
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(-100%, 0, 0)
 
@@ -275,7 +302,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-out-right
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(100%, 0, 0)
 
@@ -285,7 +311,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-left
 	from
 		transform translate3d(-100%, 0, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 
@@ -295,7 +320,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-right
 	from
 		transform translate3d(100%, 0, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 
@@ -305,7 +329,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-out-up
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(0, -100%, 0)
 
@@ -315,7 +338,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-out-down
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(0, 100%, 0)
 
@@ -325,7 +347,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-up
 	from
 		transform translate3d(0, -100%, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 
@@ -335,7 +356,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-down
 	from
 		transform translate3d(0, 100%, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 

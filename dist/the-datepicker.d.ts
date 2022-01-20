@@ -64,7 +64,11 @@ declare namespace TheDatepicker {
         AnimateFadeOutDown = 61,
         AnimateFadeInUp = 62,
         ContainerDarkMode = 63,
-        MainDarkMode = 64
+        MainDarkMode = 64,
+        AnimateExpand = 65,
+        AnimateCollapse = 66,
+        AnimateFoldingOver = 67,
+        AnimateFoldingUnder = 68
     }
     class ClassNames {
         private classNames_;
@@ -128,6 +132,7 @@ declare namespace TheDatepicker {
         private readonly inputClickable_;
         private readonly inputText_;
         private readonly viewModel_;
+        private isContainerLocatedOver_;
         private initializationPhase_;
         private inputListenerRemover_;
         private listenerRemovers_;
@@ -167,6 +172,7 @@ declare namespace TheDatepicker {
         private triggerReadyListener_;
         private onActivate_;
         private updateContainer_;
+        private animateActivation_;
         private static setBodyClass_;
         private static activateViewModel_;
     }
