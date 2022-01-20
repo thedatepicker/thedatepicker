@@ -127,6 +127,14 @@ namespace TheDatepicker {
 		}
 
 		protected updateMainElement_(viewModel: ViewModel_): void {
+			if (this.options_.isHiddenOnBlur() && viewModel.getActiveImmediateState_() === true) {
+				const originalClassName = this.tablesElement_.className;
+				Helper_.addEventListener_(this.mainElement_, ListenerType_.AnimationEnd, (): void => {
+					this.tablesElement_.className = originalClassName;
+				});
+				HtmlHelper_.addClass_(this.mainElement_, ClassNameType.Animated, this.options_);
+				HtmlHelper_.addClass_(this.mainElement_, ClassNameType.AnimateExpand, this.options_);
+			}
 			this.mainElement_.style.display = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur() ? '' : 'none';
 		}
 

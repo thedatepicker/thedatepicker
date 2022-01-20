@@ -249,8 +249,14 @@ body.the-datepicker-page {
   font-weight: bold;
 }
 .the-datepicker__main .the-datepicker__animated {
-  animation-duration: 0.1s;
   animation-fill-mode: both;
+}
+.the-datepicker__main .the-datepicker__tables.the-datepicker__animated {
+  animation-duration: 0.1s;
+}
+.the-datepicker__main.the-datepicker__animated {
+  animation-duration: 1s;
+  overflow-y: hidden;
 }
 .the-datepicker__deselect {
   position: absolute;
@@ -264,6 +270,9 @@ body.the-datepicker-page {
 }
 .the-datepicker__deselect .the-datepicker__deselect-button:hover {
   text-decoration: none;
+}
+.the-datepicker__expand {
+  animation-name: the-datepicker-expand;
 }
 .the-datepicker__fade-out-left {
   animation-name: the-datepicker-fade-out-left;
@@ -288,6 +297,38 @@ body.the-datepicker-page {
 }
 .the-datepicker__fade-in-down {
   animation-name: the-datepicker-fade-in-down;
+}
+@-moz-keyframes the-datepicker-expand {
+  from {
+    height: 0;
+  }
+  to {
+    height: auto;
+  }
+}
+@-webkit-keyframes the-datepicker-expand {
+  from {
+    height: 0;
+  }
+  to {
+    height: auto;
+  }
+}
+@-o-keyframes the-datepicker-expand {
+  from {
+    height: 0;
+  }
+  to {
+    height: auto;
+  }
+}
+@keyframes the-datepicker-expand {
+  from {
+    height: 0;
+  }
+  to {
+    height: auto;
+  }
 }
 @-moz-keyframes the-datepicker-fade-out-left {
   from {

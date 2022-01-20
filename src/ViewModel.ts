@@ -106,6 +106,7 @@ namespace TheDatepicker {
 		private highlightedDay_: Day | null = null;
 		private isHighlightedDayFocused_ = false;
 		private active_ = false;
+		private activeImmediateState_: boolean | null = null;
 
 		constructor(
 			private readonly options_: Options,
@@ -148,6 +149,7 @@ namespace TheDatepicker {
 			}
 
 			this.active_ = value;
+			this.activeImmediateState_ = value;
 
 			if (
 				(
@@ -720,6 +722,13 @@ namespace TheDatepicker {
 			this.options_.modifyDay(day);
 
 			return day;
+		}
+
+		public getActiveImmediateState_(): boolean | null
+		{
+			const value = this.activeImmediateState_;
+			this.activeImmediateState_ = null;
+			return value;
 		}
 
 		private triggerOnBeforeSelect_(event: Event | null, day: Day | null, previousDay: Day | null): boolean {

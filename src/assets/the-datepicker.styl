@@ -221,8 +221,14 @@ body.the-datepicker-page
 		font-weight bold
 
 	.the-datepicker__animated
-		animation-duration 0.1s
 		animation-fill-mode both
+
+	.the-datepicker__tables.the-datepicker__animated
+		animation-duration 0.1s
+
+	&.the-datepicker__animated
+		animation-duration 1s
+		overflow-y hidden
 
 .the-datepicker__deselect
 	position absolute
@@ -235,10 +241,18 @@ body.the-datepicker-page
 		&:hover
 			text-decoration none
 
+@keyframes the-datepicker-expand
+	from
+		height 0
+	to
+		height auto
+
+.the-datepicker__expand
+	animation-name the-datepicker-expand
+
 @keyframes the-datepicker-fade-out-left
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(-100%, 0, 0)
 
@@ -248,7 +262,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-out-right
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(100%, 0, 0)
 
@@ -258,7 +271,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-left
 	from
 		transform translate3d(-100%, 0, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 
@@ -268,7 +280,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-right
 	from
 		transform translate3d(100%, 0, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 
@@ -278,7 +289,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-out-up
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(0, -100%, 0)
 
@@ -288,7 +298,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-out-down
 	from
 		transform translate3d(0, 0, 0)
-
 	to
 		transform translate3d(0, 100%, 0)
 
@@ -298,7 +307,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-up
 	from
 		transform translate3d(0, -100%, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 
@@ -308,7 +316,6 @@ body.the-datepicker-page
 @keyframes the-datepicker-fade-in-down
 	from
 		transform translate3d(0, 100%, 0)
-
 	to
 		transform translate3d(0, 0, 0)
 

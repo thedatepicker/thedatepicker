@@ -65,6 +65,7 @@ var TheDatepicker;
         ClassNameType[ClassNameType["AnimateFadeInLeft"] = 60] = "AnimateFadeInLeft";
         ClassNameType[ClassNameType["AnimateFadeOutDown"] = 61] = "AnimateFadeOutDown";
         ClassNameType[ClassNameType["AnimateFadeInUp"] = 62] = "AnimateFadeInUp";
+        ClassNameType[ClassNameType["AnimateExpand"] = 63] = "AnimateExpand";
     })(ClassNameType = TheDatepicker.ClassNameType || (TheDatepicker.ClassNameType = {}));
     var ClassNames = (function () {
         function ClassNames() {
@@ -132,6 +133,7 @@ var TheDatepicker;
                 ['fade-in-left'],
                 ['fade-out-down'],
                 ['fade-in-up'],
+                ['expand'],
             ];
         }
         ClassNames.prototype.clone = function () {
@@ -2564,6 +2566,15 @@ var TheDatepicker;
             return main;
         };
         Template_.prototype.updateMainElement_ = function (viewModel) {
+            var _this = this;
+            if (this.options_.isHiddenOnBlur() && viewModel.getActiveImmediateState_() === true) {
+                var originalClassName_1 = this.tablesElement_.className;
+                TheDatepicker.Helper_.addEventListener_(this.mainElement_, TheDatepicker.ListenerType_.AnimationEnd, function () {
+                    _this.tablesElement_.className = originalClassName_1;
+                });
+                TheDatepicker.HtmlHelper_.addClass_(this.mainElement_, TheDatepicker.ClassNameType.Animated, this.options_);
+                TheDatepicker.HtmlHelper_.addClass_(this.mainElement_, TheDatepicker.ClassNameType.AnimateExpand, this.options_);
+            }
             this.mainElement_.style.display = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur() ? '' : 'none';
         };
         Template_.prototype.updateTableElements_ = function (viewModel) {
@@ -3553,6 +3564,7 @@ var TheDatepicker;
             this.highlightedDay_ = null;
             this.isHighlightedDayFocused_ = false;
             this.active_ = false;
+            this.activeImmediateState_ = null;
             this.template_ = new TheDatepicker.Template_(this.options_, datepicker_.container, !!datepicker_.input);
         }
         ViewModel_.prototype.render_ = function () {
@@ -3581,6 +3593,7 @@ var TheDatepicker;
                 return false;
             }
             this.active_ = value;
+            this.activeImmediateState_ = value;
             if (((!value && !this.setYearSelectionActive_(false))
                 || value) && this.options_.isHiddenOnBlur()) {
                 this.render_();
@@ -4059,6 +4072,11 @@ var TheDatepicker;
             }
             this.options_.modifyDay(day);
             return day;
+        };
+        ViewModel_.prototype.getActiveImmediateState_ = function () {
+            var value = this.activeImmediateState_;
+            this.activeImmediateState_ = null;
+            return value;
         };
         ViewModel_.prototype.triggerOnBeforeSelect_ = function (event, day, previousDay) {
             var _this = this;
