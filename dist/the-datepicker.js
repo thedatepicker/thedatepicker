@@ -1799,7 +1799,9 @@ var TheDatepicker;
         Options.prototype.setDateAvailabilityResolver = function (resolver) {
             TheDatepicker.Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', ['addDateAvailabilityResolver']);
             this.removeDateAvailabilityResolver();
-            this.addDateAvailabilityResolver(resolver);
+            if (resolver) {
+                this.addDateAvailabilityResolver(resolver);
+            }
         };
         Options.prototype.addDateAvailabilityResolver = function (resolver) {
             this.dateAvailabilityResolvers_.push(TheDatepicker.Helper_.checkFunction_('Resolver', resolver, false));

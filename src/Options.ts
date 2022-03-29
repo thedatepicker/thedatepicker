@@ -280,7 +280,9 @@ namespace TheDatepicker {
 		public setDateAvailabilityResolver(resolver: DateAvailabilityResolver | null): void {
 			Helper_.warnDeprecatedUsage_('setDateAvailabilityResolver', ['addDateAvailabilityResolver']);
 			this.removeDateAvailabilityResolver();
-			this.addDateAvailabilityResolver(resolver);
+			if (resolver) {
+				this.addDateAvailabilityResolver(resolver);
+			}
 		}
 
 		// Accepts callback which gets an instance of Date on input and returns boolean whether given date is available for select or not.
