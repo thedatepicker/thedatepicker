@@ -199,6 +199,7 @@ body.the-datepicker-page {
 }
 .the-datepicker__main td.the-datepicker__cell a.the-datepicker__button {
   padding: 0.1em;
+  margin: 0 auto;
 }
 .the-datepicker__main td.the-datepicker__cell a.the-datepicker__button .the-datepicker__button-content {
   display: block;
