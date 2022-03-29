@@ -369,12 +369,7 @@ namespace TheDatepicker {
 		};
 
 		private createContainer_(): HTMLElement {
-			const container = HtmlHelper_.createDiv_(ClassNameType.Container, this.options);
-			if (this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(container, ClassNameType.ContainerResponsive, this.options);
-			}
-
-			return container;
+			return  HtmlHelper_.createDiv_(ClassNameType.Container, this.options);
 		}
 
 		private createDeselectElement_(): HTMLElement | null {

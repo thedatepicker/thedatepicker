@@ -836,11 +836,7 @@ var TheDatepicker;
         };
         ;
         Datepicker.prototype.createContainer_ = function () {
-            var container = TheDatepicker.HtmlHelper_.createDiv_(TheDatepicker.ClassNameType.Container, this.options);
-            if (this.options.isFullScreenOnMobile()) {
-                TheDatepicker.HtmlHelper_.addClass_(container, TheDatepicker.ClassNameType.ContainerResponsive, this.options);
-            }
-            return container;
+            return TheDatepicker.HtmlHelper_.createDiv_(TheDatepicker.ClassNameType.Container, this.options);
         };
         Datepicker.prototype.createDeselectElement_ = function () {
             var _this = this;
