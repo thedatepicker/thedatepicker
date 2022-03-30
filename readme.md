@@ -85,6 +85,6 @@ datepicker.options.setMinDate('today');
 ```
 
 - Some options take effect only if changed before the first datepicker open.
-- Learn more about options in [source code](https://github.com/thedatepicker/thedatepicker/blob/master/src/Options.ts) (setters are commented).
+- Learn more about options in [source code](https://github.com/thedatepicker/thedatepicker/blob/master/src/Options.ts) (setters are commented, search for `public set*`).
 - Do not forget to call `datepicker.render()` to start using datepicker.
 - Changing options after render takes effect immediately only if you call `datepicker.render()` again.
