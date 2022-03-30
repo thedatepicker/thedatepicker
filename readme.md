@@ -19,7 +19,7 @@ https://github.com/thedatepicker/thedatepicker/releases
 CDN:
 ----
 
-https://cdn.jsdelivr.net/npm/thedatepicker@latest/dist/the-datepicker.min.js
+https://cdn.jsdelivr.net/npm/thedatepicker@latest/dist/the-datepicker.min.js  
 https://cdn.jsdelivr.net/npm/thedatepicker@latest/dist/the-datepicker.css
 
 Usage:
