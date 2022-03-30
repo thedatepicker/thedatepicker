@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/thedatepicker/thedatepicker.git"
   },
+  "main": "dist/the-datepicker.min.js",
   "browser": "dist/the-datepicker.min.js",
   "devDependencies": {
     "stylus": "^0.54.8",
