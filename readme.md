@@ -1,3 +1,8 @@
+[![](https://data.jsdelivr.com/v1/package/npm/thedatepicker/badge)](https://www.jsdelivr.com/package/npm/thedatepicker)
+![](https://img.shields.io/github/stars/thedatepicker/thedatepicker.svg)
+![](https://badge-size.herokuapp.com/thedatepicker/thedatepicker/master/dist/the-datepicker.min.js)
+![](https://img.shields.io/github/license/thedatepicker/thedatepicker.svg)
+
 TheDatepicker 
 =============
 
