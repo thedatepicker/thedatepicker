@@ -22,10 +22,13 @@
     "url": "https://github.com/thedatepicker/thedatepicker/issues"
   },
   "homepage": "https://github.com/thedatepicker/thedatepicker#readme",
-  "description": "TheDatepicker - Pure JavaScript Datepicker",
+  "description": "TheDatepicker - Pure JavaScript Datepicker by Slevomat.cz",
   "keywords": [
     "date",
     "datepicker"
   ],
-  "author": "Vladislav Hejda"
+  "author": {
+    "name": "Vladislav Hejda",
+    "url": "https://twitter.com/hejdav"
+  }
 }
