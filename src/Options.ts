@@ -353,10 +353,12 @@ namespace TheDatepicker {
 		// It accepts following placeholders:
 		// "j": Day of the month; 1 to 31
 		// "d": Day of the month with leading zero; 01 to 31
-		// "D": Textual representation of a day of the week; Mo through Su
+		// "l": Textual representation of a day of the week; Monday through Sunday
+		// "D": Short textual representation of a day of the week; Mo through Su
 		// "n": Numeric representation of a month; 1 through 12
 		// "m": Numeric representation of a month with leading zero; 01 through 12
 		// "F": Textual representation of a month; January through December
+		// "M": Short textual representation of a month; Jan through Dec
 		// "Y": Full year; 1999 or 2003
 		// "y": Year, 2 digits; 99 or 03
 		// Any other character is printed as is.
