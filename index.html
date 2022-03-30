@@ -521,6 +521,9 @@ return header;
 					<label>datepicker.options.setClassesPrefix("<input type="text" size="15" id="classesPrefix" value="the-datepicker__">");</label> <span class="error" id="classesPrefixError"></span>
 				</li>
 				<li>
+					<label>datepicker.options.setDarkMode("<input type="checkbox" id="darkMode">");</label>
+				</li>
+				<li>
 					<label>datepicker.options.setToday("<input type="text" size="15" id="today" placeholder="Y-m-d">");</label> <span class="error" id="todayError"></span>
 				</li>
 				<li>
@@ -695,6 +698,9 @@ return header;
 				</li>
 				<li>
 					<label>datepicker.options.classNames.setClassName(TheDatepicker.ClassNameType.ContainerResponsive, "<input type="text" size="15" class="className" data-prop="ContainerResponsive" value="container--responsive">");</label>
+				</li>
+				<li>
+					<label>datepicker.options.classNames.setClassName(TheDatepicker.ClassNameType.ContainerDarkMode, "<input type="text" size="15" class="className" data-prop="ContainerDarkMode" value="container--darkMode">");</label>
 				</li>
 				<li>
 					<label>datepicker.options.classNames.setClassName(TheDatepicker.ClassNameType.Main, "<input type="text" size="15" class="className" data-prop="Main" value="main">");</label>
@@ -1565,6 +1571,13 @@ return header;
 			classesPrefixInput.onchange = function () {
 				updateSetting(classesPrefixInput, function () {
 					datepicker.options.setClassesPrefix(classesPrefixInput.value);
+				});
+			};
+
+			var darkModeInput = document.getElementById('darkMode');
+			darkModeInput.onchange = function () {
+				updateSetting(darkModeInput, function () {
+					datepicker.options.setDarkMode(darkModeInput.checked);
 				});
 			};
 

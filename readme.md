@@ -19,6 +19,7 @@ Highly customizable pure JavaScript Datepicker by [Slevomat.cz](https://www.slev
 - Listeners for any event (`open` / `close` / `(de)select` / `monthChange` / `focus`)
 - Customizable design - all logical elements has it's unique CSS class
 - Possible to place it to a custom `<div>` or just let it float under an `<input>`
+- Darkmode
 
 Installation:
 -------------

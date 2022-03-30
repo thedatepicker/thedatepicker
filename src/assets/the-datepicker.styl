@@ -1,9 +1,14 @@
 $base-color = #007eff
 $weak-color = #8ac4ff
+$weak-color-darkmode = #002a41
 $unavailable-color = #aaa
+$unavailable-color-darkmode = #323232
 $highlight-background = #d1e8ff
+$highlight-background-darkmode = #003b75
 $table-header-color = #666
 $border = #ccc
+$border-darkmode = #494949
+$select-darkmode = #cdcdcd;
 
 body.the-datepicker-page
 	overflow hidden
@@ -49,6 +54,8 @@ body.the-datepicker-page
 	line-height 1em
 	box-sizing border-box
 	overflow-y auto
+	.the-datepicker__container--darkmode &
+		border-color $border-darkmode
 
 	.the-datepicker__container--responsive &
 		width 100vw
@@ -56,6 +63,9 @@ body.the-datepicker-page
 		@media (min-width: 37.5em)
 			width auto
 			height auto
+
+	.the-datepicker__container--darkmode &
+		background-color black
 
 	.the-datepicker__header
 		padding 0.4em 0.4em 0 0.4em
@@ -87,6 +97,8 @@ body.the-datepicker-page
 		&:hover
 			background-color $highlight-background
 			text-decoration none
+			.the-datepicker__container--darkmode &
+				background-color $highlight-background-darkmode
 
 	a.the-datepicker__day-button
 		width auto
@@ -160,6 +172,11 @@ body.the-datepicker-page
 		font-size 0.9em
 		margin 0
 		padding 0
+		background-color white
+		color black
+		.the-datepicker__container--darkmode &
+			background-color black
+			color $select-darkmode
 
 	table.the-datepicker__table
 		width 100%
@@ -192,31 +209,45 @@ body.the-datepicker-page
 				background-color transparent
 				.the-datepicker__button-content
 					background-color $highlight-background
+					.the-datepicker__container--darkmode &
+						background-color $highlight-background-darkmode
 
 	td.the-datepicker__cell--highlighted
 		a.the-datepicker__button
 			.the-datepicker__button-content
 				background-color $highlight-background
+				.the-datepicker__container--darkmode &
+					background-color $highlight-background-darkmode
 
 	td.the-datepicker__day--outside
 		a.the-datepicker__button
 			color $weak-color
+			.the-datepicker__container--darkmode &
+				color $weak-color-darkmode
 
 	td.the-datepicker__cell--unavailable
 		a.the-datepicker__button
 			color $unavailable-color
+			.the-datepicker__container--darkmode &
+				color $unavailable-color-darkmode
 			&:hover
 				.the-datepicker__button-content
 					background-color transparent
+					.the-datepicker__container--darkmode &
+						background-color transparent
 
 	td.the-datepicker__cell--selected, td.the-datepicker__cell--selected.the-datepicker__cell--highlighted
 		a.the-datepicker__button
 			color white
+			.the-datepicker__container--darkmode &
+				color white
 			.the-datepicker__button-content
 				background-color $base-color
 			&:hover
 				.the-datepicker__button-content
 					background-color $base-color
+					.the-datepicker__container--darkmode &
+						background-color $base-color
 
 	.the-datepicker__day--weekend, .the-datepicker__week-day--weekend, td.the-datepicker__day--today
 		font-weight bold

@@ -65,6 +65,7 @@ var TheDatepicker;
         ClassNameType[ClassNameType["AnimateFadeInLeft"] = 60] = "AnimateFadeInLeft";
         ClassNameType[ClassNameType["AnimateFadeOutDown"] = 61] = "AnimateFadeOutDown";
         ClassNameType[ClassNameType["AnimateFadeInUp"] = 62] = "AnimateFadeInUp";
+        ClassNameType[ClassNameType["ContainerDarkMode"] = 63] = "ContainerDarkMode";
     })(ClassNameType = TheDatepicker.ClassNameType || (TheDatepicker.ClassNameType = {}));
     var ClassNames = (function () {
         function ClassNames() {
@@ -132,6 +133,7 @@ var TheDatepicker;
                 ['fade-in-left'],
                 ['fade-out-down'],
                 ['fade-in-up'],
+                ['container--darkmode'],
             ];
         }
         ClassNames.prototype.clone = function () {
@@ -1024,6 +1026,9 @@ var TheDatepicker;
             if (this.options.isFullScreenOnMobile()) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerResponsive, this.options);
             }
+            if (this.options.isDarkModeEnabled()) {
+                TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerDarkMode, this.options);
+            }
             if (mainElement && (locateOver || locateLeft)) {
                 if (locateOver) {
                     var moveTop = inputHeight + containerHeight;
@@ -1676,6 +1681,7 @@ var TheDatepicker;
             this.changeMonthOnSwipe_ = true;
             this.slideAnimation_ = true;
             this.classesPrefix_ = 'the-datepicker__';
+            this.darkMode_ = false;
             this.showCloseButton_ = true;
             this.closeOnEscPress_ = true;
             this.title_ = '';
@@ -1742,6 +1748,7 @@ var TheDatepicker;
             options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
             options.slideAnimation_ = this.slideAnimation_;
             options.classesPrefix_ = this.classesPrefix_;
+            options.darkMode_ = this.darkMode_;
             options.showCloseButton_ = this.showCloseButton_;
             options.closeOnEscPress_ = this.closeOnEscPress_;
             options.title_ = this.title_;
@@ -1905,6 +1912,9 @@ var TheDatepicker;
         };
         Options.prototype.setClassesPrefix = function (prefix) {
             this.classesPrefix_ = TheDatepicker.Helper_.checkString_('Prefix', prefix);
+        };
+        Options.prototype.setDarkMode = function (value) {
+            this.darkMode_ = !!value;
         };
         Options.prototype.setShowCloseButton = function (value) {
             this.showCloseButton_ = !!value;
@@ -2180,6 +2190,9 @@ var TheDatepicker;
         };
         Options.prototype.getClassesPrefix = function () {
             return this.classesPrefix_;
+        };
+        Options.prototype.isDarkModeEnabled = function () {
+            return this.darkMode_;
         };
         Options.prototype.isCloseButtonShown = function () {
             return this.hideOnBlur_ && this.showCloseButton_;

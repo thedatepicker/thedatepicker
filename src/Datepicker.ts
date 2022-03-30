@@ -582,6 +582,9 @@ namespace TheDatepicker {
 			if (this.options.isFullScreenOnMobile()) {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
 			}
+			if (this.options.isDarkModeEnabled()) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
+			}
 
 			if (mainElement && (locateOver || locateLeft)) {
 				if (locateOver) {

@@ -95,6 +95,7 @@ namespace TheDatepicker {
 		private changeMonthOnSwipe_ = true;
 		private slideAnimation_ = true;
 		private classesPrefix_ = 'the-datepicker__';
+		private darkMode_ = false;
 		private showCloseButton_ = true;
 		private closeOnEscPress_ = true;
 		private title_ = '';
@@ -165,6 +166,7 @@ namespace TheDatepicker {
 			options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
 			options.slideAnimation_ = this.slideAnimation_;
 			options.classesPrefix_ = this.classesPrefix_;
+			options.darkMode_ = this.darkMode_;
 			options.showCloseButton_ = this.showCloseButton_;
 			options.closeOnEscPress_ = this.closeOnEscPress_;
 			options.title_ = this.title_;
@@ -507,6 +509,13 @@ namespace TheDatepicker {
 		// defaults to "the-datepicker__"
 		public setClassesPrefix(prefix: string): void {
 			this.classesPrefix_ = Helper_.checkString_('Prefix', prefix);
+		}
+
+		// Setting to true will render datepicker in the dark appearance.
+		// Works only when there is no custom container.
+		// defaults to false
+		public setDarkMode(value: boolean): void {
+			this.darkMode_ = !!value;
 		}
 
 		// Setting to true will show button for closing datepicker.
@@ -923,6 +932,10 @@ namespace TheDatepicker {
 
 		public getClassesPrefix(): string {
 			return this.classesPrefix_;
+		}
+
+		public isDarkModeEnabled(): boolean {
+			return this.darkMode_;
 		}
 
 		public isCloseButtonShown(): boolean {

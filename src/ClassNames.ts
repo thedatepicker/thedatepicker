@@ -64,6 +64,7 @@ namespace TheDatepicker {
 		AnimateFadeInLeft,
 		AnimateFadeOutDown,
 		AnimateFadeInUp,
+		ContainerDarkMode,
 	}
 
 	export class ClassNames {
@@ -132,6 +133,7 @@ namespace TheDatepicker {
 			['fade-in-left'], // AnimateFadeInLeft
 			['fade-out-down'], // AnimateFadeOutDown
 			['fade-in-up'], // AnimateFadeInUp
+			['container--darkmode'], // ContainerDarkMode
 		];
 
 		public clone(): ClassNames {
