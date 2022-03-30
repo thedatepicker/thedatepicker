@@ -1,8 +1,8 @@
+[![](http://vanilla-js.com/assets/button.png)](http://vanilla-js.com/)
 [![](https://data.jsdelivr.com/v1/package/npm/thedatepicker/badge)](https://www.jsdelivr.com/package/npm/thedatepicker)
-![](https://img.shields.io/github/stars/thedatepicker/thedatepicker.svg)
-![](https://badge-size.herokuapp.com/thedatepicker/thedatepicker/master/dist/the-datepicker.min.js)
-![](https://img.shields.io/github/license/thedatepicker/thedatepicker.svg)
-
+[![](https://img.shields.io/github/stars/thedatepicker/thedatepicker.svg)](https://github.com/thedatepicker/thedatepicker/stargazers)
+[![](https://badge-size.herokuapp.com/thedatepicker/thedatepicker/master/dist/the-datepicker.min.js)](https://cdn.jsdelivr.net/npm/thedatepicker@latest/dist/the-datepicker.min.js)
+[![](https://img.shields.io/github/license/thedatepicker/thedatepicker.svg)](https://github.com/thedatepicker/thedatepicker/blob/master/LICENSE)
 
 TheDatepicker 
 =============
@@ -12,6 +12,10 @@ Highly customizable pure JavaScript Datepicker by [Slevomat.cz](https://www.slev
 **[Try DEMO](https://thedatepicker.github.io/thedatepicker/)**  
 **[Plyaground](https://jsfiddle.net/hejdav/742cswpz/6/)**
 
+- Pure ([Vanilla](http://vanilla-js.com/)) javascript, no dependencies
+- Responsive (fullscreen on mobile devices)
+- Listeners for any event (`open` / `close` / `select` / `monthChange` / `focus`)
+- Place it to a custom `<div>` or just let it float under your `<input>`
 
 Installation:
 -------------
@@ -82,6 +86,25 @@ For example:
 
 ```javascript
 datepicker.options.setMinDate('today');
+
+datepicker.options.setInputFormat('d M Y'); // "03 Mar 2022"
+
+datepicker.options.setHideOnBlur(false);
+
+datepicker.options.setAllowEmpty(false);
+
+datepicker.options.onSelect(function (event, day) {
+    alert('Selected ' + day.getFormatted());
+});
+
+datepicker.options.addDateAvailabilityResolver(function (date) {
+    return date.getDay() !== TheDatepicker.DayOfWeek.Saturday
+        && date.getDay() !== TheDatepicker.DayOfWeek.Sunday
+});
+
+datepicker.options.setGoBackHtml('<img src=back.png>');
+
+// and much more...
 ```
 
 - Some options take effect only if changed before the first datepicker open.
