@@ -17,7 +17,7 @@ Highly customizable pure JavaScript Datepicker by [Slevomat.cz](https://www.slev
 - Appropriate semantics - rendered into `<table>`
 - Accessible - Can be fully handled by keyboard only; only and only clickable elemets are always `<a>`; includes [ARIA](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) labels
 - Listeners for any event (`open` / `close` / `(de)select` / `monthChange` / `focus`)
-- Customizable design - all logical elements has it's unique CSS class
+- Customizable design - all logical elements has it's predefined CSS classes; simply stylize weekend days, current day, past days, etc... (just examine datepicker HTML by [DevTools](https://developer.chrome.com/docs/devtools/open/) to see predefined classes)
 - Possible to place it to a custom `<div>` or just let it float under an `<input>`
 - Darkmode
 
