@@ -63,7 +63,8 @@ declare namespace TheDatepicker {
         AnimateFadeInLeft = 60,
         AnimateFadeOutDown = 61,
         AnimateFadeInUp = 62,
-        ContainerDarkMode = 63
+        ContainerDarkMode = 63,
+        MainDarkMode = 64
     }
     class ClassNames {
         private classNames_;
@@ -229,6 +230,12 @@ declare namespace TheDatepicker {
         Right = 2,
         Center = 3
     }
+    enum Position {
+        BottomRight = 1,
+        BottomLeft = 2,
+        TopRight = 3,
+        TopLeft = 4
+    }
     enum KeyCode_ {
         Enter = 13,
         Space = 32,
@@ -373,6 +380,7 @@ declare namespace TheDatepicker {
         private closeHtml_;
         private resetHtml_;
         private deselectHtml_;
+        private position_;
         private positionFixing_;
         private fullScreenOnMobile_;
         private keyboardOnMobile_;
@@ -432,6 +440,7 @@ declare namespace TheDatepicker {
         setCloseHtml(html: string): void;
         setResetHtml(html: string): void;
         setDeselectHtml(html: string): void;
+        setPosition(position: Position): void;
         setPositionFixing(value: boolean): void;
         setFullScreenOnMobile(value: boolean): void;
         setKeyboardOnMobile(value: boolean): void;
@@ -522,6 +531,7 @@ declare namespace TheDatepicker {
         isHiddenOnSelect(): boolean;
         getInputFormat(): string;
         isAllowedInputAnyChar(): boolean;
+        getPosition(): Position;
         isPositionFixingEnabled(): boolean;
         isFullScreenOnMobile(): boolean;
         isKeyboardOnMobile(): boolean;

@@ -54,7 +54,8 @@ body.the-datepicker-page
 	line-height 1em
 	box-sizing border-box
 	overflow-y auto
-	.the-datepicker__container--darkmode &
+	&.the-datepicker__main--darkmode
+		background-color black
 		border-color $border-darkmode
 
 	.the-datepicker__container--responsive &
@@ -63,9 +64,6 @@ body.the-datepicker-page
 		@media (min-width: 37.5em)
 			width auto
 			height auto
-
-	.the-datepicker__container--darkmode &
-		background-color black
 
 	.the-datepicker__header
 		padding 0.4em 0.4em 0 0.4em
@@ -97,7 +95,7 @@ body.the-datepicker-page
 		&:hover
 			background-color $highlight-background
 			text-decoration none
-			.the-datepicker__container--darkmode &
+			.the-datepicker__main--darkmode&
 				background-color $highlight-background-darkmode
 
 	a.the-datepicker__day-button
@@ -174,7 +172,7 @@ body.the-datepicker-page
 		padding 0
 		background-color white
 		color black
-		.the-datepicker__container--darkmode &
+		.the-datepicker__main--darkmode&
 			background-color black
 			color $select-darkmode
 
@@ -209,44 +207,44 @@ body.the-datepicker-page
 				background-color transparent
 				.the-datepicker__button-content
 					background-color $highlight-background
-					.the-datepicker__container--darkmode &
+					.the-datepicker__main--darkmode&
 						background-color $highlight-background-darkmode
 
 	td.the-datepicker__cell--highlighted
 		a.the-datepicker__button
 			.the-datepicker__button-content
 				background-color $highlight-background
-				.the-datepicker__container--darkmode &
+				.the-datepicker__main--darkmode&
 					background-color $highlight-background-darkmode
 
 	td.the-datepicker__day--outside
 		a.the-datepicker__button
 			color $weak-color
-			.the-datepicker__container--darkmode &
+			.the-datepicker__main--darkmode&
 				color $weak-color-darkmode
 
 	td.the-datepicker__cell--unavailable
 		a.the-datepicker__button
 			color $unavailable-color
-			.the-datepicker__container--darkmode &
+			.the-datepicker__main--darkmode&
 				color $unavailable-color-darkmode
 			&:hover
 				.the-datepicker__button-content
 					background-color transparent
-					.the-datepicker__container--darkmode &
+					.the-datepicker__main--darkmode&
 						background-color transparent
 
 	td.the-datepicker__cell--selected, td.the-datepicker__cell--selected.the-datepicker__cell--highlighted
 		a.the-datepicker__button
 			color white
-			.the-datepicker__container--darkmode &
+			.the-datepicker__main--darkmode&
 				color white
 			.the-datepicker__button-content
 				background-color $base-color
 			&:hover
 				.the-datepicker__button-content
 					background-color $base-color
-					.the-datepicker__container--darkmode &
+					.the-datepicker__main--darkmode&
 						background-color $base-color
 
 	.the-datepicker__animated

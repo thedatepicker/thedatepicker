@@ -65,6 +65,7 @@ namespace TheDatepicker {
 		AnimateFadeOutDown,
 		AnimateFadeInUp,
 		ContainerDarkMode,
+		MainDarkMode,
 	}
 
 	export class ClassNames {
@@ -134,6 +135,7 @@ namespace TheDatepicker {
 			['fade-out-down'], // AnimateFadeOutDown
 			['fade-in-up'], // AnimateFadeInUp
 			['container--darkmode'], // ContainerDarkMode
+			['main--darkmode'], // MainDarkMode
 		];
 
 		public clone(): ClassNames {
@@ -146,6 +148,10 @@ namespace TheDatepicker {
 		}
 
 		public setClassName(type: ClassNameType, className: string | string[] | null): void {
+			if (type === ClassNameType.ContainerDarkMode) {
+				Helper_.warnDeprecatedUsage_('ClassNameType.ContainerDarkMode', ['ClassNameType.MainDarkMode']);
+				this.setClassName(ClassNameType.MainDarkMode, className);
+			}
 			this.classNames_[this.checkType_(type)] = this.normalizeClassName_(className);
 		}
 

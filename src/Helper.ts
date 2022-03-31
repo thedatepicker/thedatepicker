@@ -31,6 +31,13 @@ namespace TheDatepicker {
 		Center = 3,
 	}
 
+	export enum Position {
+		BottomRight = 1,
+		BottomLeft = 2,
+		TopRight = 3,
+		TopLeft = 4,
+	}
+
 	export enum KeyCode_ {
 		Enter = 13,
 		Space = 32,
@@ -307,11 +314,7 @@ namespace TheDatepicker {
 				}
 			}
 
-			for (let index = 0; index < alternateMethods.length; index++) {
-				alternateMethods[index] += '()';
-			}
-
-			window.console.warn('TheDatepicker: ' + deprecatedMethod + '() is deprecated, use ' + alternateMethods.join(' or '));
+			window.console.warn('TheDatepicker: ' + deprecatedMethod + ' is deprecated, use ' + alternateMethods.join(' or '));
 			Helper_.deprecatedMethods_.push(deprecatedMethod);
 		}
 

@@ -106,6 +106,7 @@ namespace TheDatepicker {
 		private closeHtml_ = '&times;';
 		private resetHtml_ = '&olarr;';
 		private deselectHtml_ = '&times;';
+		private position_ = Position.BottomRight;
 		private positionFixing_ = true;
 		private fullScreenOnMobile_ = true;
 		private keyboardOnMobile_ = false;
@@ -177,6 +178,7 @@ namespace TheDatepicker {
 			options.closeHtml_ = this.closeHtml_;
 			options.resetHtml_ = this.resetHtml_;
 			options.deselectHtml_ = this.deselectHtml_;
+			options.position_ = this.position_;
 			options.positionFixing_ = this.positionFixing_;
 			options.fullScreenOnMobile_ = this.fullScreenOnMobile_;
 			options.keyboardOnMobile_ = this.keyboardOnMobile_;
@@ -579,6 +581,18 @@ namespace TheDatepicker {
 		// defaults to "&times;"
 		public setDeselectHtml(html: string): void {
 			this.deselectHtml_ = Helper_.checkString_('Html', html);
+		}
+
+		// Position of the datepicker relative to an input.
+		// TheDatepicker.Position.BottomRight means that the top left corner of the datepicker is aligned with the input,
+		//   so the datepicker is placed at the bottom right position from the input.
+		// TheDatepicker.Position.BottomLeft works similarly.
+		// TheDatepicker.Position.TopRight -"-
+		// TheDatepicker.Position.TopLeft -"-
+		// Works only when there is no custom container.
+		// defaults to Position.BottomRight
+		public setPosition(position: Position): void {
+			this.position_ = Helper_.checkNumber_('Position', position, 1, 4);
 		}
 
 		// Setting to true will render datepicker to the different side of an input than normally, if there's no enough space.
@@ -1131,6 +1145,10 @@ namespace TheDatepicker {
 
 		public isAllowedInputAnyChar(): boolean {
 			return this.allowInputAnyChar_;
+		}
+
+		public getPosition(): Position {
+			return this.position_;
 		}
 
 		public isPositionFixingEnabled(): boolean {

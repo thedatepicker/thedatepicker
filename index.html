@@ -371,6 +371,14 @@
 					<label>datepicker.options.setSlideAnimation(<input type="checkbox" id="slideAnimation" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setPosition(<select id="position">
+						<option value="1" selected="selected">TheDatepicker.Position.BottomRight</option>
+						<option value="2">TheDatepicker.Position.BottomLeft</option>
+						<option value="3">TheDatepicker.Position.TopRight</option>
+						<option value="4">TheDatepicker.Position.TopLeft</option>
+					</select>);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setPositionFixing(<input type="checkbox" id="positionFixing" checked="checked">);</label>
 				</li>
 				<li>
@@ -710,7 +718,7 @@ return header;
 					<label>datepicker.options.classNames.setClassName(TheDatepicker.ClassNameType.ContainerResponsive, "<input type="text" size="15" class="className" data-prop="ContainerResponsive" value="container--responsive">");</label>
 				</li>
 				<li>
-					<label>datepicker.options.classNames.setClassName(TheDatepicker.ClassNameType.ContainerDarkMode, "<input type="text" size="15" class="className" data-prop="ContainerDarkMode" value="container--darkMode">");</label>
+					<label>datepicker.options.classNames.setClassName(TheDatepicker.ClassNameType.MainDarkMode, "<input type="text" size="15" class="className" data-prop="MainDarkMode" value="main--darkMode">");</label>
 				</li>
 				<li>
 					<label>datepicker.options.classNames.setClassName(TheDatepicker.ClassNameType.Main, "<input type="text" size="15" class="className" data-prop="Main" value="main">");</label>
@@ -1021,48 +1029,48 @@ return header;
 				}
 			};
 			datepickerInputs[0].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(input, null, datepicker.options);
 				commentCreation(0);
 				container.className = 'hidden';
 				formWrapper.className = '';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(input, null, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[1].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(input, container, datepicker.options);
 				commentCreation(1);
 				container.className = '';
 				formWrapper.className = '';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(input, container, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[2].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(null, container, datepicker.options);
 				commentCreation(2);
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(null, container, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[3].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(button, null, datepicker.options);
 				commentCreation(3);
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = '';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(button, null, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[4].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(paragraph, null, datepicker.options);
 				commentCreation(4);
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = '';
+				datepicker = new TheDatepicker.Datepicker(paragraph, null, datepicker.options);
 				datepicker.render();
 			};
 
@@ -1329,6 +1337,13 @@ return header;
 			slideAnimationInput.onchange = function () {
 				updateSetting(slideAnimationInput, function () {
 					datepicker.options.setSlideAnimation(slideAnimationInput.checked);
+				});
+			};
+
+			var positionInput = document.getElementById('position');
+			positionInput.onchange = function () {
+				updateSetting(positionInput, function () {
+					datepicker.options.setPosition(positionInput.value);
 				});
 			};
 

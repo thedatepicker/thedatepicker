@@ -537,70 +537,69 @@ namespace TheDatepicker {
 				return;
 			}
 
-			const windowTop = window.pageYOffset || Datepicker.document_.documentElement.scrollTop;
-			const windowLeft = window.pageXOffset || Datepicker.document_.documentElement.scrollLeft;
-			let viewportHeight = null;
-			let viewportWidth = null;
-			if ((window as any).visualViewport) {
-				viewportHeight = (window as any).visualViewport.height;
-				viewportWidth = (window as any).visualViewport.width;
-			}
-			const windowHeight = viewportHeight || window.innerHeight || Math.max(Datepicker.document_.documentElement.clientHeight, Datepicker.document_.body.clientHeight) || 0;
-			const windowWidth = viewportWidth || window.innerWidth || Math.max(Datepicker.document_.documentElement.clientWidth, Datepicker.document_.body.clientWidth) || 0;
-			const windowBottom = windowTop + windowHeight;
-			const windowRight = windowLeft + windowWidth;
-
-			let inputTop = 0;
-			let inputLeft = 0;
-			let parentElement: HTMLElement = this.input;
-			while (parentElement && !isNaN(parentElement.offsetLeft) && !isNaN(parentElement.offsetTop)) {
-				inputTop += parentElement.offsetTop - (parentElement.scrollTop || 0);
-				inputLeft += parentElement.offsetLeft - (parentElement.scrollLeft || 0);
-				parentElement = parentElement.offsetParent as HTMLElement;
-			}
-
-			let mainElement: HTMLElement | null = null;
-			if (this.options.isPositionFixingEnabled() && this.container.childNodes.length > 0) {
-				mainElement = this.container.childNodes[0] as HTMLElement;
-				mainElement.style.position = '';
-				mainElement.style.top = '';
-				mainElement.style.left = '';
-			}
-
-			const inputWidth = this.input.offsetWidth;
-			const inputHeight = this.input.offsetHeight;
-			const inputBottom = inputTop + inputHeight;
-			const inputRight = inputLeft + inputWidth;
-			const containerHeight = this.container.offsetHeight;
-			const containerWidth = this.container.offsetWidth;
-
 			this.container.className = '';
+
 			HtmlHelper_.addClass_(this.container, ClassNameType.Container, this.options);
-			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
-			const locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
-			if (locateOver) {
-				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
-			}
-			if (locateLeft) {
-				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
-			}
-			if (this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
-			}
 			if (this.options.isDarkModeEnabled()) {
+				// ContainerDarkMode is deprecated, remove this line on major release
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
 			}
 
-			if (mainElement && (locateOver || locateLeft)) {
-				if (locateOver) {
-					const moveTop = inputHeight + containerHeight;
-					mainElement.style.top = '-' + moveTop + 'px';
-				}
-				if (locateLeft) {
-					const moveLeft = containerWidth - inputWidth;
-					mainElement.style.left = '-' + moveLeft + 'px';
-				}
-				mainElement.style.position = 'absolute';
+			if (this.options.isFullScreenOnMobile()) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
+			}
+
+			if (this.container.childNodes.length === 0) {
+				return;
+			}
+
+			const position = this.options.getPosition();
+			let locateOver = position === Position.TopRight || position === Position.TopLeft;
+			let locateLeft = position === Position.BottomLeft || position === Position.TopLeft;
+
+			const mainElement = this.container.childNodes[0] as HTMLElement;
+			mainElement.style.position = '';
+			mainElement.style.top = '';
+			mainElement.style.left = '';
+
+			const inputWidth = this.input.offsetWidth;
+			const inputHeight = this.input.offsetHeight;
+			const containerWidth = this.container.offsetWidth;
+			const containerHeight = this.container.offsetHeight;
+
+			if (this.options.isPositionFixingEnabled()) {
+				const document = Datepicker.document_;
+				const windowTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+				const windowLeft = window.scrollX || window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0;
+				const isCompactMode = document.compatMode === 'CSS1Compat';
+				const windowHeight = window.innerHeight || (isCompactMode ? document.documentElement.clientHeight : document.body.clientHeight) || 0;
+				const windowWidth = window.innerWidth || (isCompactMode ? document.documentElement.clientWidth : document.body.clientWidth) || 0;
+				const windowBottom = windowTop + windowHeight;
+				const windowRight = windowLeft + windowWidth;
+
+				const rect = this.input.getBoundingClientRect();
+				const inputTop = rect.top + windowTop;
+				const inputLeft = rect.left + windowLeft;
+				const inputBottom = inputTop + inputHeight;
+				const inputRight = inputLeft + inputWidth;
+
+				const fitsTop = inputTop - windowTop > containerHeight;
+				const fitsBottom = windowBottom - inputBottom > containerHeight;
+				const fitsLeft = inputLeft - windowLeft > containerWidth - inputWidth;
+				const fitsRight = windowRight - inputRight > containerWidth - inputWidth;
+
+				locateOver = (locateOver && (fitsTop || !fitsBottom)) || (fitsTop && !fitsBottom);
+				locateLeft = (locateLeft && (fitsLeft || !fitsRight)) || (fitsLeft && !fitsRight);
+			}
+
+			mainElement.style.position = locateOver || locateLeft ? 'absolute' : '';
+			if (locateOver) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
+				mainElement.style.top = '-' + (inputHeight + containerHeight) + 'px';
+			}
+			if (locateLeft) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
+				mainElement.style.left = '-' + (containerWidth - inputWidth) + 'px';
 			}
 		}
 

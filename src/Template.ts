@@ -128,6 +128,11 @@ namespace TheDatepicker {
 
 		protected updateMainElement_(viewModel: ViewModel_): void {
 			this.mainElement_.style.display = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur() ? '' : 'none';
+			this.mainElement_.className = '';
+			HtmlHelper_.addClass_(this.mainElement_, ClassNameType.Main, this.options_);
+			if (this.options_.isDarkModeEnabled()) {
+				HtmlHelper_.addClass_(this.mainElement_, ClassNameType.MainDarkMode, this.options_);
+			}
 		}
 
 		protected updateTableElements_(viewModel: ViewModel_): void {
