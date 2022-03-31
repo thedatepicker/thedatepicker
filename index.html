@@ -1009,48 +1009,48 @@ return header;
 				}
 			};
 			datepickerInputs[0].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(input, null, datepicker.options);
 				commentCreation(0);
 				container.className = 'hidden';
 				formWrapper.className = '';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(input, null, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[1].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(input, container, datepicker.options);
 				commentCreation(1);
 				container.className = '';
 				formWrapper.className = '';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(input, container, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[2].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(null, container, datepicker.options);
 				commentCreation(2);
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(null, container, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[3].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(button, null, datepicker.options);
 				commentCreation(3);
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = '';
 				paragraphWrapper.className = 'hidden';
+				datepicker = new TheDatepicker.Datepicker(button, null, datepicker.options);
 				datepicker.render();
 			};
 			datepickerInputs[4].button.onclick = function () {
-				datepicker = new TheDatepicker.Datepicker(paragraph, null, datepicker.options);
 				commentCreation(4);
 				container.className = '';
 				formWrapper.className = 'hidden';
 				buttonWrapper.className = 'hidden';
 				paragraphWrapper.className = '';
+				datepicker = new TheDatepicker.Datepicker(paragraph, null, datepicker.options);
 				datepicker.render();
 			};
 

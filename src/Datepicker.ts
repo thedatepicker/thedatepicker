@@ -48,7 +48,7 @@ namespace TheDatepicker {
 		public input: (HTMLDatepickerInputElement&HTMLElement) | null;
 		public readonly container: HTMLDatepickerContainerElement;
 
-		private readonly isContainerExternal_: boolean;
+		private readonly externalContainerClassName_: string | null = null;
 		private readonly inputClickable_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly inputText_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly viewModel_: ViewModel_;
@@ -90,7 +90,7 @@ namespace TheDatepicker {
 			this.options = options ? options.clone() : new Options();
 
 			const duplicateError = 'There is already a datepicker present on ';
-			this.isContainerExternal_ = !!container;
+			this.externalContainerClassName_ = container ? container.className : null;
 			if (!container) {
 				container = this.createContainer_();
 				if (input) {
@@ -242,7 +242,7 @@ namespace TheDatepicker {
 			}
 			this.listenerRemovers_ = [];
 
-			if (this.isContainerExternal_) {
+			if (this.externalContainerClassName_ !== null) {
 				this.container.innerHTML = '';
 			} else {
 				this.container.parentNode.removeChild(this.container);
@@ -533,74 +533,84 @@ namespace TheDatepicker {
 		}
 
 		private updateContainer_(): void {
-			if (this.isContainerExternal_) {
-				return;
-			}
+			this.container.className = this.externalContainerClassName_ !== null
+				? this.externalContainerClassName_
+				: '';
 
-			const windowTop = window.pageYOffset || Datepicker.document_.documentElement.scrollTop;
-			const windowLeft = window.pageXOffset || Datepicker.document_.documentElement.scrollLeft;
-			let viewportHeight = null;
-			let viewportWidth = null;
-			if ((window as any).visualViewport) {
-				viewportHeight = (window as any).visualViewport.height;
-				viewportWidth = (window as any).visualViewport.width;
-			}
-			const windowHeight = viewportHeight || window.innerHeight || Math.max(Datepicker.document_.documentElement.clientHeight, Datepicker.document_.body.clientHeight) || 0;
-			const windowWidth = viewportWidth || window.innerWidth || Math.max(Datepicker.document_.documentElement.clientWidth, Datepicker.document_.body.clientWidth) || 0;
-			const windowBottom = windowTop + windowHeight;
-			const windowRight = windowLeft + windowWidth;
-
-			let inputTop = 0;
-			let inputLeft = 0;
-			let parentElement: HTMLElement = this.input;
-			while (parentElement && !isNaN(parentElement.offsetLeft) && !isNaN(parentElement.offsetTop)) {
-				inputTop += parentElement.offsetTop - (parentElement.scrollTop || 0);
-				inputLeft += parentElement.offsetLeft - (parentElement.scrollLeft || 0);
-				parentElement = parentElement.offsetParent as HTMLElement;
-			}
-
-			let mainElement: HTMLElement | null = null;
-			if (this.options.isPositionFixingEnabled() && this.container.childNodes.length > 0) {
-				mainElement = this.container.childNodes[0] as HTMLElement;
-				mainElement.style.position = '';
-				mainElement.style.top = '';
-				mainElement.style.left = '';
-			}
-
-			const inputWidth = this.input.offsetWidth;
-			const inputHeight = this.input.offsetHeight;
-			const inputBottom = inputTop + inputHeight;
-			const inputRight = inputLeft + inputWidth;
-			const containerHeight = this.container.offsetHeight;
-			const containerWidth = this.container.offsetWidth;
-
-			this.container.className = '';
 			HtmlHelper_.addClass_(this.container, ClassNameType.Container, this.options);
-			const locateOver = inputTop - windowTop > containerHeight && windowBottom - inputBottom < containerHeight;
-			const locateLeft = inputLeft - windowLeft > containerWidth - inputWidth && windowRight - inputRight < containerWidth - inputWidth;
-			if (locateOver) {
-				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
-			}
-			if (locateLeft) {
-				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
-			}
-			if (this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
-			}
 			if (this.options.isDarkModeEnabled()) {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
 			}
 
-			if (mainElement && (locateOver || locateLeft)) {
-				if (locateOver) {
-					const moveTop = inputHeight + containerHeight;
-					mainElement.style.top = '-' + moveTop + 'px';
+			if (this.externalContainerClassName_ !== null) {
+				return;
+			}
+
+			if (this.options.isFullScreenOnMobile()) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
+			}
+
+			if (this.container.childNodes.length === 0) {
+				return;
+			}
+
+			const position = this.options.getPosition();
+			let locateOver = position === Position.TopRight || position === Position.TopLeft;
+			let locateLeft = position === Position.BottomLeft || position === Position.TopLeft;
+
+			const mainElement = this.container.childNodes[0] as HTMLElement;
+			mainElement.style.position = '';
+			mainElement.style.top = '';
+			mainElement.style.left = '';
+
+			const inputWidth = this.input.offsetWidth;
+			const inputHeight = this.input.offsetHeight;
+			const containerWidth = this.container.offsetWidth;
+			const containerHeight = this.container.offsetHeight;
+
+			if (this.options.isPositionFixingEnabled()) {
+				const windowTop = window.pageYOffset || Datepicker.document_.documentElement.scrollTop;
+				const windowLeft = window.pageXOffset || Datepicker.document_.documentElement.scrollLeft;
+				let viewportHeight = null;
+				let viewportWidth = null;
+				if ((window as any).visualViewport) {
+					viewportHeight = (window as any).visualViewport.height;
+					viewportWidth = (window as any).visualViewport.width;
 				}
-				if (locateLeft) {
-					const moveLeft = containerWidth - inputWidth;
-					mainElement.style.left = '-' + moveLeft + 'px';
+				const windowHeight = viewportHeight || window.innerHeight || Math.max(Datepicker.document_.documentElement.clientHeight, Datepicker.document_.body.clientHeight) || 0;
+				const windowWidth = viewportWidth || window.innerWidth || Math.max(Datepicker.document_.documentElement.clientWidth, Datepicker.document_.body.clientWidth) || 0;
+				const windowBottom = windowTop + windowHeight;
+				const windowRight = windowLeft + windowWidth;
+
+				let inputTop = 0;
+				let inputLeft = 0;
+				let parentElement: HTMLElement = this.input;
+				while (parentElement && !isNaN(parentElement.offsetLeft) && !isNaN(parentElement.offsetTop)) {
+					inputTop += parentElement.offsetTop - (parentElement.scrollTop || 0);
+					inputLeft += parentElement.offsetLeft - (parentElement.scrollLeft || 0);
+					parentElement = parentElement.offsetParent as HTMLElement;
 				}
-				mainElement.style.position = 'absolute';
+
+				const inputBottom = inputTop + inputHeight;
+				const inputRight = inputLeft + inputWidth;
+
+				const fitsTop = inputTop - windowTop > containerHeight;
+				const fitsBottom = windowBottom - inputBottom > containerHeight;
+				const fitsLeft = inputLeft - windowLeft > containerWidth - inputWidth;
+				const fitsRight = windowRight - inputRight > containerWidth - inputWidth;
+
+				locateOver = (locateOver && (fitsTop || !fitsBottom)) || (fitsTop && !fitsBottom);
+				locateLeft = (locateLeft && (fitsLeft || !fitsRight)) || (fitsLeft && !fitsRight);
+			}
+
+			mainElement.style.position = locateOver || locateLeft ? 'absolute' : '';
+			if (locateOver) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
+				mainElement.style.top = '-' + (inputHeight + containerHeight) + 'px';
+			}
+			if (locateLeft) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
+				mainElement.style.left = '-' + (containerWidth - inputWidth) + 'px';
 			}
 		}
 
@@ -654,7 +664,7 @@ namespace TheDatepicker {
 			}
 
 			datepicker.onActivate_();
-			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
+			Datepicker.setBodyClass_(datepicker.externalContainerClassName_ === null && datepicker.options.isFullScreenOnMobile());
 
 			Datepicker.activeViewModel_ = viewModel;
 

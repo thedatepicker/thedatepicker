@@ -31,6 +31,13 @@ namespace TheDatepicker {
 		Center = 3,
 	}
 
+	export enum Position {
+		BottomRight = 1,
+		BottomLeft = 2,
+		TopRight = 3,
+		TopLeft = 4,
+	}
+
 	export enum KeyCode_ {
 		Enter = 13,
 		Space = 32,
