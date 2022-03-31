@@ -587,6 +587,9 @@ var TheDatepicker;
             this.listenerRemovers_ = [];
             this.deselectElement_ = null;
             this.deselectButton_ = null;
+            if (!(this instanceof Datepicker)) {
+                throw new Error('Creation must be performed by "new" keyword.');
+            }
             if (input && !TheDatepicker.Helper_.isElement_(input)) {
                 throw new Error('Input was expected to be null or an HTMLElement.');
             }

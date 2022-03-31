@@ -70,6 +70,9 @@ namespace TheDatepicker {
 			container: HTMLDatepickerContainerElement | null = null,
 			options: Options | null = null
 		) {
+			if (!(this instanceof Datepicker)) {
+				throw new Error('Creation must be performed by "new" keyword.');
+			}
 			if (input && !Helper_.isElement_(input)) {
 				throw new Error('Input was expected to be null or an HTMLElement.');
 			}
