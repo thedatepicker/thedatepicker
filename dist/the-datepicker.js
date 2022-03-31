@@ -617,6 +617,8 @@ var TheDatepicker;
                     throw new Error(duplicateError + 'container.');
                 }
             }
+            container.setAttribute('data-credits', 'TheDatepicker - Pure JavaScript Datepicker by Slevomat.cz');
+            container.setAttribute('data-url', 'https://thedatepicker.github.io/thedatepicker/');
             if (input) {
                 if (input.datepicker) {
                     throw new Error(duplicateError + 'input.');
