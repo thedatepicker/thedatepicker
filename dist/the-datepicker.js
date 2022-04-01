@@ -145,30 +145,16 @@ var TheDatepicker;
             return classNames;
         };
         ClassNames.prototype.setClassName = function (type, className) {
-            this.classNames_[this.checkType_(type)] = this.normalizeClassName_(className);
+            this.classNames_[this.checkType_(type)] = TheDatepicker.HtmlHelper_.normalizeClassName_(className);
         };
         ClassNames.prototype.addClassName = function (type, className) {
-            this.classNames_[this.checkType_(type)].concat(this.normalizeClassName_(className));
+            this.classNames_[this.checkType_(type)].concat(TheDatepicker.HtmlHelper_.normalizeClassName_(className));
         };
         ClassNames.prototype.getClassName = function (type) {
             return this.classNames_[type].slice(0);
         };
         ClassNames.prototype.checkType_ = function (type) {
             return TheDatepicker.Helper_.checkNumber_('Class name type', type, 0, this.classNames_.length - 1);
-        };
-        ClassNames.prototype.normalizeClassName_ = function (className) {
-            var parameterName = 'Class name';
-            if (typeof className !== 'object' || className.constructor !== Array) {
-                className = TheDatepicker.Helper_.checkString_(parameterName, className).split(/\s+/);
-            }
-            var result = [];
-            for (var index = 0; index < className.length; index++) {
-                var name_1 = TheDatepicker.Helper_.checkString_(parameterName, className[index]);
-                if (name_1) {
-                    result.push(name_1);
-                }
-            }
-            return result;
         };
         return ClassNames;
     }());
@@ -1628,6 +1614,20 @@ var TheDatepicker;
             }
             element.className += (element.className ? ' ' : '') + classNames.join(' ');
         };
+        HtmlHelper_.normalizeClassName_ = function (className) {
+            var parameterName = 'Class name';
+            if (typeof className !== 'object' || className.constructor !== Array) {
+                className = TheDatepicker.Helper_.checkString_(parameterName, className).split(/\s+/);
+            }
+            var result = [];
+            for (var index = 0; index < className.length; index++) {
+                var name_1 = TheDatepicker.Helper_.checkString_(parameterName, className[index]);
+                if (name_1) {
+                    result.push(name_1);
+                }
+            }
+            return result;
+        };
         HtmlHelper_.appendChild_ = function (element, child) {
             if (child) {
                 element.appendChild(child);
@@ -1685,6 +1685,7 @@ var TheDatepicker;
             this.allowEmpty_ = true;
             this.showDeselectButton_ = true;
             this.showResetButton_ = false;
+            this.customButtons_ = [];
             this.monthAsDropdown_ = true;
             this.yearAsDropdown_ = true;
             this.yearSelectedFromTableOfYears_ = true;
@@ -1754,6 +1755,7 @@ var TheDatepicker;
             options.allowEmpty_ = this.allowEmpty_;
             options.showDeselectButton_ = this.showDeselectButton_;
             options.showResetButton_ = this.showResetButton_;
+            options.customButtons_ = this.customButtons_.slice(0);
             options.monthAsDropdown_ = this.monthAsDropdown_;
             options.yearAsDropdown_ = this.yearAsDropdown_;
             options.yearSelectedFromTableOfYears_ = this.yearSelectedFromTableOfYears_;
@@ -1891,6 +1893,33 @@ var TheDatepicker;
         Options.prototype.setShowResetButton = function (value) {
             this.showResetButton_ = !!value;
         };
+        Options.prototype.addCustomButtonXXX = function (init, update, title, className) {
+            if (update === void 0) { update = null; }
+            if (title === void 0) { title = null; }
+            if (className === void 0) { className = null; }
+            this.customButtons_.push({
+                init: TheDatepicker.Helper_.checkFunction_('Button (init)', init, false),
+                update: TheDatepicker.Helper_.checkFunction_('Button (update)', update),
+                title: TheDatepicker.Helper_.checkString_('Title', title),
+                className: TheDatepicker.HtmlHelper_.normalizeClassName_(className)
+            });
+        };
+        Options.prototype.addCustomButton = function (html, onClick, isVisible, title, className) {
+            if (isVisible === void 0) { isVisible = null; }
+            if (title === void 0) { title = null; }
+            if (className === void 0) { className = null; }
+            html = (typeof html === 'function')
+                ? TheDatepicker.Helper_.checkFunction_('HTML', html)
+                : TheDatepicker.Helper_.checkString_('HTML', html);
+            var button = {
+                html: html,
+                onClick: TheDatepicker.Helper_.checkFunction_('HTML', onClick),
+                title: TheDatepicker.Helper_.checkString_('Title', title),
+                className: TheDatepicker.HtmlHelper_.normalizeClassName_(className)
+            };
+            this.customButtons_.push(button);
+            return button;
+        };
         Options.prototype.setMonthAsDropdown = function (value) {
             this.monthAsDropdown_ = !!value;
         };
@@ -1950,19 +1979,19 @@ var TheDatepicker;
             this.hideDropdownWithOneItem_ = !!value;
         };
         Options.prototype.setGoBackHtml = function (html) {
-            this.goBackHtml_ = TheDatepicker.Helper_.checkString_('Html', html);
+            this.goBackHtml_ = TheDatepicker.Helper_.checkString_('HTML', html);
         };
         Options.prototype.setGoForwardHtml = function (html) {
-            this.goForwardHtml_ = TheDatepicker.Helper_.checkString_('Html', html);
+            this.goForwardHtml_ = TheDatepicker.Helper_.checkString_('HTML', html);
         };
         Options.prototype.setCloseHtml = function (html) {
-            this.closeHtml_ = TheDatepicker.Helper_.checkString_('Html', html);
+            this.closeHtml_ = TheDatepicker.Helper_.checkString_('HTML', html);
         };
         Options.prototype.setResetHtml = function (html) {
-            this.resetHtml_ = TheDatepicker.Helper_.checkString_('Html', html);
+            this.resetHtml_ = TheDatepicker.Helper_.checkString_('HTML', html);
         };
         Options.prototype.setDeselectHtml = function (html) {
-            this.deselectHtml_ = TheDatepicker.Helper_.checkString_('Html', html);
+            this.deselectHtml_ = TheDatepicker.Helper_.checkString_('HTML', html);
         };
         Options.prototype.setPosition = function (position) {
             this.position_ = TheDatepicker.Helper_.checkNumber_('Position', position, 1, 4);
@@ -2168,6 +2197,20 @@ var TheDatepicker;
         };
         Options.prototype.isResetButtonShown = function () {
             return this.showResetButton_;
+        };
+        Options.prototype.getCustomButtons = function () {
+            return this.customButtons_.slice(0);
+        };
+        Options.prototype.createCustomButtons_ = function () {
+            var buttons = [];
+            for (var index = 0; index < this.customButtons_.length; index++) {
+                var button = this.customButtons_[index];
+                buttons.push({
+                    element: button.init(),
+                    update: button.update
+                });
+            }
+            return buttons;
         };
         Options.prototype.isMonthAsDropdown = function () {
             return this.monthAsDropdown_;
@@ -2542,6 +2585,7 @@ var TheDatepicker;
             this.tablesElement_ = null;
             this.tableElement_ = null;
             this.tableOfYearsElement_ = null;
+            this.customButtons_ = [];
             this.controlElement_ = null;
             this.goBackElement_ = null;
             this.goForwardElement_ = null;
@@ -2660,6 +2704,10 @@ var TheDatepicker;
             top.appendChild(this.createTitleElement_(viewModel));
             var control = TheDatepicker.HtmlHelper_.createDiv_(TheDatepicker.ClassNameType.HeaderControl, this.options_);
             top.appendChild(control);
+            this.customButtons_ = this.options_.createCustomButtons_();
+            for (var index = 0; index < this.customButtons_.length; index++) {
+                control.appendChild(this.customButtons_[index].element);
+            }
             control.appendChild(this.createResetElement_(viewModel));
             control.appendChild(this.createCloseElement_(viewModel));
             var navigation = TheDatepicker.HtmlHelper_.createDiv_(TheDatepicker.ClassNameType.HeaderNavigation, this.options_);
@@ -2681,9 +2729,16 @@ var TheDatepicker;
         Template_.prototype.updateTopElement_ = function (viewModel) {
             var isVisible = this.options_.getTitle() !== ''
                 || this.options_.isResetButtonShown()
-                || (this.hasInput_ && this.options_.isCloseButtonShown());
+                || (this.hasInput_ && this.options_.isCloseButtonShown())
+                || this.customButtons_.length > 0;
             this.controlElement_.style.display = isVisible ? '' : 'none';
             this.titleElement_.style.display = isVisible ? '' : 'none';
+            for (var index = 0; index < this.customButtons_.length; index++) {
+                var button = this.customButtons_[index];
+                if (button.update) {
+                    button.update(button.element);
+                }
+            }
         };
         Template_.prototype.createTitleElement_ = function (viewModel) {
             var titleElement = TheDatepicker.HtmlHelper_.createDiv_(TheDatepicker.ClassNameType.HeaderTitle, this.options_);

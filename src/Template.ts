@@ -55,6 +55,7 @@ namespace TheDatepicker {
 		private tablesElement_: HTMLElement | null = null;
 		private tableElement_: HTMLElement | null = null;
 		private tableOfYearsElement_: HTMLElement | null = null;
+		private customButtons_: CustomButton[] = [];
 		private controlElement_: HTMLElement | null = null;
 		private goBackElement_: HTMLAnchorElement | null = null;
 		private goForwardElement_: HTMLAnchorElement | null = null;
@@ -203,6 +204,10 @@ namespace TheDatepicker {
 			const control = HtmlHelper_.createDiv_(ClassNameType.HeaderControl, this.options_);
 			top.appendChild(control);
 
+			this.customButtons_ = this.options_.createCustomButtons_();
+			for (let index = 0; index < this.customButtons_.length; index++) {
+				control.appendChild(this.customButtons_[index].element);
+			}
 			control.appendChild(this.createResetElement_(viewModel));
 			control.appendChild(this.createCloseElement_(viewModel));
 
@@ -231,9 +236,18 @@ namespace TheDatepicker {
 		protected updateTopElement_(viewModel: ViewModel_): void {
 			const isVisible = this.options_.getTitle() !== ''
 				|| this.options_.isResetButtonShown()
-				|| (this.hasInput_ && this.options_.isCloseButtonShown());
+				|| (this.hasInput_ && this.options_.isCloseButtonShown())
+				|| this.customButtons_.length > 0;
 			this.controlElement_.style.display = isVisible ? '' : 'none';
 			this.titleElement_.style.display = isVisible ? '' : 'none';
+
+			// todo měl by mít možnost ty custom buttony shovat?
+			for (let index = 0; index < this.customButtons_.length; index++) {
+				const button = this.customButtons_[index];
+				if (button.update) {
+					button.update(button.element);
+				}
+			}
 		}
 
 		protected createTitleElement_(viewModel: ViewModel_): HTMLElement {

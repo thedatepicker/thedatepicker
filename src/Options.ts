@@ -46,6 +46,14 @@ namespace TheDatepicker {
 
 	type CellContentStructureResolverUpdate = (element: HTMLElement, day: Day) => void;
 
+	interface CustomButton {
+		html: string | (() => string),
+		onClick: () => void,
+		isVisible: (() => boolean) | null,
+		title: string,
+		className: string[],
+	}
+
 	interface CellContentStructureResolver {
 		init: StructureResolverInit;
 		update: CellContentStructureResolverUpdate;
@@ -83,6 +91,7 @@ namespace TheDatepicker {
 		private allowEmpty_ = true;
 		private showDeselectButton_ = true;
 		private showResetButton_ = false;
+		private customButtons_: CustomButton[] = [];
 		private monthAsDropdown_ = true;
 		private yearAsDropdown_ = true;
 		private yearSelectedFromTableOfYears_ = true;
@@ -156,6 +165,7 @@ namespace TheDatepicker {
 			options.allowEmpty_ = this.allowEmpty_;
 			options.showDeselectButton_ = this.showDeselectButton_;
 			options.showResetButton_ = this.showResetButton_;
+			options.customButtons_ = this.customButtons_.slice(0);
 			options.monthAsDropdown_ = this.monthAsDropdown_;
 			options.yearAsDropdown_ = this.yearAsDropdown_;
 			options.yearSelectedFromTableOfYears_ = this.yearSelectedFromTableOfYears_;
@@ -311,10 +321,14 @@ namespace TheDatepicker {
 		// First callback (init) has no arguments and returns HTMLElement instance representing empty html structure of day cell.
 		// Second callback (update) gets an instance of HTMLElement created by first callback, and an instance of TheDatepicker.Day. It should update html structure by given day. Returns void.
 		// Default init creates span element and default update fills it with day number.
-		public setCellContentStructureResolver(init: StructureResolverInit | null, update: CellContentStructureResolverUpdate | null = null): void {
+		public setCellContentStructureResolver(
+			init: StructureResolverInit | null,
+			update: CellContentStructureResolverUpdate | null = null,
+		): void {
 			init = Helper_.checkFunction_('Resolver (init)', init);
 			update = Helper_.checkFunction_('Resolver (update)', update);
 
+			// todo init může být non-null a update null - opravit nebo se podle toho chovat při updatu?
 			this.cellContentStructureResolver_ = init ? {
 				init,
 				update,
@@ -418,6 +432,46 @@ namespace TheDatepicker {
 		public setShowResetButton(value: boolean): void {
 			this.showResetButton_ = !!value;
 		}
+
+		// todo popisek
+		// Works only before the datepicker is rendered for the first time.
+		public addCustomButtonXXX(
+			init: StructureResolverInit,
+			update: StructureResolverUpdate | null = null,
+			title: string | null = null,
+			className: string[] | string | null = null,
+		): void {
+			this.customButtons_.push({
+				init: Helper_.checkFunction_('Button (init)', init, false),
+				update: Helper_.checkFunction_('Button (update)', update),
+				title: Helper_.checkString_('Title', title),
+				className: HtmlHelper_.normalizeClassName_(className),
+			});
+		}
+
+		// todo anebo to pojmout úplně jinak:
+
+		public addCustomButton(
+			html: string | (() => string),
+			onClick: () => void,
+			isVisible: (() => boolean) | null = null,
+			title: string | null = null,
+			className: string[] | string | null = null,
+		): CustomButton {
+			html = (typeof html === 'function')
+				? Helper_.checkFunction_('HTML', html)
+				: Helper_.checkString_('HTML', html);
+			const button = {
+				html,
+				onClick: Helper_.checkFunction_('HTML', onClick),
+				title: Helper_.checkString_('Title', title),
+				className: HtmlHelper_.normalizeClassName_(className),
+			};
+			this.customButtons_.push(button);
+			return button;
+		}
+
+		// todo removeCustomButton
 
 		// Setting to true will render month as dropdown list (html select).
 		// defaults to true
@@ -556,31 +610,31 @@ namespace TheDatepicker {
 		// Sets html for go back button.
 		// defaults to "&lt;"
 		public setGoBackHtml(html: string): void {
-			this.goBackHtml_ = Helper_.checkString_('Html', html);
+			this.goBackHtml_ = Helper_.checkString_('HTML', html);
 		}
 
 		// Sets html for go forward button.
 		// defaults to "&gt;"
 		public setGoForwardHtml(html: string): void {
-			this.goForwardHtml_ = Helper_.checkString_('Html', html);
+			this.goForwardHtml_ = Helper_.checkString_('HTML', html);
 		}
 
 		// Sets html for close button.
 		// defaults to "&times;"
 		public setCloseHtml(html: string): void {
-			this.closeHtml_ = Helper_.checkString_('Html', html);
+			this.closeHtml_ = Helper_.checkString_('HTML', html);
 		}
 
 		// Sets html for reset button.
 		// defaults to "&olarr;"
 		public setResetHtml(html: string): void {
-			this.resetHtml_ = Helper_.checkString_('Html', html);
+			this.resetHtml_ = Helper_.checkString_('HTML', html);
 		}
 
 		// Sets html for deselect button.
 		// defaults to "&times;"
 		public setDeselectHtml(html: string): void {
-			this.deselectHtml_ = Helper_.checkString_('Html', html);
+			this.deselectHtml_ = Helper_.checkString_('HTML', html);
 		}
 
 		// Position of the datepicker relative to an input.
@@ -891,6 +945,22 @@ namespace TheDatepicker {
 			return this.showResetButton_;
 		}
 
+		public getCustomButtons(): CustomButtonStructureResolver[] {
+			return this.customButtons_.slice(0);
+		}
+
+		public createCustomButtons_(): CustomButton[] {
+			const buttons: CustomButton[] = [];
+			for (let index = 0; index < this.customButtons_.length; index++) {
+				const button = this.customButtons_[index];
+				buttons.push({
+					element: button.init(), // todo bindnout this, i jinde
+					update: button.update,
+				});
+			}
+			return buttons;
+		}
+
 		public isMonthAsDropdown(): boolean {
 			return this.monthAsDropdown_;
 		}
@@ -1066,6 +1136,7 @@ namespace TheDatepicker {
 
 		public getCellStructure_(): HTMLElement {
 			if (this.cellContentStructureResolver_) {
+				// todo check že je to skutečně htmlelement (projít i další místa kde by mohl být check)
 				return this.cellContentStructureResolver_.init();
 			}
 

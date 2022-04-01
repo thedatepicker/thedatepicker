@@ -137,6 +137,25 @@ namespace TheDatepicker {
 			element.className += (element.className ? ' ' : '') + classNames.join(' ');
 		}
 
+		public static normalizeClassName_(className: string | string[] | null): string[] {
+			const parameterName = 'Class name';
+			if (typeof className !== 'object' || className.constructor !== Array) {
+				className = Helper_.checkString_(parameterName, className as string).split(/\s+/);
+			}
+
+			const result: string[] = [];
+			for (let index = 0; index < className.length; index++) {
+				const name = Helper_.checkString_(parameterName, className[index]);
+				// todo check validních znaků?
+
+				if (name) {
+					result.push(name);
+				}
+			}
+
+			return result;
+		}
+
 		public static appendChild_(element: HTMLElement, child: HTMLElement | null): void {
 			if (child) {
 				element.appendChild(child);

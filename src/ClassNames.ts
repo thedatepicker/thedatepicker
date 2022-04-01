@@ -146,11 +146,11 @@ namespace TheDatepicker {
 		}
 
 		public setClassName(type: ClassNameType, className: string | string[] | null): void {
-			this.classNames_[this.checkType_(type)] = this.normalizeClassName_(className);
+			this.classNames_[this.checkType_(type)] = HtmlHelper_.normalizeClassName_(className);
 		}
 
 		public addClassName(type: ClassNameType, className: string | string[]): void {
-			this.classNames_[this.checkType_(type)].concat(this.normalizeClassName_(className));
+			this.classNames_[this.checkType_(type)].concat(HtmlHelper_.normalizeClassName_(className));
 		}
 
 		public getClassName(type: ClassNameType): string[] {
@@ -159,23 +159,6 @@ namespace TheDatepicker {
 
 		private checkType_(type: ClassNameType): number {
 			return Helper_.checkNumber_('Class name type', type, 0, this.classNames_.length - 1);
-		}
-
-		private normalizeClassName_(className: string | string[] | null): string[] {
-			const parameterName = 'Class name';
-			if (typeof className !== 'object' || className.constructor !== Array) {
-				className = Helper_.checkString_(parameterName, className as string).split(/\s+/);
-			}
-
-			const result: string[] = [];
-			for (let index = 0; index < className.length; index++) {
-				const name = Helper_.checkString_(parameterName, className[index]);
-				if (name) {
-					result.push(name);
-				}
-			}
-
-			return result;
 		}
 
 	}

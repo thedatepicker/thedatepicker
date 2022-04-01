@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+	<title>The Datepicker</title>
+	<link rel="stylesheet" href="dist/the-datepicker.css">
+	<link rel="shortcut icon" href="/thedatepicker/favicon.ico">
+	<script src="dist/the-datepicker.js"></script>
+	<style>
+		body {
+			width: 190vw;
+			height: 100vh;
+		}
+		#wrapper {
+			margin: 90vh 0 0 85vw;
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<div id="wrapper">
+			<input id="my-input">
+		</div>
+
+		<script>
+			var input = document.getElementById('my-input');
+			var datepicker = new TheDatepicker.Datepicker(input);
+			datepicker.render();
+		</script>
+	</main>
+</body>
