@@ -5,6 +5,7 @@
 	  "removeComments": true,
 	  "preserveConstEnums": true,
 	  "rootDir": "./src/",
-	  "outFile": "dist/the-datepicker.js"
+	  "outFile": "dist/the-datepicker.js",
+	  "declaration": true
 	}
 }
