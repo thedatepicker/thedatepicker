@@ -7,5 +7,6 @@
 	  "rootDir": "./src/",
 	  "outFile": "dist/the-datepicker.js",
 	  "declaration": true
-	}
+	},
+	"exclude": ["dist"]
 }
