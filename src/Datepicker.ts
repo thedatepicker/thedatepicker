@@ -1,19 +1,19 @@
 namespace TheDatepicker {
 
-	interface HTMLDatepickerInputElement {
+	export interface HTMLDatepickerInputElement {
 
 		datepicker?: Datepicker;
 
 	}
 
-	interface HTMLDatepickerContainerElement extends HTMLElement {
+	export interface HTMLDatepickerContainerElement extends HTMLElement {
 
 		datepicker?: Datepicker;
 		onfocusin?: (event: FocusEvent) => void;
 
 	}
 
-	type HTMLDatepickerElement = (HTMLDatepickerInputElement&HTMLElement) | HTMLDatepickerContainerElement;
+	export type HTMLDatepickerElement = (HTMLDatepickerInputElement&HTMLElement) | HTMLDatepickerContainerElement;
 
 	interface DocumentInterface extends Document {
 
@@ -21,9 +21,9 @@ namespace TheDatepicker {
 
 	}
 
-	type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
+	export type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
 
-	type ReadyPromiseResolve = (datepicker: TheDatepicker.Datepicker) => void;
+	export type ReadyPromiseResolve = (datepicker: TheDatepicker.Datepicker) => void;
 
 	interface DatepickerReadyListener {
 

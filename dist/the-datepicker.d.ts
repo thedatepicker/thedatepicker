@@ -118,7 +118,8 @@ declare namespace TheDatepicker {
     }
     type HTMLDatepickerElement = (HTMLDatepickerInputElement & HTMLElement) | HTMLDatepickerContainerElement;
     type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
-    export class Datepicker {
+    type ReadyPromiseResolve = (datepicker: TheDatepicker.Datepicker) => void;
+    class Datepicker {
         readonly options: Options;
         input: (HTMLDatepickerInputElement & HTMLElement) | null;
         readonly container: HTMLDatepickerContainerElement;
@@ -168,13 +169,12 @@ declare namespace TheDatepicker {
         private static setBodyClass_;
         private static activateViewModel_;
     }
-    export const onDatepickerReady: typeof Datepicker.onDatepickerReady;
-    export {};
+    const onDatepickerReady: typeof Datepicker.onDatepickerReady;
 }
 declare namespace TheDatepicker {
     type CreateDay = (date: Date) => Day;
     type FormatDate = (date: Date) => string;
-    export class Day {
+    class Day {
         readonly dayNumber: number;
         readonly month: number;
         readonly year: number;
@@ -199,7 +199,6 @@ declare namespace TheDatepicker {
         isEqualToDay(day: Day): boolean;
         getSibling(shift?: number): Day;
     }
-    export {};
 }
 declare namespace TheDatepicker {
     enum DayOfWeek {
@@ -315,16 +314,16 @@ declare namespace TheDatepicker {
     export type MonthChangeListener = (event: Event | null, month: Date, previousMonth: Date) => boolean;
     export type FocusListener = (event: Event | null, day: Day | null, previousDay: Day | null) => boolean;
     type ListenerCaller = (listener: (event: Event | null, ...props: any) => boolean) => boolean;
-    type DateAvailabilityResolver = (date: Date) => boolean;
-    type CellContentResolver = (day: Day) => string;
-    type StructureResolverInit = () => HTMLElement;
-    type CellContentStructureResolverUpdate = (element: HTMLElement, day: Day) => void;
-    interface CellContentStructureResolver {
+    export type DateAvailabilityResolver = (date: Date) => boolean;
+    export type CellContentResolver = (day: Day) => string;
+    export type StructureResolverInit = () => HTMLElement;
+    export type CellContentStructureResolverUpdate = (element: HTMLElement, day: Day) => void;
+    export interface CellContentStructureResolver {
         init: StructureResolverInit;
         update: CellContentStructureResolverUpdate;
     }
-    type CellClassesResolver = (day: Day) => string[];
-    type DayModifier = (day: Day) => void;
+    export type CellClassesResolver = (day: Day) => string[];
+    export type DayModifier = (day: Day) => void;
     export class Options {
         readonly translator: Translator;
         readonly classNames: ClassNames;

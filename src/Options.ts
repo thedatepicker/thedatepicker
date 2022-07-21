@@ -38,22 +38,22 @@ namespace TheDatepicker {
 		focus: FocusListener[];
 	}
 
-	type DateAvailabilityResolver = (date: Date) => boolean;
+	export type DateAvailabilityResolver = (date: Date) => boolean;
 
-	type CellContentResolver = (day: Day) => string;
+	export type CellContentResolver = (day: Day) => string;
 
-	type StructureResolverInit = () => HTMLElement;
+	export type StructureResolverInit = () => HTMLElement;
 
-	type CellContentStructureResolverUpdate = (element: HTMLElement, day: Day) => void;
+	export type CellContentStructureResolverUpdate = (element: HTMLElement, day: Day) => void;
 
-	interface CellContentStructureResolver {
+	export interface CellContentStructureResolver {
 		init: StructureResolverInit;
 		update: CellContentStructureResolverUpdate;
 	}
 
-	type CellClassesResolver = (day: Day) => string[];
+	export type CellClassesResolver = (day: Day) => string[];
 
-	type DayModifier = (day: Day) => void;
+	export type DayModifier = (day: Day) => void;
 
 	export class Options {
 

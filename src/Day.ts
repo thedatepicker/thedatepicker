@@ -1,7 +1,7 @@
 namespace TheDatepicker {
 
-	type CreateDay = (date: Date) => Day;
-	type FormatDate = (date: Date) => string;
+	export type CreateDay = (date: Date) => Day;
+	export type FormatDate = (date: Date) => string;
 
 	export class Day {
 
