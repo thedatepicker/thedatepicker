@@ -15,9 +15,13 @@
     "uglify-js": "^3.16.2"
   },
   "scripts": {
-    "js": "tsc",
+    "js": "npm run js:plain && npm run js:amd",
+    "js:plain": "tsc",
+    "js:amd": "tsc -p tsconfig-amd.json",
     "css": "stylus src/assets -o dist",
-    "minify": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js"
+    "minify": "npm run minify:plain && npm run minify:amd",
+    "minify:plain": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js",
+    "minify:amd": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/amd/the-datepicker.min.js dist/amd/the-datepicker.js"
   },
   "bugs": {
     "url": "https://github.com/thedatepicker/thedatepicker/issues"
