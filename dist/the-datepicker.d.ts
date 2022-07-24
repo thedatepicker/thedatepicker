@@ -1,180 +1,7 @@
-declare namespace TheDatepicker {
-    enum ClassNameType {
-        Container = 0,
-        ContainerOver = 1,
-        ContainerLeft = 2,
-        ContainerResponsive = 3,
-        Main = 4,
-        Body = 5,
-        BodySwipeable = 6,
-        Tables = 7,
-        Header = 8,
-        HeaderTop = 9,
-        HeaderControl = 10,
-        HeaderNavigation = 11,
-        HeaderState = 12,
-        HeaderMonth = 13,
-        HeaderYear = 14,
-        HeaderMonthYear = 15,
-        HeaderYearsToggle = 16,
-        Button = 17,
-        ButtonContent = 18,
-        SelectInput = 19,
-        Deselect = 20,
-        DeselectButton = 21,
-        HeaderTitle = 22,
-        HeaderTitleContent = 23,
-        Reset = 24,
-        Close = 25,
-        Go = 26,
-        GoNext = 27,
-        GoPrevious = 28,
-        Table = 29,
-        TableRow = 30,
-        TableCell = 31,
-        TableCellUnavailable = 32,
-        TableCellHighlighted = 33,
-        TableCellSelected = 34,
-        CalendarTable = 35,
-        CalendarTableHeader = 36,
-        CalendarTableHeaderCell = 37,
-        CalendarTableBody = 38,
-        YearsTable = 39,
-        YearsTableBody = 40,
-        WeekDayWeekend = 41,
-        Day = 42,
-        DayToday = 43,
-        DayPast = 44,
-        DayWeekend = 45,
-        DayUnavailable = 46,
-        DayOutside = 47,
-        DayHighlighted = 48,
-        DaySelected = 49,
-        DayButton = 50,
-        DayButtonContent = 51,
-        YearCellButton = 52,
-        YearCellButtonContent = 53,
-        Animated = 54,
-        AnimateFadeOutLeft = 55,
-        AnimateFadeInRight = 56,
-        AnimateFadeOutUp = 57,
-        AnimateFadeInDown = 58,
-        AnimateFadeOutRight = 59,
-        AnimateFadeInLeft = 60,
-        AnimateFadeOutDown = 61,
-        AnimateFadeInUp = 62,
-        ContainerDarkMode = 63
-    }
-    class ClassNames {
-        private classNames_;
-        clone(): ClassNames;
-        setClassName(type: ClassNameType, className: string | string[] | null): void;
-        addClassName(type: ClassNameType, className: string | string[]): void;
-        getClassName(type: ClassNameType): string[];
-        private checkType_;
-        private normalizeClassName_;
-    }
-}
-declare namespace TheDatepicker {
-    class CannotParseDateException {
-    }
-    class DateConverter_ {
-        private static readonly escapeChar_;
-        static formatDate_(date: Date | null, options: Options): string | null;
-        static parseDate_(text: string, options: Options): Date | null;
-        static isValidChar_(textChar: string, options: Options): boolean;
-        private static getFormatter_;
-        private static formatDay_;
-        private static formatDayWithLeadingZero_;
-        private static formatDayOfWeekTextual_;
-        private static formatDayOfWeekTextualFull_;
-        private static formatMonth_;
-        private static formatMonthWithLeadingZero_;
-        private static formatMonthTextual_;
-        private static formatMonthTextualShort_;
-        private static formatYear_;
-        private static formatYearTwoDigits_;
-        private static getParser_;
-        private static parseDay_;
-        private static parseDayOfWeekTextual_;
-        private static parseDayOfWeekTextualFull_;
-        private static parseDayOfWeekByTranslator_;
-        private static parseMonth_;
-        private static parseMonthTextual_;
-        private static parseMonthTextualShort_;
-        private static parseMonthByTranslator_;
-        private static parseYear_;
-        private static parseYearTwoDigits_;
-        private static getValidPhrases_;
-    }
-}
-declare namespace TheDatepicker {
-    interface HTMLDatepickerInputElement {
-        datepicker?: Datepicker;
-    }
-    interface HTMLDatepickerContainerElement extends HTMLElement {
-        datepicker?: Datepicker;
-        onfocusin?: (event: FocusEvent) => void;
-    }
-    type HTMLDatepickerElement = (HTMLDatepickerInputElement & HTMLElement) | HTMLDatepickerContainerElement;
-    type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
-    type ReadyPromiseResolve = (datepicker: TheDatepicker.Datepicker) => void;
-    class Datepicker {
-        readonly options: Options;
-        input: (HTMLDatepickerInputElement & HTMLElement) | null;
-        readonly container: HTMLDatepickerContainerElement;
-        private readonly isContainerExternal_;
-        private readonly inputClickable_;
-        private readonly inputText_;
-        private readonly viewModel_;
-        private initializationPhase_;
-        private inputListenerRemover_;
-        private listenerRemovers_;
-        private deselectElement_;
-        private deselectButton_;
-        private static document_;
-        private static readyListeners_;
-        private static areGlobalListenersInitialized_;
-        private static activeViewModel_;
-        private static hasClickedViewModel_;
-        constructor(input: (HTMLDatepickerInputElement & HTMLElement) | null, container?: HTMLDatepickerContainerElement | null, options?: Options | null);
-        render(): void;
-        open(event?: Event | null): boolean;
-        isOpened(): boolean;
-        close(event?: Event | null): boolean;
-        reset(event?: Event | null): boolean;
-        destroy(): void;
-        isDestroyed(): boolean;
-        selectDate(date: Date | string | null, doUpdateMonth?: boolean, event?: Event | null): boolean;
-        getSelectedDate(): Date | null;
-        getSelectedDateFormatted(): string | null;
-        getCurrentMonth(): Date;
-        goToMonth(month: Date | string, event?: Event | null): boolean;
-        parseRawInput(): Date | null;
-        getDay(date: Date | string): Day;
-        canType_(char: string): boolean;
-        readInput_(event?: Event | null): boolean;
-        updateInput_(): void;
-        static onDatepickerReady(element: HTMLDatepickerElement, callback?: ReadyListener | null): Promise<TheDatepicker.Datepicker> | null;
-        private createContainer_;
-        private createDeselectElement_;
-        private updateDeselectElement_;
-        private preselectFromInput_;
-        private initListeners_;
-        private removeInitialInputListener_;
-        private triggerReady_;
-        private triggerReadyListener_;
-        private onActivate_;
-        private updateContainer_;
-        private static setBodyClass_;
-        private static activateViewModel_;
-    }
-    const onDatepickerReady: typeof Datepicker.onDatepickerReady;
-}
-declare namespace TheDatepicker {
-    type CreateDay = (date: Date) => Day;
-    type FormatDate = (date: Date) => string;
-    class Day {
+declare module "Day" {
+    export type CreateDay = (date: Date) => Day;
+    export type FormatDate = (date: Date) => string;
+    export default class Day {
         readonly dayNumber: number;
         readonly month: number;
         readonly year: number;
@@ -200,85 +27,46 @@ declare namespace TheDatepicker {
         getSibling(shift?: number): Day;
     }
 }
-declare namespace TheDatepicker {
-    enum DayOfWeek {
-        Monday = 1,
-        Tuesday = 2,
-        Wednesday = 3,
-        Thursday = 4,
-        Friday = 5,
-        Saturday = 6,
-        Sunday = 0
+declare module "Translator" {
+    import { DayOfWeek, Month } from "Helper";
+    export enum TitleName {
+        GoBack = 0,
+        GoForward = 1,
+        Close = 2,
+        Reset = 3,
+        Deselect = 4,
+        Month = 5,
+        Year = 6,
+        GoBackTableOfYears = 7,
+        GoForwardTableOfYears = 8
     }
-    enum Month {
-        January = 0,
-        February = 1,
-        March = 2,
-        April = 3,
-        May = 4,
-        June = 5,
-        July = 6,
-        August = 7,
-        September = 8,
-        October = 9,
-        November = 10,
-        December = 11
-    }
-    enum Align {
-        Left = 1,
-        Right = 2,
-        Center = 3
-    }
-    enum KeyCode_ {
-        Enter = 13,
-        Space = 32,
-        Left = 37,
-        Up = 38,
-        Right = 39,
-        Down = 40,
-        Esc = 27
-    }
-    enum ListenerType_ {
-        MouseDown = "mousedown",
-        Focus = "focus",
-        FocusIn = "focusin",
-        Blur = "blur",
-        KeyDown = "keydown",
-        KeyUp = "keyup",
-        KeyPress = "keypress",
-        TouchStart = "touchstart",
-        TouchMove = "touchmove",
-        AnimationEnd = "animationend"
-    }
-    class Helper_ {
-        private static readonly months_;
-        private static deprecatedMethods_;
-        private static cssAnimationSupport_;
-        private static passiveEventListenerSupport_;
-        static resetTime_(date: Date | null): Date | null;
-        static normalizeDate_(parameterName: string, value: Day | Date | string | null, isNullable: boolean, options: Options): Date | null;
-        static isElement_(element: HTMLElement): boolean;
-        static isValidDate_(value: any): boolean;
-        static inArray_(list: any[], item: any): boolean;
-        static addEventListener_(element: Node, listenerType: ListenerType_, listener: (event: Event) => void, isPassive?: boolean): () => void;
-        static preventDefault_(event: Event): void;
-        static stopPropagation_(event: Event): void;
-        static checkString_(parameterName: string, value: string | null, checkNonEmpty?: boolean): string;
-        static checkNumber_(parameterName: string, value: number, min?: number | null, max?: number | null): number;
-        static checkFunction_<Type extends Function>(parameterName: string, value: Type | null, isNullable?: boolean): Type | null;
-        static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethods: string[]): void;
-        static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, moveDirection: MoveDirection_) => void): void;
-        static isCssAnimationSupported_(): boolean;
-        static isPassiveEventListenerSupported_(): boolean;
-        static isMobile_(): boolean;
+    export default class Translator {
+        dayOfWeekFullTranslations_: string[];
+        dayOfWeekTranslations_: string[];
+        monthTranslations_: string[];
+        monthShortTranslations_: string[];
+        private titles_;
+        clone(): Translator;
+        setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void;
+        setDayOfWeekFullTranslation(dayOfWeek: DayOfWeek, translation: string): void;
+        setMonthTranslation(month: Month, translation: string): void;
+        setMonthShortTranslation(month: Month, translation: string): void;
+        setTitleTranslation(titleName: TitleName, translation: string): void;
+        translateDayOfWeek(dayOfWeek: DayOfWeek): string;
+        translateDayOfWeekFull(dayOfWeek: DayOfWeek): string;
+        translateMonth(month: Month): string;
+        translateMonthShort(month: Month): string;
+        translateTitle(titleName: TitleName): string;
     }
 }
-declare namespace TheDatepicker {
-    interface Option {
+declare module "HtmlHelper" {
+    import Options from "Options";
+    import { ClassNameType } from "ClassNames";
+    export interface Option {
         value: string;
         label: string;
     }
-    class HtmlHelper_ {
+    export default class HtmlHelper_ {
         static createDiv_(type: ClassNameType, options: Options): HTMLDivElement;
         static createAnchor_(onClick: (event: Event) => void, options: Options, type?: ClassNameType): HTMLAnchorElement;
         static createSpan_(): HTMLSpanElement;
@@ -294,7 +82,11 @@ declare namespace TheDatepicker {
         static appendChild_(element: HTMLElement, child: HTMLElement | null): void;
     }
 }
-declare namespace TheDatepicker {
+declare module "Options" {
+    import ClassNames from "ClassNames";
+    import Day from "Day";
+    import Translator from "Translator";
+    import { Align, DayOfWeek } from "Helper";
     export enum EventType_ {
         BeforeSelect = "beforeSelect",
         Select = "select",
@@ -324,7 +116,7 @@ declare namespace TheDatepicker {
     }
     export type CellClassesResolver = (day: Day) => string[];
     export type DayModifier = (day: Day) => void;
-    export class Options {
+    export default class Options {
         readonly translator: Translator;
         readonly classNames: ClassNames;
         private hideOnBlur_;
@@ -555,9 +347,111 @@ declare namespace TheDatepicker {
         private offEvent_;
         triggerEvent_(eventType: EventType_, caller: ListenerCaller): boolean;
     }
-    export {};
 }
-declare namespace TheDatepicker {
+declare module "DateConverter" {
+    import Options from "Options";
+    export class CannotParseDateException {
+    }
+    export default class DateConverter_ {
+        private static readonly escapeChar_;
+        static formatDate_(date: Date | null, options: Options): string | null;
+        static parseDate_(text: string, options: Options): Date | null;
+        static isValidChar_(textChar: string, options: Options): boolean;
+        private static getFormatter_;
+        private static formatDay_;
+        private static formatDayWithLeadingZero_;
+        private static formatDayOfWeekTextual_;
+        private static formatDayOfWeekTextualFull_;
+        private static formatMonth_;
+        private static formatMonthWithLeadingZero_;
+        private static formatMonthTextual_;
+        private static formatMonthTextualShort_;
+        private static formatYear_;
+        private static formatYearTwoDigits_;
+        private static getParser_;
+        private static parseDay_;
+        private static parseDayOfWeekTextual_;
+        private static parseDayOfWeekTextualFull_;
+        private static parseDayOfWeekByTranslator_;
+        private static parseMonth_;
+        private static parseMonthTextual_;
+        private static parseMonthTextualShort_;
+        private static parseMonthByTranslator_;
+        private static parseYear_;
+        private static parseYearTwoDigits_;
+        private static getValidPhrases_;
+    }
+}
+declare module "Datepicker" {
+    import Day from "Day";
+    import Options from "Options";
+    export interface HTMLDatepickerInputElement {
+        datepicker?: Datepicker;
+    }
+    export interface HTMLDatepickerContainerElement extends HTMLElement {
+        datepicker?: Datepicker;
+        onfocusin?: (event: FocusEvent) => void;
+    }
+    export type HTMLDatepickerElement = (HTMLDatepickerInputElement & HTMLElement) | HTMLDatepickerContainerElement;
+    export type ReadyListener = (datepicker: Datepicker, element: HTMLDatepickerElement) => void;
+    export type ReadyPromiseResolve = (datepicker: Datepicker) => void;
+    export default class Datepicker {
+        readonly options: Options;
+        input: (HTMLDatepickerInputElement & HTMLElement) | null;
+        readonly container: HTMLDatepickerContainerElement;
+        private readonly isContainerExternal_;
+        private readonly inputClickable_;
+        private readonly inputText_;
+        private readonly viewModel_;
+        private initializationPhase_;
+        private inputListenerRemover_;
+        private listenerRemovers_;
+        private deselectElement_;
+        private deselectButton_;
+        private static document_;
+        private static readyListeners_;
+        private static areGlobalListenersInitialized_;
+        private static activeViewModel_;
+        private static hasClickedViewModel_;
+        constructor(input: (HTMLDatepickerInputElement & HTMLElement) | null, container?: HTMLDatepickerContainerElement | null, options?: Options | null);
+        render(): void;
+        open(event?: Event | null): boolean;
+        isOpened(): boolean;
+        close(event?: Event | null): boolean;
+        reset(event?: Event | null): boolean;
+        destroy(): void;
+        isDestroyed(): boolean;
+        selectDate(date: Date | string | null, doUpdateMonth?: boolean, event?: Event | null): boolean;
+        getSelectedDate(): Date | null;
+        getSelectedDateFormatted(): string | null;
+        getCurrentMonth(): Date;
+        goToMonth(month: Date | string, event?: Event | null): boolean;
+        parseRawInput(): Date | null;
+        getDay(date: Date | string): Day;
+        canType_(char: string): boolean;
+        readInput_(event?: Event | null): boolean;
+        updateInput_(): void;
+        static onDatepickerReady(element: HTMLDatepickerElement, callback?: ReadyListener | null): Promise<Datepicker> | null;
+        private createContainer_;
+        private createDeselectElement_;
+        private updateDeselectElement_;
+        private preselectFromInput_;
+        private initListeners_;
+        private removeInitialInputListener_;
+        private triggerReady_;
+        private triggerReadyListener_;
+        private onActivate_;
+        private updateContainer_;
+        private static setBodyClass_;
+        private static activateViewModel_;
+    }
+    export const onDatepickerReady: typeof Datepicker.onDatepickerReady;
+}
+declare module "Template" {
+    import Day from "Day";
+    import Options from "Options";
+    import ViewModel_ from "ViewModel";
+    import { DayOfWeek } from "Helper";
     interface HTMLDayButtonElement extends HTMLAnchorElement {
         day: Day;
     }
@@ -572,7 +466,7 @@ declare namespace TheDatepicker {
     interface HTMLYearButtonElement extends HTMLAnchorElement {
         yearCellData: YearCellData_;
     }
-    export class Template_ {
+    export default class Template_ {
         private readonly options_;
         private readonly container_;
         private readonly hasInput_;
@@ -654,40 +548,13 @@ declare namespace TheDatepicker {
         private translateMonth_;
         private updateTitle_;
     }
-    export {};
 }
-declare namespace TheDatepicker {
-    enum TitleName {
-        GoBack = 0,
-        GoForward = 1,
-        Close = 2,
-        Reset = 3,
-        Deselect = 4,
-        Month = 5,
-        Year = 6,
-        GoBackTableOfYears = 7,
-        GoForwardTableOfYears = 8
-    }
-    class Translator {
-        dayOfWeekFullTranslations_: string[];
-        dayOfWeekTranslations_: string[];
-        monthTranslations_: string[];
-        monthShortTranslations_: string[];
-        private titles_;
-        clone(): Translator;
-        setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void;
-        setDayOfWeekFullTranslation(dayOfWeek: DayOfWeek, translation: string): void;
-        setMonthTranslation(month: Month, translation: string): void;
-        setMonthShortTranslation(month: Month, translation: string): void;
-        setTitleTranslation(titleName: TitleName, translation: string): void;
-        translateDayOfWeek(dayOfWeek: DayOfWeek): string;
-        translateDayOfWeekFull(dayOfWeek: DayOfWeek): string;
-        translateMonth(month: Month): string;
-        translateMonthShort(month: Month): string;
-        translateTitle(titleName: TitleName): string;
-    }
-}
-declare namespace TheDatepicker {
+declare module "ViewModel" {
+    import Datepicker from "Datepicker";
+    import Day from "Day";
+    import Options from "Options";
+    import { DayOfWeek } from "Helper";
+    import { YearCellData_ } from "Template";
     export enum MoveDirection_ {
         Left = 1,
         Up = 2,
@@ -711,7 +578,7 @@ declare namespace TheDatepicker {
         highlightYear(year: number, doFocus?: boolean): boolean;
         cancelHighlight(): boolean;
     }
-    export class ViewModel_ {
+    export default class ViewModel_ {
         private readonly options_;
         private readonly datepicker_;
         selectedDate_: Date | null;
@@ -771,5 +638,157 @@ declare namespace TheDatepicker {
         private getInitialMonth_;
         private translateKeyCodeToMoveDirection_;
     }
-    export {};
+}
+declare module "Helper" {
+    import Day from "Day";
+    import Options from "Options";
+    import { MoveDirection_ } from "ViewModel";
+    export enum DayOfWeek {
+        Monday = 1,
+        Tuesday = 2,
+        Wednesday = 3,
+        Thursday = 4,
+        Friday = 5,
+        Saturday = 6,
+        Sunday = 0
+    }
+    export enum Month {
+        January = 0,
+        February = 1,
+        March = 2,
+        April = 3,
+        May = 4,
+        June = 5,
+        July = 6,
+        August = 7,
+        September = 8,
+        October = 9,
+        November = 10,
+        December = 11
+    }
+    export enum Align {
+        Left = 1,
+        Right = 2,
+        Center = 3
+    }
+    export enum KeyCode_ {
+        Enter = 13,
+        Space = 32,
+        Left = 37,
+        Up = 38,
+        Right = 39,
+        Down = 40,
+        Esc = 27
+    }
+    export enum ListenerType_ {
+        MouseDown = "mousedown",
+        Focus = "focus",
+        FocusIn = "focusin",
+        Blur = "blur",
+        KeyDown = "keydown",
+        KeyUp = "keyup",
+        KeyPress = "keypress",
+        TouchStart = "touchstart",
+        TouchMove = "touchmove",
+        AnimationEnd = "animationend"
+    }
+    export default class Helper_ {
+        private static readonly months_;
+        private static deprecatedMethods_;
+        private static cssAnimationSupport_;
+        private static passiveEventListenerSupport_;
+        static resetTime_(date: Date | null): Date | null;
+        static normalizeDate_(parameterName: string, value: Day | Date | string | null, isNullable: boolean, options: Options): Date | null;
+        static isElement_(element: HTMLElement): boolean;
+        static isValidDate_(value: any): boolean;
+        static inArray_(list: any[], item: any): boolean;
+        static addEventListener_(element: Node, listenerType: ListenerType_, listener: (event: Event) => void, isPassive?: boolean): () => void;
+        static preventDefault_(event: Event): void;
+        static stopPropagation_(event: Event): void;
+        static checkString_(parameterName: string, value: string | null, checkNonEmpty?: boolean): string;
+        static checkNumber_(parameterName: string, value: number, min?: number | null, max?: number | null): number;
+        static checkFunction_<Type extends Function>(parameterName: string, value: Type | null, isNullable?: boolean): Type | null;
+        static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethods: string[]): void;
+        static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, moveDirection: MoveDirection_) => void): void;
+        static isCssAnimationSupported_(): boolean;
+        static isPassiveEventListenerSupported_(): boolean;
+        static isMobile_(): boolean;
+    }
+}
+declare module "ClassNames" {
+    export enum ClassNameType {
+        Container = 0,
+        ContainerOver = 1,
+        ContainerLeft = 2,
+        ContainerResponsive = 3,
+        Main = 4,
+        Body = 5,
+        BodySwipeable = 6,
+        Tables = 7,
+        Header = 8,
+        HeaderTop = 9,
+        HeaderControl = 10,
+        HeaderNavigation = 11,
+        HeaderState = 12,
+        HeaderMonth = 13,
+        HeaderYear = 14,
+        HeaderMonthYear = 15,
+        HeaderYearsToggle = 16,
+        Button = 17,
+        ButtonContent = 18,
+        SelectInput = 19,
+        Deselect = 20,
+        DeselectButton = 21,
+        HeaderTitle = 22,
+        HeaderTitleContent = 23,
+        Reset = 24,
+        Close = 25,
+        Go = 26,
+        GoNext = 27,
+        GoPrevious = 28,
+        Table = 29,
+        TableRow = 30,
+        TableCell = 31,
+        TableCellUnavailable = 32,
+        TableCellHighlighted = 33,
+        TableCellSelected = 34,
+        CalendarTable = 35,
+        CalendarTableHeader = 36,
+        CalendarTableHeaderCell = 37,
+        CalendarTableBody = 38,
+        YearsTable = 39,
+        YearsTableBody = 40,
+        WeekDayWeekend = 41,
+        Day = 42,
+        DayToday = 43,
+        DayPast = 44,
+        DayWeekend = 45,
+        DayUnavailable = 46,
+        DayOutside = 47,
+        DayHighlighted = 48,
+        DaySelected = 49,
+        DayButton = 50,
+        DayButtonContent = 51,
+        YearCellButton = 52,
+        YearCellButtonContent = 53,
+        Animated = 54,
+        AnimateFadeOutLeft = 55,
+        AnimateFadeInRight = 56,
+        AnimateFadeOutUp = 57,
+        AnimateFadeInDown = 58,
+        AnimateFadeOutRight = 59,
+        AnimateFadeInLeft = 60,
+        AnimateFadeOutDown = 61,
+        AnimateFadeInUp = 62,
+        ContainerDarkMode = 63
+    }
+    export default class ClassNames {
+        private classNames_;
+        clone(): ClassNames;
+        setClassName(type: ClassNameType, className: string | string[] | null): void;
+        addClassName(type: ClassNameType, className: string | string[]): void;
+        getClassName(type: ClassNameType): string[];
+        private checkType_;
+        private normalizeClassName_;
+    }
 }

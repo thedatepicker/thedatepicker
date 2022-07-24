@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
-	  "target": "ES3",
+	  "target": "ES6",
+	  "module": "AMD",
 	  "noImplicitAny": true,
 	  "removeComments": true,
 	  "preserveConstEnums": true,
