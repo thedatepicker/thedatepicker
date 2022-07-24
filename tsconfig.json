@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-	  "target": "ES6",
-	  "module": "AMD",
+	  "target": "ES5",
+	  "module": "CommonJS",
 	  "noImplicitAny": true,
 	  "removeComments": true,
 	  "preserveConstEnums": true,
