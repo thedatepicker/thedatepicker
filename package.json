@@ -10,9 +10,9 @@
   "types": "dist/the-datepicker.d.ts",
   "browser": "dist/the-datepicker.min.js",
   "devDependencies": {
-    "stylus": "^0.54.8",
-    "typescript": "^4.5.4",
-    "uglify-js": "^3.14.5"
+    "stylus": "^0.58.1",
+    "typescript": "^4.7.4",
+    "uglify-js": "^3.16.2"
   },
   "scripts": {
     "js": "tsc",
