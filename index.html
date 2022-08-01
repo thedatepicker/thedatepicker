@@ -242,7 +242,7 @@
 					<label>datepicker.getSelectedDate()<span id="selectedDate"></span>;</label>
 				</li>
 				<li>
-					<label>datepicker.getSelectedDateFormatted() === <span id="selectedDateFormatted"></span>;</label>
+					<label>datepicker.getSelectedDateFormatted("<input type="text" size="15" id="selectedDateFormatted">") === <span id="selectedDateFormattedOutput"></span>;</label>
 				</li>
 				<li>
 					<label>datepicker.getCurrentMonth()<span id="currentMonth"></span>;</label>
@@ -910,15 +910,17 @@ return header;
 
 			datepicker = new TheDatepicker.Datepicker(input);
 
+			var selectedDateFormattedInput = document.getElementById('selectedDateFormatted');
 			var selectedDateOutput = document.getElementById('selectedDate');
-			var selectedDateFormattedOutput = document.getElementById('selectedDateFormatted');
+			var selectedDateFormattedOutput = document.getElementById('selectedDateFormattedOutput');
 			var updateSelectedDate = function () {
 				var selectedDate = datepicker.getSelectedDate();
 				selectedDateOutput.innerText = selectedDate !== null ? '.toString() === "' + selectedDate.toString() + '"' : ' === null';
-				var selectedDateFormatted = datepicker.getSelectedDateFormatted();
+				var selectedDateFormatted = datepicker.getSelectedDateFormatted(selectedDateFormattedInput.value);
 				selectedDateFormattedOutput.innerText = selectedDateFormatted !== null ? '"' + selectedDateFormatted + '"' : 'null';
 			};
 			datepicker.options.onSelect(updateSelectedDate);
+			selectedDateFormattedInput.onchange = updateSelectedDate;
 			updateSelectedDate();
 
 			var currentMonthOutput = document.getElementById('currentMonth');

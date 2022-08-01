@@ -212,11 +212,12 @@ var TheDatepicker;
     var DateConverter_ = (function () {
         function DateConverter_() {
         }
-        DateConverter_.formatDate_ = function (date, options) {
+        DateConverter_.formatDate_ = function (date, options, format) {
+            if (format === void 0) { format = null; }
             if (!date) {
                 return null;
             }
-            var format = options.getInputFormat();
+            format = format || options.getInputFormat();
             var escapeNext = false;
             var result = '';
             for (var position = 0; position < format.length; position++) {
@@ -763,8 +764,9 @@ var TheDatepicker;
         Datepicker.prototype.getSelectedDate = function () {
             return this.viewModel_.selectedDate_ ? new Date(this.viewModel_.selectedDate_.getTime()) : null;
         };
-        Datepicker.prototype.getSelectedDateFormatted = function () {
-            return TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options);
+        Datepicker.prototype.getSelectedDateFormatted = function (format) {
+            if (format === void 0) { format = null; }
+            return TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options, TheDatepicker.Helper_.checkString_('Format', format));
         };
         Datepicker.prototype.getCurrentMonth = function () {
             return new Date(this.viewModel_.getCurrentMonth_().getTime());
@@ -1129,8 +1131,9 @@ var TheDatepicker;
         Day.prototype.getFormatted = function () {
             return this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.dayNumber).slice(-2);
         };
-        Day.prototype.getInputFormatted = function () {
-            return this.formatDate_(this.getDate());
+        Day.prototype.getInputFormatted = function (format) {
+            if (format === void 0) { format = null; }
+            return this.formatDate_(this.getDate(), TheDatepicker.Helper_.checkString_('Format', format));
         };
         Day.prototype.isEqualToDate = function (date) {
             return TheDatepicker.Helper_.isValidDate_(date)
@@ -4041,8 +4044,9 @@ var TheDatepicker;
             var currentMonth = this.getCurrentMonth_();
             var day = new TheDatepicker.Day(date, function (date) {
                 return _this.createDay_(date);
-            }, function (date) {
-                return TheDatepicker.DateConverter_.formatDate_(date, _this.options_);
+            }, function (date, format) {
+                if (format === void 0) { format = null; }
+                return TheDatepicker.DateConverter_.formatDate_(date, _this.options_, format);
             });
             day.isToday = date.getTime() === today.getTime();
             day.isPast = date.getTime() < today.getTime();

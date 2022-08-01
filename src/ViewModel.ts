@@ -684,8 +684,8 @@ namespace TheDatepicker {
 
 			const day = new Day(date, (date: Date): Day => {
 				return this.createDay_(date);
-			}, (date: Date): string => {
-				return DateConverter_.formatDate_(date, this.options_);
+			}, (date: Date, format: string | null = null): string => {
+				return DateConverter_.formatDate_(date, this.options_, format);
 			});
 			day.isToday = date.getTime() === today.getTime();
 			day.isPast = date.getTime() < today.getTime();

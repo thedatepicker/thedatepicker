@@ -80,7 +80,7 @@ declare namespace TheDatepicker {
     }
     class DateConverter_ {
         private static readonly escapeChar_;
-        static formatDate_(date: Date | null, options: Options): string | null;
+        static formatDate_(date: Date | null, options: Options, format?: string | null): string | null;
         static parseDate_(text: string, options: Options): Date | null;
         static isValidChar_(textChar: string, options: Options): boolean;
         private static getFormatter_;
@@ -147,7 +147,7 @@ declare namespace TheDatepicker {
         isDestroyed(): boolean;
         selectDate(date: Date | string | null, doUpdateMonth?: boolean, event?: Event | null): boolean;
         getSelectedDate(): Date | null;
-        getSelectedDateFormatted(): string | null;
+        getSelectedDateFormatted(format?: string | null): string | null;
         getCurrentMonth(): Date;
         goToMonth(month: Date | string, event?: Event | null): boolean;
         parseRawInput(): Date | null;
@@ -173,7 +173,7 @@ declare namespace TheDatepicker {
 }
 declare namespace TheDatepicker {
     type CreateDay = (date: Date) => Day;
-    type FormatDate = (date: Date) => string;
+    type FormatDate = (date: Date, format: string | null) => string;
     class Day {
         readonly dayNumber: number;
         readonly month: number;
@@ -194,7 +194,7 @@ declare namespace TheDatepicker {
         constructor(date: Date, createDay: CreateDay, formatDate: FormatDate);
         getDate(): Date;
         getFormatted(): string;
-        getInputFormatted(): string;
+        getInputFormatted(format?: string | null): string;
         isEqualToDate(date: Date): boolean;
         isEqualToDay(day: Day): boolean;
         getSibling(shift?: number): Day;

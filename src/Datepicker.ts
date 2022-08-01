@@ -279,8 +279,8 @@ namespace TheDatepicker {
 			return this.viewModel_.selectedDate_ ? new Date(this.viewModel_.selectedDate_.getTime()) : null;
 		}
 
-		public getSelectedDateFormatted(): string | null {
-			return DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options);
+		public getSelectedDateFormatted(format: string | null = null): string | null {
+			return DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options, Helper_.checkString_('Format', format));
 		}
 
 		public getCurrentMonth(): Date {

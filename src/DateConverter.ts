@@ -38,12 +38,12 @@ namespace TheDatepicker {
 
 		private static readonly escapeChar_ = '\\';
 
-		public static formatDate_(date: Date | null, options: Options): string | null {
+		public static formatDate_(date: Date | null, options: Options, format: string | null = null): string | null {
 			if (!date) {
 				return null;
 			}
 
-			const format = options.getInputFormat();
+			format = format || options.getInputFormat();
 			let escapeNext = false;
 			let result = '';
 			for (let position = 0; position < format.length; position++) {

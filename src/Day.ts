@@ -1,7 +1,7 @@
 namespace TheDatepicker {
 
 	export type CreateDay = (date: Date) => Day;
-	export type FormatDate = (date: Date) => string;
+	export type FormatDate = (date: Date, format: string | null) => string;
 
 	export class Day {
 
@@ -42,8 +42,8 @@ namespace TheDatepicker {
 			return this.year + '-' + ('0' + this.month).slice(-2) + '-' + ('0' + this.dayNumber).slice(-2);
 		}
 
-		public getInputFormatted(): string {
-			return this.formatDate_(this.getDate());
+		public getInputFormatted(format: string | null = null): string {
+			return this.formatDate_(this.getDate(), Helper_.checkString_('Format', format));
 		}
 
 		public isEqualToDate(date: Date): boolean {
