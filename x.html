@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="dist/the-datepicker.css">
+<script src="dist/the-datepicker.js"></script>
+
+<style>
+    body {
+        height: 2000px;
+        width: 3000px;
+    }
+    #wrapper {
+        margin: 500px 1200px;
+    }
+</style>
+
+<div id="wrapper">
+    <input type="text" id="my-input" size="20">
+</div>
+
+<script>
+	var input = document.getElementById('my-input');
+	const datepicker = new TheDatepicker.Datepicker(input);
+	datepicker.render();
+</script>
