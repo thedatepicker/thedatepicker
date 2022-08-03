@@ -98,7 +98,7 @@ datepicker.options.setHideOnBlur(false);
 datepicker.options.setAllowEmpty(false);
 
 datepicker.options.onSelect(function (event, day) {
-    alert('Selected ' + day.getFormatted());
+    alert('Selected ' + (day ? day.getFormatted() : 'NONE'));
 });
 
 datepicker.options.addDateAvailabilityResolver(function (date) {
