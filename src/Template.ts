@@ -987,28 +987,32 @@ namespace TheDatepicker {
 				return;
 			}
 
-			let animationIn: ClassNameType;
 			let animationOut: ClassNameType;
+			let animationIn: ClassNameType;
 			switch (moveDirection) {
 				case MoveDirection_.Left:
-					animationIn = ClassNameType.AnimateFadeOutLeft;
-					animationOut = ClassNameType.AnimateFadeInRight;
+					animationOut = ClassNameType.AnimateFadeOutLeft;
+					animationIn = ClassNameType.AnimateFadeInRight;
 					break;
 				case MoveDirection_.Up:
-					animationIn = ClassNameType.AnimateFadeOutUp;
-					animationOut = ClassNameType.AnimateFadeInDown;
+					animationOut = ClassNameType.AnimateFadeOutUp;
+					animationIn = ClassNameType.AnimateFadeInDown;
 					break;
 				case MoveDirection_.Right:
-					animationIn = ClassNameType.AnimateFadeOutRight;
-					animationOut = ClassNameType.AnimateFadeInLeft;
+					animationOut = ClassNameType.AnimateFadeOutRight;
+					animationIn = ClassNameType.AnimateFadeInLeft;
 					break;
 				case MoveDirection_.Down:
-					animationIn = ClassNameType.AnimateFadeOutDown;
-					animationOut = ClassNameType.AnimateFadeInUp;
+					animationOut = ClassNameType.AnimateFadeOutDown;
+					animationIn = ClassNameType.AnimateFadeInUp;
 					break;
 			}
 
-			Helper_.animate_(this.tablesElement_, animationIn, animationOut, onComplete, this.options_);
+			// todo test při zpomalení animace
+			Helper_.animate_(this.tablesElement_, [animationOut], this.options_, () => {
+				onComplete();
+				Helper_.animate_(this.tablesElement_, [animationIn], this.options_);
+			});
 		}
 
 		private translateMonth_(monthNumber: number): string {

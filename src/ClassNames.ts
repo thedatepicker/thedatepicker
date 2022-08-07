@@ -140,10 +140,10 @@ namespace TheDatepicker {
 			['fade-in-up'], // AnimateFadeInUp
 			['container--darkmode'], // ContainerDarkMode
 			['main--darkmode'], // MainDarkMode
-			['expand'], // AnimateExpand
-			['collapse'], // AnimateCollapse
-			['folding-over'], // AnimateFoldingOver
-			['folding-under'], // AnimateFoldingUnder
+			['folding--expand'], // AnimateExpand
+			['folding--collapse'], // AnimateCollapse
+			['folding--over'], // AnimateFoldingOver
+			['folding--under'], // AnimateFoldingUnder
 		];
 
 		public clone(): ClassNames {

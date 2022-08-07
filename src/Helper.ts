@@ -360,7 +360,9 @@ namespace TheDatepicker {
 			}, true);
 		}
 
-		public static animate_(element: HTMLAnimatedElement, animationIn: ClassNameType, animationOut: ClassNameType | null, onComplete: () => void, options: Options): void {
+		public static animate_(element: HTMLAnimatedElement, animation: ClassNameType[], options: Options, onComplete: (() => void) | null = null): void {
+			onComplete = onComplete || (() => {});
+
 			if (!Helper_.isCssAnimationSupported_()) {
 				onComplete();
 				return;
@@ -368,11 +370,6 @@ namespace TheDatepicker {
 
 			const trigger = (): void => {
 				const originalClassName = element.className;
-
-				const animate = (type: ClassNameType) => {
-					HtmlHelper_.addClass_(element, ClassNameType.Animated, options);
-					HtmlHelper_.addClass_(element, type, options);
-				};
 
 				const onAfterAnimate = (): void => {
 					if (element.animationQueue.length > 0) {
@@ -382,31 +379,26 @@ namespace TheDatepicker {
 					}
 				};
 
+				// todo fallback timeout nastavit pro každou animaci jinak (150 vs 250)
 				let listenerRemover: () => void;
 				const timeoutId = window.setTimeout(() => {
 					listenerRemover();
 					onComplete();
 					onAfterAnimate();
-				}, 150);
+				}, 250);
 
 				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, (): void => {
 					window.clearTimeout(timeoutId);
-					onComplete();
 					listenerRemover();
 					element.className = originalClassName;
-					if (!animationOut) {
-						return;
-					}
-
-					animate(animationOut);
-					listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, (): void => {
-						listenerRemover();
-						element.className = originalClassName;
-						onAfterAnimate();
-					});
+					onComplete();
+					onAfterAnimate();
 				});
 
-				animate(animationIn);
+				HtmlHelper_.addClass_(element, ClassNameType.Animated, options);
+				for (let index = 0; index < animation.length; index++) {
+					HtmlHelper_.addClass_(element, animation[index], options);
+				}
 			}
 
 			if (element.animationQueue) {

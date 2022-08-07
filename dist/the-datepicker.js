@@ -140,10 +140,10 @@ var TheDatepicker;
                 ['fade-in-up'],
                 ['container--darkmode'],
                 ['main--darkmode'],
-                ['expand'],
-                ['collapse'],
-                ['folding-over'],
-                ['folding-under'],
+                ['folding--expand'],
+                ['folding--collapse'],
+                ['folding--over'],
+                ['folding--under'],
             ];
         }
         ClassNames.prototype.clone = function () {
@@ -989,21 +989,21 @@ var TheDatepicker;
                 callback.call(element, this, element);
             }
         };
-        Datepicker.prototype.onActivate_ = function () {
+        Datepicker.prototype.onActiveChange_ = function () {
             if (this.initializationPhase_ === InitializationPhase.Destroyed) {
                 return;
             }
-            this.animateActivation_();
+            this.updateContainer_();
+            this.animateFolding_();
             if (!this.viewModel_.isActive_()) {
                 return;
             }
-            this.updateContainer_();
             if (this.inputText_) {
                 this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && TheDatepicker.Helper_.isMobile_();
             }
         };
         Datepicker.prototype.updateContainer_ = function () {
-            if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
+            if (this.isContainerExternal_ || !this.options.isHiddenOnBlur() || !this.viewModel_.isActive_()) {
                 return;
             }
             this.container.className = '';
@@ -1060,19 +1060,15 @@ var TheDatepicker;
             }
             this.isContainerLocatedOver_ = locateOver;
         };
-        Datepicker.prototype.animateActivation_ = function () {
-            var _this = this;
+        Datepicker.prototype.animateFolding_ = function () {
             if (!this.options.isFoldingAnimationEnabled()) {
                 return;
             }
-            return;
-            var originalClassName = this.container.className;
-            TheDatepicker.Helper_.addEventListener_(this.container, TheDatepicker.ListenerType_.AnimationEnd, function () {
-                _this.container.className = originalClassName;
-            });
-            TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.Animated, this.options);
-            TheDatepicker.HtmlHelper_.addClass_(this.container, this.viewModel_.isActive_() ? TheDatepicker.ClassNameType.AnimateExpand : TheDatepicker.ClassNameType.AnimateCollapse, this.options);
-            TheDatepicker.HtmlHelper_.addClass_(this.container, this.isContainerLocatedOver_ ? TheDatepicker.ClassNameType.AnimateFoldingOver : TheDatepicker.ClassNameType.AnimateFoldingUnder, this.options);
+            var animations = [
+                this.isContainerLocatedOver_ ? TheDatepicker.ClassNameType.AnimateFoldingOver : TheDatepicker.ClassNameType.AnimateFoldingUnder,
+                this.viewModel_.isActive_() ? TheDatepicker.ClassNameType.AnimateExpand : TheDatepicker.ClassNameType.AnimateCollapse,
+            ];
+            TheDatepicker.Helper_.animate_(this.container, animations, this.options);
         };
         Datepicker.setBodyClass_ = function (enable) {
             var pageClass = 'the-datepicker-page';
@@ -1116,7 +1112,7 @@ var TheDatepicker;
             if (Datepicker.activeViewModel_ !== activeViewModel) {
                 return true;
             }
-            datepicker.onActivate_();
+            datepicker.onActiveChange_();
             Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
             Datepicker.activeViewModel_ = viewModel;
             return true;
@@ -1485,17 +1481,15 @@ var TheDatepicker;
                 }
             }, true);
         };
-        Helper_.animate_ = function (element, animationIn, animationOut, onComplete, options) {
+        Helper_.animate_ = function (element, animation, options, onComplete) {
+            if (onComplete === void 0) { onComplete = null; }
+            onComplete = onComplete || (function () { });
             if (!Helper_.isCssAnimationSupported_()) {
                 onComplete();
                 return;
             }
             var trigger = function () {
                 var originalClassName = element.className;
-                var animate = function (type) {
-                    TheDatepicker.HtmlHelper_.addClass_(element, TheDatepicker.ClassNameType.Animated, options);
-                    TheDatepicker.HtmlHelper_.addClass_(element, type, options);
-                };
                 var onAfterAnimate = function () {
                     if (element.animationQueue.length > 0) {
                         element.animationQueue.shift()();
@@ -1509,23 +1503,18 @@ var TheDatepicker;
                     listenerRemover();
                     onComplete();
                     onAfterAnimate();
-                }, 150);
+                }, 250);
                 listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, function () {
                     window.clearTimeout(timeoutId);
-                    onComplete();
                     listenerRemover();
                     element.className = originalClassName;
-                    if (!animationOut) {
-                        return;
-                    }
-                    animate(animationOut);
-                    listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, function () {
-                        listenerRemover();
-                        element.className = originalClassName;
-                        onAfterAnimate();
-                    });
+                    onComplete();
+                    onAfterAnimate();
                 });
-                animate(animationIn);
+                TheDatepicker.HtmlHelper_.addClass_(element, TheDatepicker.ClassNameType.Animated, options);
+                for (var index = 0; index < animation.length; index++) {
+                    TheDatepicker.HtmlHelper_.addClass_(element, animation[index], options);
+                }
             };
             if (element.animationQueue) {
                 element.animationQueue.push(trigger);
@@ -3376,31 +3365,35 @@ var TheDatepicker;
             return cellContent;
         };
         Template_.prototype.slideTable_ = function (moveDirection, onComplete) {
+            var _this = this;
             if (!this.options_.isSlideAnimationEnabled()) {
                 onComplete();
                 return;
             }
-            var animationIn;
             var animationOut;
+            var animationIn;
             switch (moveDirection) {
                 case TheDatepicker.MoveDirection_.Left:
-                    animationIn = TheDatepicker.ClassNameType.AnimateFadeOutLeft;
-                    animationOut = TheDatepicker.ClassNameType.AnimateFadeInRight;
+                    animationOut = TheDatepicker.ClassNameType.AnimateFadeOutLeft;
+                    animationIn = TheDatepicker.ClassNameType.AnimateFadeInRight;
                     break;
                 case TheDatepicker.MoveDirection_.Up:
-                    animationIn = TheDatepicker.ClassNameType.AnimateFadeOutUp;
-                    animationOut = TheDatepicker.ClassNameType.AnimateFadeInDown;
+                    animationOut = TheDatepicker.ClassNameType.AnimateFadeOutUp;
+                    animationIn = TheDatepicker.ClassNameType.AnimateFadeInDown;
                     break;
                 case TheDatepicker.MoveDirection_.Right:
-                    animationIn = TheDatepicker.ClassNameType.AnimateFadeOutRight;
-                    animationOut = TheDatepicker.ClassNameType.AnimateFadeInLeft;
+                    animationOut = TheDatepicker.ClassNameType.AnimateFadeOutRight;
+                    animationIn = TheDatepicker.ClassNameType.AnimateFadeInLeft;
                     break;
                 case TheDatepicker.MoveDirection_.Down:
-                    animationIn = TheDatepicker.ClassNameType.AnimateFadeOutDown;
-                    animationOut = TheDatepicker.ClassNameType.AnimateFadeInUp;
+                    animationOut = TheDatepicker.ClassNameType.AnimateFadeOutDown;
+                    animationIn = TheDatepicker.ClassNameType.AnimateFadeInUp;
                     break;
             }
-            TheDatepicker.Helper_.animate_(this.tablesElement_, animationIn, animationOut, onComplete, this.options_);
+            TheDatepicker.Helper_.animate_(this.tablesElement_, [animationOut], this.options_, function () {
+                onComplete();
+                TheDatepicker.Helper_.animate_(_this.tablesElement_, [animationIn], _this.options_);
+            });
         };
         Template_.prototype.translateMonth_ = function (monthNumber) {
             return this.options_.isMonthShort()

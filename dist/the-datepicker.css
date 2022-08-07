@@ -41,9 +41,8 @@ body.the-datepicker-page {
   border-bottom-right-radius: 0;
 }
 .the-datepicker__container.the-datepicker__animated {
+  animation-duration: 0.2s;
   animation-fill-mode: both;
-  animation-duration: 0.1s;
-  overflow-y: hidden;
 }
 .the-datepicker__main {
   width: auto;
@@ -302,10 +301,10 @@ body.the-datepicker-page {
 .the-datepicker__deselect .the-datepicker__deselect-button:hover {
   text-decoration: none;
 }
-.the-datepicker__expand {
+.the-datepicker__folding--expand {
   animation-name: the-datepicker-expand;
 }
-.the-datepicker__collapse {
+.the-datepicker__folding--collapse {
   animation-name: the-datepicker-collapse;
 }
 .the-datepicker__folding--over {

@@ -521,18 +521,17 @@ namespace TheDatepicker {
 			}
 		}
 
-		private onActivate_(): void {
+		private onActiveChange_(): void {
 			if (this.initializationPhase_ === InitializationPhase.Destroyed) {
 				return;
 			}
 
-			this.animateActivation_();
+			this.updateContainer_();
+			this.animateFolding_();
 
 			if (!this.viewModel_.isActive_()) {
 				return;
 			}
-
-			this.updateContainer_();
 
 			if (this.inputText_) {
 				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && Helper_.isMobile_();
@@ -541,7 +540,7 @@ namespace TheDatepicker {
 
 		private updateContainer_(): void {
 			// todo když se option isHiddenOnBlur změní za chodu, zachová se to správně?
-			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
+			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur() || !this.viewModel_.isActive_()) {
 				return;
 			}
 
@@ -610,22 +609,22 @@ namespace TheDatepicker {
 				mainElement.style.left = '-' + (containerWidth - inputWidth) + 'px';
 			}
 
+			// todo animovat i scaleX
 			this.isContainerLocatedOver_ = locateOver;
 		}
 
-		private animateActivation_(): void {
+		private animateFolding_(): void {
 			if (!this.options.isFoldingAnimationEnabled()) {
 				return;
 			}
-			return;
-			// todo fallbacky jako jsou u slideTable (DRY v Helperu)
-			const originalClassName = this.container.className;
-			Helper_.addEventListener_(this.container, ListenerType_.AnimationEnd, (): void => {
-				this.container.className = originalClassName;
-			});
-			HtmlHelper_.addClass_(this.container, ClassNameType.Animated, this.options);
-			HtmlHelper_.addClass_(this.container, this.viewModel_.isActive_() ? ClassNameType.AnimateExpand : ClassNameType.AnimateCollapse, this.options);
-			HtmlHelper_.addClass_(this.container, this.isContainerLocatedOver_ ? ClassNameType.AnimateFoldingOver : ClassNameType.AnimateFoldingUnder, this.options);
+
+			// todo isContainerLocatedOver_ se nastaví asi až později
+			const animations: ClassNameType[] = [
+				this.isContainerLocatedOver_ ? ClassNameType.AnimateFoldingOver : ClassNameType.AnimateFoldingUnder,
+				this.viewModel_.isActive_() ? ClassNameType.AnimateExpand : ClassNameType.AnimateCollapse,
+			];
+
+			Helper_.animate_(this.container, animations, this.options);
 		}
 
 		private static setBodyClass_(enable: boolean) {
@@ -665,8 +664,8 @@ namespace TheDatepicker {
 			if (!viewModel) {
 				Datepicker.setBodyClass_(false);
 
-				// todo tady bych musel volat onActivate_ na zavíraném DP...
-				// datepicker.onActivate_();
+				// todo tady bych musel volat onActiveChange_ na zavíraném DP...
+				// datepicker.onActiveChange_();
 				Datepicker.activeViewModel_ = null;
 				return true;
 			}
@@ -679,7 +678,7 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			datepicker.onActivate_();
+			datepicker.onActiveChange_();
 			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
 
 			Datepicker.activeViewModel_ = viewModel;
