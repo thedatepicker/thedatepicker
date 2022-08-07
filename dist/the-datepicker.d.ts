@@ -167,7 +167,6 @@ declare namespace TheDatepicker {
         private removeInitialInputListener_;
         private triggerReady_;
         private triggerReadyListener_;
-        private onActivate_;
         private updateContainer_;
         private static setBodyClass_;
         private static activateViewModel_;
@@ -624,6 +623,7 @@ declare namespace TheDatepicker {
         private yearsElements_;
         private yearsButtonsElements_;
         private yearsContentsElements_;
+        private isVisible_;
         constructor(options_: Options, container_: HTMLElement, hasInput_: boolean);
         render_(viewModel: ViewModel_): void;
         protected createSkeleton_(viewModel: ViewModel_): HTMLElement;

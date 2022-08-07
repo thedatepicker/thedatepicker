@@ -387,7 +387,8 @@ namespace TheDatepicker {
 					}
 				};
 
-				timeoutId = window.setTimeout(onAfterAnimate, 250);
+				// todo 250
+				timeoutId = window.setTimeout(onAfterAnimate, 950);
 				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate);
 
 				HtmlHelper_.addClass_(element, ClassNameType.Animated, options);

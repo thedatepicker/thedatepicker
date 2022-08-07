@@ -77,6 +77,8 @@ namespace TheDatepicker {
 		private yearsButtonsElements_: HTMLYearButtonElement[][] = [];
 		private yearsContentsElements_: HTMLElement[][] = [];
 
+		private isVisible_: boolean = false;
+
 		public constructor(
 			private readonly options_: Options,
 			private readonly container_: HTMLElement,
@@ -123,21 +125,31 @@ namespace TheDatepicker {
 		}
 
 		protected updateMainElement_(viewModel: ViewModel_): void {
-			const shouldBeVisible = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur();
-			const originalDisplayValue = this.mainElement_.style.display;
-			const newDisplayValue = shouldBeVisible ? '' : 'none';
+			this.mainElement_.className = '';
+			HtmlHelper_.addClass_(this.mainElement_, ClassNameType.Main, this.options_);
+			if (this.options_.isDarkModeEnabled()) {
+				HtmlHelper_.addClass_(this.mainElement_, ClassNameType.MainDarkMode, this.options_);
+			}
 
-			const onComplete = () => {
-				this.mainElement_.style.display = newDisplayValue;
-			};
-
+			// todo test když hned po realodu je input focusnutý (např. autoselectem) - otevře se? zanimuje se?
 			// todo test když is hiddenOnBlur = false (asi se to expandne na reload - je to dobře?)
 			// todo a asi i při reloadu stránky se to možná ihned kolapsne (asi si tu budu muset pamatovat poslední stav isActive...)
 			// todo jiná animace ve fullscreen
-			if (originalDisplayValue !== newDisplayValue && this.options_.isFoldingAnimationEnabled()) {
-				if (shouldBeVisible) {
+			// todo tahle animace zřejmě proběhne i když bude externí container
+			// todo test jestli je ten setTimeout fakt potřeba (jestli to updateContainer potřebuje)
+
+			const isVisible = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur();
+			const onComplete = () => {
+				this.mainElement_.style.display = isVisible ? '' : 'none';
+			};
+			if (this.isVisible_ !== isVisible && this.options_.isFoldingAnimationEnabled()) {
+				if (isVisible) {
+					// expand animation must be triggered after container is updated
+					// container can be updated only if displayed, so visibility hides it from user
+					this.mainElement_.style.visibility = 'hidden';
 					onComplete();
 					window.setTimeout(() => {
+						this.mainElement_.style.visibility = '';
 						Helper_.animate_(this.mainElement_, ClassNameType.AnimateExpand, this.options_);
 					}, 0);
 				} else {
@@ -146,12 +158,7 @@ namespace TheDatepicker {
 			} else {
 				onComplete();
 			}
-
-			this.mainElement_.className = '';
-			HtmlHelper_.addClass_(this.mainElement_, ClassNameType.Main, this.options_);
-			if (this.options_.isDarkModeEnabled()) {
-				HtmlHelper_.addClass_(this.mainElement_, ClassNameType.MainDarkMode, this.options_);
-			}
+			this.isVisible_ = isVisible;
 		}
 
 		protected updateTableElements_(viewModel: ViewModel_): void {
@@ -341,7 +348,7 @@ namespace TheDatepicker {
 
 		protected updateGoElement_(viewModel: ViewModel_, isForward: boolean): void {
 			const goElement = isForward ? this.goForwardElement_ : this.goBackElement_;
-			goElement.style.visibility = viewModel.canGoDirection_(isForward) ? 'visible' : 'hidden';
+			goElement.style.visibility = viewModel.canGoDirection_(isForward) ? '' : 'hidden';
 			this.updateTitle_(goElement, viewModel.yearSelectionState_
 				? (isForward ? TitleName.GoForwardTableOfYears : TitleName.GoBackTableOfYears)
 				: (isForward ? TitleName.GoForward : TitleName.GoBack)
@@ -805,7 +812,7 @@ namespace TheDatepicker {
 				dayElement.className += ' ' + customClasses[index];
 			}
 
-			dayButtonElement.style.visibility = 'visible';
+			dayButtonElement.style.visibility = '';
 
 			if (day.isAvailable) {
 				dayButtonElement.href = '#';
@@ -935,7 +942,7 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(yearElement, ClassNameType.TableCellSelected, this.options_);
 			}
 
-			yearButtonElement.style.visibility = 'visible';
+			yearButtonElement.style.visibility = '';
 
 			if (yearCellData.isFocused) {
 				yearButtonElement.focus();

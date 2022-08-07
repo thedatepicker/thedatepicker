@@ -408,7 +408,7 @@ namespace TheDatepicker {
 			}
 
 			const isVisible = this.options.isDeselectButtonShown() && this.viewModel_.selectedDate_;
-			this.deselectElement_.style.visibility = isVisible ? 'visible' : 'hidden';
+			this.deselectElement_.style.visibility = isVisible ? '' : 'hidden';
 		}
 
 		private preselectFromInput_(): void {
@@ -520,19 +520,6 @@ namespace TheDatepicker {
 			}
 		}
 
-		private onActivate_(): void {
-			if (this.initializationPhase_ === InitializationPhase.Destroyed) {
-				return;
-			}
-
-			// todo test jestli s tím funguje fixing position
-			this.updateContainer_();
-
-			if (this.inputText_) {
-				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && Helper_.isMobile_();
-			}
-		}
-
 		private updateContainer_(): void {
 			// todo když se option isHiddenOnBlur změní za chodu, zachová se to správně?
 			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
@@ -627,7 +614,6 @@ namespace TheDatepicker {
 			const activeDatepicker = Datepicker.activeDatepicker_;
 
 			// todo test vícero DP najednou
-			// todo asi budu muset volat updateContainer_ už tady aby se před animací správně nastavilo over/left
 
 			if (activeDatepicker === datepicker) {
 				return true;
@@ -656,7 +642,13 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			datepicker.onActivate_();
+			// todo test jestli s tím funguje fixing position
+			datepicker.updateContainer_();
+
+			if (datepicker.inputText_) {
+				datepicker.inputText_.readOnly = !datepicker.options.isKeyboardOnMobile() && Helper_.isMobile_();
+			}
+
 			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
 
 			Datepicker.activeDatepicker_ = datepicker;

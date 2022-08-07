@@ -128,18 +128,18 @@ namespace TheDatepicker {
 			['year-cell-button'], // YearCellButton
 			['year-cell-content'], // YearCellButtonContent
 			['animated'], // Animated
-			['fade-out-left'], // AnimateFadeOutLeft
-			['fade-in-right'], // AnimateFadeInRight
-			['fade-out-up'], // AnimateFadeOutUp
-			['fade-in-down'], // AnimateFadeInDown
-			['fade-out-right'], // AnimateFadeOutRight
-			['fade-in-left'], // AnimateFadeInLeft
-			['fade-out-down'], // AnimateFadeOutDown
-			['fade-in-up'], // AnimateFadeInUp
+			['fade--out-left'], // AnimateFadeOutLeft
+			['fade--in-right'], // AnimateFadeInRight
+			['fade--out-up'], // AnimateFadeOutUp
+			['fade--in-down'], // AnimateFadeInDown
+			['fade--out-right'], // AnimateFadeOutRight
+			['fade--in-left'], // AnimateFadeInLeft
+			['fade--out-down'], // AnimateFadeOutDown
+			['fade--in-up'], // AnimateFadeInUp
 			['container--darkmode'], // ContainerDarkMode
 			['main--darkmode'], // MainDarkMode
-			['expand'], // AnimateExpand
-			['collapse'], // AnimateCollapse
+			['folding--expand'], // AnimateExpand
+			['folding--collapse'], // AnimateCollapse
 		];
 
 		public clone(): ClassNames {
