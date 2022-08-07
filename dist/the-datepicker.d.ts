@@ -141,7 +141,7 @@ declare namespace TheDatepicker {
         private static document_;
         private static readyListeners_;
         private static areGlobalListenersInitialized_;
-        private static activeViewModel_;
+        private static activeDatepicker_;
         private static hasClickedViewModel_;
         constructor(input: (HTMLDatepickerInputElement & HTMLElement) | null, container?: HTMLDatepickerContainerElement | null, options?: Options | null);
         render(): void;

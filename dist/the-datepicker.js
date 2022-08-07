@@ -919,8 +919,8 @@ var TheDatepicker;
                 TheDatepicker.Helper_.addEventListener_(Datepicker.document_, TheDatepicker.ListenerType_.MouseDown, checkMiss);
                 TheDatepicker.Helper_.addEventListener_(Datepicker.document_, TheDatepicker.ListenerType_.FocusIn, checkMiss);
                 TheDatepicker.Helper_.addEventListener_(Datepicker.document_, TheDatepicker.ListenerType_.KeyDown, function (event) {
-                    if (Datepicker.activeViewModel_) {
-                        Datepicker.activeViewModel_.triggerKeyPress_(event);
+                    if (Datepicker.activeDatepicker_) {
+                        Datepicker.activeDatepicker_.viewModel_.triggerKeyPress_(event);
                     }
                 });
                 Datepicker.areGlobalListenersInitialized_ = true;
@@ -1090,36 +1090,36 @@ var TheDatepicker;
             }
         };
         Datepicker.activateViewModel_ = function (event, datepicker) {
-            var viewModel = datepicker ? datepicker.viewModel_ : null;
-            var activeViewModel = Datepicker.activeViewModel_;
-            if (activeViewModel === viewModel) {
+            var activeDatepicker = Datepicker.activeDatepicker_;
+            if (activeDatepicker === datepicker) {
                 return true;
             }
-            if (activeViewModel && !activeViewModel.setActive_(event, false)) {
+            if (activeDatepicker && !activeDatepicker.viewModel_.setActive_(event, false)) {
                 return false;
             }
-            if (Datepicker.activeViewModel_ !== activeViewModel) {
+            if (Datepicker.activeDatepicker_ !== activeDatepicker) {
                 return true;
             }
-            if (!viewModel) {
+            if (!datepicker) {
                 Datepicker.setBodyClass_(false);
-                Datepicker.activeViewModel_ = null;
+                Datepicker.activeDatepicker_.onActiveChange_();
+                Datepicker.activeDatepicker_ = null;
                 return true;
             }
-            if (!viewModel.setActive_(event, true)) {
+            if (!datepicker.viewModel_.setActive_(event, true)) {
                 return false;
             }
-            if (Datepicker.activeViewModel_ !== activeViewModel) {
+            if (Datepicker.activeDatepicker_ !== activeDatepicker) {
                 return true;
             }
             datepicker.onActiveChange_();
             Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
-            Datepicker.activeViewModel_ = viewModel;
+            Datepicker.activeDatepicker_ = datepicker;
             return true;
         };
         Datepicker.readyListeners_ = [];
         Datepicker.areGlobalListenersInitialized_ = false;
-        Datepicker.activeViewModel_ = null;
+        Datepicker.activeDatepicker_ = null;
         Datepicker.hasClickedViewModel_ = false;
         return Datepicker;
     }());

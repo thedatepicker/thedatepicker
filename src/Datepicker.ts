@@ -63,7 +63,7 @@ namespace TheDatepicker {
 		private static document_: DocumentInterface;
 		private static readyListeners_: DatepickerReadyListener[] = [];
 		private static areGlobalListenersInitialized_ = false;
-		private static activeViewModel_: ViewModel_ | null = null;
+		private static activeDatepicker_: Datepicker | null = null;
 		private static hasClickedViewModel_ = false;
 
 		public constructor(
@@ -440,8 +440,8 @@ namespace TheDatepicker {
 				Helper_.addEventListener_(Datepicker.document_, ListenerType_.MouseDown, checkMiss);
 				Helper_.addEventListener_(Datepicker.document_, ListenerType_.FocusIn, checkMiss);
 				Helper_.addEventListener_(Datepicker.document_, ListenerType_.KeyDown, (event: KeyboardEvent): void => {
-					if (Datepicker.activeViewModel_) {
-						Datepicker.activeViewModel_.triggerKeyPress_(event);
+					if (Datepicker.activeDatepicker_) {
+						Datepicker.activeDatepicker_.viewModel_.triggerKeyPress_(event);
 					}
 				});
 
@@ -647,42 +647,41 @@ namespace TheDatepicker {
 		}
 
 		private static activateViewModel_(event: Event | null, datepicker: Datepicker | null): boolean {
-			const viewModel = datepicker ? datepicker.viewModel_ : null;
-			const activeViewModel = Datepicker.activeViewModel_;
+			const activeDatepicker = Datepicker.activeDatepicker_;
 
-			if (activeViewModel === viewModel) {
+			// todo test vícero DP najednou
+
+			if (activeDatepicker === datepicker) {
 				return true;
 			}
 
-			if (activeViewModel && !activeViewModel.setActive_(event, false)) {
+			if (activeDatepicker && !activeDatepicker.viewModel_.setActive_(event, false)) {
 				return false;
 			}
 
-			if (Datepicker.activeViewModel_ !== activeViewModel) {
+			if (Datepicker.activeDatepicker_ !== activeDatepicker) {
 				return true;
 			}
 
-			if (!viewModel) {
+			if (!datepicker) {
 				Datepicker.setBodyClass_(false);
-
-				// todo tady bych musel volat onActiveChange_ na zavíraném DP...
-				// datepicker.onActiveChange_();
-				Datepicker.activeViewModel_ = null;
+				Datepicker.activeDatepicker_.onActiveChange_();
+				Datepicker.activeDatepicker_ = null;
 				return true;
 			}
 
-			if (!viewModel.setActive_(event, true)) {
+			if (!datepicker.viewModel_.setActive_(event, true)) {
 				return false;
 			}
 
-			if (Datepicker.activeViewModel_ !== activeViewModel) {
+			if (Datepicker.activeDatepicker_ !== activeDatepicker) {
 				return true;
 			}
 
 			datepicker.onActiveChange_();
 			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
 
-			Datepicker.activeViewModel_ = viewModel;
+			Datepicker.activeDatepicker_ = datepicker;
 
 			return true;
 		}
