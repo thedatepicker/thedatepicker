@@ -46,8 +46,6 @@ namespace TheDatepicker {
 
 	}
 
-	type AfterSlideListener = () => void;
-
 	export class Template_ {
 
 		private mainElement_: HTMLElement | null = null;
@@ -78,8 +76,6 @@ namespace TheDatepicker {
 		private yearsElements_: HTMLElement[][] = [];
 		private yearsButtonsElements_: HTMLYearButtonElement[][] = [];
 		private yearsContentsElements_: HTMLElement[][] = [];
-
-		private onAfterSlide_: AfterSlideListener[] | null = null;
 
 		public constructor(
 			private readonly options_: Options,
@@ -176,7 +172,7 @@ namespace TheDatepicker {
 					}
 
 					if (change) {
-						this.slideTable_(viewModel, moveDirection, change);
+						this.slideTable_(moveDirection, change);
 					}
 				});
 			}
@@ -302,7 +298,7 @@ namespace TheDatepicker {
 			const goButton = HtmlHelper_.createAnchor_((event: Event): void => {
 				const moveDirection = isForward ? MoveDirection_.Left : MoveDirection_.Right;
 				if (viewModel.canGoDirection_(isForward)) {
-					this.slideTable_(viewModel, moveDirection, (): void => {
+					this.slideTable_(moveDirection, (): void => {
 						viewModel.goDirection_(event, isForward);
 					});
 				}
@@ -397,7 +393,7 @@ namespace TheDatepicker {
 
 			if (this.options_.isYearSelectedFromTableOfYears()) {
 				yearActiveElement = HtmlHelper_.createAnchor_((): void => {
-					this.slideTable_(viewModel, viewModel.yearSelectionState_ ? MoveDirection_.Up : MoveDirection_.Down, (): void => {
+					this.slideTable_(viewModel.yearSelectionState_ ? MoveDirection_.Up : MoveDirection_.Down, (): void => {
 						viewModel.setYearSelectionActive_(!viewModel.yearSelectionState_);
 					});
 				}, this.options_);
@@ -954,7 +950,7 @@ namespace TheDatepicker {
 				if (correctMonth.getFullYear() === newMonth.getFullYear()) {
 					viewModel.goToMonth_(event, correctMonth)
 					viewModel.isYearSelectionToggleButtonFocused_ = true;
-					this.slideTable_(viewModel, MoveDirection_.Up, (): void => {
+					this.slideTable_(MoveDirection_.Up, (): void => {
 						viewModel.setYearSelectionActive_(false);
 					});
 				}
@@ -985,78 +981,34 @@ namespace TheDatepicker {
 			return cellContent;
 		}
 
-		private slideTable_(viewModel: ViewModel_, moveDirection: MoveDirection_, onComplete: () => void): void {
-			if (!this.options_.isSlideAnimationEnabled() || !Helper_.isCssAnimationSupported_()) {
+		private slideTable_(moveDirection: MoveDirection_, onComplete: () => void): void {
+			if (!this.options_.isSlideAnimationEnabled()) {
 				onComplete();
 				return;
 			}
 
-			const trigger = (): void => {
-				let animationOut: ClassNameType;
-				let animationIn: ClassNameType;
-				switch (moveDirection) {
-					case MoveDirection_.Left:
-						animationOut = ClassNameType.AnimateFadeOutLeft;
-						animationIn = ClassNameType.AnimateFadeInRight;
-						break;
-					case MoveDirection_.Up:
-						animationOut = ClassNameType.AnimateFadeOutUp;
-						animationIn = ClassNameType.AnimateFadeInDown;
-						break;
-					case MoveDirection_.Right:
-						animationOut = ClassNameType.AnimateFadeOutRight;
-						animationIn = ClassNameType.AnimateFadeInLeft;
-						break;
-					case MoveDirection_.Down:
-						animationOut = ClassNameType.AnimateFadeOutDown;
-						animationIn = ClassNameType.AnimateFadeInUp;
-						break;
-				}
-
-				const originalClassName = this.tablesElement_.className;
-
-				const animate = (type: ClassNameType) => {
-					HtmlHelper_.addClass_(this.tablesElement_, ClassNameType.Animated, this.options_);
-					HtmlHelper_.addClass_(this.tablesElement_, type, this.options_);
-				};
-
-				const onAfterSlide = (): void => {
-					if (this.onAfterSlide_.length > 0) {
-						this.onAfterSlide_.shift()();
-					} else {
-						this.onAfterSlide_ = null;
-					}
-				};
-
-				let listenerRemover: () => void;
-				const timeoutId = window.setTimeout(() => {
-					listenerRemover();
-					onComplete();
-					onAfterSlide();
-				}, 150);
-
-				listenerRemover = Helper_.addEventListener_(this.tablesElement_, ListenerType_.AnimationEnd, (): void => {
-					window.clearTimeout(timeoutId);
-					onComplete();
-					listenerRemover();
-					this.tablesElement_.className = originalClassName;
-					animate(animationIn);
-					listenerRemover = Helper_.addEventListener_(this.tablesElement_, ListenerType_.AnimationEnd, (): void => {
-						listenerRemover();
-						this.tablesElement_.className = originalClassName;
-						onAfterSlide();
-					});
-				});
-
-				animate(animationOut);
+			let animationIn: ClassNameType;
+			let animationOut: ClassNameType;
+			switch (moveDirection) {
+				case MoveDirection_.Left:
+					animationIn = ClassNameType.AnimateFadeOutLeft;
+					animationOut = ClassNameType.AnimateFadeInRight;
+					break;
+				case MoveDirection_.Up:
+					animationIn = ClassNameType.AnimateFadeOutUp;
+					animationOut = ClassNameType.AnimateFadeInDown;
+					break;
+				case MoveDirection_.Right:
+					animationIn = ClassNameType.AnimateFadeOutRight;
+					animationOut = ClassNameType.AnimateFadeInLeft;
+					break;
+				case MoveDirection_.Down:
+					animationIn = ClassNameType.AnimateFadeOutDown;
+					animationOut = ClassNameType.AnimateFadeInUp;
+					break;
 			}
 
-			if (this.onAfterSlide_) {
-				this.onAfterSlide_.push(trigger);
-			} else {
-				this.onAfterSlide_ = [];
-				trigger();
-			}
+			Helper_.animate_(this.tablesElement_, animationIn, animationOut, onComplete, this.options_);
 		}
 
 		private translateMonth_(monthNumber: number): string {

@@ -208,7 +208,7 @@ declare namespace TheDatepicker {
     }
 }
 declare namespace TheDatepicker {
-    enum DayOfWeek {
+    export enum DayOfWeek {
         Monday = 1,
         Tuesday = 2,
         Wednesday = 3,
@@ -217,7 +217,7 @@ declare namespace TheDatepicker {
         Saturday = 6,
         Sunday = 0
     }
-    enum Month {
+    export enum Month {
         January = 0,
         February = 1,
         March = 2,
@@ -231,18 +231,18 @@ declare namespace TheDatepicker {
         November = 10,
         December = 11
     }
-    enum Align {
+    export enum Align {
         Left = 1,
         Right = 2,
         Center = 3
     }
-    enum Position {
+    export enum Position {
         BottomRight = 1,
         BottomLeft = 2,
         TopRight = 3,
         TopLeft = 4
     }
-    enum KeyCode_ {
+    export enum KeyCode_ {
         Enter = 13,
         Space = 32,
         Left = 37,
@@ -251,7 +251,7 @@ declare namespace TheDatepicker {
         Down = 40,
         Esc = 27
     }
-    enum ListenerType_ {
+    export enum ListenerType_ {
         MouseDown = "mousedown",
         Focus = "focus",
         FocusIn = "focusin",
@@ -263,7 +263,10 @@ declare namespace TheDatepicker {
         TouchMove = "touchmove",
         AnimationEnd = "animationend"
     }
-    class Helper_ {
+    interface HTMLAnimatedElement extends HTMLElement {
+        animationQueue?: (() => void)[];
+    }
+    export class Helper_ {
         private static readonly months_;
         private static deprecatedMethods_;
         private static cssAnimationSupport_;
@@ -281,10 +284,12 @@ declare namespace TheDatepicker {
         static checkFunction_<Type extends Function>(parameterName: string, value: Type | null, isNullable?: boolean): Type | null;
         static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethods: string[]): void;
         static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, moveDirection: MoveDirection_) => void): void;
+        static animate_(element: HTMLAnimatedElement, animationIn: ClassNameType, animationOut: ClassNameType | null, onComplete: () => void, options: Options): void;
         static isCssAnimationSupported_(): boolean;
         static isPassiveEventListenerSupported_(): boolean;
         static isMobile_(): boolean;
     }
+    export {};
 }
 declare namespace TheDatepicker {
     interface Option {
@@ -373,6 +378,7 @@ declare namespace TheDatepicker {
         private monthAndYearSeparated_;
         private monthShort_;
         private changeMonthOnSwipe_;
+        private foldingAnimation_;
         private slideAnimation_;
         private classesPrefix_;
         private darkMode_;
@@ -433,6 +439,7 @@ declare namespace TheDatepicker {
         setMonthShort(value: boolean): void;
         setChangeMonthOnSwipe(value: boolean): void;
         setAnimateMonthChange(value: boolean): void;
+        setFoldingAnimation(value: boolean): void;
         setSlideAnimation(value: boolean): void;
         setClassesPrefix(prefix: string): void;
         setDarkMode(value: boolean): void;
@@ -503,6 +510,7 @@ declare namespace TheDatepicker {
         isMonthShort(): boolean;
         isMonthChangeOnSwipeEnabled(): boolean;
         isMonthChangeAnimated(): boolean;
+        isFoldingAnimationEnabled(): boolean;
         isSlideAnimationEnabled(): boolean;
         getClassesPrefix(): string;
         isDarkModeEnabled(): boolean;
@@ -620,7 +628,6 @@ declare namespace TheDatepicker {
         private yearsElements_;
         private yearsButtonsElements_;
         private yearsContentsElements_;
-        private onAfterSlide_;
         constructor(options_: Options, container_: HTMLElement, hasInput_: boolean);
         render_(viewModel: ViewModel_): void;
         protected createSkeleton_(viewModel: ViewModel_): HTMLElement;

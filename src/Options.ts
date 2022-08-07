@@ -93,6 +93,7 @@ namespace TheDatepicker {
 		private monthAndYearSeparated_ = true;
 		private monthShort_ = false;
 		private changeMonthOnSwipe_ = true;
+		private foldingAnimation_ = true;
 		private slideAnimation_ = true;
 		private classesPrefix_ = 'the-datepicker__';
 		private darkMode_ = false;
@@ -165,6 +166,7 @@ namespace TheDatepicker {
 			options.monthAndYearSeparated_ = this.monthAndYearSeparated_;
 			options.monthShort_ = this.monthShort_;
 			options.changeMonthOnSwipe_ = this.changeMonthOnSwipe_;
+			options.foldingAnimation_ = this.foldingAnimation_;
 			options.slideAnimation_ = this.slideAnimation_;
 			options.classesPrefix_ = this.classesPrefix_;
 			options.darkMode_ = this.darkMode_;
@@ -499,6 +501,12 @@ namespace TheDatepicker {
 		public setAnimateMonthChange(value: boolean): void {
 			Helper_.warnDeprecatedUsage_('setAnimateMonthChange', ['setSlideAnimation'])
 			this.setSlideAnimation(value);
+		}
+
+		// If set to true then opening/closing of datepicker will become animated.
+		// defaults to true
+		public setFoldingAnimation(value: boolean): void {
+			this.foldingAnimation_ = !!value;
 		}
 
 		// If set to true then changing month to next/previous and open/close of table of years will become animated.
@@ -938,6 +946,10 @@ namespace TheDatepicker {
 		public isMonthChangeAnimated(): boolean {
 			Helper_.warnDeprecatedUsage_('isMonthChangeAnimated', ['isSlideAnimationEnabled'])
 			return this.isSlideAnimationEnabled();
+		}
+
+		public isFoldingAnimationEnabled(): boolean {
+			return this.foldingAnimation_;
 		}
 
 		public isSlideAnimationEnabled(): boolean {

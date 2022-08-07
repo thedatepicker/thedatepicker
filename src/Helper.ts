@@ -61,6 +61,12 @@ namespace TheDatepicker {
 		AnimationEnd = 'animationend',
 	}
 
+	interface HTMLAnimatedElement extends HTMLElement {
+
+		animationQueue?: (() => void)[];
+
+	}
+
 	export class Helper_ {
 
 		private static readonly months_ = [
@@ -352,6 +358,63 @@ namespace TheDatepicker {
 					startPosition = null;
 				}
 			}, true);
+		}
+
+		public static animate_(element: HTMLAnimatedElement, animationIn: ClassNameType, animationOut: ClassNameType | null, onComplete: () => void, options: Options): void {
+			if (!Helper_.isCssAnimationSupported_()) {
+				onComplete();
+				return;
+			}
+
+			const trigger = (): void => {
+				const originalClassName = element.className;
+
+				const animate = (type: ClassNameType) => {
+					HtmlHelper_.addClass_(element, ClassNameType.Animated, options);
+					HtmlHelper_.addClass_(element, type, options);
+				};
+
+				const onAfterAnimate = (): void => {
+					if (element.animationQueue.length > 0) {
+						element.animationQueue.shift()();
+					} else {
+						delete element.animationQueue;
+					}
+				};
+
+				let listenerRemover: () => void;
+				const timeoutId = window.setTimeout(() => {
+					listenerRemover();
+					onComplete();
+					onAfterAnimate();
+				}, 150);
+
+				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, (): void => {
+					window.clearTimeout(timeoutId);
+					onComplete();
+					listenerRemover();
+					element.className = originalClassName;
+					if (!animationOut) {
+						return;
+					}
+
+					animate(animationOut);
+					listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, (): void => {
+						listenerRemover();
+						element.className = originalClassName;
+						onAfterAnimate();
+					});
+				});
+
+				animate(animationIn);
+			}
+
+			if (element.animationQueue) {
+				element.animationQueue.push(trigger);
+			} else {
+				element.animationQueue = [];
+				trigger();
+			}
 		}
 
 		public static isCssAnimationSupported_(): boolean {

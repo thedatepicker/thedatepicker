@@ -614,8 +614,11 @@ namespace TheDatepicker {
 		}
 
 		private animateActivation_(): void {
-			// todo fallbacky jako jsou u slideTable
-			// todo option
+			if (!this.options.isFoldingAnimationEnabled()) {
+				return;
+			}
+			return;
+			// todo fallbacky jako jsou u slideTable (DRY v Helperu)
 			const originalClassName = this.container.className;
 			Helper_.addEventListener_(this.container, ListenerType_.AnimationEnd, (): void => {
 				this.container.className = originalClassName;
