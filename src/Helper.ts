@@ -371,7 +371,15 @@ namespace TheDatepicker {
 			const trigger = (): void => {
 				const originalClassName = element.className;
 
+				let listenerRemover: () => void;
+				let timeoutId: number;
+
 				const onAfterAnimate = (): void => {
+					window.clearTimeout(timeoutId);
+					listenerRemover();
+					element.className = originalClassName;
+					onComplete();
+
 					if (element.animationQueue.length > 0) {
 						element.animationQueue.shift()();
 					} else {
@@ -379,21 +387,8 @@ namespace TheDatepicker {
 					}
 				};
 
-				// todo fallback timeout nastavit pro každou animaci jinak (150 vs 250)
-				let listenerRemover: () => void;
-				const timeoutId = window.setTimeout(() => {
-					listenerRemover();
-					onComplete();
-					onAfterAnimate();
-				}, 250);
-
-				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, (): void => {
-					window.clearTimeout(timeoutId);
-					listenerRemover();
-					element.className = originalClassName;
-					onComplete();
-					onAfterAnimate();
-				});
+				timeoutId = window.setTimeout(onAfterAnimate, 250);
+				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate);
 
 				HtmlHelper_.addClass_(element, ClassNameType.Animated, options);
 				for (let index = 0; index < animation.length; index++) {

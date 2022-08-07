@@ -42,7 +42,6 @@ body.the-datepicker-page {
 }
 .the-datepicker__container.the-datepicker__animated {
   animation-duration: 0.2s;
-  animation-fill-mode: both;
 }
 .the-datepicker__main {
   width: auto;
@@ -286,7 +285,6 @@ body.the-datepicker-page {
 }
 .the-datepicker__main .the-datepicker__tables.the-datepicker__animated {
   animation-duration: 0.1s;
-  animation-fill-mode: both;
 }
 .the-datepicker__deselect {
   position: absolute;

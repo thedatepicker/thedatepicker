@@ -1008,11 +1008,8 @@ namespace TheDatepicker {
 					break;
 			}
 
-			// todo test při zpomalení animace
-			Helper_.animate_(this.tablesElement_, [animationOut], this.options_, () => {
-				onComplete();
-				Helper_.animate_(this.tablesElement_, [animationIn], this.options_);
-			});
+			Helper_.animate_(this.tablesElement_, [animationOut], this.options_, onComplete);
+			Helper_.animate_(this.tablesElement_, [animationIn], this.options_);
 		}
 
 		private translateMonth_(monthNumber: number): string {

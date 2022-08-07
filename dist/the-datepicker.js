@@ -1490,7 +1490,13 @@ var TheDatepicker;
             }
             var trigger = function () {
                 var originalClassName = element.className;
+                var listenerRemover;
+                var timeoutId;
                 var onAfterAnimate = function () {
+                    window.clearTimeout(timeoutId);
+                    listenerRemover();
+                    element.className = originalClassName;
+                    onComplete();
                     if (element.animationQueue.length > 0) {
                         element.animationQueue.shift()();
                     }
@@ -1498,19 +1504,8 @@ var TheDatepicker;
                         delete element.animationQueue;
                     }
                 };
-                var listenerRemover;
-                var timeoutId = window.setTimeout(function () {
-                    listenerRemover();
-                    onComplete();
-                    onAfterAnimate();
-                }, 250);
-                listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, function () {
-                    window.clearTimeout(timeoutId);
-                    listenerRemover();
-                    element.className = originalClassName;
-                    onComplete();
-                    onAfterAnimate();
-                });
+                timeoutId = window.setTimeout(onAfterAnimate, 250);
+                listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate);
                 TheDatepicker.HtmlHelper_.addClass_(element, TheDatepicker.ClassNameType.Animated, options);
                 for (var index = 0; index < animation.length; index++) {
                     TheDatepicker.HtmlHelper_.addClass_(element, animation[index], options);
@@ -3365,7 +3360,6 @@ var TheDatepicker;
             return cellContent;
         };
         Template_.prototype.slideTable_ = function (moveDirection, onComplete) {
-            var _this = this;
             if (!this.options_.isSlideAnimationEnabled()) {
                 onComplete();
                 return;
@@ -3390,10 +3384,8 @@ var TheDatepicker;
                     animationIn = TheDatepicker.ClassNameType.AnimateFadeInUp;
                     break;
             }
-            TheDatepicker.Helper_.animate_(this.tablesElement_, [animationOut], this.options_, function () {
-                onComplete();
-                TheDatepicker.Helper_.animate_(_this.tablesElement_, [animationIn], _this.options_);
-            });
+            TheDatepicker.Helper_.animate_(this.tablesElement_, [animationOut], this.options_, onComplete);
+            TheDatepicker.Helper_.animate_(this.tablesElement_, [animationIn], this.options_);
         };
         Template_.prototype.translateMonth_ = function (monthNumber) {
             return this.options_.isMonthShort()

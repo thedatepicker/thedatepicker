@@ -526,6 +526,7 @@ namespace TheDatepicker {
 				return;
 			}
 
+			// todo test jestli s tím funguje fixing position
 			this.updateContainer_();
 			this.animateFolding_();
 
@@ -618,7 +619,7 @@ namespace TheDatepicker {
 				return;
 			}
 
-			// todo isContainerLocatedOver_ se nastaví asi až později
+			// todo na směr animace můžu využít ContainerOver a ContainerLeft a nemusim tam posílat array
 			const animations: ClassNameType[] = [
 				this.isContainerLocatedOver_ ? ClassNameType.AnimateFoldingOver : ClassNameType.AnimateFoldingUnder,
 				this.viewModel_.isActive_() ? ClassNameType.AnimateExpand : ClassNameType.AnimateCollapse,
