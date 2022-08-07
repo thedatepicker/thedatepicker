@@ -123,7 +123,30 @@ namespace TheDatepicker {
 		}
 
 		protected updateMainElement_(viewModel: ViewModel_): void {
-			this.mainElement_.style.display = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur() ? '' : 'none';
+			const shouldBeVisible = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur();
+			const originalDisplayValue = this.mainElement_.style.display;
+			const newDisplayValue = shouldBeVisible ? '' : 'none';
+
+			const onComplete = () => {
+				this.mainElement_.style.display = newDisplayValue;
+			};
+
+			// todo test když is hiddenOnBlur = false (asi se to expandne na reload - je to dobře?)
+			// todo a asi i při reloadu stránky se to možná ihned kolapsne (asi si tu budu muset pamatovat poslední stav isActive...)
+			// todo jiná animace ve fullscreen
+			if (originalDisplayValue !== newDisplayValue && this.options_.isFoldingAnimationEnabled()) {
+				if (shouldBeVisible) {
+					onComplete();
+					window.setTimeout(() => {
+						Helper_.animate_(this.mainElement_, ClassNameType.AnimateExpand, this.options_);
+					}, 0);
+				} else {
+					Helper_.animate_(this.mainElement_, ClassNameType.AnimateCollapse, this.options_, onComplete);
+				}
+			} else {
+				onComplete();
+			}
+
 			this.mainElement_.className = '';
 			HtmlHelper_.addClass_(this.mainElement_, ClassNameType.Main, this.options_);
 			if (this.options_.isDarkModeEnabled()) {
@@ -1008,8 +1031,8 @@ namespace TheDatepicker {
 					break;
 			}
 
-			Helper_.animate_(this.tablesElement_, [animationOut], this.options_, onComplete);
-			Helper_.animate_(this.tablesElement_, [animationIn], this.options_);
+			Helper_.animate_(this.tablesElement_, animationOut, this.options_, onComplete);
+			Helper_.animate_(this.tablesElement_, animationIn, this.options_);
 		}
 
 		private translateMonth_(monthNumber: number): string {

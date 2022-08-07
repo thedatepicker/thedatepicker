@@ -66,9 +66,7 @@ declare namespace TheDatepicker {
         ContainerDarkMode = 63,
         MainDarkMode = 64,
         AnimateExpand = 65,
-        AnimateCollapse = 66,
-        AnimateFoldingOver = 67,
-        AnimateFoldingUnder = 68
+        AnimateCollapse = 66
     }
     class ClassNames {
         private classNames_;
@@ -132,7 +130,6 @@ declare namespace TheDatepicker {
         private readonly inputClickable_;
         private readonly inputText_;
         private readonly viewModel_;
-        private isContainerLocatedOver_;
         private initializationPhase_;
         private inputListenerRemover_;
         private listenerRemovers_;
@@ -170,9 +167,8 @@ declare namespace TheDatepicker {
         private removeInitialInputListener_;
         private triggerReady_;
         private triggerReadyListener_;
-        private onActiveChange_;
+        private onActivate_;
         private updateContainer_;
-        private animateFolding_;
         private static setBodyClass_;
         private static activateViewModel_;
     }
@@ -284,7 +280,7 @@ declare namespace TheDatepicker {
         static checkFunction_<Type extends Function>(parameterName: string, value: Type | null, isNullable?: boolean): Type | null;
         static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethods: string[]): void;
         static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, moveDirection: MoveDirection_) => void): void;
-        static animate_(element: HTMLAnimatedElement, animation: ClassNameType[], options: Options, onComplete?: (() => void) | null): void;
+        static animate_(element: HTMLAnimatedElement, animationType: ClassNameType, options: Options, onComplete?: (() => void) | null): void;
         static isCssAnimationSupported_(): boolean;
         static isPassiveEventListenerSupported_(): boolean;
         static isMobile_(): boolean;

@@ -52,7 +52,6 @@ namespace TheDatepicker {
 		private readonly inputClickable_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly inputText_: (HTMLDatepickerInputElement&HTMLInputElement) | null = null;
 		private readonly viewModel_: ViewModel_;
-		private isContainerLocatedOver_: boolean = false;
 
 		private initializationPhase_ = InitializationPhase.Untouched;
 		private inputListenerRemover_: (() => void) | null = null;
@@ -521,18 +520,13 @@ namespace TheDatepicker {
 			}
 		}
 
-		private onActiveChange_(): void {
+		private onActivate_(): void {
 			if (this.initializationPhase_ === InitializationPhase.Destroyed) {
 				return;
 			}
 
 			// todo test jestli s tím funguje fixing position
 			this.updateContainer_();
-			this.animateFolding_();
-
-			if (!this.viewModel_.isActive_()) {
-				return;
-			}
 
 			if (this.inputText_) {
 				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && Helper_.isMobile_();
@@ -541,7 +535,7 @@ namespace TheDatepicker {
 
 		private updateContainer_(): void {
 			// todo když se option isHiddenOnBlur změní za chodu, zachová se to správně?
-			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur() || !this.viewModel_.isActive_()) {
+			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
 				return;
 			}
 
@@ -609,23 +603,6 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
 				mainElement.style.left = '-' + (containerWidth - inputWidth) + 'px';
 			}
-
-			// todo animovat i scaleX
-			this.isContainerLocatedOver_ = locateOver;
-		}
-
-		private animateFolding_(): void {
-			if (!this.options.isFoldingAnimationEnabled()) {
-				return;
-			}
-
-			// todo na směr animace můžu využít ContainerOver a ContainerLeft a nemusim tam posílat array
-			const animations: ClassNameType[] = [
-				this.isContainerLocatedOver_ ? ClassNameType.AnimateFoldingOver : ClassNameType.AnimateFoldingUnder,
-				this.viewModel_.isActive_() ? ClassNameType.AnimateExpand : ClassNameType.AnimateCollapse,
-			];
-
-			Helper_.animate_(this.container, animations, this.options);
 		}
 
 		private static setBodyClass_(enable: boolean) {
@@ -650,6 +627,7 @@ namespace TheDatepicker {
 			const activeDatepicker = Datepicker.activeDatepicker_;
 
 			// todo test vícero DP najednou
+			// todo asi budu muset volat updateContainer_ už tady aby se před animací správně nastavilo over/left
 
 			if (activeDatepicker === datepicker) {
 				return true;
@@ -665,7 +643,7 @@ namespace TheDatepicker {
 
 			if (!datepicker) {
 				Datepicker.setBodyClass_(false);
-				Datepicker.activeDatepicker_.onActiveChange_();
+
 				Datepicker.activeDatepicker_ = null;
 				return true;
 			}
@@ -678,7 +656,7 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			datepicker.onActiveChange_();
+			datepicker.onActivate_();
 			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
 
 			Datepicker.activeDatepicker_ = datepicker;

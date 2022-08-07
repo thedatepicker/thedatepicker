@@ -360,7 +360,7 @@ namespace TheDatepicker {
 			}, true);
 		}
 
-		public static animate_(element: HTMLAnimatedElement, animation: ClassNameType[], options: Options, onComplete: (() => void) | null = null): void {
+		public static animate_(element: HTMLAnimatedElement, animationType: ClassNameType, options: Options, onComplete: (() => void) | null = null): void {
 			onComplete = onComplete || (() => {});
 
 			if (!Helper_.isCssAnimationSupported_()) {
@@ -391,9 +391,7 @@ namespace TheDatepicker {
 				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate);
 
 				HtmlHelper_.addClass_(element, ClassNameType.Animated, options);
-				for (let index = 0; index < animation.length; index++) {
-					HtmlHelper_.addClass_(element, animation[index], options);
-				}
+				HtmlHelper_.addClass_(element, animationType, options);
 			}
 
 			if (element.animationQueue) {
