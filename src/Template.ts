@@ -147,10 +147,11 @@ namespace TheDatepicker {
 					// expand animation must be triggered after container is updated
 					// container can be updated only if displayed, so visibility hides it from user
 					this.mainElement_.style.visibility = 'hidden';
-					onComplete();
 					window.setTimeout(() => {
-						this.mainElement_.style.visibility = '';
-						Helper_.animate_(this.mainElement_, ClassNameType.AnimateExpand, this.options_);
+						Helper_.animate_(this.mainElement_, ClassNameType.AnimateExpand, this.options_, null, () => {
+							onComplete();
+							this.mainElement_.style.visibility = '';
+						});
 					}, 0);
 				} else {
 					Helper_.animate_(this.mainElement_, ClassNameType.AnimateCollapse, this.options_, onComplete);

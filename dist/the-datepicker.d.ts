@@ -256,6 +256,7 @@ declare namespace TheDatepicker {
         KeyPress = "keypress",
         TouchStart = "touchstart",
         TouchMove = "touchmove",
+        AnimationStart = "animationstart",
         AnimationEnd = "animationend"
     }
     interface HTMLAnimatedElement extends HTMLElement {
@@ -279,7 +280,7 @@ declare namespace TheDatepicker {
         static checkFunction_<Type extends Function>(parameterName: string, value: Type | null, isNullable?: boolean): Type | null;
         static warnDeprecatedUsage_(deprecatedMethod: string, alternateMethods: string[]): void;
         static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, moveDirection: MoveDirection_) => void): void;
-        static animate_(element: HTMLAnimatedElement, animationType: ClassNameType, options: Options, onComplete?: (() => void) | null): void;
+        static animate_(element: HTMLAnimatedElement, animationType: ClassNameType, options: Options, onComplete?: (() => void) | null, onBegin?: (() => void) | null): void;
         static isCssAnimationSupported_(): boolean;
         static isPassiveEventListenerSupported_(): boolean;
         static isMobile_(): boolean;

@@ -58,6 +58,7 @@ namespace TheDatepicker {
 		KeyPress = 'keypress',
 		TouchStart = 'touchstart',
 		TouchMove = 'touchmove',
+		AnimationStart = 'animationstart',
 		AnimationEnd = 'animationend',
 	}
 
@@ -360,10 +361,19 @@ namespace TheDatepicker {
 			}, true);
 		}
 
-		public static animate_(element: HTMLAnimatedElement, animationType: ClassNameType, options: Options, onComplete: (() => void) | null = null): void {
+		public static animate_(
+			element: HTMLAnimatedElement,
+			animationType: ClassNameType,
+			options: Options,
+			onComplete: (() => void) | null = null,
+			onBegin: (() => void) | null = null,
+		): void {
+			// todo prohodit arg begin a complete
 			onComplete = onComplete || (() => {});
+			onBegin = onBegin || (() => {});
 
 			if (!Helper_.isCssAnimationSupported_()) {
+				onBegin();
 				onComplete();
 				return;
 			}
@@ -371,12 +381,14 @@ namespace TheDatepicker {
 			const trigger = (): void => {
 				const originalClassName = element.className;
 
-				let listenerRemover: () => void;
+				let listenerRemovers: (() => void)[] = [];
 				let timeoutId: number;
 
 				const onAfterAnimate = (): void => {
 					window.clearTimeout(timeoutId);
-					listenerRemover();
+					for (let index = 0; index < listenerRemovers.length; index++) {
+						listenerRemovers[index]();
+					}
 					element.className = originalClassName;
 					onComplete();
 
@@ -388,8 +400,13 @@ namespace TheDatepicker {
 				};
 
 				// todo 250
-				timeoutId = window.setTimeout(onAfterAnimate, 950);
-				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate);
+				timeoutId = window.setTimeout(() => {
+					onBegin();
+					onAfterAnimate();
+				}, 950);
+				// todo onBegin se může spustíit 2x (na timeout a na animationstart)
+				listenerRemovers.push(Helper_.addEventListener_(element, ListenerType_.AnimationStart, onBegin));
+				listenerRemovers.push(Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate));
 
 				HtmlHelper_.addClass_(element, ClassNameType.Animated, options);
 				HtmlHelper_.addClass_(element, animationType, options);

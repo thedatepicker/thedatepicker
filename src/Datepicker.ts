@@ -613,7 +613,7 @@ namespace TheDatepicker {
 		private static activateViewModel_(event: Event | null, datepicker: Datepicker | null): boolean {
 			const activeDatepicker = Datepicker.activeDatepicker_;
 
-			// todo test vícero DP najednou
+			// todo test vícero DP najednou (vyrobit trvalou testovací stránku)
 
 			if (activeDatepicker === datepicker) {
 				return true;
