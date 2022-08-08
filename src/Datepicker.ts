@@ -521,6 +521,12 @@ namespace TheDatepicker {
 		}
 
 		private updateContainer_(): void {
+			// todo když vyberu datum a znovu otevřu DP tak se otevře do defaultní position
+			// todo (test) pokud jsou 2 dp hiddenOnBlur=false a překrývají se, měl by se nějak dealovat z-index?
+			// todo přidat nové ClassNames do index.html (má ale smysl aby tam byly Animate?)
+
+			// todo když dám hiddenOnBlur=false až poté co se dp vyrendruje mimo default pozici tak tam zůstane
+			//      container by se měl resetovat do default posice poté co se hiddenOnBlur změní na false:
 			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
 				return;
 			}
