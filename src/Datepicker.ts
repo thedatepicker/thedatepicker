@@ -521,7 +521,6 @@ namespace TheDatepicker {
 		}
 
 		private updateContainer_(): void {
-			// todo když se option isHiddenOnBlur změní za chodu, zachová se to správně?
 			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
 				return;
 			}
@@ -613,8 +612,6 @@ namespace TheDatepicker {
 		private static activateViewModel_(event: Event | null, datepicker: Datepicker | null): boolean {
 			const activeDatepicker = Datepicker.activeDatepicker_;
 
-			// todo test vícero DP najednou (vyrobit trvalou testovací stránku)
-
 			if (activeDatepicker === datepicker) {
 				return true;
 			}
@@ -642,7 +639,6 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			// todo test jestli s tím funguje fixing position
 			datepicker.updateContainer_();
 
 			if (datepicker.inputText_) {

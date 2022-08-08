@@ -58,7 +58,6 @@ namespace TheDatepicker {
 		KeyPress = 'keypress',
 		TouchStart = 'touchstart',
 		TouchMove = 'touchmove',
-		AnimationStart = 'animationstart',
 		AnimationEnd = 'animationend',
 	}
 
@@ -365,12 +364,11 @@ namespace TheDatepicker {
 			element: HTMLAnimatedElement,
 			animationType: ClassNameType,
 			options: Options,
-			onComplete: (() => void) | null = null,
 			onBegin: (() => void) | null = null,
+			onComplete: (() => void) | null = null,
 		): void {
-			// todo prohodit arg begin a complete
-			onComplete = onComplete || (() => {});
 			onBegin = onBegin || (() => {});
+			onComplete = onComplete || (() => {});
 
 			if (!Helper_.isCssAnimationSupported_()) {
 				onBegin();
@@ -379,16 +377,16 @@ namespace TheDatepicker {
 			}
 
 			const trigger = (): void => {
+				onBegin();
+
 				const originalClassName = element.className;
 
-				let listenerRemovers: (() => void)[] = [];
+				let listenerRemover: () => void;
 				let timeoutId: number;
 
 				const onAfterAnimate = (): void => {
 					window.clearTimeout(timeoutId);
-					for (let index = 0; index < listenerRemovers.length; index++) {
-						listenerRemovers[index]();
-					}
+					listenerRemover();
 					element.className = originalClassName;
 					onComplete();
 
@@ -399,14 +397,9 @@ namespace TheDatepicker {
 					}
 				};
 
-				// todo 250
-				timeoutId = window.setTimeout(() => {
-					onBegin();
-					onAfterAnimate();
-				}, 950);
-				// todo onBegin se může spustíit 2x (na timeout a na animationstart)
-				listenerRemovers.push(Helper_.addEventListener_(element, ListenerType_.AnimationStart, onBegin));
-				listenerRemovers.push(Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate));
+				// timeout fallback if animation not working
+				timeoutId = window.setTimeout(onAfterAnimate, 250);
+				listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate);
 
 				HtmlHelper_.addClass_(element, ClassNameType.Animated, options);
 				HtmlHelper_.addClass_(element, animationType, options);
@@ -417,6 +410,14 @@ namespace TheDatepicker {
 			} else {
 				element.animationQueue = [];
 				trigger();
+			}
+		}
+
+		public static afterAnimate_(element: HTMLAnimatedElement, callback: () => void): void {
+			if (element.animationQueue) {
+				element.animationQueue.push(callback);
+			} else {
+				callback();
 			}
 		}
 

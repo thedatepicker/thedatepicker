@@ -125,40 +125,33 @@ namespace TheDatepicker {
 		}
 
 		protected updateMainElement_(viewModel: ViewModel_): void {
-			this.mainElement_.className = '';
-			HtmlHelper_.addClass_(this.mainElement_, ClassNameType.Main, this.options_);
-			if (this.options_.isDarkModeEnabled()) {
-				HtmlHelper_.addClass_(this.mainElement_, ClassNameType.MainDarkMode, this.options_);
-			}
-
-			// todo test když hned po realodu je input focusnutý (např. autoselectem) - otevře se? zanimuje se?
-			// todo test když is hiddenOnBlur = false (asi se to expandne na reload - je to dobře?)
-			// todo a asi i při reloadu stránky se to možná ihned kolapsne (asi si tu budu muset pamatovat poslední stav isActive...)
-			// todo jiná animace ve fullscreen
+			// todo při změně isHiddenOnBlur za chodu DP zmizí
+			// todo jiná animace ve fullscreen (anebo animovat jen scaleY jak ve fullcscreen tak na desktopu)
 			// todo tahle animace zřejmě proběhne i když bude externí container
-			// todo test jestli je ten setTimeout fakt potřeba (jestli to updateContainer potřebuje)
 
 			const isVisible = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur();
-			const onComplete = () => {
+
+			const update = () => {
 				this.mainElement_.style.display = isVisible ? '' : 'none';
-			};
-			if (this.isVisible_ !== isVisible && this.options_.isFoldingAnimationEnabled()) {
-				if (isVisible) {
-					// expand animation must be triggered after container is updated
-					// container can be updated only if displayed, so visibility hides it from user
-					this.mainElement_.style.visibility = 'hidden';
-					window.setTimeout(() => {
-						Helper_.animate_(this.mainElement_, ClassNameType.AnimateExpand, this.options_, null, () => {
-							onComplete();
-							this.mainElement_.style.visibility = '';
-						});
-					}, 0);
-				} else {
-					Helper_.animate_(this.mainElement_, ClassNameType.AnimateCollapse, this.options_, onComplete);
+				this.mainElement_.className = '';
+				HtmlHelper_.addClass_(this.mainElement_, ClassNameType.Main, this.options_);
+				if (this.options_.isDarkModeEnabled()) {
+					HtmlHelper_.addClass_(this.mainElement_, ClassNameType.MainDarkMode, this.options_);
 				}
+			};
+
+			if (this.isVisible_ !== isVisible && this.options_.isFoldingAnimationEnabled() && this.options_.isHiddenOnBlur()) {
+				Helper_.animate_(
+					this.mainElement_,
+					isVisible ? ClassNameType.AnimateExpand : ClassNameType.AnimateCollapse,
+					this.options_,
+					isVisible ? update : null,
+					isVisible ? null : update,
+				);
 			} else {
-				onComplete();
+				Helper_.afterAnimate_(this.mainElement_, update);
 			}
+
 			this.isVisible_ = isVisible;
 		}
 
@@ -1039,7 +1032,7 @@ namespace TheDatepicker {
 					break;
 			}
 
-			Helper_.animate_(this.tablesElement_, animationOut, this.options_, onComplete);
+			Helper_.animate_(this.tablesElement_, animationOut, this.options_, null, onComplete);
 			Helper_.animate_(this.tablesElement_, animationIn, this.options_);
 		}
 

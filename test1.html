@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+		<title>The Datepicker - test 1</title>
+		<link rel="stylesheet" href="dist/the-datepicker.css">
+		<link rel="shortcut icon" href="/thedatepicker/favicon.ico">
+		<script src="dist/the-datepicker.js"></script>
+		<style>
+			html, body, input {
+				font-size: 16px;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			article {
+				float: left;
+			}
+			#wrapper-1 {
+				position: absolute;
+			}
+			#wrapper-2 {
+				position: absolute;
+				margin: 50px 0 0 50px;
+			}
+			#input-1, #input-2 {
+				background-color: #cbe4ff;
+			}
+		</style>
+</head>
+<body>
+
+	<article>
+		<div id="wrapper-1">
+			<input type="text" id="input-1" size="20">
+		</div>
+		<div id="wrapper-2">
+			<input type="text" id="input-2" size="20" autofocus>
+			<input type="button" value="xxx" id="xxx">
+		</div>
+	</article>
+
+	<script>
+		var article = document.getElementsByTagName('article')[0];
+
+		var wrapper1 = document.getElementById('wrapper-1');
+		var input1 = document.getElementById('input-1');
+		wrapper1.style.marginTop = (window.innerHeight - input1.offsetHeight - 50) + 'px';
+		wrapper1.style.marginLeft = (window.innerWidth - input1.offsetWidth - 50) + 'px';
+
+		article.style.height = (2 * window.innerHeight - input1.offsetHeight - 100) + 'px';
+		article.style.width = (2 * window.innerWidth - input1.offsetWidth - 100) + 'px';
+
+		const datepicker1 = new TheDatepicker.Datepicker(input1);
+		datepicker1.render();
+
+		var xxx = document.getElementById('xxx');
+		xxx.addEventListener('click', () => {
+			datepicker1.options.setHideOnBlur(!datepicker1.options.isHiddenOnBlur());
+			datepicker1.render();
+		});
+
+		var input2 = document.getElementById('input-2');
+		const datepicker2 = new TheDatepicker.Datepicker(input2);
+		datepicker2.render();
+	</script>
+</body>
+</html>
