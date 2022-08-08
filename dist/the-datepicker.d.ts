@@ -258,8 +258,9 @@ declare namespace TheDatepicker {
         TouchMove = "touchmove",
         AnimationEnd = "animationend"
     }
+    type AnimationTrigger = (next: () => void) => void;
     interface HTMLAnimatedElement extends HTMLElement {
-        animationQueue?: (() => void)[];
+        animationQueue?: AnimationTrigger[];
     }
     export class Helper_ {
         private static readonly months_;
@@ -281,6 +282,7 @@ declare namespace TheDatepicker {
         static addSwipeListener_(element: HTMLElement, listener: (event: TouchEvent, moveDirection: MoveDirection_) => void): void;
         static animate_(element: HTMLAnimatedElement, animationType: ClassNameType, options: Options, onBegin?: (() => void) | null, onComplete?: (() => void) | null): void;
         static afterAnimate_(element: HTMLAnimatedElement, callback: () => void): void;
+        private static addAnimation_;
         static isCssAnimationSupported_(): boolean;
         static isPassiveEventListenerSupported_(): boolean;
         static isMobile_(): boolean;

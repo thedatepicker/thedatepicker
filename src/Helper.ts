@@ -61,9 +61,11 @@ namespace TheDatepicker {
 		AnimationEnd = 'animationend',
 	}
 
+	type AnimationTrigger = (next: () => void) => void;
+
 	interface HTMLAnimatedElement extends HTMLElement {
 
-		animationQueue?: (() => void)[];
+		animationQueue?: AnimationTrigger[];
 
 	}
 
@@ -376,7 +378,7 @@ namespace TheDatepicker {
 				return;
 			}
 
-			const trigger = (): void => {
+			const trigger = (next: () => void): void => {
 				onBegin();
 
 				const originalClassName = element.className;
@@ -389,12 +391,7 @@ namespace TheDatepicker {
 					listenerRemover();
 					element.className = originalClassName;
 					onComplete();
-
-					if (element.animationQueue.length > 0) {
-						element.animationQueue.shift()();
-					} else {
-						delete element.animationQueue;
-					}
+					next();
 				};
 
 				// timeout fallback if animation not working
@@ -405,19 +402,30 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(element, animationType, options);
 			}
 
+			Helper_.addAnimation_(element, trigger);
+		}
+
+		public static afterAnimate_(element: HTMLAnimatedElement, callback: () => void): void {
+			Helper_.addAnimation_(element, (next: () => void): void => {
+				callback();
+				next();
+			});
+		}
+
+		private static addAnimation_(element: HTMLAnimatedElement, trigger: AnimationTrigger): void {
+			const next = (): void => {
+				if (element.animationQueue.length > 0) {
+					element.animationQueue.shift()(next);
+				} else {
+					delete element.animationQueue;
+				}
+			}
+
 			if (element.animationQueue) {
 				element.animationQueue.push(trigger);
 			} else {
 				element.animationQueue = [];
-				trigger();
-			}
-		}
-
-		public static afterAnimate_(element: HTMLAnimatedElement, callback: () => void): void {
-			if (element.animationQueue) {
-				element.animationQueue.push(callback);
-			} else {
-				callback();
+				trigger(next);
 			}
 		}
 

@@ -1464,7 +1464,7 @@ var TheDatepicker;
                 onComplete();
                 return;
             }
-            var trigger = function () {
+            var trigger = function (next) {
                 onBegin();
                 var originalClassName = element.className;
                 var listenerRemover;
@@ -1474,32 +1474,36 @@ var TheDatepicker;
                     listenerRemover();
                     element.className = originalClassName;
                     onComplete();
-                    if (element.animationQueue.length > 0) {
-                        element.animationQueue.shift()();
-                    }
-                    else {
-                        delete element.animationQueue;
-                    }
+                    next();
                 };
                 timeoutId = window.setTimeout(onAfterAnimate, 250);
                 listenerRemover = Helper_.addEventListener_(element, ListenerType_.AnimationEnd, onAfterAnimate);
                 TheDatepicker.HtmlHelper_.addClass_(element, TheDatepicker.ClassNameType.Animated, options);
                 TheDatepicker.HtmlHelper_.addClass_(element, animationType, options);
             };
+            Helper_.addAnimation_(element, trigger);
+        };
+        Helper_.afterAnimate_ = function (element, callback) {
+            Helper_.addAnimation_(element, function (next) {
+                callback();
+                next();
+            });
+        };
+        Helper_.addAnimation_ = function (element, trigger) {
+            var next = function () {
+                if (element.animationQueue.length > 0) {
+                    element.animationQueue.shift()(next);
+                }
+                else {
+                    delete element.animationQueue;
+                }
+            };
             if (element.animationQueue) {
                 element.animationQueue.push(trigger);
             }
             else {
                 element.animationQueue = [];
-                trigger();
-            }
-        };
-        Helper_.afterAnimate_ = function (element, callback) {
-            if (element.animationQueue) {
-                element.animationQueue.push(callback);
-            }
-            else {
-                callback();
+                trigger(next);
             }
         };
         Helper_.isCssAnimationSupported_ = function () {
