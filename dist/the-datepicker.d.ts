@@ -157,8 +157,9 @@ declare namespace TheDatepicker {
         getDay(date: Date | string): Day;
         canType_(char: string): boolean;
         readInput_(event?: Event | null): boolean;
-        updateInput_(): void;
         static onDatepickerReady(element: HTMLDatepickerElement, callback?: ReadyListener | null): Promise<TheDatepicker.Datepicker> | null;
+        private init_;
+        private updateInput_;
         private createContainer_;
         private createDeselectElement_;
         private updateDeselectElement_;
@@ -167,7 +168,7 @@ declare namespace TheDatepicker {
         private removeInitialInputListener_;
         private triggerReady_;
         private triggerReadyListener_;
-        private updateContainer_;
+        private updateElements_;
         private static setBodyClass_;
         private static activateViewModel_;
     }

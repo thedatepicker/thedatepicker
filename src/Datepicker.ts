@@ -33,10 +33,10 @@ namespace TheDatepicker {
 
 	}
 
+	// todo Untouched atd to neminifikuje
 	enum InitializationPhase {
 		Untouched,
 		Waiting,
-		Ready,
 		Initialized,
 		Destroyed,
 	}
@@ -132,13 +132,36 @@ namespace TheDatepicker {
 
 		public render(): void {
 			switch (this.initializationPhase_) {
-				case InitializationPhase.Ready:
-					this.initListeners_();
-					this.initializationPhase_ = InitializationPhase.Initialized;
+				case InitializationPhase.Untouched:
+					// prepare for show
+					this.preselectFromInput_();
+					this.createDeselectElement_();
+
+					if (!this.viewModel_.selectInitialDate_(null)) {
+						this.updateInput_();
+					}
+
+					if (this.inputClickable_ && this.options.isHiddenOnBlur()) {
+						if (this.inputClickable_ === Datepicker.document_.activeElement) {
+							this.init_();
+							this.open();
+							return;
+						}
+
+						this.inputListenerRemover_ = Helper_.addEventListener_(this.inputClickable_, ListenerType_.Focus, (event: FocusEvent): void => {
+							this.open(event);
+						});
+
+						this.initializationPhase_ = InitializationPhase.Waiting;
+						return;
+					}
+
+					this.init_();
 					this.render();
 					return;
 
 				case InitializationPhase.Waiting:
+					// called render again during waiting phase - possibly changed options, so update
 					this.createDeselectElement_();
 
 					if (!this.options.isHiddenOnBlur()) {
@@ -152,35 +175,10 @@ namespace TheDatepicker {
 
 					return;
 
-				case InitializationPhase.Untouched:
-					this.preselectFromInput_();
-					this.createDeselectElement_();
-
-					if (!this.viewModel_.selectInitialDate_(null)) {
-						this.updateInput_();
-					}
-
-					if (this.inputClickable_ && this.options.isHiddenOnBlur()) {
-						if (this.inputClickable_ === Datepicker.document_.activeElement) {
-							this.initializationPhase_ = InitializationPhase.Ready;
-							this.render();
-							this.open();
-							return;
-						}
-
-						this.inputListenerRemover_ = Helper_.addEventListener_(this.inputClickable_, ListenerType_.Focus, (event: FocusEvent): void => {
-							this.open(event);
-						});
-
-						this.initializationPhase_ = InitializationPhase.Waiting;
-						return;
-					}
-
-					this.initializationPhase_ = InitializationPhase.Ready;
-					this.render();
-					return;
-
 				default:
+					// todo jak se updatne např nový formát v inputu pouze po zavolání dp.render() ?
+					// redraw with possibly changed options
+					this.updateElements_();
 					this.viewModel_.render_();
 					return;
 			}
@@ -188,12 +186,12 @@ namespace TheDatepicker {
 
 		public open(event: Event | null = null): boolean {
 			if (this.initializationPhase_ === InitializationPhase.Untouched) {
+				// for case when render was not called yet
 				this.render();
 			}
 
 			if (this.initializationPhase_ === InitializationPhase.Waiting) {
-				this.initializationPhase_ = InitializationPhase.Ready;
-				this.render();
+				this.init_();
 				Datepicker.hasClickedViewModel_ = true;
 			}
 
@@ -330,16 +328,6 @@ namespace TheDatepicker {
 			return false;
 		}
 
-		public updateInput_(): void {
-			if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
-				return;
-			}
-
-			this.inputText_.value = DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
-
-			this.updateDeselectElement_();
-		}
-
 		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<TheDatepicker.Datepicker> | null {
 			if (!Helper_.isElement_(element)) {
 				throw new Error('Element was expected to be an HTMLElement.');
@@ -372,6 +360,21 @@ namespace TheDatepicker {
 
 			return promise;
 		};
+
+		private init_(): void {
+			this.initListeners_();
+			this.initializationPhase_ = InitializationPhase.Initialized;
+		}
+
+		private updateInput_(): void {
+			if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
+				return;
+			}
+
+			this.inputText_.value = DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+
+			this.updateDeselectElement_();
+		}
 
 		private createContainer_(): HTMLElement {
 			return  HtmlHelper_.createDiv_(ClassNameType.Container, this.options);
@@ -520,16 +523,26 @@ namespace TheDatepicker {
 			}
 		}
 
-		private updateContainer_(): void {
-			// todo když vyberu datum a znovu otevřu DP tak se otevře do defaultní position
-			// todo (test) pokud jsou 2 dp hiddenOnBlur=false a překrývají se, měl by se nějak dealovat z-index?
-			// todo přidat nové ClassNames do index.html (má ale smysl aby tam byly Animate?)
-
-			// todo když dám hiddenOnBlur=false až poté co se dp vyrendruje mimo default pozici tak tam zůstane
-			//      container by se měl resetovat do default posice poté co se hiddenOnBlur změní na false:
-			if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
+		private updateElements_(): void {
+			if (this.initializationPhase_ === InitializationPhase.Destroyed) {
 				return;
 			}
+
+			this.updateInput_();
+
+			if (this.inputText_) {
+				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && Helper_.isMobile_();
+			}
+
+			// todo když vyberu datum a znovu otevřu DP tak se otevře do defaultní position
+			// todo (test) pokud jsou 2 dp a alespoň jeden je hiddenOnBlur=false a překrývají se, měl by se nějak dealovat z-index?
+			// todo přidat nové ClassNames do index.html (má ale smysl aby tam byly Animate?)
+
+			if (this.isContainerExternal_) {
+				return;
+			}
+
+			const isHiddenOnBlur = this.options.isHiddenOnBlur();
 
 			this.container.className = '';
 
@@ -539,7 +552,7 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
 			}
 
-			if (this.options.isFullScreenOnMobile()) {
+			if (isHiddenOnBlur && this.options.isFullScreenOnMobile()) {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
 			}
 
@@ -561,7 +574,7 @@ namespace TheDatepicker {
 			const containerWidth = this.container.offsetWidth;
 			const containerHeight = this.container.offsetHeight;
 
-			if (this.options.isPositionFixingEnabled()) {
+			if (isHiddenOnBlur && this.options.isPositionFixingEnabled()) {
 				const document = Datepicker.document_;
 				const windowTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
 				const windowLeft = window.scrollX || window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0;
@@ -615,6 +628,7 @@ namespace TheDatepicker {
 			}
 		}
 
+		// todo rename na activateDatepicker_, nebo vrátit na VM
 		private static activateViewModel_(event: Event | null, datepicker: Datepicker | null): boolean {
 			const activeDatepicker = Datepicker.activeDatepicker_;
 
@@ -645,11 +659,9 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			datepicker.updateContainer_();
+			// todo funguje v pořádku destroy?
 
-			if (datepicker.inputText_) {
-				datepicker.inputText_.readOnly = !datepicker.options.isKeyboardOnMobile() && Helper_.isMobile_();
-			}
+			datepicker.updateElements_();
 
 			Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
 

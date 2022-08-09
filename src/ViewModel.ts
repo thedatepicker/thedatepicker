@@ -132,7 +132,6 @@ namespace TheDatepicker {
 			}
 
 			this.template_.render_(this);
-			this.datepicker_.updateInput_();
 		}
 
 		public setActive_(event: Event | null, value: boolean): boolean {
@@ -150,10 +149,8 @@ namespace TheDatepicker {
 			this.active_ = value;
 
 			if (
-				(
-					(!value && !this.setYearSelectionActive_(false))
-					|| value
-				) && this.options_.isHiddenOnBlur()
+				(!value && !this.setYearSelectionActive_(false))
+				|| value
 			) {
 				this.render_();
 			}

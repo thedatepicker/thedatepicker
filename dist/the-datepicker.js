@@ -583,9 +583,8 @@ var TheDatepicker;
     (function (InitializationPhase) {
         InitializationPhase[InitializationPhase["Untouched"] = 0] = "Untouched";
         InitializationPhase[InitializationPhase["Waiting"] = 1] = "Waiting";
-        InitializationPhase[InitializationPhase["Ready"] = 2] = "Ready";
-        InitializationPhase[InitializationPhase["Initialized"] = 3] = "Initialized";
-        InitializationPhase[InitializationPhase["Destroyed"] = 4] = "Destroyed";
+        InitializationPhase[InitializationPhase["Initialized"] = 2] = "Initialized";
+        InitializationPhase[InitializationPhase["Destroyed"] = 3] = "Destroyed";
     })(InitializationPhase || (InitializationPhase = {}));
     var Datepicker = (function () {
         function Datepicker(input, container, options) {
@@ -653,9 +652,25 @@ var TheDatepicker;
         Datepicker.prototype.render = function () {
             var _this = this;
             switch (this.initializationPhase_) {
-                case InitializationPhase.Ready:
-                    this.initListeners_();
-                    this.initializationPhase_ = InitializationPhase.Initialized;
+                case InitializationPhase.Untouched:
+                    this.preselectFromInput_();
+                    this.createDeselectElement_();
+                    if (!this.viewModel_.selectInitialDate_(null)) {
+                        this.updateInput_();
+                    }
+                    if (this.inputClickable_ && this.options.isHiddenOnBlur()) {
+                        if (this.inputClickable_ === Datepicker.document_.activeElement) {
+                            this.init_();
+                            this.open();
+                            return;
+                        }
+                        this.inputListenerRemover_ = TheDatepicker.Helper_.addEventListener_(this.inputClickable_, TheDatepicker.ListenerType_.Focus, function (event) {
+                            _this.open(event);
+                        });
+                        this.initializationPhase_ = InitializationPhase.Waiting;
+                        return;
+                    }
+                    this.init_();
                     this.render();
                     return;
                 case InitializationPhase.Waiting:
@@ -668,29 +683,8 @@ var TheDatepicker;
                         this.updateInput_();
                     }
                     return;
-                case InitializationPhase.Untouched:
-                    this.preselectFromInput_();
-                    this.createDeselectElement_();
-                    if (!this.viewModel_.selectInitialDate_(null)) {
-                        this.updateInput_();
-                    }
-                    if (this.inputClickable_ && this.options.isHiddenOnBlur()) {
-                        if (this.inputClickable_ === Datepicker.document_.activeElement) {
-                            this.initializationPhase_ = InitializationPhase.Ready;
-                            this.render();
-                            this.open();
-                            return;
-                        }
-                        this.inputListenerRemover_ = TheDatepicker.Helper_.addEventListener_(this.inputClickable_, TheDatepicker.ListenerType_.Focus, function (event) {
-                            _this.open(event);
-                        });
-                        this.initializationPhase_ = InitializationPhase.Waiting;
-                        return;
-                    }
-                    this.initializationPhase_ = InitializationPhase.Ready;
-                    this.render();
-                    return;
                 default:
+                    this.updateElements_();
                     this.viewModel_.render_();
                     return;
             }
@@ -701,8 +695,7 @@ var TheDatepicker;
                 this.render();
             }
             if (this.initializationPhase_ === InitializationPhase.Waiting) {
-                this.initializationPhase_ = InitializationPhase.Ready;
-                this.render();
+                this.init_();
                 Datepicker.hasClickedViewModel_ = true;
             }
             if (!Datepicker.activateViewModel_(event, this)) {
@@ -818,13 +811,6 @@ var TheDatepicker;
             }
             return false;
         };
-        Datepicker.prototype.updateInput_ = function () {
-            if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
-                return;
-            }
-            this.inputText_.value = TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
-            this.updateDeselectElement_();
-        };
         Datepicker.onDatepickerReady = function (element, callback) {
             if (callback === void 0) { callback = null; }
             if (!TheDatepicker.Helper_.isElement_(element)) {
@@ -854,6 +840,17 @@ var TheDatepicker;
             return promise;
         };
         ;
+        Datepicker.prototype.init_ = function () {
+            this.initListeners_();
+            this.initializationPhase_ = InitializationPhase.Initialized;
+        };
+        Datepicker.prototype.updateInput_ = function () {
+            if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
+                return;
+            }
+            this.inputText_.value = TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+            this.updateDeselectElement_();
+        };
         Datepicker.prototype.createContainer_ = function () {
             return TheDatepicker.HtmlHelper_.createDiv_(TheDatepicker.ClassNameType.Container, this.options);
         };
@@ -984,16 +981,24 @@ var TheDatepicker;
                 callback.call(element, this, element);
             }
         };
-        Datepicker.prototype.updateContainer_ = function () {
-            if (this.isContainerExternal_ || !this.options.isHiddenOnBlur()) {
+        Datepicker.prototype.updateElements_ = function () {
+            if (this.initializationPhase_ === InitializationPhase.Destroyed) {
                 return;
             }
+            this.updateInput_();
+            if (this.inputText_) {
+                this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && TheDatepicker.Helper_.isMobile_();
+            }
+            if (this.isContainerExternal_) {
+                return;
+            }
+            var isHiddenOnBlur = this.options.isHiddenOnBlur();
             this.container.className = '';
             TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.Container, this.options);
             if (this.options.isDarkModeEnabled()) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerDarkMode, this.options);
             }
-            if (this.options.isFullScreenOnMobile()) {
+            if (isHiddenOnBlur && this.options.isFullScreenOnMobile()) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerResponsive, this.options);
             }
             if (this.container.childNodes.length === 0) {
@@ -1010,7 +1015,7 @@ var TheDatepicker;
             var inputHeight = this.input.offsetHeight;
             var containerWidth = this.container.offsetWidth;
             var containerHeight = this.container.offsetHeight;
-            if (this.options.isPositionFixingEnabled()) {
+            if (isHiddenOnBlur && this.options.isPositionFixingEnabled()) {
                 var document_1 = Datepicker.document_;
                 var windowTop = window.scrollY || window.pageYOffset || document_1.documentElement.scrollTop || document_1.body.scrollTop || 0;
                 var windowLeft = window.scrollX || window.pageXOffset || document_1.documentElement.scrollLeft || document_1.body.scrollLeft || 0;
@@ -1082,10 +1087,7 @@ var TheDatepicker;
             if (Datepicker.activeDatepicker_ !== activeDatepicker) {
                 return true;
             }
-            datepicker.updateContainer_();
-            if (datepicker.inputText_) {
-                datepicker.inputText_.readOnly = !datepicker.options.isKeyboardOnMobile() && TheDatepicker.Helper_.isMobile_();
-            }
+            datepicker.updateElements_();
             Datepicker.setBodyClass_(!datepicker.isContainerExternal_ && datepicker.options.isFullScreenOnMobile());
             Datepicker.activeDatepicker_ = datepicker;
             return true;
@@ -3632,7 +3634,6 @@ var TheDatepicker;
                 };
             }
             this.template_.render_(this);
-            this.datepicker_.updateInput_();
         };
         ViewModel_.prototype.setActive_ = function (event, value) {
             if (this.active_ === value) {
@@ -3643,8 +3644,8 @@ var TheDatepicker;
                 return false;
             }
             this.active_ = value;
-            if (((!value && !this.setYearSelectionActive_(false))
-                || value) && this.options_.isHiddenOnBlur()) {
+            if ((!value && !this.setYearSelectionActive_(false))
+                || value) {
                 this.render_();
             }
             if (value) {

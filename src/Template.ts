@@ -128,6 +128,7 @@ namespace TheDatepicker {
 			// todo při změně isHiddenOnBlur za chodu DP zmizí
 			// todo jiná animace ve fullscreen (anebo animovat jen scaleY jak ve fullcscreen tak na desktopu)
 			// todo tahle animace zřejmě proběhne i když bude externí container
+			// todo hnusnej efekt zavření při přepnutí xxx - u !hidden je isVisible vždy true..
 
 			const isVisible = !this.hasInput_ || viewModel.isActive_() || !this.options_.isHiddenOnBlur();
 
