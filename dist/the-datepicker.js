@@ -69,6 +69,7 @@ var TheDatepicker;
         ClassNameType[ClassNameType["MainDarkMode"] = 64] = "MainDarkMode";
         ClassNameType[ClassNameType["AnimateExpand"] = 65] = "AnimateExpand";
         ClassNameType[ClassNameType["AnimateCollapse"] = 66] = "AnimateCollapse";
+        ClassNameType[ClassNameType["ContainerActive"] = 67] = "ContainerActive";
     })(ClassNameType = TheDatepicker.ClassNameType || (TheDatepicker.ClassNameType = {}));
     var ClassNames = (function () {
         function ClassNames() {
@@ -140,6 +141,7 @@ var TheDatepicker;
                 ['main--darkmode'],
                 ['folding--expand'],
                 ['folding--collapse'],
+                ['container--active'],
             ];
         }
         ClassNames.prototype.clone = function () {
@@ -994,8 +996,12 @@ var TheDatepicker;
             }
             var isHiddenOnBlur = this.options.isHiddenOnBlur();
             var isFullScreenOnMobile = this.options.isFullScreenOnMobile();
+            var isActive = this.viewModel_.isActive_();
             this.container.className = '';
             TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.Container, this.options);
+            if (isActive) {
+                TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerActive, this.options);
+            }
             if (this.options.isDarkModeEnabled()) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerDarkMode, this.options);
             }
@@ -1079,6 +1085,9 @@ var TheDatepicker;
             }
             if (Datepicker.activeDatepicker_ !== activeDatepicker) {
                 return true;
+            }
+            if (activeDatepicker) {
+                activeDatepicker.updateElements_();
             }
             if (!datepicker) {
                 Datepicker.setBodyClass_(false);

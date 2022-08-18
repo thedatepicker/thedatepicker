@@ -68,7 +68,10 @@ namespace TheDatepicker {
 		MainDarkMode,
 		AnimateExpand,
 		AnimateCollapse,
+		ContainerActive,
 	}
+
+	// todo čísla hardcoded a seřadit
 
 	export class ClassNames {
 
@@ -140,6 +143,7 @@ namespace TheDatepicker {
 			['main--darkmode'], // MainDarkMode
 			['folding--expand'], // AnimateExpand
 			['folding--collapse'], // AnimateCollapse
+			['container--active'], // ContainerActive
 		];
 
 		public clone(): ClassNames {

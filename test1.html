@@ -24,9 +24,13 @@
 			}
 			#wrapper-2 {
 				position: absolute;
+				margin: 150px 0 0 150px;
+			}
+			#wrapper-5 {
+				position: absolute;
 				width: 380px;
 			}
-			#input-1, #input-2 {
+			#input-1, #input-5 {
 				background-color: #cbe4ff;
 			}
 		</style>
@@ -36,10 +40,14 @@
 	<article>
 		<div id="wrapper-1">
 			<input type="text" id="input-1" size="20" autofocus>
+			<input type="button" value="toggle HideOnBlur" id="dp-1-HideOnBlur">
 		</div>
 		<div id="wrapper-2">
 			<input type="text" id="input-2" size="20">
-			<input type="button" value="toggle HideOnBlur" id="dp-2-HideOnBlur">
+		</div>
+		<div id="wrapper-5">
+			<input type="text" id="input-5" size="20">
+			<input type="button" value="toggle HideOnBlur" id="dp-5-HideOnBlur">
 		</div>
 	</article>
 
@@ -50,21 +58,35 @@
 		const datepicker1 = new TheDatepicker.Datepicker(input1);
 		datepicker1.render();
 
-		var wrapper2 = document.getElementById('wrapper-2');
 		var input2 = document.getElementById('input-2');
-		wrapper2.style.marginTop = (window.innerHeight - input2.offsetHeight - 50) + 'px';
-		wrapper2.style.marginLeft = (window.innerWidth - input2.offsetWidth - 50) + 'px';
-
-		article.style.height = (2 * window.innerHeight - input2.offsetHeight - 100) + 'px';
-		article.style.width = (2 * window.innerWidth - input2.offsetWidth - 100) + 'px';
-
 		const datepicker2 = new TheDatepicker.Datepicker(input2);
 		datepicker2.render();
 
-		var datepicker2HideOnBlur = document.getElementById('dp-2-HideOnBlur');
-		datepicker2HideOnBlur.addEventListener('click', () => {
-			datepicker2.options.setHideOnBlur(!datepicker2.options.isHiddenOnBlur());
+		var datepicker1HideOnBlur = document.getElementById('dp-1-HideOnBlur');
+		datepicker1HideOnBlur.addEventListener('click', () => {
+			var isHiddenOnBlur = datepicker1.options.isHiddenOnBlur();
+			datepicker1.options.setHideOnBlur(!isHiddenOnBlur);
+			datepicker2.options.setHideOnBlur(!isHiddenOnBlur);
+			datepicker1.render();
 			datepicker2.render();
+		});
+
+
+		var wrapper5 = document.getElementById('wrapper-5');
+		var input5 = document.getElementById('input-5');
+		wrapper5.style.marginTop = (window.innerHeight - input5.offsetHeight - 50) + 'px';
+		wrapper5.style.marginLeft = (window.innerWidth - input5.offsetWidth - 50) + 'px';
+
+		article.style.height = (5 * window.innerHeight - input5.offsetHeight - 100) + 'px';
+		article.style.width = (5 * window.innerWidth - input5.offsetWidth - 100) + 'px';
+
+		const datepicker5 = new TheDatepicker.Datepicker(input5);
+		datepicker5.render();
+
+		var datepicker5HideOnBlur = document.getElementById('dp-5-HideOnBlur');
+		datepicker5HideOnBlur.addEventListener('click', () => {
+			datepicker5.options.setHideOnBlur(!datepicker5.options.isHiddenOnBlur());
+			datepicker5.render();
 		});
 	</script>
 </body>

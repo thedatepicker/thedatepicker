@@ -12,6 +12,9 @@ body.the-datepicker-page {
   top: auto;
   z-index: 99;
 }
+.the-datepicker__container.the-datepicker__container--active {
+  z-index: 100;
+}
 .the-datepicker__container.the-datepicker__container--responsive {
   position: fixed;
   left: 0;

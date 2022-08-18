@@ -540,15 +540,24 @@ namespace TheDatepicker {
 
 			const isHiddenOnBlur = this.options.isHiddenOnBlur();
 			const isFullScreenOnMobile = this.options.isFullScreenOnMobile();
+			const isActive = this.viewModel_.isActive_();
 
 			this.container.className = '';
 
 			HtmlHelper_.addClass_(this.container, ClassNameType.Container, this.options);
+			if (isActive) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerActive, this.options);
+			}
 			if (this.options.isDarkModeEnabled()) {
 				// ContainerDarkMode is deprecated, remove this line on major release
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
 			}
 
+			// todo proč je tu childNodes? zřejmě když ještě není main element vůbec vyrendrován, ale může to nastat?
+			//      nebo jen jako ochrana aby nedošlo k error kdyby nějaký externí js sahal na strukturu?
+
+			// todo toto imo způsobí že když bude otevřený dp mimo window tak se před zavřením fixne jeho pozice
+			// if (!isActive || this.container.childNodes.length === 0) {
 			if (this.container.childNodes.length === 0) {
 				return;
 			}
@@ -641,6 +650,12 @@ namespace TheDatepicker {
 
 			if (Datepicker.activeDatepicker_ !== activeDatepicker) {
 				return true;
+			}
+
+			// todo toto sem dávám kvůli třídě ContainerActive, je to tady dobře?
+			// todo test open dp2 při dp1.onClose
+			if (activeDatepicker) {
+				activeDatepicker.updateElements_();
 			}
 
 			if (!datepicker) {

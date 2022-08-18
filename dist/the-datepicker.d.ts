@@ -66,7 +66,8 @@ declare namespace TheDatepicker {
         ContainerDarkMode = 63,
         MainDarkMode = 64,
         AnimateExpand = 65,
-        AnimateCollapse = 66
+        AnimateCollapse = 66,
+        ContainerActive = 67
     }
     class ClassNames {
         private classNames_;
