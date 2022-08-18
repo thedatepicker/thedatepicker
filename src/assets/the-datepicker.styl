@@ -30,23 +30,21 @@ body.the-datepicker-page
 			top auto
 	.the-datepicker__main
 		border-top-left-radius 0
-		transform-origin top left
+		transform-origin top
 	&.the-datepicker__container--over
 		.the-datepicker__main
 			border-top-left-radius 0.3em
 			border-bottom-left-radius 0
-			transform-origin bottom left
+			transform-origin bottom
 	&.the-datepicker__container--left
 		.the-datepicker__main
 			border-top-left-radius 0.3em
 			border-top-right-radius 0
-			transform-origin top right
 	&.the-datepicker__container--over.the-datepicker__container--left
 		.the-datepicker__main
 			border-bottom-left-radius 0.3em
 			border-top-right-radius 0.3em
 			border-bottom-right-radius 0
-			transform-origin bottom right
 
 .the-datepicker__main
 	width auto
@@ -270,18 +268,18 @@ body.the-datepicker-page
 
 @keyframes the-datepicker-folding-expand
 	from
-		transform scaleX(0) scaleY(0)
+		transform scaleY(0)
 	to
-		transform scaleX(1) scaleY(1)
+		transform scaleY(1)
 
 .the-datepicker__folding--expand
 	animation-name the-datepicker-folding-expand
 
 @keyframes the-datepicker-folding-collapse
 	from
-		transform scaleX(1) scaleY(1)
+		transform scaleY(1)
 	to
-		transform scaleX(0) scaleY(0)
+		transform scaleY(0)
 
 .the-datepicker__folding--collapse
 	animation-name the-datepicker-folding-collapse

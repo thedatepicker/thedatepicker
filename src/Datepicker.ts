@@ -33,7 +33,6 @@ namespace TheDatepicker {
 
 	}
 
-	// todo Untouched atd to neminifikuje
 	enum InitializationPhase {
 		Untouched,
 		Waiting,
@@ -176,10 +175,9 @@ namespace TheDatepicker {
 					return;
 
 				default:
-					// todo jak se updatne např nový formát v inputu pouze po zavolání dp.render() ?
 					// redraw with possibly changed options
-					this.updateElements_();
 					this.viewModel_.render_();
+					this.updateElements_();
 					return;
 			}
 		}
@@ -195,7 +193,7 @@ namespace TheDatepicker {
 				Datepicker.hasClickedViewModel_ = true;
 			}
 
-			if (!Datepicker.activateViewModel_(event, this)) {
+			if (!Datepicker.activateDatepicker_(event, this)) {
 				return false;
 			}
 
@@ -215,7 +213,7 @@ namespace TheDatepicker {
 				return true;
 			}
 
-			if (!Datepicker.activateViewModel_(event, null)) {
+			if (!Datepicker.activateDatepicker_(event, null)) {
 				return false;
 			}
 
@@ -435,7 +433,7 @@ namespace TheDatepicker {
 					if (Datepicker.hasClickedViewModel_) {
 						Datepicker.hasClickedViewModel_ = false;
 					} else {
-						Datepicker.activateViewModel_(event, null);
+						Datepicker.activateDatepicker_(event, null);
 					}
 				};
 
@@ -453,7 +451,7 @@ namespace TheDatepicker {
 			this.removeInitialInputListener_();
 
 			const hit = (event: Event): void => {
-				Datepicker.activateViewModel_(event, this);
+				Datepicker.activateDatepicker_(event, this);
 				Datepicker.hasClickedViewModel_ = true;
 			};
 
@@ -530,8 +528,10 @@ namespace TheDatepicker {
 
 			this.updateInput_();
 
+			const isMobile = Helper_.isMobile_();
+
 			if (this.inputText_) {
-				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && Helper_.isMobile_();
+				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && isMobile;
 			}
 
 			// todo když vyberu datum a znovu otevřu DP tak se otevře do defaultní position
@@ -543,6 +543,7 @@ namespace TheDatepicker {
 			}
 
 			const isHiddenOnBlur = this.options.isHiddenOnBlur();
+			const isFullScreenOnMobile = this.options.isFullScreenOnMobile();
 
 			this.container.className = '';
 
@@ -552,22 +553,25 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
 			}
 
-			if (isHiddenOnBlur && this.options.isFullScreenOnMobile()) {
-				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
-			}
-
 			if (this.container.childNodes.length === 0) {
 				return;
 			}
-
-			const position = this.options.getPosition();
-			let locateOver = position === Position.TopRight || position === Position.TopLeft;
-			let locateLeft = position === Position.BottomLeft || position === Position.TopLeft;
 
 			const mainElement = this.container.childNodes[0] as HTMLElement;
 			mainElement.style.position = '';
 			mainElement.style.top = '';
 			mainElement.style.left = '';
+
+			if (isHiddenOnBlur && isFullScreenOnMobile) {
+				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerResponsive, this.options);
+				if (isMobile) {
+					return;
+				}
+			}
+
+			const position = this.options.getPosition();
+			let locateOver = position === Position.TopRight || position === Position.TopLeft;
+			let locateLeft = position === Position.BottomLeft || position === Position.TopLeft;
 
 			const inputWidth = this.input.offsetWidth;
 			const inputHeight = this.input.offsetHeight;
@@ -628,8 +632,7 @@ namespace TheDatepicker {
 			}
 		}
 
-		// todo rename na activateDatepicker_, nebo vrátit na VM
-		private static activateViewModel_(event: Event | null, datepicker: Datepicker | null): boolean {
+		private static activateDatepicker_(event: Event | null, datepicker: Datepicker | null): boolean {
 			const activeDatepicker = Datepicker.activeDatepicker_;
 
 			if (activeDatepicker === datepicker) {

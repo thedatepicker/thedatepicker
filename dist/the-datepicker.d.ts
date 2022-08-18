@@ -170,7 +170,7 @@ declare namespace TheDatepicker {
         private triggerReadyListener_;
         private updateElements_;
         private static setBodyClass_;
-        private static activateViewModel_;
+        private static activateDatepicker_;
     }
     const onDatepickerReady: typeof Datepicker.onDatepickerReady;
 }

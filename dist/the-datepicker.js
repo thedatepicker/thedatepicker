@@ -684,8 +684,8 @@ var TheDatepicker;
                     }
                     return;
                 default:
-                    this.updateElements_();
                     this.viewModel_.render_();
+                    this.updateElements_();
                     return;
             }
         };
@@ -698,7 +698,7 @@ var TheDatepicker;
                 this.init_();
                 Datepicker.hasClickedViewModel_ = true;
             }
-            if (!Datepicker.activateViewModel_(event, this)) {
+            if (!Datepicker.activateDatepicker_(event, this)) {
                 return false;
             }
             if (this.inputClickable_) {
@@ -714,7 +714,7 @@ var TheDatepicker;
             if (!this.viewModel_.isActive_()) {
                 return true;
             }
-            if (!Datepicker.activateViewModel_(event, null)) {
+            if (!Datepicker.activateDatepicker_(event, null)) {
                 return false;
             }
             if (this.inputClickable_) {
@@ -905,7 +905,7 @@ var TheDatepicker;
                         Datepicker.hasClickedViewModel_ = false;
                     }
                     else {
-                        Datepicker.activateViewModel_(event, null);
+                        Datepicker.activateDatepicker_(event, null);
                     }
                 };
                 TheDatepicker.Helper_.addEventListener_(Datepicker.document_, TheDatepicker.ListenerType_.MouseDown, checkMiss);
@@ -919,7 +919,7 @@ var TheDatepicker;
             }
             this.removeInitialInputListener_();
             var hit = function (event) {
-                Datepicker.activateViewModel_(event, _this);
+                Datepicker.activateDatepicker_(event, _this);
                 Datepicker.hasClickedViewModel_ = true;
             };
             this.listenerRemovers_.push(TheDatepicker.Helper_.addEventListener_(this.container, TheDatepicker.ListenerType_.MouseDown, hit));
@@ -986,31 +986,36 @@ var TheDatepicker;
                 return;
             }
             this.updateInput_();
+            var isMobile = TheDatepicker.Helper_.isMobile_();
             if (this.inputText_) {
-                this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && TheDatepicker.Helper_.isMobile_();
+                this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && isMobile;
             }
             if (this.isContainerExternal_) {
                 return;
             }
             var isHiddenOnBlur = this.options.isHiddenOnBlur();
+            var isFullScreenOnMobile = this.options.isFullScreenOnMobile();
             this.container.className = '';
             TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.Container, this.options);
             if (this.options.isDarkModeEnabled()) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerDarkMode, this.options);
             }
-            if (isHiddenOnBlur && this.options.isFullScreenOnMobile()) {
-                TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerResponsive, this.options);
-            }
             if (this.container.childNodes.length === 0) {
                 return;
             }
-            var position = this.options.getPosition();
-            var locateOver = position === TheDatepicker.Position.TopRight || position === TheDatepicker.Position.TopLeft;
-            var locateLeft = position === TheDatepicker.Position.BottomLeft || position === TheDatepicker.Position.TopLeft;
             var mainElement = this.container.childNodes[0];
             mainElement.style.position = '';
             mainElement.style.top = '';
             mainElement.style.left = '';
+            if (isHiddenOnBlur && isFullScreenOnMobile) {
+                TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerResponsive, this.options);
+                if (isMobile) {
+                    return;
+                }
+            }
+            var position = this.options.getPosition();
+            var locateOver = position === TheDatepicker.Position.TopRight || position === TheDatepicker.Position.TopLeft;
+            var locateLeft = position === TheDatepicker.Position.BottomLeft || position === TheDatepicker.Position.TopLeft;
             var inputWidth = this.input.offsetWidth;
             var inputHeight = this.input.offsetHeight;
             var containerWidth = this.container.offsetWidth;
@@ -1065,7 +1070,7 @@ var TheDatepicker;
                 body.className = className.replace(search, '');
             }
         };
-        Datepicker.activateViewModel_ = function (event, datepicker) {
+        Datepicker.activateDatepicker_ = function (event, datepicker) {
             var activeDatepicker = Datepicker.activeDatepicker_;
             if (activeDatepicker === datepicker) {
                 return true;

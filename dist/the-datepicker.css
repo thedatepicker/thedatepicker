@@ -26,23 +26,21 @@ body.the-datepicker-page {
 }
 .the-datepicker__container .the-datepicker__main {
   border-top-left-radius: 0;
-  transform-origin: top left;
+  transform-origin: top;
 }
 .the-datepicker__container.the-datepicker__container--over .the-datepicker__main {
   border-top-left-radius: 0.3em;
   border-bottom-left-radius: 0;
-  transform-origin: bottom left;
+  transform-origin: bottom;
 }
 .the-datepicker__container.the-datepicker__container--left .the-datepicker__main {
   border-top-left-radius: 0.3em;
   border-top-right-radius: 0;
-  transform-origin: top right;
 }
 .the-datepicker__container.the-datepicker__container--over.the-datepicker__container--left .the-datepicker__main {
   border-bottom-left-radius: 0.3em;
   border-top-right-radius: 0.3em;
   border-bottom-right-radius: 0;
-  transform-origin: bottom right;
 }
 .the-datepicker__main {
   width: auto;
@@ -335,66 +333,66 @@ body.the-datepicker-page {
 }
 @-moz-keyframes the-datepicker-folding-expand {
   from {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
   to {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
 }
 @-webkit-keyframes the-datepicker-folding-expand {
   from {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
   to {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
 }
 @-o-keyframes the-datepicker-folding-expand {
   from {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
   to {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
 }
 @keyframes the-datepicker-folding-expand {
   from {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
   to {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
 }
 @-moz-keyframes the-datepicker-folding-collapse {
   from {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
   to {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
 }
 @-webkit-keyframes the-datepicker-folding-collapse {
   from {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
   to {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
 }
 @-o-keyframes the-datepicker-folding-collapse {
   from {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
   to {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
 }
 @keyframes the-datepicker-folding-collapse {
   from {
-    transform: scaleX(1) scaleY(1);
+    transform: scaleY(1);
   }
   to {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleY(0);
   }
 }
 @-moz-keyframes the-datepicker-fade-out-left {
