@@ -132,6 +132,7 @@ namespace TheDatepicker {
 			}
 
 			this.template_.render_(this);
+			this.datepicker_.updateInput_();
 		}
 
 		public setActive_(event: Event | null, value: boolean): boolean {

@@ -326,6 +326,16 @@ namespace TheDatepicker {
 			return false;
 		}
 
+		public updateInput_(): void {
+			if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
+				return;
+			}
+
+			this.inputText_.value = DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+
+			this.updateDeselectElement_();
+		}
+
 		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<TheDatepicker.Datepicker> | null {
 			if (!Helper_.isElement_(element)) {
 				throw new Error('Element was expected to be an HTMLElement.');
@@ -362,16 +372,6 @@ namespace TheDatepicker {
 		private init_(): void {
 			this.initListeners_();
 			this.initializationPhase_ = InitializationPhase.Initialized;
-		}
-
-		private updateInput_(): void {
-			if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
-				return;
-			}
-
-			this.inputText_.value = DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
-
-			this.updateDeselectElement_();
 		}
 
 		private createContainer_(): HTMLElement {
@@ -526,17 +526,13 @@ namespace TheDatepicker {
 				return;
 			}
 
-			this.updateInput_();
-
 			const isMobile = Helper_.isMobile_();
 
 			if (this.inputText_) {
 				this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && isMobile;
 			}
 
-			// todo když vyberu datum a znovu otevřu DP tak se otevře do defaultní position
 			// todo (test) pokud jsou 2 dp a alespoň jeden je hiddenOnBlur=false a překrývají se, měl by se nějak dealovat z-index?
-			// todo přidat nové ClassNames do index.html (má ale smysl aby tam byly Animate?)
 
 			if (this.isContainerExternal_) {
 				return;
@@ -661,8 +657,6 @@ namespace TheDatepicker {
 			if (Datepicker.activeDatepicker_ !== activeDatepicker) {
 				return true;
 			}
-
-			// todo funguje v pořádku destroy?
 
 			datepicker.updateElements_();
 

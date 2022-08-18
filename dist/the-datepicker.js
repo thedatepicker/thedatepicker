@@ -811,6 +811,13 @@ var TheDatepicker;
             }
             return false;
         };
+        Datepicker.prototype.updateInput_ = function () {
+            if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
+                return;
+            }
+            this.inputText_.value = TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+            this.updateDeselectElement_();
+        };
         Datepicker.onDatepickerReady = function (element, callback) {
             if (callback === void 0) { callback = null; }
             if (!TheDatepicker.Helper_.isElement_(element)) {
@@ -843,13 +850,6 @@ var TheDatepicker;
         Datepicker.prototype.init_ = function () {
             this.initListeners_();
             this.initializationPhase_ = InitializationPhase.Initialized;
-        };
-        Datepicker.prototype.updateInput_ = function () {
-            if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
-                return;
-            }
-            this.inputText_.value = TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
-            this.updateDeselectElement_();
         };
         Datepicker.prototype.createContainer_ = function () {
             return TheDatepicker.HtmlHelper_.createDiv_(TheDatepicker.ClassNameType.Container, this.options);
@@ -985,7 +985,6 @@ var TheDatepicker;
             if (this.initializationPhase_ === InitializationPhase.Destroyed) {
                 return;
             }
-            this.updateInput_();
             var isMobile = TheDatepicker.Helper_.isMobile_();
             if (this.inputText_) {
                 this.inputText_.readOnly = !this.options.isKeyboardOnMobile() && isMobile;
@@ -3639,6 +3638,7 @@ var TheDatepicker;
                 };
             }
             this.template_.render_(this);
+            this.datepicker_.updateInput_();
         };
         ViewModel_.prototype.setActive_ = function (event, value) {
             if (this.active_ === value) {
