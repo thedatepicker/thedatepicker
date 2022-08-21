@@ -559,18 +559,18 @@ declare namespace TheDatepicker {
         getFooterStructureResolver(): StructureResolverInit | null;
         getCellClassesResolvers(): CellClassesResolver[];
         getDayModifiers(): DayModifier[];
-        getBeforeSelectListeners(): SelectListener[];
-        getSelectListeners(): SelectListener[];
-        getBeforeOpenListeners(): OpenOrCloseListener[];
-        getOpenListeners(): OpenOrCloseListener[];
-        getBeforeCloseListeners(): OpenOrCloseListener[];
-        getCloseListeners(): OpenOrCloseListener[];
+        getBeforeSelectListeners(filter?: SelectListener | null): SelectListener[];
+        getSelectListeners(filter?: SelectListener | null): SelectListener[];
+        getBeforeOpenListeners(filter?: OpenOrCloseListener | null): OpenOrCloseListener[];
+        getOpenListeners(filter?: OpenOrCloseListener | null): OpenOrCloseListener[];
+        getBeforeCloseListeners(filter?: OpenOrCloseListener | null): OpenOrCloseListener[];
+        getCloseListeners(filter?: OpenOrCloseListener | null): OpenOrCloseListener[];
         getBeforeOpenAndCloseListeners(): OpenOrCloseListener[];
         getOpenAndCloseListeners(): OpenOrCloseListener[];
-        getBeforeMonthChangeListeners(): MonthChangeListener[];
-        getMonthChangeListeners(): MonthChangeListener[];
-        getBeforeFocusListeners(): FocusListener[];
-        getFocusListeners(): FocusListener[];
+        getBeforeMonthChangeListeners(filter?: MonthChangeListener | null): MonthChangeListener[];
+        getMonthChangeListeners(filter?: MonthChangeListener | null): MonthChangeListener[];
+        getBeforeFocusListeners(filter?: FocusListener | null): FocusListener[];
+        getFocusListeners(filter?: FocusListener | null): FocusListener[];
         private checkConstraints_;
         private calculateMonthCorrection_;
         private calculateDateCorrection_;
@@ -578,6 +578,7 @@ declare namespace TheDatepicker {
         private onEvent_;
         private offEvent_;
         triggerEvent_(eventType: EventType_, caller: ListenerCaller): boolean;
+        private getListeners_;
     }
     export {};
 }

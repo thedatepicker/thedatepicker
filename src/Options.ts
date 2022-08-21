@@ -1216,28 +1216,28 @@ namespace TheDatepicker {
 			return this.dayModifiers_.slice(0);
 		}
 
-		public getBeforeSelectListeners(): SelectListener[] {
-			return this.listeners_.beforeSelect.slice(0);
+		public getBeforeSelectListeners(filter: SelectListener | null = null): SelectListener[] {
+			return this.getListeners_(this.listeners_.beforeSelect, filter);
 		}
 
-		public getSelectListeners(): SelectListener[] {
-			return this.listeners_.select.slice(0);
+		public getSelectListeners(filter: SelectListener | null = null): SelectListener[] {
+			return this.getListeners_(this.listeners_.select, filter);
 		}
 
-		public getBeforeOpenListeners(): OpenOrCloseListener[] {
-			return this.listeners_.beforeOpen.slice(0);
+		public getBeforeOpenListeners(filter: OpenOrCloseListener | null = null): OpenOrCloseListener[] {
+			return this.getListeners_(this.listeners_.beforeOpen, filter);
 		}
 
-		public getOpenListeners(): OpenOrCloseListener[] {
-			return this.listeners_.open.slice(0);
+		public getOpenListeners(filter: OpenOrCloseListener | null = null): OpenOrCloseListener[] {
+			return this.getListeners_(this.listeners_.open, filter);
 		}
 
-		public getBeforeCloseListeners(): OpenOrCloseListener[] {
-			return this.listeners_.beforeClose.slice(0);
+		public getBeforeCloseListeners(filter: OpenOrCloseListener | null = null): OpenOrCloseListener[] {
+			return this.getListeners_(this.listeners_.beforeClose, filter);
 		}
 
-		public getCloseListeners(): OpenOrCloseListener[] {
-			return this.listeners_.close.slice(0);
+		public getCloseListeners(filter: OpenOrCloseListener | null = null): OpenOrCloseListener[] {
+			return this.getListeners_(this.listeners_.close, filter);
 		}
 
 		public getBeforeOpenAndCloseListeners(): OpenOrCloseListener[] {
@@ -1250,20 +1250,20 @@ namespace TheDatepicker {
 			return this.listeners_.open.concat(this.listeners_.close);
 		}
 
-		public getBeforeMonthChangeListeners(): MonthChangeListener[] {
-			return this.listeners_.beforeMonthChange.slice(0);
+		public getBeforeMonthChangeListeners(filter: MonthChangeListener | null = null): MonthChangeListener[] {
+			return this.getListeners_(this.listeners_.beforeMonthChange, filter);
 		}
 
-		public getMonthChangeListeners(): MonthChangeListener[] {
-			return this.listeners_.monthChange.slice(0);
+		public getMonthChangeListeners(filter: MonthChangeListener | null = null): MonthChangeListener[] {
+			return this.getListeners_(this.listeners_.monthChange, filter);
 		}
 
-		public getBeforeFocusListeners(): FocusListener[] {
-			return this.listeners_.beforeFocus.slice(0);
+		public getBeforeFocusListeners(filter: FocusListener | null = null): FocusListener[] {
+			return this.getListeners_(this.listeners_.beforeFocus, filter);
 		}
 
-		public getFocusListeners(): FocusListener[] {
-			return this.listeners_.focus.slice(0);
+		public getFocusListeners(filter: FocusListener | null = null): FocusListener[] {
+			return this.getListeners_(this.listeners_.focus, filter);
 		}
 
 		private checkConstraints_(minDate: Date | null, maxDate: Date | null): void {
@@ -1344,6 +1344,18 @@ namespace TheDatepicker {
 			}
 
 			return true;
+		}
+
+		private getListeners_<Listener extends OneOfListener>(list: Listener[], listener: Listener | null): Listener[] {
+			if (listener) {
+				for (let index = 0; index < list.length; index++) {
+					if (list[index] === listener) {
+						return [listener];
+					}
+				}
+			}
+
+			return list.slice(0);
 		}
 
 	}

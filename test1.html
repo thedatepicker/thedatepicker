@@ -39,41 +39,48 @@
 
 	<article>
 		<div id="wrapper-1">
-			<input type="text" id="input-1" size="20" autofocus>
-			<input type="button" value="toggle HideOnBlur" id="dp-1-HideOnBlur">
+			<label><input type="text" id="input-1" size="20" autofocus> (1)</label>
+			<input type="button" value="toggle HideOnBlur 1" id="dp-1-HideOnBlur">
+			<input type="button" value="2" id="dp-2-HideOnBlur">
+			<input type="button" value="Open 5 on close 1" id="dp-1-OnClose">
 		</div>
 		<div id="wrapper-2">
-			<input type="text" id="input-2" size="20">
+			<label><input type="text" id="input-2" size="20"> (2)</label>
 		</div>
 		<div id="wrapper-5">
-			<input type="text" id="input-5" size="20">
+			<label><input type="text" id="input-5" size="20"> (5)</label>
 			<input type="button" value="toggle HideOnBlur" id="dp-5-HideOnBlur">
 		</div>
 	</article>
 
 	<script>
-		var article = document.getElementsByTagName('article')[0];
+		const article = document.getElementsByTagName('article')[0];
 
-		var input1 = document.getElementById('input-1');
+		const input1 = document.getElementById('input-1');
 		const datepicker1 = new TheDatepicker.Datepicker(input1);
 		datepicker1.render();
 
-		var input2 = document.getElementById('input-2');
+		const datepicker1HideOnBlur = document.getElementById('dp-1-HideOnBlur');
+		datepicker1HideOnBlur.addEventListener('click', () => {
+			const isHiddenOnBlur = datepicker1.options.isHiddenOnBlur();
+			datepicker1.options.setHideOnBlur(!isHiddenOnBlur);
+			datepicker1.render();
+		});
+
+		const input2 = document.getElementById('input-2');
 		const datepicker2 = new TheDatepicker.Datepicker(input2);
 		datepicker2.render();
 
-		var datepicker1HideOnBlur = document.getElementById('dp-1-HideOnBlur');
-		datepicker1HideOnBlur.addEventListener('click', () => {
-			var isHiddenOnBlur = datepicker1.options.isHiddenOnBlur();
-			datepicker1.options.setHideOnBlur(!isHiddenOnBlur);
+		const datepicker2HideOnBlur = document.getElementById('dp-2-HideOnBlur');
+		datepicker2HideOnBlur.addEventListener('click', () => {
+			const isHiddenOnBlur = datepicker2.options.isHiddenOnBlur();
 			datepicker2.options.setHideOnBlur(!isHiddenOnBlur);
-			datepicker1.render();
 			datepicker2.render();
 		});
 
 
-		var wrapper5 = document.getElementById('wrapper-5');
-		var input5 = document.getElementById('input-5');
+		const wrapper5 = document.getElementById('wrapper-5');
+		const input5 = document.getElementById('input-5');
 		wrapper5.style.marginTop = (window.innerHeight - input5.offsetHeight - 50) + 'px';
 		wrapper5.style.marginLeft = (window.innerWidth - input5.offsetWidth - 50) + 'px';
 
@@ -83,10 +90,24 @@
 		const datepicker5 = new TheDatepicker.Datepicker(input5);
 		datepicker5.render();
 
-		var datepicker5HideOnBlur = document.getElementById('dp-5-HideOnBlur');
+		const datepicker5HideOnBlur = document.getElementById('dp-5-HideOnBlur');
 		datepicker5HideOnBlur.addEventListener('click', () => {
 			datepicker5.options.setHideOnBlur(!datepicker5.options.isHiddenOnBlur());
 			datepicker5.render();
+		});
+
+
+		const datepicker1OnClose = document.getElementById('dp-1-OnClose');
+		const onClose1 = () => {
+			console.log('dp5 opens');
+			datepicker5.open();
+		};
+		datepicker1OnClose.addEventListener('click', () => {
+			if (datepicker1.options.getCloseListeners(onClose1).length > 0) {
+				datepicker1.options.offClose(onClose1);
+			} else {
+				datepicker1.options.onClose(onClose1);
+			}
 		});
 	</script>
 </body>

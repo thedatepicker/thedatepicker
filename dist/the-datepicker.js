@@ -1005,7 +1005,7 @@ var TheDatepicker;
             if (this.options.isDarkModeEnabled()) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerDarkMode, this.options);
             }
-            if (this.container.childNodes.length === 0) {
+            if (!isActive || this.container.childNodes.length === 0) {
                 return;
             }
             var mainElement = this.container.childNodes[0];
@@ -2475,23 +2475,29 @@ var TheDatepicker;
         Options.prototype.getDayModifiers = function () {
             return this.dayModifiers_.slice(0);
         };
-        Options.prototype.getBeforeSelectListeners = function () {
-            return this.listeners_.beforeSelect.slice(0);
+        Options.prototype.getBeforeSelectListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.beforeSelect, filter);
         };
-        Options.prototype.getSelectListeners = function () {
-            return this.listeners_.select.slice(0);
+        Options.prototype.getSelectListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.select, filter);
         };
-        Options.prototype.getBeforeOpenListeners = function () {
-            return this.listeners_.beforeOpen.slice(0);
+        Options.prototype.getBeforeOpenListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.beforeOpen, filter);
         };
-        Options.prototype.getOpenListeners = function () {
-            return this.listeners_.open.slice(0);
+        Options.prototype.getOpenListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.open, filter);
         };
-        Options.prototype.getBeforeCloseListeners = function () {
-            return this.listeners_.beforeClose.slice(0);
+        Options.prototype.getBeforeCloseListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.beforeClose, filter);
         };
-        Options.prototype.getCloseListeners = function () {
-            return this.listeners_.close.slice(0);
+        Options.prototype.getCloseListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.close, filter);
         };
         Options.prototype.getBeforeOpenAndCloseListeners = function () {
             TheDatepicker.Helper_.warnDeprecatedUsage_('getBeforeOpenAndCloseListeners', ['getBeforeOpenListeners', 'getBeforeCloseListeners']);
@@ -2501,17 +2507,21 @@ var TheDatepicker;
             TheDatepicker.Helper_.warnDeprecatedUsage_('getOpenAndCloseListeners', ['getOpenListeners', 'getCloseListeners']);
             return this.listeners_.open.concat(this.listeners_.close);
         };
-        Options.prototype.getBeforeMonthChangeListeners = function () {
-            return this.listeners_.beforeMonthChange.slice(0);
+        Options.prototype.getBeforeMonthChangeListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.beforeMonthChange, filter);
         };
-        Options.prototype.getMonthChangeListeners = function () {
-            return this.listeners_.monthChange.slice(0);
+        Options.prototype.getMonthChangeListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.monthChange, filter);
         };
-        Options.prototype.getBeforeFocusListeners = function () {
-            return this.listeners_.beforeFocus.slice(0);
+        Options.prototype.getBeforeFocusListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.beforeFocus, filter);
         };
-        Options.prototype.getFocusListeners = function () {
-            return this.listeners_.focus.slice(0);
+        Options.prototype.getFocusListeners = function (filter) {
+            if (filter === void 0) { filter = null; }
+            return this.getListeners_(this.listeners_.focus, filter);
         };
         Options.prototype.checkConstraints_ = function (minDate, maxDate) {
             if (minDate && maxDate && minDate.getTime() > maxDate.getTime()) {
@@ -2580,6 +2590,16 @@ var TheDatepicker;
                 }
             }
             return true;
+        };
+        Options.prototype.getListeners_ = function (list, listener) {
+            if (listener) {
+                for (var index = 0; index < list.length; index++) {
+                    if (list[index] === listener) {
+                        return [listener];
+                    }
+                }
+            }
+            return list.slice(0);
         };
         return Options;
     }());
