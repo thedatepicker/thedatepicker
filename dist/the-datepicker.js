@@ -1006,18 +1006,19 @@ var TheDatepicker;
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerDarkMode, this.options);
             }
             var dataPosition = 'data-position';
-            if (!isActive) {
+            if (!isActive && isHiddenOnBlur) {
                 var position_1 = this.container.getAttribute(dataPosition);
-                if (position_1[0] === '1') {
-                    TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerOver, this.options);
-                }
-                if (position_1[1] === '1') {
-                    TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerLeft, this.options);
+                if (position_1) {
+                    if (position_1[0] === '1') {
+                        TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerOver, this.options);
+                    }
+                    if (position_1[1] === '1') {
+                        TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerLeft, this.options);
+                    }
                 }
                 return;
             }
             if (this.container.childNodes.length === 0) {
-                return;
             }
             var mainElement = this.container.childNodes[0];
             mainElement.style.position = '';

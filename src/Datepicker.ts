@@ -551,23 +551,27 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
 			}
 
+			// todo nebylo by lepší namísto data atributu použít prostě property (např Datepicker.lastPosition) ?
+			// todo a nebylo by i lepší aby se o tyhle grafický záležitosti staral Template? tam by se mohla position upravit afterAnimate
 			const dataPosition = 'data-position';
-			if (!isActive) {
+			if (!isActive && isHiddenOnBlur) {
 				const position = this.container.getAttribute(dataPosition);
-				if (position[0] === '1') {
-					HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
-				}
-				if (position[1] === '1') {
-					HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
+				if (position) {
+					if (position[0] === '1') {
+						HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
+					}
+					if (position[1] === '1') {
+						HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
+					}
 				}
 				return;
 			}
 
-			// todo proč je tu childNodes? zřejmě když ještě není main element vůbec vyrendrován, ale může to nastat?
-			//      nebo jen jako ochrana aby nedošlo k error kdyby nějaký externí js sahal na strukturu?
-
 			if (this.container.childNodes.length === 0) {
-				return;
+				// todo proč je tu tenhle if? zřejmě když ještě není main element vůbec vyrendrován, ale může to nastat?
+				//      nebo jen jako ochrana aby nedošlo k error kdyby nějaký externí js sahal na strukturu?
+				//      (ale externí js to může rozbít naprosto libovolně takže to by nedávalo smysl)
+				// return;
 			}
 
 			const mainElement = this.container.childNodes[0] as HTMLElement;
