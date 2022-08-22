@@ -1005,7 +1005,18 @@ var TheDatepicker;
             if (this.options.isDarkModeEnabled()) {
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerDarkMode, this.options);
             }
-            if (!isActive || this.container.childNodes.length === 0) {
+            var dataPosition = 'data-position';
+            if (!isActive) {
+                var position_1 = this.container.getAttribute(dataPosition);
+                if (position_1[0] === '1') {
+                    TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerOver, this.options);
+                }
+                if (position_1[1] === '1') {
+                    TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerLeft, this.options);
+                }
+                return;
+            }
+            if (this.container.childNodes.length === 0) {
                 return;
             }
             var mainElement = this.container.childNodes[0];
@@ -1055,6 +1066,7 @@ var TheDatepicker;
                 TheDatepicker.HtmlHelper_.addClass_(this.container, TheDatepicker.ClassNameType.ContainerLeft, this.options);
                 mainElement.style.left = '-' + (containerWidth - inputWidth) + 'px';
             }
+            this.container.setAttribute(dataPosition, (locateOver ? '1' : '0') + (locateLeft ? '1' : '0'));
         };
         Datepicker.setBodyClass_ = function (enable) {
             var pageClass = 'the-datepicker-page';

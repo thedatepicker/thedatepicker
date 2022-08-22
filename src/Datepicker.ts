@@ -540,8 +540,6 @@ namespace TheDatepicker {
 			const isFullScreenOnMobile = this.options.isFullScreenOnMobile();
 			const isActive = this.viewModel_.isActive_();
 
-			// todo když se dp zavírá, přijde o třídu over/left (to způsobí špatně rohy a nesprávný směr animace)
-			//      šlo by to vyřešit např fcí removeClass...
 			this.container.className = '';
 
 			HtmlHelper_.addClass_(this.container, ClassNameType.Container, this.options);
@@ -553,10 +551,22 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerDarkMode, this.options);
 			}
 
+			const dataPosition = 'data-position';
+			if (!isActive) {
+				const position = this.container.getAttribute(dataPosition);
+				if (position[0] === '1') {
+					HtmlHelper_.addClass_(this.container, ClassNameType.ContainerOver, this.options);
+				}
+				if (position[1] === '1') {
+					HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
+				}
+				return;
+			}
+
 			// todo proč je tu childNodes? zřejmě když ještě není main element vůbec vyrendrován, ale může to nastat?
 			//      nebo jen jako ochrana aby nedošlo k error kdyby nějaký externí js sahal na strukturu?
 
-			if (!isActive || this.container.childNodes.length === 0) {
+			if (this.container.childNodes.length === 0) {
 				return;
 			}
 
@@ -615,6 +625,8 @@ namespace TheDatepicker {
 				HtmlHelper_.addClass_(this.container, ClassNameType.ContainerLeft, this.options);
 				mainElement.style.left = '-' + (containerWidth - inputWidth) + 'px';
 			}
+
+			this.container.setAttribute(dataPosition, (locateOver ? '1' : '0') + (locateLeft ? '1' : '0'));
 		}
 
 		private static setBodyClass_(enable: boolean) {
