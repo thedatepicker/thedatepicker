@@ -11,8 +11,8 @@
   "browser": "dist/the-datepicker.min.js",
   "devDependencies": {
     "stylus": "^0.58.1",
-    "typescript": "^4.7.4",
-    "uglify-js": "^3.16.2"
+    "typescript": "^4.9.3",
+    "uglify-js": "^3.17.4"
   },
   "scripts": {
     "js": "tsc",
