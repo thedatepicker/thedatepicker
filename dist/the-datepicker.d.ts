@@ -610,7 +610,6 @@ declare namespace TheDatepicker {
         private daysElements_;
         private daysButtonsElements_;
         private daysContentsElements_;
-        private yearsRowsElements_;
         private yearsElements_;
         private yearsButtonsElements_;
         private yearsContentsElements_;

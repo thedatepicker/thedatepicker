@@ -2555,7 +2555,6 @@ var TheDatepicker;
             this.daysElements_ = [];
             this.daysButtonsElements_ = [];
             this.daysContentsElements_ = [];
-            this.yearsRowsElements_ = [];
             this.yearsElements_ = [];
             this.yearsButtonsElements_ = [];
             this.yearsContentsElements_ = [];
@@ -3192,7 +3191,6 @@ var TheDatepicker;
             for (var index = 0; index < this.options_.getTableOfYearsRowsCount(); index++) {
                 rows.push(this.createTableOfYearsRowElement_(viewModel));
             }
-            this.yearsRowsElements_ = rows;
             return TheDatepicker.HtmlHelper_.createTableBody_(rows, TheDatepicker.ClassNameType.YearsTableBody, this.options_);
         };
         Template_.prototype.updateTableOfYearsRowsElements_ = function (viewModel) {
@@ -3200,8 +3198,7 @@ var TheDatepicker;
                 return;
             }
             var rows = viewModel.getYearsRows_();
-            for (var rowIndex = 0; rowIndex < this.yearsRowsElements_.length; rowIndex++) {
-                var rowElement = this.yearsRowsElements_[rowIndex];
+            for (var rowIndex = 0; rowIndex < this.yearsElements_.length; rowIndex++) {
                 var cells = rows.length > rowIndex ? rows[rowIndex] : null;
                 if (cells) {
                     for (var columnIndex = 0; columnIndex < this.yearsElements_[rowIndex].length; columnIndex++) {

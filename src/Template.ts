@@ -74,7 +74,6 @@ namespace TheDatepicker {
 		private daysElements_: HTMLElement[][] = [];
 		private daysButtonsElements_: HTMLDayButtonElement[][] = [];
 		private daysContentsElements_: HTMLElement[][] = [];
-		private yearsRowsElements_: HTMLElement[] = [];
 		private yearsElements_: HTMLElement[][] = [];
 		private yearsButtonsElements_: HTMLYearButtonElement[][] = [];
 		private yearsContentsElements_: HTMLElement[][] = [];
@@ -855,7 +854,6 @@ namespace TheDatepicker {
 			for (let index = 0; index < this.options_.getTableOfYearsRowsCount(); index++) {
 				rows.push(this.createTableOfYearsRowElement_(viewModel));
 			}
-			this.yearsRowsElements_ = rows;
 
 			return HtmlHelper_.createTableBody_(rows as HTMLTableRowElement[], ClassNameType.YearsTableBody, this.options_);
 		}
@@ -867,8 +865,7 @@ namespace TheDatepicker {
 
 			const rows = viewModel.getYearsRows_();
 
-			for (let rowIndex = 0; rowIndex < this.yearsRowsElements_.length; rowIndex++) {
-				const rowElement = this.yearsRowsElements_[rowIndex];
+			for (let rowIndex = 0; rowIndex < this.yearsElements_.length; rowIndex++) {
 				const cells = rows.length > rowIndex ? rows[rowIndex] : null;
 
 				if (cells) {
