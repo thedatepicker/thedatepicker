@@ -118,8 +118,8 @@ declare namespace TheDatepicker {
         onfocusin?: (event: FocusEvent) => void;
     }
     type HTMLDatepickerElement = (HTMLDatepickerInputElement & HTMLElement) | HTMLDatepickerContainerElement;
-    type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
-    type ReadyPromiseResolve = (datepicker: TheDatepicker.Datepicker) => void;
+    type ReadyListener = (datepicker: Datepicker, element: HTMLDatepickerElement) => void;
+    type ReadyPromiseResolve = (datepicker: Datepicker) => void;
     class Datepicker {
         readonly options: Options;
         input: (HTMLDatepickerInputElement & HTMLElement) | null;
@@ -156,7 +156,7 @@ declare namespace TheDatepicker {
         canType_(char: string): boolean;
         readInput_(event?: Event | null): boolean;
         updateInput_(): void;
-        static onDatepickerReady(element: HTMLDatepickerElement, callback?: ReadyListener | null): Promise<TheDatepicker.Datepicker> | null;
+        static onDatepickerReady(element: HTMLDatepickerElement, callback?: ReadyListener | null): Promise<Datepicker> | null;
         private createContainer_;
         private createDeselectElement_;
         private updateDeselectElement_;

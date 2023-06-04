@@ -21,9 +21,9 @@ namespace TheDatepicker {
 
 	}
 
-	export type ReadyListener = (datepicker: TheDatepicker.Datepicker, element: HTMLDatepickerElement) => void;
+	export type ReadyListener = (datepicker: Datepicker, element: HTMLDatepickerElement) => void;
 
-	export type ReadyPromiseResolve = (datepicker: TheDatepicker.Datepicker) => void;
+	export type ReadyPromiseResolve = (datepicker: Datepicker) => void;
 
 	interface DatepickerReadyListener {
 
@@ -340,7 +340,7 @@ namespace TheDatepicker {
 			this.updateDeselectElement_();
 		}
 
-		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<TheDatepicker.Datepicker> | null {
+		public static onDatepickerReady(element: HTMLDatepickerElement, callback: ReadyListener | null = null): Promise<Datepicker> | null {
 			if (!Helper_.isElement_(element)) {
 				throw new Error('Element was expected to be an HTMLElement.');
 			}
@@ -351,7 +351,7 @@ namespace TheDatepicker {
 			// @ts-ignore
 			if (typeof Promise !== 'undefined') {
 				// @ts-ignore
-				promise = new Promise<TheDatepicker.Datepicker>((resolve: ReadyPromiseResolve): void => {
+				promise = new Promise<Datepicker>((resolve: ReadyPromiseResolve): void => {
 					promiseResolve = resolve;
 				});
 			}
