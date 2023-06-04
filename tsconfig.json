@@ -1,12 +1,16 @@
 {
 	"compilerOptions": {
-	  "target": "ES3",
-	  "noImplicitAny": true,
-	  "removeComments": true,
-	  "preserveConstEnums": true,
-	  "rootDir": "./src/",
-	  "outFile": "dist/the-datepicker.js",
-	  "declaration": true
+		"target": "ES5",
+		"module": "CommonJS",
+		"moduleResolution": "Node",
+		"esModuleInterop": true,
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"rootDir": "./src/",
+		"declaration": true,
+		"declarationDir": "amd",
+		"forceConsistentCasingInFileNames": true
 	},
-	"exclude": ["dist"]
+	"include": ["src"]
 }
