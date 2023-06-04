@@ -1,0 +1,5 @@
+amd: AMD module distribution (index.js) & TypeScript declarations (*.d.ts)
+dist: plain JavaScript distribution
+namespaced (not versioned): Ported namespaced TypeScript
+port: PHP library to port module TypeScript (src) to namespaced TypeScript (namespaced)
+src: TypeScript source code (development directory)
