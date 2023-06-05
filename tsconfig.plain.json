@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"target": "ES3",
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"rootDir": "./namespaced/",
+		"outFile": "dist/the-datepicker.js",
+		"declaration": true
+	},
+	"include": ["namespaced"]
+}

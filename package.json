@@ -18,11 +18,12 @@
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
-    "webpack" : "webpack --config webpack.config.js",
-    "js": "tsc",
+    "port": "php port.php",
+    "js": "tsc --project tsconfig.plain.json",
     "css": "stylus src/assets -o dist",
     "minify": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js",
-    "build": "npm run webpack && npm run css && npm run minify"
+    "webpack" : "webpack --config webpack.config.js",
+    "build": "npm run port && npm run js && npm run css && npm run minify && npm run webpack"
   },
   "bugs": {
     "url": "https://github.com/thedatepicker/thedatepicker/issues"
