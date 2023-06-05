@@ -23,7 +23,8 @@
     "css": "stylus src/assets -o dist",
     "minify": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js",
     "webpack" : "webpack --config webpack.config.js",
-    "build": "npm run port && npm run js && npm run css && npm run minify && npm run webpack"
+    "minify-amd": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o amd/index.min.js amd/index.js",
+    "build": "npm run port && npm run js && npm run css && npm run minify && npm run webpack && npm run minify-amd"
   },
   "bugs": {
     "url": "https://github.com/thedatepicker/thedatepicker/issues"
