@@ -593,6 +593,7 @@ export default class Options {
 	// TheDatepicker.Position.BottomLeft works similarly.
 	// TheDatepicker.Position.TopRight -"-
 	// TheDatepicker.Position.TopLeft -"-
+	// Note that while PositionFixing is on, datepicker still render to the different side, when there's no enough space.
 	// Works only when there is no custom container.
 	// defaults to Position.BottomRight
 	public setPosition(position: Position): void {
