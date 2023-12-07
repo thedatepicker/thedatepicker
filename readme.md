@@ -76,7 +76,8 @@ For example ...
 
 <script>
 const container = document.getElementById('my-container');
-new TheDatepicker.Datepicker(null, container);
+const datepicker = new TheDatepicker.Datepicker(null, container);
+datepicker.render();
 </script>
 ```
 
