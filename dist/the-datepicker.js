@@ -247,7 +247,7 @@ var TheDatepicker;
             return result;
         };
         DateConverter_.parseDate_ = function (text, options) {
-            if (text === '') {
+            if ((text.trim ? text.trim() : text) === '') {
                 return null;
             }
             var format = options.getInputFormat();
