@@ -45,7 +45,7 @@ export default class Datepicker {
     getDay(date: Date | string): Day;
     canType_(char: string): boolean;
     readInput_(event?: Event | null): boolean;
-    updateInput_(): void;
+    updateInput_(force?: boolean): void;
     static onDatepickerReady(element: HTMLDatepickerElement, callback?: ReadyListener | null): Promise<Datepicker> | null;
     private createContainer_;
     private createDeselectElement_;

@@ -814,11 +814,14 @@ var TheDatepicker;
             }
             return false;
         };
-        Datepicker.prototype.updateInput_ = function () {
+        Datepicker.prototype.updateInput_ = function (force) {
+            if (force === void 0) { force = false; }
             if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
                 return;
             }
-            this.inputText_.value = TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+            if (force || !this.options.isInputInvalidValueKept()) {
+                this.inputText_.value = TheDatepicker.DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+            }
             this.updateDeselectElement_();
         };
         Datepicker.onDatepickerReady = function (element, callback) {
@@ -1673,6 +1676,7 @@ var TheDatepicker;
             this.dayModifiers_ = [];
             this.inputFormat_ = 'j. n. Y';
             this.allowInputAnyChar_ = false;
+            this.inputKeepInvalidValue_ = false;
             this.daysOutOfMonthVisible_ = false;
             this.fixedRowsCount_ = false;
             this.toggleSelection_ = false;
@@ -1742,6 +1746,7 @@ var TheDatepicker;
             options.dayModifiers_ = this.dayModifiers_.slice(0);
             options.inputFormat_ = this.inputFormat_;
             options.allowInputAnyChar_ = this.allowInputAnyChar_;
+            options.inputKeepInvalidValue_ = this.inputKeepInvalidValue_;
             options.daysOutOfMonthVisible_ = this.daysOutOfMonthVisible_;
             options.fixedRowsCount_ = this.fixedRowsCount_;
             options.toggleSelection_ = this.toggleSelection_;
@@ -1866,6 +1871,9 @@ var TheDatepicker;
         };
         Options.prototype.setAllowInputAnyChar = function (value) {
             this.allowInputAnyChar_ = !!value;
+        };
+        Options.prototype.setInputKeepInvalidValue = function (value) {
+            this.inputKeepInvalidValue_ = !!value;
         };
         Options.prototype.setDaysOutOfMonthVisible = function (value) {
             this.daysOutOfMonthVisible_ = !!value;
@@ -2359,6 +2367,9 @@ var TheDatepicker;
         };
         Options.prototype.isAllowedInputAnyChar = function () {
             return this.allowInputAnyChar_;
+        };
+        Options.prototype.isInputInvalidValueKept = function () {
+            return this.inputKeepInvalidValue_;
         };
         Options.prototype.getPosition = function () {
             return this.position_;
@@ -3708,6 +3719,7 @@ var TheDatepicker;
                 if (canToggle && this.options_.hasToggleSelection()) {
                     return this.cancelSelection_(event);
                 }
+                this.forceUpdateInput_();
                 return false;
             }
             var previousDay = this.selectedDate_ ? this.createDay_(this.selectedDate_) : null;
@@ -3721,6 +3733,7 @@ var TheDatepicker;
             if (!doUpdateMonth || !this.goToMonth_(event, date)) {
                 this.render_();
             }
+            this.forceUpdateInput_();
             this.triggerOnSelect_(event, day, previousDay);
             return true;
         };
@@ -3836,6 +3849,7 @@ var TheDatepicker;
                 return false;
             }
             if (!this.selectedDate_) {
+                this.forceUpdateInput_();
                 return false;
             }
             var previousDay = this.createDay_(this.selectedDate_);
@@ -3844,6 +3858,7 @@ var TheDatepicker;
             }
             this.selectedDate_ = null;
             this.render_();
+            this.forceUpdateInput_();
             this.triggerOnSelect_(event, null, previousDay);
             return true;
         };
@@ -4091,6 +4106,11 @@ var TheDatepicker;
             }
             this.options_.modifyDay(day);
             return day;
+        };
+        ViewModel_.prototype.forceUpdateInput_ = function () {
+            if (this.options_.isInputInvalidValueKept()) {
+                this.datepicker_.updateInput_(true);
+            }
         };
         ViewModel_.prototype.triggerOnBeforeSelect_ = function (event, day, previousDay) {
             var _this = this;

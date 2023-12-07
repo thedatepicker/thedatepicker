@@ -275,6 +275,7 @@ export default class ViewModel_ {
 				return this.cancelSelection_(event);
 			}
 
+			this.forceUpdateInput_();
 			return false;
 		}
 
@@ -294,6 +295,7 @@ export default class ViewModel_ {
 			this.render_();
 		}
 
+		this.forceUpdateInput_();
 		this.triggerOnSelect_(event, day, previousDay);
 
 		return true;
@@ -431,6 +433,7 @@ export default class ViewModel_ {
 		}
 
 		if (!this.selectedDate_) {
+			this.forceUpdateInput_();
 			return false;
 		}
 
@@ -443,6 +446,7 @@ export default class ViewModel_ {
 		this.selectedDate_ = null;
 		this.render_();
 
+		this.forceUpdateInput_();
 		this.triggerOnSelect_(event, null, previousDay);
 
 		return true;
@@ -725,6 +729,12 @@ export default class ViewModel_ {
 		this.options_.modifyDay(day);
 
 		return day;
+	}
+
+	private forceUpdateInput_(): void {
+		if (this.options_.isInputInvalidValueKept()) {
+			this.datepicker_.updateInput_(true);
+		}
 	}
 
 	private triggerOnBeforeSelect_(event: Event | null, day: Day | null, previousDay: Day | null): boolean {

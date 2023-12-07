@@ -285,6 +285,9 @@
 					<label>datepicker.options.setAllowInputAnyChar(<input type="checkbox" id="allowInputAnyChar">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setInputKeepInvalidValue(<input type="checkbox" id="inputKeepInvalidValue">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setFirstDayOfWeek(<select id="firstDayOfWeek">
 							<option value="1" selected="selected">TheDatepicker.DayOfWeek.Monday</option>
 							<option value="2">TheDatepicker.DayOfWeek.Tuesday</option>
@@ -1164,6 +1167,13 @@ return header;
 			allowInputAnyCharInput.onchange = function () {
 				updateSetting(allowInputAnyCharInput, function () {
 					datepicker.options.setAllowInputAnyChar(allowInputAnyCharInput.checked);
+				});
+			};
+
+			var inputKeepInvalidValue = document.getElementById('inputKeepInvalidValue');
+			inputKeepInvalidValue.onchange = function () {
+				updateSetting(inputKeepInvalidValue, function () {
+					datepicker.options.setInputKeepInvalidValue(inputKeepInvalidValue.checked);
 				});
 			};
 

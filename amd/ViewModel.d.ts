@@ -71,6 +71,7 @@ export default class ViewModel_ {
     private createYearSelectionState_;
     triggerKeyPress_(event: KeyboardEvent): void;
     createDay_(date: Date): Day;
+    private forceUpdateInput_;
     private triggerOnBeforeSelect_;
     private triggerOnSelect_;
     private triggerOnBeforeOpen_;

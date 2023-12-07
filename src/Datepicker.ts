@@ -337,12 +337,14 @@ export default class Datepicker {
 		return false;
 	}
 
-	public updateInput_(): void {
+	public updateInput_(force = false): void {
 		if (!this.inputText_ || this.inputText_ === Datepicker.document_.activeElement) {
 			return;
 		}
 
-		this.inputText_.value = DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+		if (force || !this.options.isInputInvalidValueKept()) {
+			this.inputText_.value = DateConverter_.formatDate_(this.viewModel_.selectedDate_, this.options) || '';
+		}
 
 		this.updateDeselectElement_();
 	}

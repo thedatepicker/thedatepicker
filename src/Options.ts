@@ -81,6 +81,7 @@ export default class Options {
 	private dayModifiers_: DayModifier[] = [];
 	private inputFormat_ = 'j. n. Y';
 	private allowInputAnyChar_ = false;
+	private inputKeepInvalidValue_ = false;
 	private daysOutOfMonthVisible_ = false;
 	private fixedRowsCount_ = false;
 	private toggleSelection_ = false;
@@ -154,6 +155,7 @@ export default class Options {
 		options.dayModifiers_ = this.dayModifiers_.slice(0);
 		options.inputFormat_ = this.inputFormat_;
 		options.allowInputAnyChar_ = this.allowInputAnyChar_;
+		options.inputKeepInvalidValue_ = this.inputKeepInvalidValue_;
 		options.daysOutOfMonthVisible_ = this.daysOutOfMonthVisible_;
 		options.fixedRowsCount_ = this.fixedRowsCount_;
 		options.toggleSelection_ = this.toggleSelection_;
@@ -381,6 +383,13 @@ export default class Options {
 	// defaults to false
 	public setAllowInputAnyChar(value: boolean): void {
 		this.allowInputAnyChar_ = !!value;
+	}
+
+	// Setting to true will keep any value typed in the input,
+	// otherwise an invalid value is updated to the valid one.
+	// defaults to false
+	public setInputKeepInvalidValue(value: boolean): void {
+		this.inputKeepInvalidValue_ = !!value;
 	}
 
 	// Setting to false will hide days which belongs to other months.
@@ -1150,6 +1159,10 @@ export default class Options {
 
 	public isAllowedInputAnyChar(): boolean {
 		return this.allowInputAnyChar_;
+	}
+
+	public isInputInvalidValueKept(): boolean {
+		return this.inputKeepInvalidValue_;
 	}
 
 	public getPosition(): Position {

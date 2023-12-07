@@ -51,6 +51,7 @@ export default class Options {
     private dayModifiers_;
     private inputFormat_;
     private allowInputAnyChar_;
+    private inputKeepInvalidValue_;
     private daysOutOfMonthVisible_;
     private fixedRowsCount_;
     private toggleSelection_;
@@ -110,6 +111,7 @@ export default class Options {
     removeDayModifier(modifier?: DayModifier | null): void;
     setInputFormat(format: string): void;
     setAllowInputAnyChar(value: boolean): void;
+    setInputKeepInvalidValue(value: boolean): void;
     setDaysOutOfMonthVisible(value: boolean): void;
     setFixedRowsCount(value: boolean): void;
     setToggleSelection(value: boolean): void;
@@ -231,6 +233,7 @@ export default class Options {
     isHiddenOnSelect(): boolean;
     getInputFormat(): string;
     isAllowedInputAnyChar(): boolean;
+    isInputInvalidValueKept(): boolean;
     getPosition(): Position;
     isPositionFixingEnabled(): boolean;
     isFullScreenOnMobile(): boolean;

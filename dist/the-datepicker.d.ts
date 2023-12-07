@@ -155,7 +155,7 @@ declare namespace TheDatepicker {
         getDay(date: Date | string): Day;
         canType_(char: string): boolean;
         readInput_(event?: Event | null): boolean;
-        updateInput_(): void;
+        updateInput_(force?: boolean): void;
         static onDatepickerReady(element: HTMLDatepickerElement, callback?: ReadyListener | null): Promise<Datepicker> | null;
         private createContainer_;
         private createDeselectElement_;
@@ -351,6 +351,7 @@ declare namespace TheDatepicker {
         private dayModifiers_;
         private inputFormat_;
         private allowInputAnyChar_;
+        private inputKeepInvalidValue_;
         private daysOutOfMonthVisible_;
         private fixedRowsCount_;
         private toggleSelection_;
@@ -410,6 +411,7 @@ declare namespace TheDatepicker {
         removeDayModifier(modifier?: DayModifier | null): void;
         setInputFormat(format: string): void;
         setAllowInputAnyChar(value: boolean): void;
+        setInputKeepInvalidValue(value: boolean): void;
         setDaysOutOfMonthVisible(value: boolean): void;
         setFixedRowsCount(value: boolean): void;
         setToggleSelection(value: boolean): void;
@@ -531,6 +533,7 @@ declare namespace TheDatepicker {
         isHiddenOnSelect(): boolean;
         getInputFormat(): string;
         isAllowedInputAnyChar(): boolean;
+        isInputInvalidValueKept(): boolean;
         getPosition(): Position;
         isPositionFixingEnabled(): boolean;
         isFullScreenOnMobile(): boolean;
@@ -765,6 +768,7 @@ declare namespace TheDatepicker {
         private createYearSelectionState_;
         triggerKeyPress_(event: KeyboardEvent): void;
         createDay_(date: Date): Day;
+        private forceUpdateInput_;
         private triggerOnBeforeSelect_;
         private triggerOnSelect_;
         private triggerOnBeforeOpen_;
