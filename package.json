@@ -1,6 +1,6 @@
 {
   "name": "thedatepicker",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "js": "tsc --project tsconfig.plain.json",
     "css": "stylus src/assets -o dist",
     "minify": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js",
-    "webpack" : "webpack --config webpack.config.js",
+    "webpack": "webpack --config webpack.config.js",
     "minify-amd": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o amd/index.min.js amd/index.js",
     "build": "npm run port && npm run js && npm run css && npm run minify && npm run webpack && npm run minify-amd"
   },
