@@ -1347,7 +1347,7 @@ var TheDatepicker;
                 var options = void 0;
                 if (isPassive && Helper_.isPassiveEventListenerSupported_()) {
                     options = {
-                        passive: true
+                        passive: true,
                     };
                 }
                 element.addEventListener(listenerType, listener, options);
@@ -1431,11 +1431,11 @@ var TheDatepicker;
             Helper_.addEventListener_(element, ListenerType_.TouchStart, function (event) {
                 startPosition = {
                     x: event.touches[0].clientX,
-                    y: event.touches[0].clientY
+                    y: event.touches[0].clientY,
                 };
                 minDistance = {
                     x: element.offsetWidth / 5,
-                    y: element.offsetHeight / 5
+                    y: element.offsetHeight / 5,
                 };
             }, true);
             Helper_.addEventListener_(element, ListenerType_.TouchMove, function (event) {
@@ -1718,7 +1718,7 @@ var TheDatepicker;
                 beforeMonthChange: [],
                 monthChange: [],
                 beforeFocus: [],
-                focus: []
+                focus: [],
             };
             this.translator = translator || new TheDatepicker.Translator();
             this.classNames = classNames || new TheDatepicker.ClassNames();
@@ -1838,7 +1838,7 @@ var TheDatepicker;
             update = TheDatepicker.Helper_.checkFunction_('Resolver (update)', update);
             this.cellContentStructureResolver_ = init ? {
                 init: init,
-                update: update
+                update: update,
             } : null;
         };
         Options.prototype.setHeaderStructureResolver = function (resolver) {
@@ -2762,7 +2762,7 @@ var TheDatepicker;
             for (var monthNumber = 0; monthNumber < 12; monthNumber++) {
                 options.push({
                     value: monthNumber + '',
-                    label: this.translateMonth_(monthNumber)
+                    label: this.translateMonth_(monthNumber),
                 });
             }
             var selectElement = TheDatepicker.HtmlHelper_.createSelectInput_(options, function (event, monthNumber) {
@@ -2899,7 +2899,7 @@ var TheDatepicker;
                 if (!viewModel.goToMonth_(event, newMonth)) {
                     _this.monthAndYearSelect_.value = _this.getMonthAndYearOptionValue_({
                         month: currentMonth.getMonth(),
-                        year: currentMonth.getFullYear()
+                        year: currentMonth.getFullYear(),
                     });
                 }
             }, this.options_);
@@ -2918,7 +2918,7 @@ var TheDatepicker;
             var currentMonth = viewModel.getCurrentMonth_();
             var currentData = {
                 month: currentMonth.getMonth(),
-                year: currentMonth.getFullYear()
+                year: currentMonth.getFullYear(),
             };
             var currentIndex = this.calculateMonthAndYearIndex_(currentData);
             this.monthAndYearElement_.innerText = this.translateMonthAndYear_(currentData);
@@ -2961,7 +2961,7 @@ var TheDatepicker;
         Template_.prototype.getMonthAndYearByIndex_ = function (index) {
             return {
                 year: Math.floor(index / 12),
-                month: index % 12
+                month: index % 12,
             };
         };
         Template_.prototype.getMonthAndYearOptionValue_ = function (data) {
@@ -2971,7 +2971,7 @@ var TheDatepicker;
             var parts = value.split('-');
             return {
                 month: parseInt(parts[1], 10),
-                year: parseInt(parts[0], 10)
+                year: parseInt(parts[0], 10),
             };
         };
         Template_.prototype.calculateDropdownRange_ = function (current, min, max) {
@@ -2995,7 +2995,7 @@ var TheDatepicker;
             }
             return {
                 from: from,
-                to: to
+                to: to,
             };
         };
         Template_.prototype.calculateDropdownDiff_ = function (options, newRange, getNumerical) {
@@ -3021,7 +3021,7 @@ var TheDatepicker;
             return {
                 prepend: prepend,
                 append: append,
-                remove: remove
+                remove: remove,
             };
         };
         Template_.prototype.createTableElement_ = function (viewModel) {
@@ -3597,7 +3597,7 @@ var TheDatepicker;
             if (!this.tableOfYearsSettings_) {
                 this.tableOfYearsSettings_ = {
                     rowsCount: this.options_.getTableOfYearsRowsCount(),
-                    columnsCount: this.options_.getTableOfYearsColumnsCount()
+                    columnsCount: this.options_.getTableOfYearsColumnsCount(),
                 };
             }
             this.template_.render_(this);
@@ -4183,7 +4183,7 @@ var TheDatepicker;
             }
             this.outsideDates_ = {
                 prepend: prepend,
-                append: append
+                append: append,
             };
             return this.outsideDates_;
         };
