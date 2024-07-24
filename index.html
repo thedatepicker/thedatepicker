@@ -341,6 +341,9 @@
 					<label>datepicker.options.setYearAsDropdown(<input type="checkbox" id="yearAsDropdown" checked="checked">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setBindSelectedDateWithMonth(<input type="checkbox" id="bindSelectedDateWithMonth">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setYearSelectedFromTableOfYears(<input type="checkbox" id="yearSelectedFromTableOfYears" checked="checked">);</label>
 				</li>
 				<li>
@@ -1276,6 +1279,13 @@ return header;
 			yearAsDropdownInput.onchange = function () {
 				updateSetting(yearAsDropdownInput, function () {
 					datepicker.options.setYearAsDropdown(yearAsDropdownInput.checked);
+				});
+			};
+
+			var bindSelectedDateWithMonthInput = document.getElementById('bindSelectedDateWithMonth');
+            bindSelectedDateWithMonthInput.onchange = function () {
+				updateSetting(bindSelectedDateWithMonthInput, function () {
+					datepicker.options.setBindSelectedDateWithMonth(bindSelectedDateWithMonthInput.checked);
 				});
 			};
 

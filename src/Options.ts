@@ -89,6 +89,7 @@ export default class Options {
 	private showResetButton_ = false;
 	private monthAsDropdown_ = true;
 	private yearAsDropdown_ = true;
+	private bindSelectedDateWithMonth_ = false;
 	private yearSelectedFromTableOfYears_ = true;
 	private tableOfYearsRowsCount_ = 6;
 	private tableOfYearsAlign_: Align | null = null;
@@ -162,6 +163,7 @@ export default class Options {
 		options.showResetButton_ = this.showResetButton_;
 		options.monthAsDropdown_ = this.monthAsDropdown_;
 		options.yearAsDropdown_ = this.yearAsDropdown_;
+		options.bindSelectedDateWithMonth_ = this.bindSelectedDateWithMonth_;
 		options.yearSelectedFromTableOfYears_ = this.yearSelectedFromTableOfYears_;
 		options.tableOfYearsRowsCount_ = this.tableOfYearsRowsCount_;
 		options.tableOfYearsAlign_ = this.tableOfYearsAlign_;
@@ -433,6 +435,12 @@ export default class Options {
 	// defaults to true
 	public setYearAsDropdown(value: boolean): void {
 		this.yearAsDropdown_ = !!value;
+	}
+
+	// Setting to true will always keep selected date in current month.
+	// defaults to false
+	public setBindSelectedDateWithMonth(value: boolean): void {
+		this.bindSelectedDateWithMonth_ = !!value;
 	}
 
 	// Setting to true will render year selection as a table of years instead of dropdown list (html select).
@@ -821,15 +829,22 @@ export default class Options {
 		throw new AvailableDateNotFoundException();
 	}
 
-	public findNearestAvailableDate(date: Date): Date {
+	public findNearestAvailableDate(date: Date): Date | null {
+		return this.calculateNearestAvailableDate_(date);
+	}
+
+	public calculateNearestAvailableDate_(date: Date, minDate: Date | null = null, maxDate: Date | null = null): Date | null {
 		date = this.correctDate_(date);
 
-		if (this.isDateAvailable(date)) {
-			return date;
-		}
+		const defaultMinDate = this.getMinDate_().getTime();
+		const defaultMaxDate = this.getMaxDate_().getTime();
+		const minTimestamp = minDate ? Math.max(defaultMinDate, minDate.getTime()) : defaultMinDate;
+		const maxTimestamp = maxDate ? Math.min(defaultMaxDate, maxDate.getTime()) : defaultMaxDate;
 
-		const minDate = this.getMinDate_().getTime();
-		const maxDate = this.getMaxDate_().getTime();
+		if (this.isDateAvailable(date)) {
+			const timestamp = date.getTime();
+			return timestamp >= minTimestamp && timestamp <= maxTimestamp ? date : null;
+		}
 
 		let maxLoops = 1000; // infinite loop prevention
 		let increasedDate: Date | null = date;
@@ -837,7 +852,7 @@ export default class Options {
 		do {
 			if (increasedDate) {
 				increasedDate.setDate(increasedDate.getDate() + 1);
-				if (increasedDate.getTime() > maxDate) {
+				if (increasedDate.getTime() > maxTimestamp) {
 					increasedDate = null;
 				} else if (this.isDateAvailable(increasedDate)) {
 					return increasedDate;
@@ -846,7 +861,7 @@ export default class Options {
 
 			if (decreasedDate) {
 				decreasedDate.setDate(decreasedDate.getDate() - 1);
-				if (decreasedDate.getTime() < minDate) {
+				if (decreasedDate.getTime() < minTimestamp) {
 					decreasedDate = null;
 				} else if (this.isDateAvailable(decreasedDate)) {
 					return decreasedDate;
@@ -906,6 +921,10 @@ export default class Options {
 
 	public isYearSelectedFromTableOfYears(): boolean {
 		return this.yearAsDropdown_ && this.yearSelectedFromTableOfYears_;
+	}
+
+	public isSelectedDateBoundWithMonth(): boolean {
+		return this.bindSelectedDateWithMonth_;
 	}
 
 	public getTableOfYearsRowsCount(): number {

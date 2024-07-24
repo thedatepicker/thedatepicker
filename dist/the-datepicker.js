@@ -1681,6 +1681,7 @@ var TheDatepicker;
             this.showResetButton_ = false;
             this.monthAsDropdown_ = true;
             this.yearAsDropdown_ = true;
+            this.bindSelectedDateWithMonth_ = false;
             this.yearSelectedFromTableOfYears_ = true;
             this.tableOfYearsRowsCount_ = 6;
             this.tableOfYearsAlign_ = null;
@@ -1750,6 +1751,7 @@ var TheDatepicker;
             options.showResetButton_ = this.showResetButton_;
             options.monthAsDropdown_ = this.monthAsDropdown_;
             options.yearAsDropdown_ = this.yearAsDropdown_;
+            options.bindSelectedDateWithMonth_ = this.bindSelectedDateWithMonth_;
             options.yearSelectedFromTableOfYears_ = this.yearSelectedFromTableOfYears_;
             options.tableOfYearsRowsCount_ = this.tableOfYearsRowsCount_;
             options.tableOfYearsAlign_ = this.tableOfYearsAlign_;
@@ -1890,6 +1892,9 @@ var TheDatepicker;
         };
         Options.prototype.setYearAsDropdown = function (value) {
             this.yearAsDropdown_ = !!value;
+        };
+        Options.prototype.setBindSelectedDateWithMonth = function (value) {
+            this.bindSelectedDateWithMonth_ = !!value;
         };
         Options.prototype.setYearSelectedFromTableOfYears = function (value) {
             this.yearSelectedFromTableOfYears_ = !!value;
@@ -2103,19 +2108,27 @@ var TheDatepicker;
             throw new AvailableDateNotFoundException();
         };
         Options.prototype.findNearestAvailableDate = function (date) {
+            return this.calculateNearestAvailableDate_(date);
+        };
+        Options.prototype.calculateNearestAvailableDate_ = function (date, minDate, maxDate) {
+            if (minDate === void 0) { minDate = null; }
+            if (maxDate === void 0) { maxDate = null; }
             date = this.correctDate_(date);
+            var defaultMinDate = this.getMinDate_().getTime();
+            var defaultMaxDate = this.getMaxDate_().getTime();
+            var minTimestamp = minDate ? Math.max(defaultMinDate, minDate.getTime()) : defaultMinDate;
+            var maxTimestamp = maxDate ? Math.min(defaultMaxDate, maxDate.getTime()) : defaultMaxDate;
             if (this.isDateAvailable(date)) {
-                return date;
+                var timestamp = date.getTime();
+                return timestamp >= minTimestamp && timestamp <= maxTimestamp ? date : null;
             }
-            var minDate = this.getMinDate_().getTime();
-            var maxDate = this.getMaxDate_().getTime();
             var maxLoops = 1000;
             var increasedDate = date;
             var decreasedDate = new Date(date.getTime());
             do {
                 if (increasedDate) {
                     increasedDate.setDate(increasedDate.getDate() + 1);
-                    if (increasedDate.getTime() > maxDate) {
+                    if (increasedDate.getTime() > maxTimestamp) {
                         increasedDate = null;
                     }
                     else if (this.isDateAvailable(increasedDate)) {
@@ -2124,7 +2137,7 @@ var TheDatepicker;
                 }
                 if (decreasedDate) {
                     decreasedDate.setDate(decreasedDate.getDate() - 1);
-                    if (decreasedDate.getTime() < minDate) {
+                    if (decreasedDate.getTime() < minTimestamp) {
                         decreasedDate = null;
                     }
                     else if (this.isDateAvailable(decreasedDate)) {
@@ -2171,6 +2184,9 @@ var TheDatepicker;
         };
         Options.prototype.isYearSelectedFromTableOfYears = function () {
             return this.yearAsDropdown_ && this.yearSelectedFromTableOfYears_;
+        };
+        Options.prototype.isSelectedDateBoundWithMonth = function () {
+            return this.bindSelectedDateWithMonth_;
         };
         Options.prototype.getTableOfYearsRowsCount = function () {
             return this.tableOfYearsRowsCount_;
@@ -3678,6 +3694,13 @@ var TheDatepicker;
                 this.render_();
             }
             this.triggerOnMonthChange_(event, month, this.currentMonth_);
+            if (this.selectedDate_ && this.options_.isSelectedDateBoundWithMonth()) {
+                var maxDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+                var date = this.options_.calculateNearestAvailableDate_(new Date(month.getFullYear(), month.getMonth(), Math.min(this.selectedDate_.getDate(), maxDate.getDate())), month, maxDate);
+                if (date) {
+                    this.selectDay_(event, date);
+                }
+            }
             return true;
         };
         ViewModel_.prototype.reset_ = function (event) {
@@ -3718,6 +3741,7 @@ var TheDatepicker;
             if (doHighlight) {
                 this.highlightDay_(event, day);
             }
+            doUpdateMonth = doUpdateMonth || this.options_.isSelectedDateBoundWithMonth();
             if (!doUpdateMonth || !this.goToMonth_(event, date)) {
                 this.render_();
             }

@@ -242,6 +242,19 @@ export default class ViewModel_ {
 
 		this.triggerOnMonthChange_(event, month, this.currentMonth_);
 
+		if (this.selectedDate_ && this.options_.isSelectedDateBoundWithMonth()) {
+			const maxDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+			const date = this.options_.calculateNearestAvailableDate_(
+				new Date(month.getFullYear(), month.getMonth(), Math.min(this.selectedDate_.getDate(), maxDate.getDate())),
+				month,
+				maxDate
+			);
+
+			if (date) {
+				this.selectDay_(event, date);
+			}
+		}
+
 		return true;
 	}
 
@@ -290,6 +303,7 @@ export default class ViewModel_ {
 			this.highlightDay_(event, day);
 		}
 
+		doUpdateMonth = doUpdateMonth || this.options_.isSelectedDateBoundWithMonth();
 		if (!doUpdateMonth || !this.goToMonth_(event, date)) {
 			this.render_();
 		}

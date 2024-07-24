@@ -59,6 +59,7 @@ export default class Options {
     private showResetButton_;
     private monthAsDropdown_;
     private yearAsDropdown_;
+    private bindSelectedDateWithMonth_;
     private yearSelectedFromTableOfYears_;
     private tableOfYearsRowsCount_;
     private tableOfYearsAlign_;
@@ -118,6 +119,7 @@ export default class Options {
     setShowResetButton(value: boolean): void;
     setMonthAsDropdown(value: boolean): void;
     setYearAsDropdown(value: boolean): void;
+    setBindSelectedDateWithMonth(value: boolean): void;
     setYearSelectedFromTableOfYears(value: boolean): void;
     setTableOfYearsRowsCount(count: number): void;
     setTableOfYearsAlign(align: Align | null): void;
@@ -175,7 +177,8 @@ export default class Options {
     correctMonth(month: Date): Date;
     getInitialDate(): Date | null;
     findPossibleAvailableDate(date: Date | null): Date | null;
-    findNearestAvailableDate(date: Date): Date;
+    findNearestAvailableDate(date: Date): Date | null;
+    calculateNearestAvailableDate_(date: Date, minDate?: Date | null, maxDate?: Date | null): Date | null;
     isDateInValidity(date: Date): boolean;
     private correctDate_;
     getFirstDayOfWeek(): DayOfWeek;
@@ -188,6 +191,7 @@ export default class Options {
     isMonthAsDropdown(): boolean;
     isYearAsDropdown(): boolean;
     isYearSelectedFromTableOfYears(): boolean;
+    isSelectedDateBoundWithMonth(): boolean;
     getTableOfYearsRowsCount(): number;
     getTableOfYearsColumnsCount(): number;
     getTableOfYearsAlign(): Align | null;
