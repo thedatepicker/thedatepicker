@@ -10,11 +10,11 @@
   "types": "dist/the-datepicker.d.ts",
   "browser": "dist/the-datepicker.min.js",
   "devDependencies": {
-    "stylus": "^0.62.0",
+    "stylus": "^0.63.0",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.3.3",
-    "uglify-js": "^3.17.4",
-    "webpack": "^5.89.0",
+    "typescript": "^5.5.4",
+    "uglify-js": "^3.19.0",
+    "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
