@@ -734,7 +734,7 @@ export default class Options {
 		this.offClose(listener);
 	}
 
-	// Callback to be called just before displayed month is changed.
+	// Callback to be called just before displayed month/year is changed.
 	// An Event instance, month (Date instance set to first day of month) which is going to be displayed and month (Date instance) which was displayed before are given on input.
 	// If callback returns false, month will not be changed.
 	public onBeforeMonthChange(listener: MonthChangeListener): void {
@@ -745,8 +745,8 @@ export default class Options {
 		this.offEvent_(EventType_.BeforeMonthChange, listener);
 	}
 
-	// Callback to be called immediately after the datepicker is opened or closed.
-	// An Event instance and a boolean telling whether datepicker was opened (true) or closed (false) are given on input.
+	// Callback to be called immediately after displayed month/year is changed.
+	// An Event instance, month (Date instance set to first day of month) which is now displayed and month (Date instance) which was displayed before are given on input.
 	public onMonthChange(listener: MonthChangeListener): void {
 		this.onEvent_(EventType_.MonthChange, listener as AnyListener);
 	}
@@ -766,8 +766,8 @@ export default class Options {
 		this.offEvent_(EventType_.BeforeFocus, listener);
 	}
 
-	// Callback to be called immediately after the day is selected or deselected.
-	// An Event instance, a TheDatepicker.Day instance (or null when deselected) and previous selected day TheDatepicker.Day instance (or null when nothing selected before) are given on input.
+	// Callback to be called immediately after the day is focused or blurred.
+	// An Event instance, a TheDatepicker.Day instance (or null when blurred) and previous focused day TheDatepicker.Day instance (or null when nothing focused before) are given on input.
 	public onFocus(listener: FocusListener): void {
 		this.onEvent_(EventType_.Focus, listener as AnyListener);
 	}
