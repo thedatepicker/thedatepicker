@@ -10,7 +10,7 @@ TheDatepicker
 Highly customizable pure JavaScript Datepicker by [Slevomat.cz](https://www.slevomat.cz).
 
 **[Try DEMO](https://thedatepicker.github.io/thedatepicker/)**  
-**[Plyaground](https://jsfiddle.net/hejdav/742cswpz/6/)**
+**[Playground](https://jsfiddle.net/hejdav/742cswpz/6/)**
 
 - Pure ([Vanilla](http://vanilla-js.com/)) javascript, no dependencies
 - Responsive (fullscreen on mobile devices)
