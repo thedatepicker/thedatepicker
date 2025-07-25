@@ -5,4 +5,5 @@ Release new version:
 - npm version patch|minor|major (tag is automatically created)
 - git push
 - git push --tags
+- npm publish
 - create new release on GitHub: https://github.com/thedatepicker/thedatepicker/releases/new
