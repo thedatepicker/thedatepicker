@@ -42,6 +42,7 @@ export default class Datepicker {
     getCurrentMonth(): Date;
     goToMonth(month: Date | string, event?: Event | null): boolean;
     parseRawInput(): Date | null;
+    getHtmlInput(): HTMLDatepickerInputElement & HTMLInputElement | null;
     getDay(date: Date | string): Day;
     canType_(char: string): boolean;
     readInput_(event?: Event | null): boolean;

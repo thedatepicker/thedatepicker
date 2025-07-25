@@ -786,6 +786,9 @@ var TheDatepicker;
                 ? TheDatepicker.DateConverter_.parseDate_(this.inputText_.value, this.options)
                 : null;
         };
+        Datepicker.prototype.getHtmlInput = function () {
+            return this.inputClickable_;
+        };
         Datepicker.prototype.getDay = function (date) {
             return this.viewModel_.createDay_(TheDatepicker.Helper_.normalizeDate_('Date', date, false, this.options));
         };

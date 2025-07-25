@@ -304,6 +304,10 @@ export default class Datepicker {
 			: null;
 	}
 
+	public getHtmlInput(): HTMLDatepickerInputElement&HTMLInputElement | null {
+		return this.inputClickable_;
+	}
+
 	public getDay(date: Date | string): Day {
 		return this.viewModel_.createDay_(Helper_.normalizeDate_('Date', date, false, this.options));
 	}
