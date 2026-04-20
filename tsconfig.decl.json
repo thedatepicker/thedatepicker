@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"target": "ES2016",
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"skipLibCheck": true,
+		"strict": false,
+		"outDir": "dist"
+	},
+	"files": []
+}
