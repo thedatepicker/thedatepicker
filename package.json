@@ -10,16 +10,18 @@
   "types": "dist/the-datepicker.d.ts",
   "browser": "dist/the-datepicker.min.js",
   "devDependencies": {
+    "esbuild": "^0.28.0",
     "stylus": "^0.64.0",
     "ts-loader": "^9.5.4",
     "typescript": "^6.0.2",
     "uglify-js": "^3.19.3",
     "webpack": "^5.105.4",
-    "webpack-cli": "^7.0.2"
+    "webpack-cli": "^7.0.2",
+    "webpack-concat-files-plugin": "^0.5.2"
   },
   "scripts": {
     "port": "php port.php",
-    "js": "tsc --project tsconfig.plain.json",
+    "js": "node build-plain.js",
     "css": "stylus src/assets -o dist",
     "minify": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js",
     "webpack": "webpack --config webpack.config.js",
