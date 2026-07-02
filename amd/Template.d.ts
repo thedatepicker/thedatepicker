@@ -41,6 +41,7 @@ export default class Template_ {
     private monthAndYearSelect_;
     private monthAndYearElement_;
     private weeksElements_;
+    private weeksNumbersElements_;
     private daysElements_;
     private daysButtonsElements_;
     private daysContentsElements_;
@@ -79,6 +80,7 @@ export default class Template_ {
     private calculateDropdownDiff_;
     protected createTableElement_(viewModel: ViewModel_): HTMLElement;
     protected createTableHeaderElement_(viewModel: ViewModel_): HTMLElement;
+    protected createTableHeaderWeekNumberCellElement_(): HTMLElement;
     protected createTableHeaderCellElement_(viewModel: ViewModel_, dayOfWeek: DayOfWeek): HTMLElement;
     protected createTableBodyElement_(viewModel: ViewModel_): HTMLElement;
     protected updateWeeksElements_(viewModel: ViewModel_): void;

@@ -15,6 +15,7 @@ export default class Translator {
     dayOfWeekTranslations_: string[];
     monthTranslations_: string[];
     monthShortTranslations_: string[];
+    weekNumberTranslation_: string;
     private titles_;
     clone(): Translator;
     setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void;
@@ -22,9 +23,11 @@ export default class Translator {
     setMonthTranslation(month: Month, translation: string): void;
     setMonthShortTranslation(month: Month, translation: string): void;
     setTitleTranslation(titleName: TitleName, translation: string): void;
+    setWeekNumberTranslation(translation: string): void;
     translateDayOfWeek(dayOfWeek: DayOfWeek): string;
     translateDayOfWeekFull(dayOfWeek: DayOfWeek): string;
     translateMonth(month: Month): string;
     translateMonthShort(month: Month): string;
     translateTitle(titleName: TitleName): string;
+    translateWeekNumber(): string;
 }

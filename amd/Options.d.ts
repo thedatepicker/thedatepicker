@@ -57,6 +57,7 @@ export default class Options {
     private allowEmpty_;
     private showDeselectButton_;
     private showResetButton_;
+    private showWeekNumbers_;
     private monthAsDropdown_;
     private yearAsDropdown_;
     private bindSelectedDateWithMonth_;
@@ -117,6 +118,7 @@ export default class Options {
     setShowDeselectButton(value: boolean): void;
     setAllowEmpty(value: boolean): void;
     setShowResetButton(value: boolean): void;
+    setShowWeekNumbers(value: boolean): void;
     setMonthAsDropdown(value: boolean): void;
     setYearAsDropdown(value: boolean): void;
     setBindSelectedDateWithMonth(value: boolean): void;
@@ -188,6 +190,7 @@ export default class Options {
     isAllowedEmpty(): boolean;
     isDeselectButtonShown(): boolean;
     isResetButtonShown(): boolean;
+    areWeekNumbersShown(): boolean;
     isMonthAsDropdown(): boolean;
     isYearAsDropdown(): boolean;
     isYearSelectedFromTableOfYears(): boolean;

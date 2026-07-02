@@ -78,6 +78,7 @@ export default class Template_ {
 	private monthAndYearSelect_: HTMLSelectElement | null = null;
 	private monthAndYearElement_: HTMLElement | null = null;
 	private weeksElements_: HTMLElement[] = [];
+	private weeksNumbersElements_: HTMLElement[] = [];
 	private daysElements_: HTMLElement[][] = [];
 	private daysButtonsElements_: HTMLDayButtonElement[][] = [];
 	private daysContentsElements_: HTMLElement[][] = [];
@@ -659,12 +660,24 @@ export default class Template_ {
 		const weekDays = viewModel.getWeekDays_();
 
 		const cells = [];
+
+		if (this.options_.areWeekNumbersShown()) {
+			cells.push(this.createTableHeaderWeekNumberCellElement_());
+		}
+
 		for (let index = 0; index < weekDays.length; index++) {
 			const dayOfWeek = weekDays[index];
 			cells.push(this.createTableHeaderCellElement_(viewModel, dayOfWeek));
 		}
 
 		return HtmlHelper_.createTableHeader_(cells as HTMLTableHeaderCellElement[], ClassNameType.CalendarTableHeader, this.options_);
+	}
+
+	protected createTableHeaderWeekNumberCellElement_(): HTMLElement {
+		const headerCell = HtmlHelper_.createTableHeaderCell_(ClassNameType.CalendarTableHeaderWeekNumber, this.options_);
+		headerCell.innerText = this.options_.translator.translateWeekNumber();
+
+		return headerCell;
 	}
 
 	protected createTableHeaderCellElement_(viewModel: ViewModel_, dayOfWeek: DayOfWeek): HTMLElement {
@@ -683,6 +696,7 @@ export default class Template_ {
 		this.daysElements_ = [];
 		this.daysButtonsElements_ = [];
 		this.daysContentsElements_ = [];
+		this.weeksNumbersElements_ = [];
 
 		const rows = [];
 		for (let index = 0; index < 6; index++) {
@@ -707,6 +721,11 @@ export default class Template_ {
 			weekElement.style.display = week ? '' : 'none';
 
 			if (week) {
+				if (this.options_.areWeekNumbersShown() && this.weeksNumbersElements_.length > weekIndex) {
+					const weekNumber = Helper_.getWeekNumber_(week[0].getDate(), this.options_.getFirstDayOfWeek());
+					this.weeksNumbersElements_[weekIndex].innerText = '' + weekNumber;
+				}
+
 				for (let dayIndex = 0; dayIndex < this.daysElements_[weekIndex].length; dayIndex++) {
 					this.updateDayElement_(
 						viewModel,
@@ -740,7 +759,16 @@ export default class Template_ {
 		this.daysButtonsElements_.push(cellsButtons);
 		this.daysContentsElements_.push(cellsContents);
 
-		return HtmlHelper_.createTableRow_(cells as HTMLTableCellElement[], this.options_);
+		const rowCells = cells.slice(0);
+
+		if (this.options_.areWeekNumbersShown()) {
+			const weekNumberCell = HtmlHelper_.createTableCell_();
+			HtmlHelper_.addClass_(weekNumberCell, ClassNameType.WeekNumber, this.options_);
+			this.weeksNumbersElements_.push(weekNumberCell);
+			rowCells.unshift(weekNumberCell);
+		}
+
+		return HtmlHelper_.createTableRow_(rowCells as HTMLTableCellElement[], this.options_);
 	}
 
 	protected updateDayElement_(

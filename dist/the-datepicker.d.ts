@@ -64,7 +64,9 @@ declare namespace TheDatepicker {
         AnimateFadeOutDown = 61,
         AnimateFadeInUp = 62,
         ContainerDarkMode = 63,
-        MainDarkMode = 64
+        MainDarkMode = 64,
+        CalendarTableHeaderWeekNumber = 65,
+        WeekNumber = 66
     }
     class ClassNames {
         private classNames_;
@@ -264,6 +266,7 @@ declare namespace TheDatepicker {
         private static cssAnimationSupport_;
         private static passiveEventListenerSupport_;
         static resetTime_(date: Date | null): Date | null;
+        static getWeekNumber_(date: Date, firstDayOfWeek: DayOfWeek): number;
         static normalizeDate_(parameterName: string, value: Day | Date | string | null, isNullable: boolean, options: Options): Date | null;
         static isElement_(element: HTMLElement): boolean;
         static isValidDate_(value: any): boolean;
@@ -358,6 +361,7 @@ declare namespace TheDatepicker {
         private allowEmpty_;
         private showDeselectButton_;
         private showResetButton_;
+        private showWeekNumbers_;
         private monthAsDropdown_;
         private yearAsDropdown_;
         private bindSelectedDateWithMonth_;
@@ -418,6 +422,7 @@ declare namespace TheDatepicker {
         setShowDeselectButton(value: boolean): void;
         setAllowEmpty(value: boolean): void;
         setShowResetButton(value: boolean): void;
+        setShowWeekNumbers(value: boolean): void;
         setMonthAsDropdown(value: boolean): void;
         setYearAsDropdown(value: boolean): void;
         setBindSelectedDateWithMonth(value: boolean): void;
@@ -489,6 +494,7 @@ declare namespace TheDatepicker {
         isAllowedEmpty(): boolean;
         isDeselectButtonShown(): boolean;
         isResetButtonShown(): boolean;
+        areWeekNumbersShown(): boolean;
         isMonthAsDropdown(): boolean;
         isYearAsDropdown(): boolean;
         isYearSelectedFromTableOfYears(): boolean;
@@ -612,6 +618,7 @@ declare namespace TheDatepicker {
         private monthAndYearSelect_;
         private monthAndYearElement_;
         private weeksElements_;
+        private weeksNumbersElements_;
         private daysElements_;
         private daysButtonsElements_;
         private daysContentsElements_;
@@ -650,6 +657,7 @@ declare namespace TheDatepicker {
         private calculateDropdownDiff_;
         protected createTableElement_(viewModel: ViewModel_): HTMLElement;
         protected createTableHeaderElement_(viewModel: ViewModel_): HTMLElement;
+        protected createTableHeaderWeekNumberCellElement_(): HTMLElement;
         protected createTableHeaderCellElement_(viewModel: ViewModel_, dayOfWeek: DayOfWeek): HTMLElement;
         protected createTableBodyElement_(viewModel: ViewModel_): HTMLElement;
         protected updateWeeksElements_(viewModel: ViewModel_): void;
@@ -687,6 +695,7 @@ declare namespace TheDatepicker {
         dayOfWeekTranslations_: string[];
         monthTranslations_: string[];
         monthShortTranslations_: string[];
+        weekNumberTranslation_: string;
         private titles_;
         clone(): Translator;
         setDayOfWeekTranslation(dayOfWeek: DayOfWeek, translation: string): void;
@@ -694,11 +703,13 @@ declare namespace TheDatepicker {
         setMonthTranslation(month: Month, translation: string): void;
         setMonthShortTranslation(month: Month, translation: string): void;
         setTitleTranslation(titleName: TitleName, translation: string): void;
+        setWeekNumberTranslation(translation: string): void;
         translateDayOfWeek(dayOfWeek: DayOfWeek): string;
         translateDayOfWeekFull(dayOfWeek: DayOfWeek): string;
         translateMonth(month: Month): string;
         translateMonthShort(month: Month): string;
         translateTitle(titleName: TitleName): string;
+        translateWeekNumber(): string;
     }
 }
 declare namespace TheDatepicker {

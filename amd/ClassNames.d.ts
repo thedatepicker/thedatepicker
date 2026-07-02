@@ -63,7 +63,9 @@ export declare enum ClassNameType {
     AnimateFadeOutDown = 61,
     AnimateFadeInUp = 62,
     ContainerDarkMode = 63,
-    MainDarkMode = 64
+    MainDarkMode = 64,
+    CalendarTableHeaderWeekNumber = 65,
+    WeekNumber = 66
 }
 export default class ClassNames {
     private classNames_;

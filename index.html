@@ -335,6 +335,9 @@
 					<label>datepicker.options.setShowResetButton(<input type="checkbox" id="showResetButton">);</label>
 				</li>
 				<li>
+					<label>datepicker.options.setShowWeekNumbers(<input type="checkbox" id="showWeekNumbers">);</label>
+				</li>
+				<li>
 					<label>datepicker.options.setMonthAsDropdown(<input type="checkbox" id="monthAsDropdown" checked="checked">);</label>
 				</li>
 				<li>
@@ -1265,6 +1268,13 @@ return header;
 			showResetButtonInput.onchange = function () {
 				updateSetting(showResetButtonInput, function () {
 					datepicker.options.setShowResetButton(showResetButtonInput.checked);
+				});
+			};
+
+			var showWeekNumbersInput = document.getElementById('showWeekNumbers');
+			showWeekNumbersInput.onchange = function () {
+				updateSetting(showWeekNumbersInput, function () {
+					datepicker.options.setShowWeekNumbers(showWeekNumbersInput.checked);
 				});
 			};
 
