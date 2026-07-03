@@ -85,6 +85,20 @@ body.the-datepicker-page {
   color: #666;
   font-size: 0.85em;
 }
+.the-datepicker__main th.the-datepicker__week-number-header {
+  padding: 0.5em 0.4em;
+  text-align: center;
+  font-weight: normal;
+  text-transform: uppercase;
+  color: #666;
+  font-size: 0.85em;
+}
+.the-datepicker__main td.the-datepicker__week-number {
+  padding: 0 0.4em;
+  text-align: center;
+  color: #666;
+  font-size: 0.85em;
+}
 .the-datepicker__main a.the-datepicker__button {
   display: block;
   width: 2.1em;

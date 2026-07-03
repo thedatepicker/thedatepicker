@@ -87,6 +87,7 @@ export default class Options {
 	private allowEmpty_ = true;
 	private showDeselectButton_ = true;
 	private showResetButton_ = false;
+	private showWeekNumbers_ = false;
 	private monthAsDropdown_ = true;
 	private yearAsDropdown_ = true;
 	private bindSelectedDateWithMonth_ = false;
@@ -161,6 +162,7 @@ export default class Options {
 		options.allowEmpty_ = this.allowEmpty_;
 		options.showDeselectButton_ = this.showDeselectButton_;
 		options.showResetButton_ = this.showResetButton_;
+		options.showWeekNumbers_ = this.showWeekNumbers_;
 		options.monthAsDropdown_ = this.monthAsDropdown_;
 		options.yearAsDropdown_ = this.yearAsDropdown_;
 		options.bindSelectedDateWithMonth_ = this.bindSelectedDateWithMonth_;
@@ -423,6 +425,13 @@ export default class Options {
 	// defaults to false
 	public setShowResetButton(value: boolean): void {
 		this.showResetButton_ = !!value;
+	}
+
+	// Setting to true will render an additional first column in the calendar showing week numbers.
+	// Week number is calculated according to the setting FirstDayOfWeek.
+	// defaults to false
+	public setShowWeekNumbers(value: boolean): void {
+		this.showWeekNumbers_ = !!value;
 	}
 
 	// Setting to true will render month as dropdown list (html select).
@@ -909,6 +918,10 @@ export default class Options {
 
 	public isResetButtonShown(): boolean {
 		return this.showResetButton_;
+	}
+
+	public areWeekNumbersShown(): boolean {
+		return this.showWeekNumbers_;
 	}
 
 	public isMonthAsDropdown(): boolean {

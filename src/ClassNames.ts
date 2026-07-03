@@ -66,6 +66,8 @@ export enum ClassNameType {
 	AnimateFadeInUp,
 	ContainerDarkMode,
 	MainDarkMode,
+	CalendarTableHeaderWeekNumber,
+	WeekNumber,
 }
 
 export default class ClassNames {
@@ -136,6 +138,8 @@ export default class ClassNames {
 		['fade-in-up'], // AnimateFadeInUp
 		['container--darkmode'], // ContainerDarkMode
 		['main--darkmode'], // MainDarkMode
+		['week-number-header'], // CalendarTableHeaderWeekNumber
+		['week-number'], // WeekNumber
 	];
 
 	public clone(): ClassNames {

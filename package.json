@@ -19,7 +19,7 @@
   },
   "scripts": {
     "port": "php port.php",
-    "js": "tsc --project tsconfig.plain.json",
+    "js": "tsc --project tsconfig.plain.json && cat dist/plain/*.js > dist/the-datepicker.js && cat dist/plain/*.d.ts > dist/the-datepicker.d.ts && rm -rf dist/plain",
     "css": "stylus src/assets -o dist",
     "minify": "uglifyjs -c -m  --mangle-props regex=\"/_$/\" -o dist/the-datepicker.min.js dist/the-datepicker.js",
     "webpack": "webpack --config webpack.config.js",

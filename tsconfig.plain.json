@@ -1,11 +1,13 @@
 {
 	"compilerOptions": {
-		"target": "ES5",
+		"target": "ES2015",
+		"module": "ESNext",
+		"strict": false,
 		"noImplicitAny": true,
 		"removeComments": true,
 		"preserveConstEnums": true,
 		"rootDir": "./namespaced/",
-		"outFile": "dist/the-datepicker.js",
+		"outDir": "./dist/plain",
 		"declaration": true
 	},
 	"include": ["namespaced"]

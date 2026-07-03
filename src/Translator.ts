@@ -64,6 +64,8 @@ export default class Translator {
 		'Dec',
 	];
 
+	public weekNumberTranslation_ = 'Wk';
+
 	private titles_ = [
 		'Go to previous month', // GoBack
 		'Go to next month', // GoForward
@@ -94,6 +96,7 @@ export default class Translator {
 		for (index = 0; index < this.titles_.length; index++) {
 			translator.titles_ = this.titles_.slice(0);
 		}
+		translator.weekNumberTranslation_ = this.weekNumberTranslation_;
 		return translator;
 	}
 
@@ -117,6 +120,10 @@ export default class Translator {
 		this.titles_[Helper_.checkNumber_('Title', titleName, 0, this.titles_.length - 1)] = Helper_.checkString_('Translation', translation);
 	}
 
+	public setWeekNumberTranslation(translation: string): void {
+		this.weekNumberTranslation_ = Helper_.checkString_('Translation', translation);
+	}
+
 	public translateDayOfWeek(dayOfWeek: DayOfWeek): string {
 		return this.dayOfWeekTranslations_[dayOfWeek];
 	}
@@ -135,6 +142,10 @@ export default class Translator {
 
 	public translateTitle(titleName: TitleName): string {
 		return this.titles_[titleName];
+	}
+
+	public translateWeekNumber(): string {
+		return this.weekNumberTranslation_;
 	}
 
 }

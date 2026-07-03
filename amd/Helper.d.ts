@@ -62,6 +62,7 @@ export default class Helper_ {
     private static cssAnimationSupport_;
     private static passiveEventListenerSupport_;
     static resetTime_(date: Date | null): Date | null;
+    static getWeekNumber_(date: Date, firstDayOfWeek: DayOfWeek): number;
     static normalizeDate_(parameterName: string, value: Day | Date | string | null, isNullable: boolean, options: Options): Date | null;
     static isElement_(element: HTMLElement): boolean;
     static isValidDate_(value: any): boolean;

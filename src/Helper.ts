@@ -99,6 +99,16 @@ export default class Helper_ {
 		return date;
 	}
 
+	public static getWeekNumber_(date: Date, firstDayOfWeek: DayOfWeek): number {
+		const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+		const dayOffset = (target.getDay() - firstDayOfWeek + 7) % 7;
+		target.setDate(target.getDate() - dayOffset + 3);
+		const firstDayOfYear = new Date(target.getFullYear(), 0, 1);
+		const daysDifference = Math.round((target.getTime() - firstDayOfYear.getTime()) / 86400000);
+
+		return Math.floor(daysDifference / 7) + 1;
+	}
+
 	public static normalizeDate_(parameterName: string, value: Day | Date | string | null, isNullable: boolean, options: Options): Date | null {
 		if (!value) {
 			if (!isNullable) {

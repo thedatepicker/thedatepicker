@@ -1,8 +1,9 @@
 {
 	"compilerOptions": {
-		"target": "ES5",
-		"module": "CommonJS",
-		"moduleResolution": "Node",
+		"target": "ES2015",
+		"strict": false,
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
 		"esModuleInterop": true,
 		"noImplicitAny": true,
 		"removeComments": true,
