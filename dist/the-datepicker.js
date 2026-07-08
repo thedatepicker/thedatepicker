@@ -3057,8 +3057,15 @@ var TheDatepicker;
                 weekElement.style.display = week ? '' : 'none';
                 if (week) {
                     if (this.options_.areWeekNumbersShown() && this.weeksNumbersElements_.length > weekIndex) {
+                        let hasVisibleDay = false;
+                        for (let dayIndex = 0; dayIndex < week.length; dayIndex++) {
+                            if (week[dayIndex].isVisible) {
+                                hasVisibleDay = true;
+                                break;
+                            }
+                        }
                         const weekNumber = TheDatepicker.Helper_.getWeekNumber_(week[0].getDate(), this.options_.getFirstDayOfWeek());
-                        this.weeksNumbersElements_[weekIndex].innerText = '' + weekNumber;
+                        this.weeksNumbersElements_[weekIndex].innerText = hasVisibleDay ? String(weekNumber) : '';
                     }
                     for (let dayIndex = 0; dayIndex < this.daysElements_[weekIndex].length; dayIndex++) {
                         this.updateDayElement_(viewModel, this.daysElements_[weekIndex][dayIndex], this.daysButtonsElements_[weekIndex][dayIndex], this.daysContentsElements_[weekIndex][dayIndex], week[dayIndex]);
