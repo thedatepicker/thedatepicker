@@ -722,8 +722,16 @@ export default class Template_ {
 
 			if (week) {
 				if (this.options_.areWeekNumbersShown() && this.weeksNumbersElements_.length > weekIndex) {
+					let hasVisibleDay = false;
+					for (let dayIndex = 0; dayIndex < week.length; dayIndex++) {
+						if (week[dayIndex].isVisible) {
+							hasVisibleDay = true;
+							break;
+						}
+					}
+
 					const weekNumber = Helper_.getWeekNumber_(week[0].getDate(), this.options_.getFirstDayOfWeek());
-					this.weeksNumbersElements_[weekIndex].innerText = '' + weekNumber;
+					this.weeksNumbersElements_[weekIndex].innerText = hasVisibleDay ? String(weekNumber) : '';
 				}
 
 				for (let dayIndex = 0; dayIndex < this.daysElements_[weekIndex].length; dayIndex++) {
