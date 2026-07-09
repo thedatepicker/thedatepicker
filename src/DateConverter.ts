@@ -74,7 +74,7 @@ export default class DateConverter_ {
 	}
 
 	public static parseDate_(text: string, options: Options): Date | null {
-		if ((text.trim ? text.trim() : text) === '') {
+		if (text.trim() === '') {
 			return null;
 		}
 
