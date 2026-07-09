@@ -68,6 +68,7 @@ export enum ClassNameType {
 	MainDarkMode,
 	CalendarTableHeaderWeekNumber,
 	WeekNumber,
+	TableRowEmpty,
 }
 
 export default class ClassNames {
@@ -140,6 +141,7 @@ export default class ClassNames {
 		['main--darkmode'], // MainDarkMode
 		['week-number-header'], // CalendarTableHeaderWeekNumber
 		['week-number'], // WeekNumber
+		['row--empty'], // TableRowEmpty
 	];
 
 	public clone(): ClassNames {

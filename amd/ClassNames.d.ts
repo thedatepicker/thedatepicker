@@ -65,7 +65,8 @@ export declare enum ClassNameType {
     ContainerDarkMode = 63,
     MainDarkMode = 64,
     CalendarTableHeaderWeekNumber = 65,
-    WeekNumber = 66
+    WeekNumber = 66,
+    TableRowEmpty = 67
 }
 export default class ClassNames {
     private classNames_;

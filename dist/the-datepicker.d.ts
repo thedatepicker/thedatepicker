@@ -66,7 +66,8 @@ declare namespace TheDatepicker {
         ContainerDarkMode = 63,
         MainDarkMode = 64,
         CalendarTableHeaderWeekNumber = 65,
-        WeekNumber = 66
+        WeekNumber = 66,
+        TableRowEmpty = 67
     }
     class ClassNames {
         private classNames_;
@@ -302,6 +303,7 @@ declare namespace TheDatepicker {
         static createSelectInput_(selectOptions: Option[], onChange: (event: Event, value: string) => void, options: Options): HTMLSelectElement;
         static createSelectOption_(value: string, label: string): HTMLOptionElement;
         static addClass_(element: HTMLElement, type: ClassNameType, options: Options): void;
+        static removeClass_(element: HTMLElement, type: ClassNameType, options: Options): void;
         static appendChild_(element: HTMLElement, child: HTMLElement | null): void;
     }
 }
