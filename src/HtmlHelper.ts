@@ -130,13 +130,17 @@ export default class HtmlHelper_ {
 
 	public static addClass_(element: HTMLElement, type: ClassNameType, options: Options): void {
 		const classNames = options.classNames.getClassName(type);
-		if (classNames.length) {
+		if (classNames.length === 0) {
 			return;
 		}
+		let currentClassName = ' ' + element.className + ' ';
 		for (let index = 0; index < classNames.length; index++) {
-			classNames[index] = options.prefixClass_(classNames[index]);
+			const className = options.prefixClass_(classNames[index]);
+			if (currentClassName.indexOf(' ' + className + ' ') === -1) {
+				currentClassName += className + ' ';
+			}
 		}
-		element.className += (element.className ? ' ' : '') + classNames.join(' ');
+		element.className = currentClassName.replace(/^\s+|\s+$/g, '');
 	}
 
 	public static removeClass_(element: HTMLElement, type: ClassNameType, options: Options): void {
