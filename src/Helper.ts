@@ -123,7 +123,7 @@ export default class Helper_ {
 		}
 
 		if (typeof value === 'string') {
-			value = value.trim ? value.trim() : value;
+			value = value.trim();
 
 			if (value === 'today' || value === 'now') {
 				return options.getToday();

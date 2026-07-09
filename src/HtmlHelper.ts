@@ -140,7 +140,7 @@ export default class HtmlHelper_ {
 				currentClassName += className + ' ';
 			}
 		}
-		element.className = currentClassName.replace(/^\s+|\s+$/g, '');
+		element.className = currentClassName.trim();
 	}
 
 	public static removeClass_(element: HTMLElement, type: ClassNameType, options: Options): void {
@@ -152,7 +152,7 @@ export default class HtmlHelper_ {
 		for (let index = 0; index < classNames.length; index++) {
 			currentClassName = currentClassName.split(' ' + options.prefixClass_(classNames[index]) + ' ').join(' ');
 		}
-		element.className = currentClassName.replace(/^\s+|\s+$/g, '');
+		element.className = currentClassName.trim();
 	}
 
 	public static appendChild_(element: HTMLElement, child: HTMLElement | null): void {

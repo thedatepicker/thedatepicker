@@ -247,7 +247,7 @@ var TheDatepicker;
             return result;
         }
         static parseDate_(text, options) {
-            if ((text.trim ? text.trim() : text) === '') {
+            if (text.trim() === '') {
                 return null;
             }
             const format = options.getInputFormat();
@@ -1235,7 +1235,7 @@ var TheDatepicker;
                 return value.getDate();
             }
             if (typeof value === 'string') {
-                value = value.trim ? value.trim() : value;
+                value = value.trim();
                 if (value === 'today' || value === 'now') {
                     return options.getToday();
                 }
@@ -1609,7 +1609,7 @@ var TheDatepicker;
                     currentClassName += className + ' ';
                 }
             }
-            element.className = currentClassName.replace(/^\s+|\s+$/g, '');
+            element.className = currentClassName.trim();
         }
         static removeClass_(element, type, options) {
             const classNames = options.classNames.getClassName(type);
@@ -1620,7 +1620,7 @@ var TheDatepicker;
             for (let index = 0; index < classNames.length; index++) {
                 currentClassName = currentClassName.split(' ' + options.prefixClass_(classNames[index]) + ' ').join(' ');
             }
-            element.className = currentClassName.replace(/^\s+|\s+$/g, '');
+            element.className = currentClassName.trim();
         }
         static appendChild_(element, child) {
             if (child) {
