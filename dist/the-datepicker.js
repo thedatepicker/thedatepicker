@@ -70,6 +70,7 @@ var TheDatepicker;
         ClassNameType[ClassNameType["MainDarkMode"] = 64] = "MainDarkMode";
         ClassNameType[ClassNameType["CalendarTableHeaderWeekNumber"] = 65] = "CalendarTableHeaderWeekNumber";
         ClassNameType[ClassNameType["WeekNumber"] = 66] = "WeekNumber";
+        ClassNameType[ClassNameType["TableRowEmpty"] = 67] = "TableRowEmpty";
     })(ClassNameType = TheDatepicker.ClassNameType || (TheDatepicker.ClassNameType = {}));
     class ClassNames {
         constructor() {
@@ -141,6 +142,7 @@ var TheDatepicker;
                 ['main--darkmode'],
                 ['week-number-header'],
                 ['week-number'],
+                ['row--empty'],
             ];
         }
         clone() {
@@ -1605,6 +1607,17 @@ var TheDatepicker;
             }
             element.className += (element.className ? ' ' : '') + classNames.join(' ');
         }
+        static removeClass_(element, type, options) {
+            const classNames = options.classNames.getClassName(type);
+            if (!classNames.length) {
+                return;
+            }
+            let currentClassName = ' ' + element.className + ' ';
+            for (let index = 0; index < classNames.length; index++) {
+                currentClassName = currentClassName.split(' ' + options.prefixClass_(classNames[index]) + ' ').join(' ');
+            }
+            element.className = currentClassName.replace(/^\s+|\s+$/g, '');
+        }
         static appendChild_(element, child) {
             if (child) {
                 element.appendChild(child);
@@ -3055,15 +3068,23 @@ var TheDatepicker;
                 const weekElement = this.weeksElements_[weekIndex];
                 const week = weeks.length > weekIndex ? weeks[weekIndex] : null;
                 weekElement.style.display = week ? '' : 'none';
+                let hasVisibleDay = false;
+                if (week) {
+                    for (let dayIndex = 0; dayIndex < week.length; dayIndex++) {
+                        if (week[dayIndex].isVisible) {
+                            hasVisibleDay = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasVisibleDay) {
+                    TheDatepicker.HtmlHelper_.removeClass_(weekElement, TheDatepicker.ClassNameType.TableRowEmpty, this.options_);
+                }
+                else {
+                    TheDatepicker.HtmlHelper_.addClass_(weekElement, TheDatepicker.ClassNameType.TableRowEmpty, this.options_);
+                }
                 if (week) {
                     if (this.options_.areWeekNumbersShown() && this.weeksNumbersElements_.length > weekIndex) {
-                        let hasVisibleDay = false;
-                        for (let dayIndex = 0; dayIndex < week.length; dayIndex++) {
-                            if (week[dayIndex].isVisible) {
-                                hasVisibleDay = true;
-                                break;
-                            }
-                        }
                         const weekNumber = TheDatepicker.Helper_.getWeekNumber_(week[0].getDate(), this.options_.getFirstDayOfWeek());
                         this.weeksNumbersElements_[weekIndex].innerText = hasVisibleDay ? String(weekNumber) : '';
                     }

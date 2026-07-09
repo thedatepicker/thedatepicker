@@ -720,16 +720,24 @@ export default class Template_ {
 
 			weekElement.style.display = week ? '' : 'none';
 
+			let hasVisibleDay = false;
+			if (week) {
+				for (let dayIndex = 0; dayIndex < week.length; dayIndex++) {
+					if (week[dayIndex].isVisible) {
+						hasVisibleDay = true;
+						break;
+					}
+				}
+			}
+
+			if (hasVisibleDay) {
+				HtmlHelper_.removeClass_(weekElement, ClassNameType.TableRowEmpty, this.options_);
+			} else {
+				HtmlHelper_.addClass_(weekElement, ClassNameType.TableRowEmpty, this.options_);
+			}
+
 			if (week) {
 				if (this.options_.areWeekNumbersShown() && this.weeksNumbersElements_.length > weekIndex) {
-					let hasVisibleDay = false;
-					for (let dayIndex = 0; dayIndex < week.length; dayIndex++) {
-						if (week[dayIndex].isVisible) {
-							hasVisibleDay = true;
-							break;
-						}
-					}
-
 					const weekNumber = Helper_.getWeekNumber_(week[0].getDate(), this.options_.getFirstDayOfWeek());
 					this.weeksNumbersElements_[weekIndex].innerText = hasVisibleDay ? String(weekNumber) : '';
 				}

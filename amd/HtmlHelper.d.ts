@@ -17,5 +17,6 @@ export default class HtmlHelper_ {
     static createSelectInput_(selectOptions: Option[], onChange: (event: Event, value: string) => void, options: Options): HTMLSelectElement;
     static createSelectOption_(value: string, label: string): HTMLOptionElement;
     static addClass_(element: HTMLElement, type: ClassNameType, options: Options): void;
+    static removeClass_(element: HTMLElement, type: ClassNameType, options: Options): void;
     static appendChild_(element: HTMLElement, child: HTMLElement | null): void;
 }
