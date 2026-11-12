@@ -851,6 +851,9 @@ export default class Template_ {
 
 	protected createTableCellButtonElement_(viewModel: ViewModel_): HTMLDayButtonElement {
 		const cellButton = HtmlHelper_.createAnchor_((event: Event): void => {
+			if (viewModel.isInputDisabled_()) {
+				return;
+			}
 			const previous = viewModel.selectedDate_;
 			const isSelected = viewModel.selectDay_(event, cellButton.day, false, true, true);
 			if (this.options_.isHiddenOnSelect() && (isSelected || (previous && cellButton.day.isEqualToDate(previous)))) {
