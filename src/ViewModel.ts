@@ -266,6 +266,10 @@ export default class ViewModel_ {
 		return isMonthChanged || isDaySelected;
 	}
 
+	public isInputDisabled_(): boolean {
+		return this.datepicker_.getHtmlInput()?.matches(':disabled') ?? false;
+	}
+
 	public selectDay_(event: Event | null, date: Day | Date | null, doUpdateMonth = true, doHighlight = false, canToggle = false): boolean {
 		if (!date) {
 			return this.cancelSelection_(event);
